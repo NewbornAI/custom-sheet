@@ -205,6 +205,72 @@ input[type=range]::-moz-range-thumb{
 }
 .chip[hidden]{display:none}
 
+/* ---- view tabs ---- */
+
+.tabs{
+  flex:0 0 auto;
+  display:flex;
+  gap:16px;
+  border-bottom:1px solid var(--edge);
+}
+.tab{
+  border:0;
+  border-bottom:2px solid transparent;
+  margin-bottom:-1px;
+  padding:2px 0 5px;
+  background:none;
+  color:var(--muted);
+  font-family:var(--sans);
+  font-size:12px;
+  letter-spacing:.04em;
+  cursor:pointer;
+}
+.tab[aria-selected="true"]{color:var(--arcane);border-bottom-color:var(--arcane)}
+.tab:focus-visible{outline:2px solid var(--arcane);outline-offset:2px}
+
+/* ---- views ---- */
+
+.views{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.view{display:none;flex:1 1 auto;min-height:0;flex-direction:column;gap:8px}
+.view.on{display:flex}
+
+/* ---- wild magic surge ---- */
+
+.surge{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:18px;
+  overflow-y:auto;
+}
+.sroll{display:flex;flex-direction:column;align-items:center;gap:3px}
+.d100{
+  font-family:var(--display);
+  font-weight:700;
+  font-size:54px;
+  line-height:1;
+  font-variant-numeric:tabular-nums;
+  text-shadow:0 0 26px rgba(155,123,255,.35);
+}
+.srange{
+  font-family:var(--display);
+  font-size:14px;
+  letter-spacing:.14em;
+  color:var(--muted);
+}
+.seffect{
+  margin:0;
+  padding-top:16px;
+  border-top:1px solid var(--edge);
+  font-size:13.5px;
+  line-height:1.6;
+  color:#d9d5ec;
+}
+.sdice{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.sdice .g .stot{font-family:var(--display);font-size:14px;color:var(--arcane);line-height:1.1}
+
 /* ---- build summary ---- */
 
 .summary{
@@ -245,7 +311,7 @@ input[type=range]::-moz-range-thumb{
 .cell{
   display:flex;
   flex-direction:column;
-  gap:6px;
+  gap:5px;
   padding:8px 8px 9px;
   border:1px solid var(--edge);
   border-radius:5px;
@@ -307,11 +373,11 @@ input[type=range]::-moz-range-thumb{
 }
 
 .dmg{
-  padding-top:7px;
+  padding-top:6px;
   border-top:1px solid var(--edge);
   display:flex;
   flex-direction:column;
-  gap:6px;
+  gap:5px;
 }
 .cell.miss .dmg{opacity:.38}
 
@@ -366,7 +432,7 @@ input[type=range]::-moz-range-thumb{
   position:relative;
   flex:0 0 auto;
   width:100%;
-  height:104px;
+  height:92px;
   border:1px solid rgba(255,255,255,.2);
   border-radius:16px;
   background:linear-gradient(180deg,#9573ff 0%,#5a39d6 100%);
@@ -404,7 +470,7 @@ input[type=range]::-moz-range-thumb{
 }
 
 @media (min-height:760px){
-  .cast{height:130px}
+  .cast{height:120px}
 }
 </style>
 </head>
@@ -419,8 +485,16 @@ input[type=range]::-moz-range-thumb{
       <circle cx="12" cy="12" r="1.7" fill="currentColor"/>
     </svg>
     <h1 class="title" id="spellName">Eldritch blast</h1>
-    <label class="ac"><span>AC</span><input id="ac" type="number" inputmode="numeric" min="1" max="40" step="1" placeholder="—" aria-label="Target armor class"></label>
+    <label class="ac" id="acField"><span>AC</span><input id="ac" type="number" inputmode="numeric" min="1" max="40" step="1" placeholder="—" aria-label="Target armor class"></label>
   </header>
+
+  <nav class="tabs" role="tablist" aria-label="Views">
+    <button class="tab" id="tab-volley" type="button" role="tab" aria-selected="true">Volley</button>
+    <button class="tab" id="tab-surge" type="button" role="tab" aria-selected="false">Wild surge</button>
+  </nav>
+
+  <div class="views">
+  <section class="view on" id="view-volley">
 
   <div class="slider">
     <input id="power" type="range" min="0" max="4" step="1" value="0" aria-label="Spell power">
@@ -437,8 +511,23 @@ input[type=range]::-moz-range-thumb{
 
   <div class="tally" id="tally"></div>
 
+  </section>
+
+  <section class="view" id="view-surge">
+    <div class="surge">
+      <div class="sroll">
+        <span class="d100" id="surgeRoll">--</span>
+        <span class="srange" id="surgeRange"></span>
+      </div>
+      <p class="seffect" id="surgeText">Roll to see what the surge does.</p>
+      <div class="sdice" id="surgeDice"></div>
+    </div>
+  </section>
+
+  </div>
+
   <button class="cast" id="cast">
-    Cast
+    <span id="castLabel">Cast</span>
     <svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width=".8"/>
       <path d="M12 2.2V6M12 18v3.8M2.2 12H6M18 12h3.8" stroke="currentColor" stroke-width=".8"/>
@@ -447,6 +536,8 @@ input[type=range]::-moz-range-thumb{
   </button>
 
 </div>
+
+<script id="surge-data" type="application/json">{"name":"Wild Magic Surge","rows":[]}</script>
 
 <script id="rules">
 /* Pure rules engine. No DOM, no globals beyond this one. */
@@ -564,13 +655,43 @@ input[type=range]::-moz-range-thumb{
     return { total: total, byType: byType, order: order, hits: hits, crits: crits, flat: flatTotal, ac: ac };
   }
 
+  /* The dice a surge effect asks for, so the app can roll them as well. */
+  function diceIn(text) {
+    var out = [], m, re = /(\d*)d(\d+)/gi;
+    while ((m = re.exec(text)) !== null) {
+      out.push({ count: m[1] ? Number(m[1]) : 1, sides: Number(m[2]), label: (m[1] || '1') + 'd' + m[2] });
+    }
+    return out;
+  }
+
+  /* Rolls the surge table: a d100, the row it lands on, and that row's dice. */
+  function rollSurge(rows, rng) {
+    rng = rng || Math.random;
+    rows = rows || [];
+    if (!rows.length) throw new Error('the surge table is empty');
+    var roll = 1 + Math.floor(rng() * 100);
+    var row = null, i;
+    for (i = 0; i < rows.length; i++) {
+      if (roll >= rows[i].from && roll <= rows[i].to) { row = rows[i]; break; }
+    }
+    if (!row) throw new Error('no surge row for ' + roll);
+    var specs = diceIn(row.text), rolled = [], j, values;
+    for (j = 0; j < specs.length; j++) {
+      values = dice(rng, specs[j].count, specs[j].sides);
+      rolled.push({ label: specs[j].label, values: values, total: sum(values) });
+    }
+    return { roll: roll, from: row.from, to: row.to, text: row.text, dice: rolled };
+  }
+
   root.Rules = {
     ATTACK_MOD: ATTACK_MOD,
     POWERS: POWERS,
     EXTRAS: EXTRAS,
     powerOf: powerOf,
     rollVolley: rollVolley,
-    tally: tally
+    tally: tally,
+    diceIn: diceIn,
+    rollSurge: rollSurge
   };
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 </script>
@@ -602,6 +723,9 @@ input[type=range]::-moz-range-thumb{
 
   var state = load();
   var volley = null;
+  var view = 'volley';
+  var SURGE = { rows: [] };
+  try { SURGE = JSON.parse(document.getElementById('surge-data').textContent); } catch (e) {}
 
   var el = {
     spellName: document.getElementById('spellName'),
@@ -613,7 +737,17 @@ input[type=range]::-moz-range-thumb{
     grid: document.getElementById('grid'),
     tally: document.getElementById('tally'),
     cast: document.getElementById('cast'),
-    ac: document.getElementById('ac')
+    castLabel: document.getElementById('castLabel'),
+    ac: document.getElementById('ac'),
+    acField: document.getElementById('acField'),
+    tabVolley: document.getElementById('tab-volley'),
+    tabSurge: document.getElementById('tab-surge'),
+    viewVolley: document.getElementById('view-volley'),
+    viewSurge: document.getElementById('view-surge'),
+    surgeRoll: document.getElementById('surgeRoll'),
+    surgeRange: document.getElementById('surgeRange'),
+    surgeText: document.getElementById('surgeText'),
+    surgeDice: document.getElementById('surgeDice')
   };
 
   /* ---- state ---- */
@@ -687,7 +821,11 @@ input[type=range]::-moz-range-thumb{
     el.chips.appendChild(b);
   });
 
+  el.tabVolley.addEventListener('click', function () { setView('volley'); });
+  el.tabSurge.addEventListener('click', function () { setView('surge'); });
+
   el.cast.addEventListener('click', function () {
+    if (view === 'surge') { castSurge(); return; }
     volley = R.rollVolley(state);
     renderBoard(true);
     renderTally();
@@ -702,10 +840,42 @@ input[type=range]::-moz-range-thumb{
     return state.elemPlus ? 'Elem 3d8' : 'Elem 2d8';
   }
 
+  function setView(next) {
+    view = next;
+    el.viewVolley.classList.toggle('on', next === 'volley');
+    el.viewSurge.classList.toggle('on', next === 'surge');
+    el.tabVolley.setAttribute('aria-selected', next === 'volley' ? 'true' : 'false');
+    el.tabSurge.setAttribute('aria-selected', next === 'surge' ? 'true' : 'false');
+    el.acField.style.visibility = next === 'volley' ? 'visible' : 'hidden';
+    el.castLabel.textContent = next === 'volley' ? 'Cast' : 'Surge';
+    render();
+  }
+
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
+  function castSurge() {
+    if (!SURGE.rows || !SURGE.rows.length) {
+      el.surgeText.textContent = 'The surge table did not load.';
+      return;
+    }
+    var result = R.rollSurge(SURGE.rows);
+    el.surgeRoll.textContent = result.roll;
+    el.surgeRange.textContent = pad2(result.from) + '-' + pad2(result.to);
+    el.surgeText.textContent = result.text;
+    var html = '';
+    result.dice.forEach(function (d) {
+      html += '<span class="g"><span class="lbl">' + d.label + '</span>';
+      html += '<span class="roll">' + d.values.join(',') + '</span>';
+      html += '<span class="stot">= ' + d.total + '</span></span>';
+    });
+    el.surgeDice.innerHTML = html;
+    if (navigator.vibrate) navigator.vibrate(result.dice.length ? [14, 45, 14] : 16);
+  }
+
   function render() {
     var power = R.powerOf(state.power);
 
-    el.spellName.textContent = power.name;
+    el.spellName.textContent = view === 'volley' ? power.name : 'Wild magic surge';
     el.power.value = String(R.POWERS.indexOf(power));
     var span = Number(el.power.max) - Number(el.power.min);
     el.power.style.setProperty('--fill', (span ? (Number(el.power.value) - Number(el.power.min)) / span * 100 : 0) + '%');

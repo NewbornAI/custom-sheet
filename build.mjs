@@ -12,7 +12,12 @@ const font = readFileSync(resolve(src, 'cinzel.woff2')).toString('base64');
 const marker = "url('cinzel.woff2')";
 if (!html.includes(marker)) throw new Error('font reference not found in src/index.html');
 
-const built = html.replace(marker, `url('data:font/woff2;base64,${font}')`);
+const surge = readFileSync(resolve(root, 'data', 'wild-magic-surge-xphb.json'), 'utf8').trim();
+const surgeTag = /(<script id="surge-data" type="application\/json">)[\s\S]*?(<\/script>)/;
+if (!surgeTag.test(html)) throw new Error('surge data tag not found in src/index.html');
+
+let built = html.replace(marker, `url('data:font/woff2;base64,${font}')`);
+built = built.replace(surgeTag, (m, open, close) => open + surge + close);
 mkdirSync(out, { recursive: true });
 writeFileSync(resolve(out, 'index.html'), built, 'utf8');
 

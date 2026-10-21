@@ -111,5 +111,49 @@ console.log('target AC');
   check('three hits add up', [t2.hits, t2.total], [3, 18]);
 }
 
+
+console.log('wild magic surge');
+{
+  const surge = JSON.parse(readFileSync(resolve(root, 'data', 'wild-magic-surge-xphb.json'), 'utf8'));
+  check('fifty rows', surge.rows.length, 50);
+
+  const seen = new Array(101).fill(0);
+  surge.rows.forEach((r) => { for (let v = r.from; v <= r.to; v++) seen[v]++; });
+  check('every value from 1 to 100 is covered once', seen.slice(1).every((n) => n === 1), true);
+
+  const first = (v) => { let used = false; return () => { if (!used) { used = true; return (v - 0.5) / 100; } return 0.5; }; };
+  let maps = true;
+  for (let v = 1; v <= 100; v++) {
+    const r = R.rollSurge(surge.rows, first(v));
+    if (r.roll !== v || r.from > v || r.to < v) { maps = false; break; }
+  }
+  check('the d100 lands on the row that covers it', maps, true);
+
+  check('finds 2d10 in a sentence', R.diceIn('You regain 2d10 hit points.').map((d) => d.label), ['2d10']);
+  check('reads a d10 as one die', R.diceIn('Roll a d10. Your height changes.').map((d) => d.label), ['1d10']);
+  check('ignores a spell level', R.diceIn('You cast Fireball as a 3rd-level spell centered on yourself.').length, 0);
+  check('ignores feet and minutes', R.diceIn('A creature within 30 feet of you is poisoned for 1 minute.').length, 0);
+
+  const hit = R.rollSurge(surge.rows, first(40));
+  check('row 39 to 40', [hit.from, hit.to], [39, 40]);
+  check('rolls the dice the row asks for', [hit.dice.length, hit.dice[0].label, hit.dice[0].values.length], [1, '2d10', 2]);
+  check('keeps the row text', hit.text, 'You regain 2d10 hit points.');
+
+  const plain = R.rollSurge(surge.rows, first(30));
+  check('a row without dice rolls nothing', plain.dice.length, 0);
+}
+
+console.log('the built page carries the table');
+{
+  const built = readFileSync(resolve(root, 'dist', 'index.html'), 'utf8');
+  const block = built.match(/<script id="surge-data" type="application\/json">([\s\S]*?)<\/script>/);
+  if (!block) { check('the table is inlined', false, true); }
+  else {
+    const parsed = JSON.parse(block[1]);
+    check('the table is inlined with fifty rows', parsed.rows.length, 50);
+    check('the inlined table matches the data file', parsed.rows[0].text, JSON.parse(readFileSync(resolve(root, 'data', 'wild-magic-surge-xphb.json'), 'utf8')).rows[0].text);
+  }
+}
+
 console.log(failures === 0 ? '\nall rules checks pass' : '\n' + failures + ' check(s) failed');
 process.exit(failures === 0 ? 0 : 1);

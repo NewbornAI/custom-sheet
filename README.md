@@ -20,6 +20,18 @@ The AC field is optional. Leave it empty and the app shows the damage of every b
 
 ![A critical roll with hex and elementals](shots/final-crit.png)
 
+## The wild magic surge page
+
+The second tab rolls on the Wild Magic Surge table from the 2024 Player's Handbook, the same one 5e.tools serves under its XPHB source. It rolls d100, shows the range it landed on and the effect text, and rolls any dice the effect names: eight of the fifty rows ask for dice, so the app rolls them and shows the values and the total.
+
+The table is never typed by hand. `tools/fetch-surge-table.mjs` downloads it, parses the two column layout into `data/wild-magic-surge-xphb.json`, and refuses to write a table that does not cover 1 to 100 exactly once. The build inlines that JSON into the page, and the test suite checks the inlined copy against the file.
+
+```
+node tools/fetch-surge-table.mjs
+```
+
+The 2014 table is a different file with the same shape, so swapping editions means pointing the build at it.
+
 ## Run it
 
 `dist/index.html` is the whole app: one file, no server, no network, 60 KB with the font inlined. Copy it to the phone, open it in Chrome, then Add to home screen for a full screen launcher.
