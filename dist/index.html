@@ -58,6 +58,7 @@ body{
   display:flex;
   flex-direction:column;
   gap:8px;
+  padding:9px 10px 10px;
   padding:calc(env(safe-area-inset-top) + 9px) 10px calc(env(safe-area-inset-bottom) + 10px);
   background:
     radial-gradient(130% 55% at 50% -8%, rgba(155,123,255,.20), transparent 62%),
@@ -78,6 +79,7 @@ body{
   font-family:var(--display);
   font-weight:700;
   font-size:24px;
+  font-size:clamp(19px,5.6vw,26px);
   line-height:1.05;
   letter-spacing:.01em;
   white-space:nowrap;
@@ -513,8 +515,7 @@ input[type=range]::-moz-range-thumb{
 
       var sources = power.dice.slice();
       if (state.hex) sources = sources.concat(EXTRAS.hex.dice);
-      if (state.elem) sources = sources.concat(EXTRAS.elem.dice);
-      if (state.elemPlus) sources = sources.concat(EXTRAS.elemPlus.dice);
+      if (state.elem) sources = sources.concat(state.elemPlus ? EXTRAS.elemPlus.dice : EXTRAS.elem.dice);
 
       for (j = 0; j < sources.length; j++) {
         var count = sources[j].n * mult;
@@ -698,7 +699,7 @@ input[type=range]::-moz-range-thumb{
 
   function elemLabel() {
     if (!state.elem) return 'Elem';
-    return state.elemPlus ? 'Elem 5d8' : 'Elem 2d8';
+    return state.elemPlus ? 'Elem 3d8' : 'Elem 2d8';
   }
 
   function render() {
@@ -777,8 +778,7 @@ input[type=range]::-moz-range-thumb{
     });
     if (state.hex) bits.push('1d6 <em class="necrotic">necrotic</em>');
     var light = 0;
-    if (state.elem) light += 2;
-    if (state.elemPlus) light += 3;
+    if (state.elem) light = state.elemPlus ? 3 : 2;
     if (light) bits.push(light + 'd8 <em class="lightning">lightning</em>');
     if (state.curse) bits.push('+4');
 
@@ -792,8 +792,7 @@ input[type=range]::-moz-range-thumb{
     var groups = [];
     power.dice.forEach(function (d) { groups.push({ label: d.n + 'd' + d.s, type: d.type }); });
     if (state.hex) groups.push({ label: '1d6', type: 'necrotic' });
-    if (state.elem) groups.push({ label: '2d8', type: 'lightning' });
-    if (state.elemPlus) groups.push({ label: '3d8', type: 'lightning' });
+    if (state.elem) groups.push({ label: state.elemPlus ? '3d8' : '2d8', type: 'lightning' });
     return groups;
   }
 

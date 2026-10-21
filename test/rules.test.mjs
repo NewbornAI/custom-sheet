@@ -80,11 +80,11 @@ console.log('minor elementals');
   check('adds 2d8 lightning', v.beams[0].groups[1].label, '2d8');
   check('lightning type', v.beams[0].groups[1].type, 'lightning');
   const p = R.rollVolley({ power: 'eb', elem: true, elemPlus: true }, minRoll);
-  check('elem plus stacks', p.beams[0].groups.length, 3);
-  check('2d8 then 3d8', [p.beams[0].groups[1].label, p.beams[0].groups[2].label], ['2d8', '3d8']);
-  check('damage is 1d10 + 2d8 + 3d8 + 5', p.beams[0].damage, 11);
+  check('elem plus upgrades rather than stacks', p.beams[0].groups.length, 2);
+  check('the lightning is 3d8', p.beams[0].groups[1].label, '3d8');
+  check('damage is 1d10 + 3d8 + 5', p.beams[0].damage, 9);
   const c = R.rollVolley({ power: 'eb', elem: true, elemPlus: true }, maxRoll);
-  check('crit doubles both', [c.beams[0].groups[1].label, c.beams[0].groups[2].label], ['4d8', '6d8']);
+  check('a critical doubles it to 6d8', c.beams[0].groups[1].label, '6d8');
 }
 
 console.log('scorching ray');
