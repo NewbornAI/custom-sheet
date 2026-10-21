@@ -234,6 +234,174 @@ input[type=range]::-moz-range-thumb{
 .view{display:none;flex:1 1 auto;min-height:0;flex-direction:column;gap:8px}
 .view.on{display:flex}
 
+/* ---- spells ---- */
+
+.wrench{
+  flex:0 0 auto;
+  width:30px;
+  height:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  border:1px solid var(--edge);
+  border-radius:7px;
+  background:rgba(255,255,255,.03);
+  color:var(--muted);
+  cursor:pointer;
+}
+.wrench svg{width:15px;height:15px}
+.wrench[aria-pressed="true"]{border-color:rgba(155,123,255,.6);color:var(--arcane);background:rgba(155,123,255,.12)}
+.wrench[hidden]{display:none}
+
+.sbar{display:flex;gap:8px;align-items:center;flex:0 0 auto;flex-wrap:wrap}
+.stat{display:flex;align-items:center;gap:3px;font-size:10.5px;color:var(--muted)}
+.stat .k{letter-spacing:.08em}
+.stat .v{
+  font-family:var(--display);
+  font-size:15px;
+  color:var(--ink);
+  font-variant-numeric:tabular-nums;
+  min-width:28px;
+  text-align:center;
+}
+.mini{
+  width:22px;height:22px;
+  border-radius:6px;
+  border:1px solid var(--edge);
+  background:rgba(255,255,255,.03);
+  color:var(--muted);
+  font-size:14px;line-height:1;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  padding:0;
+  flex:0 0 auto;
+}
+.mini:active{background:rgba(155,123,255,.2);color:var(--ink)}
+.tog{
+  border:1px solid var(--edge);
+  border-radius:999px;
+  background:rgba(255,255,255,.03);
+  color:var(--muted);
+  font-family:var(--sans);
+  font-size:10px;
+  letter-spacing:.01em;
+  padding:5px 8px;
+  min-height:25px;
+  cursor:pointer;
+}
+.tog[aria-pressed="true"]{border-color:rgba(255,196,77,.5);background:rgba(255,196,77,.10);color:var(--gold)}
+.tog:disabled{opacity:.4;cursor:default}
+
+.sbody{flex:1 1 auto;min-height:0;display:flex;gap:8px}
+.levels{flex:0 0 100px;display:flex;flex-direction:column;gap:3px;overflow-y:auto;scrollbar-width:none}
+.levels::-webkit-scrollbar{width:0}
+.lv{display:flex;align-items:center;gap:5px;padding:3px 2px;border-radius:4px;cursor:pointer}
+.lv.on{background:rgba(155,123,255,.12)}
+.lv .n{font-size:11px;color:var(--muted);width:11px;flex:0 0 auto}
+.lv.on .n{color:var(--arcane)}
+.pip{
+  width:11px;height:11px;
+  border-radius:50%;
+  border:1px solid #3a3454;
+  background:transparent;
+  flex:0 0 auto;
+  padding:0;
+  cursor:pointer;
+}
+.pip.full{background:var(--arcane);border-color:var(--arcane)}
+.pip.wl{border-radius:2px}
+.pip.wl.full{background:#54cfc4;border-color:#54cfc4}
+.lv .plus{font-size:9px;color:#4f4a6b;flex:0 0 auto}
+.lv .arrow{margin-left:auto;background:none;border:0;color:#615c7d;font-size:13px;padding:0 1px;cursor:pointer;flex:0 0 auto;line-height:1}
+.lv.dim{opacity:.35}
+.lv .edit{display:none;gap:3px;flex:0 0 auto}
+.lv.editing .edit{display:flex}
+.lv.editing .pips{display:none}
+.pips{display:flex;align-items:center;gap:3px}
+
+.grimoire{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px;overflow-y:auto;scrollbar-width:none}
+.grimoire::-webkit-scrollbar{width:0}
+.card{
+  border:1px solid var(--edge);
+  border-radius:5px;
+  background:rgba(255,255,255,.03);
+  padding:7px 8px;
+  cursor:pointer;
+  touch-action:pan-y;
+}
+.card .t{font-size:12.5px;color:var(--ink);line-height:1.25}
+.card .m{font-size:10px;color:var(--muted);margin-top:3px;display:flex;gap:7px;flex-wrap:wrap;align-items:baseline}
+.card .cmp{color:var(--arcane);letter-spacing:.1em}
+.card .rit{color:var(--gold)}
+.card.dragging{opacity:.95;border-color:var(--arcane);box-shadow:0 10px 24px rgba(0,0,0,.55)}
+.card.ghost{opacity:.25}
+.empty{font-size:11px;color:#615c7d;padding:8px 2px;line-height:1.5}
+
+/* ---- sheet ---- */
+
+.sheet{
+  position:fixed;
+  inset:0;
+  background:rgba(4,3,10,.74);
+  display:flex;
+  align-items:flex-end;
+  z-index:30;
+}
+.sheet[hidden]{display:none}
+.sheet-in{
+  width:100%;
+  max-height:88%;
+  background:#15131f;
+  border-top:1px solid var(--edge);
+  border-radius:14px 14px 0 0;
+  padding:12px 14px calc(env(safe-area-inset-bottom) + 16px);
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  position:relative;
+}
+.sheet h2{font-family:var(--display);font-size:19px;font-weight:700;margin:0;padding-right:30px}
+.sheet-meta{font-size:10.5px;color:var(--muted);display:flex;gap:9px;flex-wrap:wrap}
+.sheet-text{font-size:12.5px;line-height:1.55;color:#d9d5ec}
+.sheet-list{display:flex;flex-direction:column;gap:4px}
+.sheet-list .row{display:flex;align-items:center;gap:8px;border:1px solid var(--edge);border-radius:5px;padding:7px 8px;font-size:12px;color:var(--ink);background:rgba(255,255,255,.02)}
+.sheet-list .row .lv2{font-size:10px;color:var(--muted);margin-left:auto}
+.sheet-list .row button{width:26px;height:26px;border-radius:6px;border:1px solid var(--edge);background:rgba(255,255,255,.03);color:var(--arcane);font-size:15px;line-height:1;cursor:pointer;flex:0 0 auto}
+.sheet-actions{display:flex;gap:8px}
+.sheet-actions button{
+  border:1px solid var(--edge);
+  border-radius:7px;
+  background:rgba(255,255,255,.03);
+  color:var(--muted);
+  font-family:var(--sans);
+  font-size:11px;
+  padding:7px 11px;
+  cursor:pointer;
+}
+.sheet-actions button.danger{color:#d08a9c;border-color:rgba(208,138,156,.4)}
+.sheet-x{
+  position:absolute;
+  top:8px;right:10px;
+  width:28px;height:28px;
+  border:0;background:none;
+  color:var(--muted);
+  font-size:20px;line-height:1;
+  cursor:pointer;
+}
+.sheet-search{
+  border:1px solid var(--edge);
+  border-radius:7px;
+  background:rgba(255,255,255,.03);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:12px;
+  padding:7px 9px;
+  outline:none;
+}
+.sheet-search:focus{border-color:rgba(155,123,255,.6)}
+
 /* ---- wild magic surge ---- */
 
 .surge{
@@ -486,11 +654,17 @@ input[type=range]::-moz-range-thumb{
     </svg>
     <h1 class="title" id="spellName">Eldritch blast</h1>
     <label class="ac" id="acField"><span>AC</span><input id="ac" type="number" inputmode="numeric" min="1" max="40" step="1" placeholder="—" aria-label="Target armor class"></label>
+    <button class="wrench" id="wrench" type="button" aria-pressed="false" aria-label="Edit slot maximums" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+      </svg>
+    </button>
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Views">
     <button class="tab" id="tab-volley" type="button" role="tab" aria-selected="true">Volley</button>
     <button class="tab" id="tab-surge" type="button" role="tab" aria-selected="false">Wild surge</button>
+    <button class="tab" id="tab-spells" type="button" role="tab" aria-selected="false">Spells</button>
   </nav>
 
   <div class="views">
@@ -524,6 +698,30 @@ input[type=range]::-moz-range-thumb{
     </div>
   </section>
 
+  <section class="view" id="view-spells">
+    <div class="sbar">
+      <div class="stat">
+        <span class="k">DC</span>
+        <span class="v" id="dcValue">17</span>
+        <button class="mini" type="button" data-act="dc-" aria-label="Lower the DC">&minus;</button>
+        <button class="mini" type="button" data-act="dc+" aria-label="Raise the DC">+</button>
+      </div>
+      <div class="stat">
+        <span class="k">SP</span>
+        <span class="v" id="spValue">8/8</span>
+        <button class="mini" type="button" data-act="sp-" aria-label="Spend a sorcery point">&minus;</button>
+        <button class="mini" type="button" data-act="sp+" aria-label="Regain a sorcery point">+</button>
+      </div>
+      <button class="tog" id="cunning" type="button" aria-pressed="false" title="Restores 1 warlock slot">Cunning</button>
+      <button class="tog" id="sorcRest" type="button" aria-pressed="false" title="Restores half your sorcerer level in sorcery points">Sorc rest</button>
+    </div>
+
+    <div class="sbody">
+      <div class="levels" id="levels"></div>
+      <div class="grimoire" id="spellList"></div>
+    </div>
+  </section>
+
   </div>
 
   <button class="cast" id="cast">
@@ -537,261 +735,2412 @@ input[type=range]::-moz-range-thumb{
 
 </div>
 
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-in">
+    <button class="sheet-x" id="sheetClose" type="button" aria-label="Close">&times;</button>
+    <h2 id="sheetTitle"></h2>
+    <div class="sheet-meta" id="sheetMeta"></div>
+    <input class="sheet-search" id="sheetSearch" type="search" placeholder="Search the grimoire" hidden>
+    <div class="sheet-text" id="sheetText"></div>
+    <div class="sheet-list" id="sheetList" hidden></div>
+    <div class="sheet-actions" id="sheetActions"></div>
+  </div>
+</div>
+
 <script id="surge-data" type="application/json">{
   "name": "Wild Magic Surge",
-  "edition": "2024 Player's Handbook, the Sorcerer's Wild Magic Surge table",
-  "source": "https://dnd5e.wikidot.com/sorcerer:wild-magic",
+  "edition": "2024 Player's Handbook, the Wild Magic Surge table",
+  "source": "https://5e.tools/classes.html#sorcerer_xphb",
   "fetched": "2026-10-21",
   "rows": [
     {
       "from": 1,
-      "to": 2,
+      "to": 4,
       "text": "Roll on this table at the start of each of your turns for the next minute, ignoring this result on subsequent rolls."
     },
     {
-      "from": 3,
-      "to": 4,
-      "text": "For the next minute, you can see any invisible creature if you have line of sight to it."
-    },
-    {
       "from": 5,
-      "to": 6,
-      "text": "A modron chosen and controlled by the DM appears in an unoccupied space within 5 feet of you, then disappears 1 minute later."
-    },
-    {
-      "from": 7,
       "to": 8,
-      "text": "You cast Fireball as a 3rd-level spell centered on yourself."
+      "text": "A creature that is Friendly toward you appears in a random unoccupied space within 60 feet of you. The creature is under the DM's control and disappears 1 minute later. Roll 1d4 to determine the creature: on a 1, a Modron Duodrone appears; on a 2, a Flumph appears; on a 3, a Modron Monodrone appears; on a 4, a Unicorn appears. See the Monster Manual for the creature's stat block."
     },
     {
       "from": 9,
-      "to": 10,
-      "text": "You cast Magic Missile as a 5th-level spell."
-    },
-    {
-      "from": 11,
       "to": 12,
-      "text": "Roll a d10. Your height changes by a number of inches equal to the roll. If the roll is odd, you shrink. If the roll is even, you grow."
+      "text": "For the next minute, you regain 5 Hit Points at the start of each of your turns."
     },
     {
       "from": 13,
-      "to": 14,
-      "text": "You cast Confusion centered on yourself."
-    },
-    {
-      "from": 15,
       "to": 16,
-      "text": "For the next minute, you regain 5 hit points at the start of each of your turns."
+      "text": "Creatures have Disadvantage on saving throws against the next spell you cast in the next minute that involves a saving throw."
     },
     {
       "from": 17,
-      "to": 18,
-      "text": "You grow a long beard made of feathers that remains until you sneeze, at which point the feathers explode out from your face."
-    },
-    {
-      "from": 19,
       "to": 20,
-      "text": "You cast Grease centered on yourself."
+      "text": "You are subjected to an effect that lasts for 1 minute unless its description says otherwise. Roll 1d8 to determine the effect: on a 1, you're surrounded by faint, ethereal music only you and creatures within 5 feet of you can hear; on a 2, your size increases by one size category; on a 3, you grow a long beard made of feathers that remains until you sneeze, at which point the feathers explode from your face and vanish; on a 4, you must shout when you speak; on a 5, illusory butterflies flutter in the air within 10 feet of you; on a 6, an eye appears on your forehead, granting you Advantage on Wisdom (Perception) checks; on a 7, pink bubbles float out of your mouth whenever you speak; on an 8, your skin turns a vibrant shade of blue for 24 hours or until the effect is ended by a Remove Curse spell."
     },
     {
       "from": 21,
-      "to": 22,
-      "text": "Creatures have disadvantage on saving throws against the next spell you cast in the next minute that involves a saving throw."
-    },
-    {
-      "from": 23,
       "to": 24,
-      "text": "Your skin turns a vibrant shade of blue. A Remove Curse spell can end this effect."
+      "text": "For the next minute, all your spells with a casting time of an action have a casting time of a Bonus Action."
     },
     {
       "from": 25,
-      "to": 26,
-      "text": "An eye appears on your forehead for the next minute. During that time, you have advantage on Wisdom (Perception) checks that rely on sight."
-    },
-    {
-      "from": 27,
       "to": 28,
-      "text": "For the next minute, all your spells with a casting time of 1 action have a casting time of 1 bonus action."
+      "text": "You are transported to the Astral Plane until the end of your next turn. You then return to the space you previously occupied or the nearest unoccupied space if that space is occupied."
     },
     {
       "from": 29,
-      "to": 30,
-      "text": "You teleport up to 60 feet to an unoccupied space of your choice that you can see."
-    },
-    {
-      "from": 31,
       "to": 32,
-      "text": "You are transported to the Astral Plane until the end of your next turn, after which time you return to the space you previously occupied or the nearest unoccupied space if that space is occupied."
+      "text": "The next time you cast a spell that deals damage within the next minute, don't roll the spell's damage dice for the damage. Instead use the highest number possible for each damage die."
     },
     {
       "from": 33,
-      "to": 34,
-      "text": "Maximize the damage of the next damaging spell you cast within the next minute."
-    },
-    {
-      "from": 35,
       "to": 36,
-      "text": "Roll a d10. Your age changes by a number of years equal to the roll. If the roll is odd, you get younger (minimum 1 year old). If the roll is even, you get older."
+      "text": "You have Resistance to all damage for the next minute."
     },
     {
       "from": 37,
-      "to": 38,
-      "text": "1d6 flumphs controlled by the DM appear in unoccupied spaces within 60 feet of you and are frightened of you. They vanish after 1 minute."
-    },
-    {
-      "from": 39,
       "to": 40,
-      "text": "You regain 2d10 hit points."
+      "text": "You turn into a potted plant until the start of your next turn. While you're a plant, you have the Incapacitated condition and have Vulnerability to all damage. If you drop to 0 Hit Points, your pot breaks, and your form reverts."
     },
     {
       "from": 41,
-      "to": 42,
-      "text": "You turn into a potted plant until the start of your next turn. While a plant, you are incapacitated and have vulnerability to all damage. If you drop to 0 hit points, your pot breaks, and your form reverts."
-    },
-    {
-      "from": 43,
       "to": 44,
-      "text": "For the next minute, you can teleport up to 20 feet as a bonus action on each of your turns."
+      "text": "For the next minute, you can teleport up to 20 feet as a Bonus Action on each of your turns."
     },
     {
       "from": 45,
-      "to": 46,
-      "text": "You cast Levitate on yourself."
-    },
-    {
-      "from": 47,
       "to": 48,
-      "text": "A unicorn controlled by the DM appears in a space within 5 feet of you, then disappears 1 minute later."
+      "text": "You and up to three creatures you choose within 30 feet of you have the Invisible condition for 1 minute. This invisibility ends on a creature immediately after it makes an attack roll, deals damage, or casts a spell."
     },
     {
       "from": 49,
-      "to": 50,
-      "text": "You can't speak for the next minute. Whenever you try, pink bubbles float out of your mouth."
-    },
-    {
-      "from": 51,
       "to": 52,
       "text": "A spectral shield hovers near you for the next minute, granting you a +2 bonus to AC and immunity to Magic Missile."
     },
     {
       "from": 53,
-      "to": 54,
-      "text": "You are immune to being intoxicated by alcohol for the next 5d6 days."
-    },
-    {
-      "from": 55,
       "to": 56,
-      "text": "Your hair falls out but grows back within 24 hours."
+      "text": "You can take one extra action on this turn."
     },
     {
       "from": 57,
-      "to": 58,
-      "text": "For the next minute, any flammable object you touch that isn't being worn or carried by another creature bursts into flame."
-    },
-    {
-      "from": 59,
       "to": 60,
-      "text": "You regain your lowest-level expended spell slot."
+      "text": "You cast a random spell. If the spell normally requires Concentration, it doesn't require Concentration in this case; the spell lasts for its full duration. Roll 1d10 to determine the spell: on a 1, Confusion; on a 2, Fireball; on a 3, Fog Cloud; on a 4, Fly (cast on a random creature within 60 feet of you), on a 5, Grease; on a 6, Levitate (cast on yourself); on a 7, Magic Missile (cast as a level 5 spell); on an 8, Mirror Image; on a 9, Polymorph (cast on yourself), and if you fail the saving throw, you turn into a Goat (see appendix B); on a 10, See Invisibility."
     },
     {
       "from": 61,
-      "to": 62,
-      "text": "For the next minute, you must shout when you speak."
-    },
-    {
-      "from": 63,
       "to": 64,
-      "text": "You cast Fog Cloud centered on yourself."
+      "text": "For the next minute, any flammable, nonmagical object you touch that isn't being worn or carried by another creature bursts into flame, takes 1d4 Fire damage, and is burning."
     },
     {
       "from": 65,
-      "to": 66,
-      "text": "Up to three creatures you choose within 30 feet of you take 4d10 lightning damage."
-    },
-    {
-      "from": 67,
       "to": 68,
-      "text": "You are frightened by the nearest creature until the end of your next turn."
+      "text": "If you die within the next hour, you immediately revive as if by the Reincarnate spell."
     },
     {
       "from": 69,
-      "to": 70,
-      "text": "Each creature within 30 feet of you becomes invisible for the next minute. The invisibility ends on a creature when it attacks or casts a spell."
-    },
-    {
-      "from": 71,
       "to": 72,
-      "text": "You gain resistance to all damage for the next minute."
+      "text": "You have the Frightened condition until the end of your next turn. The DM determines the source of your fear."
     },
     {
       "from": 73,
-      "to": 74,
-      "text": "A random creature within 60 feet of you becomes poisoned for 1d4 hours."
-    },
-    {
-      "from": 75,
       "to": 76,
-      "text": "You glow with bright light in a 30-foot radius for the next minute. Any creature that ends its turn within 5 feet of you is blinded until the end of its next turn."
+      "text": "You teleport up to 60 feet to an unoccupied space you can see."
     },
     {
       "from": 77,
-      "to": 78,
-      "text": "You cast Polymorph on yourself. If you fail the saving throw, you turn into a sheep for the spell's duration."
-    },
-    {
-      "from": 79,
       "to": 80,
-      "text": "Illusory butterflies and flower petals flutter in the air within 10 feet of you for the next minute."
+      "text": "A random creature within 60 feet of you has the Poisoned condition for 1d4 hours."
     },
     {
       "from": 81,
-      "to": 82,
-      "text": "You can take one additional action immediately."
-    },
-    {
-      "from": 83,
       "to": 84,
-      "text": "Each creature within 30 feet of you takes 1d10 necrotic damage. You regain hit points equal to the sum of the necrotic damage dealt."
+      "text": "You radiate Bright Light in a 30-foot radius for the next minute. Any creature that ends its turn within 5 feet of you has the Blinded condition until the end of its next turn."
     },
     {
       "from": 85,
-      "to": 86,
-      "text": "You cast Mirror Image."
-    },
-    {
-      "from": 87,
       "to": 88,
-      "text": "You cast Fly on a random creature within 60 feet of you."
+      "text": "Up to three creatures of your choice that you can see within 30 feet of you take 1d10 Necrotic damage. You regain Hit Points equal to the sum of the Necrotic damage dealt."
     },
     {
       "from": 89,
-      "to": 90,
-      "text": "You become invisible for the next minute. During that time, other creatures can't hear you. The invisibility ends if you attack or cast a spell."
-    },
-    {
-      "from": 91,
       "to": 92,
-      "text": "If you die within the next minute, you immediately come back to life as if by the Reincarnate spell."
+      "text": "Up to three creatures of your choice that you can see within 30 feet of you take 4d10 Lightning damage."
     },
     {
       "from": 93,
-      "to": 94,
-      "text": "Your size increases by one size category for the next minute."
-    },
-    {
-      "from": 95,
       "to": 96,
-      "text": "You and all creatures within 30 feet of you gain vulnerability to piercing damage for the next minute."
+      "text": "You and all creatures within 30 feet of you have Vulnerability to Piercing damage for the next minute."
     },
     {
       "from": 97,
-      "to": 98,
-      "text": "You are surrounded by faint, ethereal music for the next minute."
+      "to": 100,
+      "text": "Roll 1d6. On a 1, you regain 2d10 Hit Points; on a 2, one ally of your choice within 300 feet of you regains 2d10 Hit Points; on a 3, you regain your lowest-level expended spell slot; on a 4, one ally of your choice within 300 feet of you regains their lowest-level expended spell slot; on a 5, you regain all your expended Sorcery Points; on a 6, all the effects of row 17–20 affect you simultaneously."
+    }
+  ]
+}</script>
+
+<script id="spell-data" type="application/json">{
+  "edition": "2024 Player's Handbook, the Sorcerer spell list",
+  "source": "https://5e.tools/spells.html",
+  "fetched": "2026-10-21",
+  "spells": [
+    {
+      "name": "Acid Splash",
+      "level": 0,
+      "school": "V",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create an acidic bubble at a point within range, where it explodes in a 5-foot-radius Sphere [Area of Effect]. Each creature in that Sphere [Area of Effect] must succeed on a Dexterity saving throw or take 1d6 Acid damage."
     },
     {
-      "from": 99,
-      "to": 100,
-      "text": "You regain all expended sorcery points."
+      "name": "Blade Ward",
+      "level": 0,
+      "school": "A",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "Whenever a creature makes an attack roll against you before the spell ends, the attacker subtracts 1d4 from the attack roll."
+    },
+    {
+      "name": "Chill Touch",
+      "level": 0,
+      "school": "N",
+      "time": "Action",
+      "range": "Special",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "Channeling the chill of the grave, make a melee spell attack against a target within reach. On a hit, the target takes 1d10 Necrotic damage, and it can't regain Hit Points until the end of your next turn."
+    },
+    {
+      "name": "Dancing Lights",
+      "level": 0,
+      "school": "I",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create up to four torch-size lights within range, making them appear as torches, lanterns, or glowing orbs that hover for the duration. Alternatively, you combine the four lights into one glowing Medium form that is vaguely humanlike. Whichever form you choose, each light sheds Dim Light in a 10-foot radius. As a Bonus Action, you can move the lights up to 60 feet to a space within range. A light must be within 20 feet of another light created by this spell, and a light vanishes if it exceeds the spell's range."
+    },
+    {
+      "name": "Eldritch Blast",
+      "level": 0,
+      "school": "V",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You hurl a beam of crackling energy. Make a ranged spell attack against one creature or object in range. On a hit, the target takes 1d10 Force damage."
+    },
+    {
+      "name": "Elementalism",
+      "level": 0,
+      "school": "T",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You exert control over the elements, creating one of the following effects within range. Beckon Air: Beckon Earth: Beckon Fire: Beckon Water: Sculpt Element:"
+    },
+    {
+      "name": "Fire Bolt",
+      "level": 0,
+      "school": "V",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You hurl a mote of fire at a creature or an object within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 Fire damage. A flammable object hit by this spell starts burning if it isn't being worn or carried."
+    },
+    {
+      "name": "Friends",
+      "level": 0,
+      "school": "E",
+      "time": "Action",
+      "range": "10 feet",
+      "duration": "1 minute",
+      "components": "SM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You magically emanate a sense of friendship toward one creature you can see within range. The target must succeed on a Wisdom saving throw or have the Charmed condition for the duration. The target succeeds automatically if it isn't a Humanoid, if you're fighting it, or if you have cast this spell on it within the past 24 hours. The spell ends early if the target takes damage or if you make an attack roll, deal damage, or force anyone to make a saving throw. When the spell ends, the target knows it was Charmed by you."
+    },
+    {
+      "name": "Light",
+      "level": 0,
+      "school": "V",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "VM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You touch one Large or smaller object that isn't being worn or carried by someone else. Until the spell ends, the object sheds Bright Light in a 20-foot radius and Dim Light for an additional 20 feet. The light can be colored as you like. Covering the object with something opaque blocks the light. The spell ends if you cast it again."
+    },
+    {
+      "name": "Mage Hand",
+      "level": 0,
+      "school": "C",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "1 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "A spectral, floating hand appears at a point you choose within range. The hand lasts for the duration. The hand vanishes if it is ever more than 30 feet away from you or if you cast this spell again. When you cast the spell, you can use the hand to manipulate an object, open an unlocked door or container, stow or retrieve an item from an open container, or pour the contents out of a vial. As a Magic action on your later turns, you can control the hand thus again. As part of that action, you can move the hand up to 30 feet. The hand can't attack, activate magic items, or carry more than 10 pounds."
+    },
+    {
+      "name": "Mending",
+      "level": 0,
+      "school": "T",
+      "time": "1 minute",
+      "range": "Special",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "This spell repairs a single break or tear in an object you touch, such as a broken chain link, two halves of a broken key, a torn cloak, or a leaking wineskin. As long as the break or tear is no larger than 1 foot in any dimension, you mend it, leaving no trace of the former damage. This spell can physically repair a magic item, but it can't restore magic to such an object."
+    },
+    {
+      "name": "Message",
+      "level": 0,
+      "school": "T",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "1 round",
+      "components": "SM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You point toward a creature within range and whisper a message. The target (and only the target) hears the message and can reply in a whisper that only you can hear. You can cast this spell through solid objects if you are familiar with the target and know it is beyond the barrier. Magical silence; 1 foot of stone, metal, or wood; or a thin sheet of lead blocks the spell."
+    },
+    {
+      "name": "Mind Sliver",
+      "level": 0,
+      "school": "E",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "Instantaneous",
+      "components": "V",
+      "ritual": false,
+      "concentration": false,
+      "description": "You try to temporarily sliver the mind of one creature you can see within range. The target must succeed on an Intelligence saving throw or take 1d6 Psychic damage and subtract 1d4 from the next saving throw it makes before the end of your next turn."
+    },
+    {
+      "name": "Minor Illusion",
+      "level": 0,
+      "school": "I",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "1 minute",
+      "components": "SM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create a sound or an image of an object within range that lasts for the duration. See the descriptions below for the effects of each. The illusion ends if you cast this spell again. If a creature takes a Study action to examine the sound or image, the creature can determine that it is an illusion with a successful Intelligence (Investigation) check against your spell save DC. If a creature discerns the illusion for what it is, the illusion becomes faint to the creature. Sound: Image:"
+    },
+    {
+      "name": "Poison Spray",
+      "level": 0,
+      "school": "N",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You spray toxic mist at a creature within range. Make a ranged spell attack against the target. On a hit, the target takes 1d12 Poison damage."
+    },
+    {
+      "name": "Prestidigitation",
+      "level": 0,
+      "school": "T",
+      "time": "Action",
+      "range": "10 feet",
+      "duration": "1 hour",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create a magical effect within range. Choose the effect from the options below. If you cast this spell multiple times, you can have up to three of its non-instantaneous effects active at a time. Sensory Effect: Fire Play: Clean or Soil: Minor Sensation: Magic Mark: Minor Creation:"
+    },
+    {
+      "name": "Ray of Frost",
+      "level": 0,
+      "school": "V",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "A frigid beam of blue-white light streaks toward a creature within range. Make a ranged spell attack against the target. On a hit, it takes 1d8 Cold damage, and its Speed is reduced by 10 feet until the start of your next turn."
+    },
+    {
+      "name": "Shocking Grasp",
+      "level": 0,
+      "school": "V",
+      "time": "Action",
+      "range": "Special",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "Lightning springs from you to a creature that you try to touch. Make a melee spell attack against the target. On a hit, the target takes 1d8 Lightning damage, and it can't make Opportunity Attack until the start of its next turn."
+    },
+    {
+      "name": "Sorcerous Burst",
+      "level": 0,
+      "school": "V",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You cast sorcerous energy at one creature or object within range. Make a ranged spell attack against the target. On a hit, the target takes 1d8 damage of a type you choose: Acid, Cold, Fire, Lightning, Poison, Psychic, or Thunder. If you roll an 8 on a d8 for this spell, you can roll another d8, and add it to the damage. When you cast this spell, the maximum number of these d8s you can add to the spell's damage equals your spellcasting ability modifier."
+    },
+    {
+      "name": "Thunderclap",
+      "level": 0,
+      "school": "V",
+      "time": "Action",
+      "range": "5 feet",
+      "duration": "Instantaneous",
+      "components": "S",
+      "ritual": false,
+      "concentration": false,
+      "description": "Each creature in a 5-foot Emanation [Area of Effect] originating from you must succeed on a Constitution saving throw or take 1d6 Thunder damage. The spell's thunderous sound can be heard up to 100 feet away."
+    },
+    {
+      "name": "Toll the Dead",
+      "level": 0,
+      "school": "N",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You point at one creature you can see within range, and the single chime of a dolorous bell is audible within 10 feet of the target. The target must succeed on a Wisdom saving throw or take 1d8 Necrotic damage. If the target is missing any of its Hit Points, it instead takes 1d12 Necrotic damage."
+    },
+    {
+      "name": "True Strike",
+      "level": 0,
+      "school": "D",
+      "time": "Action",
+      "range": "Special",
+      "duration": "Instantaneous",
+      "components": "SM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Guided by a flash of magical insight, you make one attack with the weapon used in the spell's casting. The attack uses your spellcasting ability for the attack and damage rolls instead of using Strength or Dexterity. If the attack deals damage, it can be Radiant damage or the weapon's normal damage type (your choice)."
+    },
+    {
+      "name": "Armor of Agathys",
+      "level": 1,
+      "school": "A",
+      "time": "Bonus Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Protective magical frost surrounds you. You gain 5 Temporary Hit Points. If a creature hits you with a melee attack roll before the spell ends, the creature takes 5 Cold damage. The spell ends early if you have no Temporary Hit Points."
+    },
+    {
+      "name": "Arms of Hadar",
+      "level": 1,
+      "school": "C",
+      "time": "Action",
+      "range": "10 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "Invoking Hadar, you cause tendrils to erupt from yourself. Each creature in a 10-foot Emanation [Area of Effect] originating from you makes a Strength saving throw. On a failed save, a target takes 2d6 Necrotic damage and can't take Reactions until the start of its next turn. On a successful save, a target takes half as much damage only."
+    },
+    {
+      "name": "Bane",
+      "level": 1,
+      "school": "E",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Up to three creatures of your choice that you can see within range must each make a Charisma saving throw. Whenever a target that fails this save makes an attack roll or a saving throw before the spell ends, the target must subtract 1d4 from the attack roll or save."
+    },
+    {
+      "name": "Burning Hands",
+      "level": 1,
+      "school": "V",
+      "time": "Action",
+      "range": "15 feet cone",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "A thin sheet of flames shoots forth from you. Each creature in a 15-foot Cone [Area of Effect] makes a Dexterity saving throw, taking 3d6 Fire damage on a failed save or half as much damage on a successful one. Flammable objects in the Cone [Area of Effect] that aren't being worn or carried start burning."
+    },
+    {
+      "name": "Charm Person",
+      "level": 1,
+      "school": "E",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "1 hour",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "One Humanoid you can see within range makes a Wisdom saving throw. It does so with Advantage if you or your allies are fighting it. On a failed save, the target has the Charmed condition until the spell ends or until you or your allies damage it. The Charmed creature is Friendly [Attitude] to you. When the spell ends, the target knows it was Charmed by you."
+    },
+    {
+      "name": "Chromatic Orb",
+      "level": 1,
+      "school": "V",
+      "time": "Action",
+      "range": "90 feet",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You hurl an orb of energy at a target within range. Choose Acid, Cold, Fire, Lightning, Poison, or Thunder for the type of orb you create, and then make a ranged spell attack against the target. On a hit, the target takes 3d8 damage of the chosen type. If you roll the same number on two or more of the d8s, the orb leaps to a different target of your choice within 30 feet of the target. Make an attack roll against the new target, and make a new damage roll. The orb can't leap again unless you cast the spell with a level 2+ spell slot."
+    },
+    {
+      "name": "Color Spray",
+      "level": 1,
+      "school": "I",
+      "time": "Action",
+      "range": "15 feet cone",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You launch a dazzling array of flashing, colorful light. Each creature in a 15-foot Cone [Area of Effect] originating from you must succeed on a Constitution saving throw or have the Blinded condition until the end of your next turn."
+    },
+    {
+      "name": "Comprehend Languages",
+      "level": 1,
+      "school": "D",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "For the duration, you understand the literal meaning of any language that you hear or see signed. You also understand any written language that you see, but you must be touching the surface on which the words are written. It takes about 1 minute to read one page of text. This spell doesn't decode symbols or secret messages."
+    },
+    {
+      "name": "Detect Magic",
+      "level": 1,
+      "school": "D",
+      "time": "Action",
+      "range": "30 feet radius",
+      "duration": "10 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "For the duration, you sense the presence of magical effects within 30 feet of yourself. If you sense such effects, you can take the Magic action to see a faint aura around any visible creature or object in the area that bears the magic, and if an effect was created by a spell, you learn the spell's school of magic. The spell is blocked by 1 foot of stone, dirt, or wood; 1 inch of metal; or a thin sheet of lead."
+    },
+    {
+      "name": "Disguise Self",
+      "level": 1,
+      "school": "I",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You make yourself—including your clothing, armor, weapons, and other belongings on your person—look different until the spell ends. You can seem 1 foot shorter or taller and can appear heavier or lighter. You must adopt a form that has the same basic arrangement of limbs as you have. Otherwise, the extent of the illusion is up to you. The changes wrought by this spell fail to hold up to physical inspection. For example, if you use this spell to add a hat to your outfit, objects pass through the hat, and anyone who touches it would feel nothing. To discern that you are disguised, a creature must take the Study action to inspect your appearance and succeed on an Intelligence (Investigation) check against your spell save DC."
+    },
+    {
+      "name": "Expeditious Retreat",
+      "level": 1,
+      "school": "T",
+      "time": "Bonus Action",
+      "range": "Special",
+      "duration": "10 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You take the Dash action, and until the spell ends, you can take that action again as a Bonus Action."
+    },
+    {
+      "name": "False Life",
+      "level": 1,
+      "school": "N",
+      "time": "Action",
+      "range": "Special",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You gain 2d4 + 4 Temporary Hit Points."
+    },
+    {
+      "name": "Feather Fall",
+      "level": 1,
+      "school": "T",
+      "time": "Reaction",
+      "range": "60 feet",
+      "duration": "1 minute",
+      "components": "VM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Choose up to five falling creatures within range. A falling creature's rate of descent slows to 60 feet per round until the spell ends. If a creature lands before the spell ends, the creature takes no damage from the fall, and the spell ends for that creature."
+    },
+    {
+      "name": "Fog Cloud",
+      "level": 1,
+      "school": "C",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "1 hour",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create a 20-foot-radius Sphere [Area of Effect] of fog centered on a point within range. The Sphere [Area of Effect] is Heavily Obscured. It lasts for the duration or until a strong wind (such as one created by Gust of Wind) disperses it."
+    },
+    {
+      "name": "Grease",
+      "level": 1,
+      "school": "C",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Nonflammable grease covers the ground in a 10-foot square centered on a point within range and turns it into Difficult Terrain for the duration. When the grease appears, each creature standing in its area must succeed on a Dexterity saving throw or have the Prone condition. A creature that enters the area or ends its turn there must also succeed on that save or fall Prone."
+    },
+    {
+      "name": "Hellish Rebuke",
+      "level": 1,
+      "school": "V",
+      "time": "Reaction",
+      "range": "60 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "The creature that damaged you is momentarily surrounded by green flames. It makes a Dexterity saving throw, taking 2d10 Fire damage on a failed save or half as much damage on a successful one."
+    },
+    {
+      "name": "Hex",
+      "level": 1,
+      "school": "E",
+      "time": "Bonus Action",
+      "range": "90 feet",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You place a curse on a creature that you can see within range. Until the spell ends, you deal an extra 1d6 Necrotic damage to the target whenever you hit it with an attack roll. Also, choose one ability when you cast the spell. The target has Disadvantage on ability checks made with the chosen ability. If the target drops to 0 Hit Points before this spell ends, you can take a Bonus Action on a later turn to curse a new creature."
+    },
+    {
+      "name": "Ice Knife",
+      "level": 1,
+      "school": "C",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "Instantaneous",
+      "components": "SM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create a shard of ice and fling it at one creature within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 Piercing damage. Hit or miss, the shard then explodes. The target and each creature within 5 feet of it must succeed on a Dexterity saving throw or take 2d6 Cold damage."
+    },
+    {
+      "name": "Illusory Script",
+      "level": 1,
+      "school": "I",
+      "time": "1 minute",
+      "range": "Special",
+      "duration": "10 day",
+      "components": "SM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You write on parchment, paper, or another suitable material and imbue it with an illusion that lasts for the duration. To you and any creatures you designate when you cast the spell, the writing appears normal, seems to be written in your hand, and conveys whatever meaning you intended when you wrote the text. To all others, the writing appears as if it were written in an unknown or magical script that is unintelligible. Alternatively, the illusion can alter the meaning, handwriting, and language of the text, though the language must be one you know. If the spell is dispelled, the original script and the illusion both disappear. A creature that has Truesight can read the hidden message."
+    },
+    {
+      "name": "Jump",
+      "level": 1,
+      "school": "T",
+      "time": "Bonus Action",
+      "range": "Special",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You touch a willing creature. Once on each of its turns until the spell ends, that creature can jump up to 30 feet by spending 10 feet of movement."
+    },
+    {
+      "name": "Mage Armor",
+      "level": 1,
+      "school": "A",
+      "time": "Action",
+      "range": "Special",
+      "duration": "8 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You touch a willing creature who isn't wearing armor. Until the spell ends, the target's base AC becomes 13 plus its Dexterity modifier. The spell ends early if the target dons armor."
+    },
+    {
+      "name": "Magic Missile",
+      "level": 1,
+      "school": "V",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create three glowing darts of magical force. Each dart strikes a creature of your choice that you can see within range. A dart deals 1d4 + 1 Force damage to its target. The darts all strike simultaneously, and you can direct them to hit one creature or several."
+    },
+    {
+      "name": "Protection from Evil and Good",
+      "level": 1,
+      "school": "A",
+      "time": "Action",
+      "range": "Special",
+      "duration": "10 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Until the spell ends, one willing creature you touch is protected against creatures that are Aberrations, Celestials, Elementals, Fey, Fiends, or Undead. The protection grants several benefits. Creatures of those types have Disadvantage on attack rolls against the target. The target also can't be possessed by or gain the Charmed or Frightened conditions from them. If the target is already possessed, Charmed, or Frightened by such a creature, the target has Advantage on any new saving throw against the relevant effect."
+    },
+    {
+      "name": "Ray of Sickness",
+      "level": 1,
+      "school": "N",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You shoot a greenish ray at a creature within range. Make a ranged spell attack against the target. On a hit, the target takes 2d8 Poison damage and has the Poisoned condition until the end of your next turn."
+    },
+    {
+      "name": "Shield",
+      "level": 1,
+      "school": "A",
+      "time": "Reaction",
+      "range": "Special",
+      "duration": "1 round",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "An imperceptible barrier of magical force protects you. Until the start of your next turn, you have a +5 bonus to AC, including against the triggering attack, and you take no damage from Magic Missile."
+    },
+    {
+      "name": "Silent Image",
+      "level": 1,
+      "school": "I",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "10 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create the image of an object, a creature, or some other visible phenomenon that is no larger than a 15-foot Cube [Area of Effect]. The image appears at a spot within range and lasts for the duration. The image is purely visual; it isn't accompanied by sound, smell, or other sensory effects. As a Magic action, you can cause the image to move to any spot within range. As the image changes location, you can alter its appearance so that its movements appear natural for the image. For example, if you create an image of a creature and move it, you can alter the image so that it appears to be walking. Physical interaction with the image reveals it to be an illusion, since things can pass through it. A creature that takes a Study action to examine the image can determine that it is an illusion with a successful Intelligence (Investigation) check against your spell save DC. If a creature discerns the illusion for what it is, the creature can see through the image."
+    },
+    {
+      "name": "Sleep",
+      "level": 1,
+      "school": "E",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Each creature of your choice in a 5-foot-radius Sphere [Area of Effect] centered on a point within range must succeed on a Wisdom saving throw or have the Incapacitated condition until the end of its next turn, at which point it must repeat the save. If the target fails the second save, the target has the Unconscious condition for the duration. The spell ends on a target if it takes damage or someone within 5 feet of it takes an action to shake it out of the spell's effect. Creatures that don't sleep, such as elves, or that have Immunity to the Exhaustion condition automatically succeed on saves against this spell."
+    },
+    {
+      "name": "Speak with Animals",
+      "level": 1,
+      "school": "D",
+      "time": "Action",
+      "range": "Special",
+      "duration": "10 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "For the duration, you can comprehend and verbally communicate with Beasts, and you can use any of the Influence action's skill options with them. Most Beasts have little to say about topics that don't pertain to survival or companionship, but at minimum, a Beast can give you information about nearby locations and monsters, including whatever it has perceived within the past day."
+    },
+    {
+      "name": "Tasha's Hideous Laughter",
+      "level": 1,
+      "school": "E",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "One creature of your choice that you can see within range makes a Wisdom saving throw. On a failed save, it has the Prone and Incapacitated conditions for the duration. During that time, it laughs uncontrollably if it's capable of laughter, and it can't end the Prone condition on itself. At the end of each of its turns and each time it takes damage, it makes another Wisdom saving throw. The target has Advantage on the save if the save is triggered by damage. On a successful save, the spell ends."
+    },
+    {
+      "name": "Thunderwave",
+      "level": 1,
+      "school": "V",
+      "time": "Action",
+      "range": "15 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You unleash a wave of thunderous energy. Each creature in a 15-foot Cube [Area of Effect] originating from you makes a Constitution saving throw. On a failed save, a creature takes 2d8 Thunder damage and is pushed 10 feet away from you. On a successful save, a creature takes half as much damage only. In addition, unsecured objects that are entirely within the Cube [Area of Effect] are pushed 10 feet away from you, and a thunderous boom is audible within 300 feet."
+    },
+    {
+      "name": "Unseen Servant",
+      "level": 1,
+      "school": "C",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "This spell creates an Invisible, mindless, shapeless, Medium force that performs simple tasks at your command until the spell ends. The servant springs into existence in an unoccupied space on the ground within range. It has AC 10, 1 Hit Points, and a Strength of 2, and it can't attack. If it drops to 0 Hit Points, the spell ends. Once on each of your turns as a Bonus Action, you can mentally command the servant to move up to 15 feet and interact with an object. The servant can perform simple tasks that a human could do, such as fetching things, cleaning, mending, folding clothes, lighting fires, serving food, and pouring drinks. Once you give the command, the servant performs the task to the best of its ability until it completes the task, then waits for your next command. If you command the servant to perform a task that would move it more than 60 feet away from you, the spell ends."
+    },
+    {
+      "name": "Witch Bolt",
+      "level": 1,
+      "school": "V",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "A beam of crackling energy lances toward a creature within range, forming a sustained arc of lightning between you and the target. Make a ranged spell attack against it. On a hit, the target takes 2d12 Lightning damage. On each of your subsequent turns, you can take a Bonus Action to deal 1d12 Lightning damage to the target automatically, even if the first attack missed. The spell ends if the target is ever outside the spell's range or if it has Total Cover from you."
+    },
+    {
+      "name": "Alter Self",
+      "level": 2,
+      "school": "T",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You alter your physical form. Choose one of the following options. Its effects last for the duration, during which you can take a Magic action to replace the option you chose with a different one. Aquatic Adaptation: Change Appearance: Natural Weapons:"
+    },
+    {
+      "name": "Arcane Vigor",
+      "level": 2,
+      "school": "A",
+      "time": "Bonus Action",
+      "range": "Special",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You tap into your life force to heal yourself. Roll one or two of your unexpended Hit Point Dice, and regain a number of Hit Points equal to the roll's total plus your spellcasting ability modifier. Those dice are then expended."
+    },
+    {
+      "name": "Blindness/Deafness",
+      "level": 2,
+      "school": "T",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "1 minute",
+      "components": "V",
+      "ritual": false,
+      "concentration": false,
+      "description": "One creature that you can see within range must succeed on a Constitution saving throw, or it has the Blinded or Deafened condition (your choice) for the duration. At the end of each of its turns, the target repeats the save, ending the spell on itself on a success."
+    },
+    {
+      "name": "Blur",
+      "level": 2,
+      "school": "I",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 minute",
+      "components": "V",
+      "ritual": false,
+      "concentration": false,
+      "description": "Your body becomes blurred. For the duration, any creature has Disadvantage on attack rolls against you. An attacker is immune to this effect if it perceives you with Blindsight or Truesight."
+    },
+    {
+      "name": "Cloud of Daggers",
+      "level": 2,
+      "school": "C",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You conjure spinning daggers in a 5-foot Cube [Area of Effect] centered on a point within range. Each creature in that area takes 4d4 Slashing damage. A creature also takes this damage if it enters the Cube [Area of Effect] or ends its turn there or if the Cube [Area of Effect] moves into its space. A creature takes this damage only once per turn. On your later turns, you can take a Magic action to teleport the Cube [Area of Effect] up to 30 feet."
+    },
+    {
+      "name": "Crown of Madness",
+      "level": 2,
+      "school": "E",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "1 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "One creature that you can see within range must succeed on a Wisdom saving throw or have the Charmed condition for the duration. The creature succeeds automatically if it isn't Humanoid. A spectral crown appears on the Charmed target's head, and it must use its action before moving on each of its turns to make a melee attack against a creature other than itself that you mentally choose. The target can act normally on its turn if you choose no creature or if no creature is within its reach. The target repeats the save at the end of each of its turns, ending the spell on itself on a success. On your later turns, you must take the Magic action to maintain control of the target, or the spell ends."
+    },
+    {
+      "name": "Darkness",
+      "level": 2,
+      "school": "V",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "10 minute",
+      "components": "VM",
+      "ritual": false,
+      "concentration": false,
+      "description": "For the duration, magical Darkness spreads from a point within range and fills a 15-foot-radius Sphere [Area of Effect]. Darkvision can't see through it, and nonmagical light can't illuminate it. Alternatively, you cast the spell on an object that isn't being worn or carried, causing the Darkness to fill a 15-foot Emanation [Area of Effect] originating from that object. Covering that object with something opaque, such as a bowl or helm, blocks the Darkness. If any of this spell's area overlaps with an area of Bright Light or Dim Light created by a spell of level 2 or lower, that other spell is dispelled."
+    },
+    {
+      "name": "Darkvision",
+      "level": 2,
+      "school": "T",
+      "time": "Action",
+      "range": "Special",
+      "duration": "8 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "For the duration, a willing creature you touch has Darkvision with a range of 150 feet."
+    },
+    {
+      "name": "Detect Thoughts",
+      "level": 2,
+      "school": "D",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You activate one of the effects below. Until the spell ends, you can activate either effect as a Magic action on your later turns. Sense Thoughts: Read Thoughts:"
+    },
+    {
+      "name": "Dragon's Breath",
+      "level": 2,
+      "school": "T",
+      "time": "Bonus Action",
+      "range": "Special",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You touch one willing creature, and choose Acid, Cold, Fire, Lightning, or Poison. Until the spell ends, the target can take a Magic action to exhale a 15-foot Cone [Area of Effect]. Each creature in that area makes a Dexterity saving throw, taking 3d6 damage of the chosen type on a failed save or half as much damage on a successful one."
+    },
+    {
+      "name": "Enhance Ability",
+      "level": 2,
+      "school": "T",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You touch a creature and choose Strength, Dexterity, Intelligence, Wisdom, or Charisma. For the duration, the target has Advantage on ability checks using the chosen ability."
+    },
+    {
+      "name": "Enlarge/Reduce",
+      "level": 2,
+      "school": "T",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "For the duration, the spell enlarges or reduces a creature or an object you can see within range (see the chosen effect below). A targeted object must be neither worn nor carried. If the target is an unwilling creature, it can make a Constitution saving throw. On a successful save, the spell has no effect. Everything that a targeted creature is wearing and carrying changes size with it. Any item it drops returns to normal size at once. A thrown weapon or piece of ammunition returns to normal size immediately after it hits or misses a target. Enlarge: Reduce:"
+    },
+    {
+      "name": "Enthrall",
+      "level": 2,
+      "school": "E",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You weave a distracting string of words, causing creatures of your choice that you can see within range to make a Wisdom saving throw. Any creature you or your companions are fighting automatically succeeds on this save. On a failed save, a target has a -10 penalty to Wisdom (Perception) checks and Passive Perception until the spell ends."
+    },
+    {
+      "name": "Flame Blade",
+      "level": 2,
+      "school": "V",
+      "time": "Bonus Action",
+      "range": "Special",
+      "duration": "10 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You evoke a fiery blade in your free hand. The blade is similar in size and shape to a scimitar, and it lasts for the duration. If you let go of the blade, it disappears, but you can evoke it again as a Bonus Action. As a Magic action, you can make a melee spell attack with the fiery blade. On a hit, the target takes Fire damage equal to 3d6 plus your spellcasting ability modifier. The flaming blade sheds Bright Light in a 10-foot radius and Dim Light for an additional 10 feet."
+    },
+    {
+      "name": "Flaming Sphere",
+      "level": 2,
+      "school": "V",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create a 5-foot-diameter sphere of fire in an unoccupied space on the ground within range. It lasts for the duration. Any creature that ends its turn within 5 feet of the sphere makes a Dexterity saving throw, taking 2d6 Fire damage on a failed save or half as much damage on a successful one. As a Bonus Action, you can move the sphere up to 30 feet, rolling it along the ground. If you move the sphere into a creature's space, that creature makes the save against the sphere, and the sphere stops moving for the turn. When you move the sphere, you can direct it over barriers up to 5 feet tall and jump it across pits up to 10 feet wide. Flammable objects that aren't being worn or carried start burning if touched by the sphere, and it sheds Bright Light in a 20-foot radius and Dim Light for an additional 20 feet."
+    },
+    {
+      "name": "Gust of Wind",
+      "level": 2,
+      "school": "V",
+      "time": "Action",
+      "range": "60 feet line",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "A Line [Area of Effect] of strong wind 60 feet long and 10 feet wide blasts from you in a direction you choose for the duration. Each creature in the Line [Area of Effect] must succeed on a Strength saving throw or be pushed 15 feet away from you in a direction following the Line [Area of Effect]. A creature that ends its turn in the Line [Area of Effect] must make the same save. Any creature in the Line [Area of Effect] must spend 2 feet of movement for every 1 foot it moves when moving closer to you. The gust disperses gas or vapor, and it extinguishes candles and similar unprotected flames in the area. It causes protected flames, such as those of lanterns, to dance wildly and has a 50 chance to extinguish them. As a Bonus Action on your later turns, you can change the direction in which the Line [Area of Effect] blasts from you."
+    },
+    {
+      "name": "Hold Person",
+      "level": 2,
+      "school": "E",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Choose a Humanoid that you can see within range. The target must succeed on a Wisdom saving throw or have the Paralyzed condition for the duration. At the end of each of its turns, the target repeats the save, ending the spell on itself on a success."
+    },
+    {
+      "name": "Invisibility",
+      "level": 2,
+      "school": "I",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "A creature you touch has the Invisible condition until the spell ends. The spell ends early immediately after the target makes an attack roll, deals damage, or casts a spell."
+    },
+    {
+      "name": "Knock",
+      "level": 2,
+      "school": "T",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "Instantaneous",
+      "components": "V",
+      "ritual": false,
+      "concentration": false,
+      "description": "Choose an object that you can see within range. The object can be a door, a box, a chest, a set of manacles, a padlock, or another object that contains a mundane or magical means that prevents access. A target that is held shut by a mundane lock or that is stuck or barred becomes unlocked, unstuck, or unbarred. If the object has multiple locks, only one of them is unlocked. If the target is held shut by Arcane Lock, that spell is suppressed for 10 minutes, during which time the target can be opened and closed. When you cast the spell, a loud knock, audible up to 300 feet away, emanates from the target."
+    },
+    {
+      "name": "Levitate",
+      "level": 2,
+      "school": "T",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "10 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "One creature or loose object of your choice that you can see within range rises vertically up to 20 feet and remains suspended there for the duration. The spell can levitate an object that weighs up to 500 pounds. An unwilling creature that succeeds on a Constitution saving throw is unaffected. The target can move only by pushing or pulling against a fixed object or surface within reach (such as a wall or a ceiling), which allows it to move as if it were climbing. You can change the target's altitude by up to 20 feet in either direction on your turn. If you are the target, you can move up or down as part of your move. Otherwise, you can take a Magic action to move the target, which must remain within the spell's range. When the spell ends, the target floats gently to the ground if it is still aloft."
+    },
+    {
+      "name": "Magic Weapon",
+      "level": 2,
+      "school": "T",
+      "time": "Bonus Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You touch a nonmagical weapon. Until the spell ends, that weapon becomes a magic weapon with a +1 bonus to attack rolls and damage rolls. The spell ends early if you cast it again."
+    },
+    {
+      "name": "Mind Spike",
+      "level": 2,
+      "school": "D",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "1 hour",
+      "components": "S",
+      "ritual": false,
+      "concentration": false,
+      "description": "You drive a spike of psionic energy into the mind of one creature you can see within range. The target makes a Wisdom saving throw, taking 3d8 Psychic damage on a failed save or half as much damage on a successful one. On a failed save, you also always know the target's location until the spell ends, but only while the two of you are on the same plane of existence. While you have this knowledge, the target can't become hidden from you, and if it has the Invisible condition, it gains no benefit from that condition against you."
+    },
+    {
+      "name": "Mirror Image",
+      "level": 2,
+      "school": "I",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "Three illusory duplicates of yourself appear in your space. Until the spell ends, the duplicates move with you and mimic your actions, shifting position so it's impossible to track which image is real. Each time a creature hits you with an attack roll during the spell's duration, roll a d6 for each of your remaining duplicates. If any of the d6s rolls a 3 or higher, one of the duplicates is hit instead of you, and the duplicate is destroyed. The duplicates otherwise ignore all other damage and effects. The spell ends when all three duplicates are destroyed. A creature is unaffected by this spell if it has the Blinded condition, Blindsight, or Truesight."
+    },
+    {
+      "name": "Misty Step",
+      "level": 2,
+      "school": "C",
+      "time": "Bonus Action",
+      "range": "Special",
+      "duration": "Instantaneous",
+      "components": "V",
+      "ritual": false,
+      "concentration": false,
+      "description": "Briefly surrounded by silvery mist, you teleport up to 30 feet to an unoccupied space you can see."
+    },
+    {
+      "name": "Phantasmal Force",
+      "level": 2,
+      "school": "I",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You attempt to craft an illusion in the mind of a creature you can see within range. The target makes an Intelligence saving throw. On a failed save, you create a phantasmal object, creature, or other phenomenon that is no larger than a 10-foot Cube [Area of Effect] and that is perceivable only to the target for the duration. The phantasm includes sound, temperature, and other stimuli. The target can take a Study action to examine the phantasm with an Intelligence (Investigation) check against your spell save DC. If the check succeeds, the target realizes that the phantasm is an illusion, and the spell ends. While affected by the spell, the target treats the phantasm as if it were real and rationalizes any illogical outcomes from interacting with it. For example, if the target steps through a phantasmal bridge and survives the fall, it believes the bridge exists and something else caused it to fall. An affected target can even take damage from the illusion if the phantasm represents a dangerous creature or hazard. On each of your turns, such a phantasm can deal 2d8 Psychic damage to the target if it is in the phantasm's area or within 5 feet of the phantasm. The target perceives the damage as a type appropriate to the illusion."
+    },
+    {
+      "name": "Ray of Enfeeblement",
+      "level": 2,
+      "school": "N",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "A beam of enervating energy shoots from you toward a creature within range. The target must make a Constitution saving throw. On a successful save, the target has Disadvantage on the next attack roll it makes until the start of your next turn. On a failed save, the target has Disadvantage on Strength-based D20 Test for the duration. During that time, it also subtracts 1d8 from all its damage rolls. The target repeats the save at the end of each of its turns, ending the spell on a success."
+    },
+    {
+      "name": "Scorching Ray",
+      "level": 2,
+      "school": "V",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You hurl three fiery rays. You can hurl them at one target within range or at several. Make a ranged spell attack for each ray. On a hit, the target takes 2d6 Fire damage."
+    },
+    {
+      "name": "See Invisibility",
+      "level": 2,
+      "school": "D",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "For the duration, you see creatures and objects that have the Invisible condition as if they were visible, and you can see into the Ethereal Plane. Creatures and objects there appear ghostly."
+    },
+    {
+      "name": "Shatter",
+      "level": 2,
+      "school": "V",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "A loud noise erupts from a point of your choice within range. Each creature in a 10-foot-radius Sphere [Area of Effect] centered there makes a Constitution saving throw, taking 3d8 Thunder damage on a failed save or half as much damage on a successful one. A Construct has Disadvantage on the save. A nonmagical object that isn't being worn or carried also takes the damage if it's in the spell's area."
+    },
+    {
+      "name": "Spider Climb",
+      "level": 2,
+      "school": "T",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Until the spell ends, one willing creature you touch gains the ability to move up, down, and across vertical surfaces and along ceilings, while leaving its hands free. The target also gains a Climb Speed equal to its Speed."
+    },
+    {
+      "name": "Suggestion",
+      "level": 2,
+      "school": "E",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "8 hour",
+      "components": "VM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You suggest a course of activity—described in no more than 25 words—to one creature you can see within range that can hear and understand you. The suggestion must sound achievable and not involve anything that would obviously deal damage to the target or its allies. For example, you could say, \"Fetch the key to the cult's treasure vault, and give the key to me.\" Or you could say, \"Stop fighting, leave this library peacefully, and don't return.\" The target must succeed on a Wisdom saving throw or have the Charmed condition for the duration or until you or your allies deal damage to the target. The Charmed target pursues the suggestion to the best of its ability. The suggested activity can continue for the entire duration, but if the suggested activity can be completed in a shorter time, the spell ends for the target upon completing it."
+    },
+    {
+      "name": "Web",
+      "level": 2,
+      "school": "C",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You conjure a mass of sticky webbing at a point within range. The webs fill a 20-foot Cube [Area of Effect] there for the duration. The webs are Difficult Terrain, and the area within them is Lightly Obscured. If the webs aren't anchored between two solid masses (such as walls or trees) or layered across a floor, wall, or ceiling, the web collapses on itself, and the spell ends at the start of your next turn. Webs layered over a flat surface have a depth of 5 feet. The first time a creature enters the webs on a turn or starts its turn there, it must succeed on a Dexterity saving throw or have the Restrained condition while in the webs or until it breaks free. A creature Restrained by the webs can take an action to make a Strength (Athletics) check against your spell save DC. If it succeeds, it is no longer Restrained. The webs are flammable. Any 5-foot Cube [Area of Effect] of webs exposed to fire burns away in 1 round, dealing 2d4 Fire damage to any creature that starts its turn in the fire."
+    },
+    {
+      "name": "Blink",
+      "level": 3,
+      "school": "T",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "Roll 1d6 at the end of each of your turns for the duration. On a roll of 4-6, you vanish from your current plane of existence and appear in the Ethereal Plane (the spell ends instantly if you are already on that plane). While on the Ethereal Plane, you can perceive the plane you left, which is cast in shades of gray, but you can't see anything there more than 60 feet away. You can affect and be affected only by other creatures on the Ethereal Plane, and creatures on the other plane can't perceive you unless they have a special ability that lets them perceive things on the Ethereal Plane. You return to the other plane at the start of your next turn and when the spell ends if you are on the Ethereal Plane. You return to an unoccupied space of your choice that you can see within 10 feet of the space you left. If no unoccupied space is available within that range, you appear in the nearest unoccupied space."
+    },
+    {
+      "name": "Clairvoyance",
+      "level": 3,
+      "school": "D",
+      "time": "10 minutes",
+      "range": "1 miles",
+      "duration": "10 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create an Invisible sensor within range in a location familiar to you (a place you have visited or seen before) or in an obvious location that is unfamiliar to you (such as behind a door, around a corner, or in a grove of trees). The intangible, invulnerable sensor remains in place for the duration. When you cast the spell, choose seeing or hearing. You can use the chosen sense through the sensor as if you were in its space. As a Bonus Action, you can switch between seeing and hearing. A creature that sees the sensor (such as a creature benefiting from See Invisibility or Truesight) sees a luminous orb about the size of your fist."
+    },
+    {
+      "name": "Counterspell",
+      "level": 3,
+      "school": "A",
+      "time": "Reaction",
+      "range": "60 feet",
+      "duration": "Instantaneous",
+      "components": "S",
+      "ritual": false,
+      "concentration": false,
+      "description": "You attempt to interrupt a creature in the process of casting a spell. The creature makes a Constitution saving throw. On a failed save, the spell dissipates with no effect, and the action, Bonus Action, or Reaction used to cast it is wasted. If that spell was cast with a spell slot, the slot isn't expended."
+    },
+    {
+      "name": "Daylight",
+      "level": 3,
+      "school": "V",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 hour",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "For the duration, sunlight spreads from a point within range and fills a 60-foot-radius Sphere [Area of Effect]. The sunlight's area is Bright Light and sheds Dim Light for an additional 60 feet. Alternatively, you cast the spell on an object that isn't being worn or carried, causing the sunlight to fill a 60-foot Emanation [Area of Effect] originating from that object. Covering that object with something opaque, such as a bowl or helm, blocks the sunlight. If any of this spell's area overlaps with an area of Darkness created by a spell of level 3 or lower, that other spell is dispelled."
+    },
+    {
+      "name": "Dispel Magic",
+      "level": 3,
+      "school": "A",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "Choose one creature, object, or magical effect within range. Any ongoing spell of level 3 or lower on the target ends. For each ongoing spell of level 4 or higher on the target, make an ability check using your spellcasting ability (DC 10 plus that spell's level). On a successful check, the spell ends."
+    },
+    {
+      "name": "Fear",
+      "level": 3,
+      "school": "I",
+      "time": "Action",
+      "range": "30 feet cone",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Each creature in a 30-foot Cone [Area of Effect] must succeed on a Wisdom saving throw or drop whatever it is holding and have the Frightened condition for the duration. A Frightened creature takes the Dash action and moves away from you by the safest route on each of its turns unless there is nowhere to move. If the creature ends its turn in a space where it doesn't have line of sight to you, the creature makes a Wisdom saving throw. On a successful save, the spell ends on that creature."
+    },
+    {
+      "name": "Fireball",
+      "level": 3,
+      "school": "V",
+      "time": "Action",
+      "range": "150 feet",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "A bright streak flashes from you to a point you choose within range and then blossoms with a low roar into a fiery explosion. Each creature in a 20-foot-radius Sphere [Area of Effect] centered on that point makes a Dexterity saving throw, taking 8d6 Fire damage on a failed save or half as much damage on a successful one. Flammable objects in the area that aren't being worn or carried start burning."
+    },
+    {
+      "name": "Fly",
+      "level": 3,
+      "school": "T",
+      "time": "Action",
+      "range": "Special",
+      "duration": "10 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You touch a willing creature. For the duration, the target gains a Fly Speed of 60 feet and can hover. When the spell ends, the target falls if it is still aloft unless it can stop the fall."
+    },
+    {
+      "name": "Gaseous Form",
+      "level": 3,
+      "school": "T",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "A willing creature you touch shape-shifts, along with everything it's wearing and carrying, into a misty cloud for the duration. The spell ends on the target if it drops to 0 Hit Points or if it takes a Magic action to end the spell on itself. While in this form, the target's only method of movement is a Fly Speed of 10 feet, and it can hover. The target can enter and occupy the space of another creature. The target has Resistance to Bludgeoning, Piercing, and Slashing damage; it has Immunity to the Prone condition; and it has Advantage on Strength, Dexterity, and Constitution saving throws. The target can pass through narrow openings, but it treats liquids as though they were solid surfaces. The target can't talk or manipulate objects, and any objects it was carrying or holding can't be dropped, used, or otherwise interacted with. Finally, the target can't attack or cast spells."
+    },
+    {
+      "name": "Haste",
+      "level": 3,
+      "school": "T",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Choose a willing creature that you can see within range. Until the spell ends, the target's Speed is doubled, it gains a +2 bonus to Armor Class, it has Advantage on Dexterity saving throws, and it gains an additional action on each of its turns. That action can be used to take only the Attack (one attack only), Dash, Disengage, Hide, or Utilize action. When the spell ends, the target is Incapacitated and has a Speed of 0 until the end of its next turn, as a wave of lethargy washes over it."
+    },
+    {
+      "name": "Hunger of Hadar",
+      "level": 3,
+      "school": "C",
+      "time": "Action",
+      "range": "150 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You open a gateway to the Far Realm, a region infested with unspeakable horrors. A 20-foot-radius Sphere [Area of Effect] of Darkness appears, centered on a point within range and lasting for the duration. The Sphere [Area of Effect] is Difficult Terrain, and it is filled with strange whispers and slurping noises, which can be heard up to 30 feet away. No light, magical or otherwise, can illuminate the area, and creatures fully within it have the Blinded condition. Any creature that starts its turn in the area takes 2d6 Cold damage. Any creature that ends its turn there must succeed on a Dexterity saving throw or take 2d6 Acid damage from otherworldly tentacles."
+    },
+    {
+      "name": "Hypnotic Pattern",
+      "level": 3,
+      "school": "I",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "1 minute",
+      "components": "SM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create a twisting pattern of colors in a 30-foot Cube [Area of Effect] within range. The pattern appears for a moment and vanishes. Each creature in the area who can see the pattern must succeed on a Wisdom saving throw or have the Charmed condition for the duration. While Charmed, the creature has the Incapacitated condition and a Speed of 0. The spell ends for an affected creature if it takes any damage or if someone else uses an action to shake the creature out of its stupor."
+    },
+    {
+      "name": "Lightning Bolt",
+      "level": 3,
+      "school": "V",
+      "time": "Action",
+      "range": "100 feet line",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "A stroke of lightning forming a 100-foot-long, 5-foot-wide Line [Area of Effect] blasts out from you in a direction you choose. Each creature in the Line [Area of Effect] makes a Dexterity saving throw, taking 8d6 Lightning damage on a failed save or half as much damage on a successful one."
+    },
+    {
+      "name": "Magic Circle",
+      "level": 3,
+      "school": "A",
+      "time": "1 minute",
+      "range": "10 feet",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create a 10-foot-radius, 20-foot-tall Cylinder [Area of Effect] of magical energy centered on a point on the ground that you can see within range. Glowing runes appear wherever the Cylinder [Area of Effect] intersects with the floor or other surface. Choose one or more of the following types of creatures: Celestials, Elementals, Fey, Fiends, or Undead. The circle affects a creature of the chosen type in the following ways: Each time you cast this spell, you can cause its magic to operate in the reverse direction, preventing a creature of the specified type from leaving the Cylinder [Area of Effect] and protecting targets outside it."
+    },
+    {
+      "name": "Major Image",
+      "level": 3,
+      "school": "I",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "10 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create the image of an object, a creature, or some other visible phenomenon that is no larger than a 20-foot Cube [Area of Effect]. The image appears at a spot that you can see within range and lasts for the duration. It seems real, including sounds, smells, and temperature appropriate to the thing depicted, but it can't deal damage or cause conditions. If you are within range of the illusion, you can take a Magic action to cause the image to move to any other spot within range. As the image changes location, you can alter its appearance so that its movements appear natural for the image. For example, if you create an image of a creature and move it, you can alter the image so that it appears to be walking. Similarly, you can cause the illusion to make different sounds at different times, even making it carry on a conversation, for example. Physical interaction with the image reveals it to be an illusion, for things can pass through it. A creature that takes a Study action to examine the image can determine that it is an illusion with a successful Intelligence (Investigation) check against your spell save DC. If a creature discerns the illusion for what it is, the creature can see through the image, and its other sensory qualities become faint to the creature."
+    },
+    {
+      "name": "Protection from Energy",
+      "level": 3,
+      "school": "A",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "For the duration, the willing creature you touch has Resistance to one damage type of your choice: Acid, Cold, Fire, Lightning, or Thunder."
+    },
+    {
+      "name": "Remove Curse",
+      "level": 3,
+      "school": "A",
+      "time": "Action",
+      "range": "Special",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "At your touch, all curses affecting one creature or object end. If the object is a cursed magic item, its curse remains, but the spell breaks its owner's Attunement to the object so it can be removed or discarded."
+    },
+    {
+      "name": "Sleet Storm",
+      "level": 3,
+      "school": "C",
+      "time": "Action",
+      "range": "150 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Until the spell ends, sleet falls in a 40-foot-tall, 20-foot-radius Cylinder [Area of Effect] centered on a point you choose within range. The area is Heavily Obscured, and exposed flames in the area are doused. Ground in the Cylinder [Area of Effect] is Difficult Terrain. When a creature enters the Cylinder [Area of Effect] for the first time on a turn or starts its turn there, it must succeed on a Dexterity saving throw or have the Prone condition and lose Concentration."
+    },
+    {
+      "name": "Slow",
+      "level": 3,
+      "school": "T",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You alter time around up to six creatures of your choice in a 40-foot Cube [Area of Effect] within range. Each target must succeed on a Wisdom saving throw or be affected by this spell for the duration. An affected target's Speed is halved, it takes a -2 penalty to AC and Dexterity saving throws, and it can't take Reactions. On its turns, it can take either an action or a Bonus Action, not both, and it can make only one attack if it takes the Attack action. If it casts a spell with a Somatic component, there is a 25 chance the spell fails as a result of the target making the spell's gestures too slowly. An affected target repeats the save at the end of each of its turns, ending the spell on itself on a success."
+    },
+    {
+      "name": "Stinking Cloud",
+      "level": 3,
+      "school": "C",
+      "time": "Action",
+      "range": "90 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create a 20-foot-radius Sphere [Area of Effect] of yellow, nauseating gas centered on a point within range. The cloud is Heavily Obscured. The cloud lingers in the air for the duration or until a strong wind (such as the one created by Gust of Wind) disperses it. Each creature that starts its turn in the Sphere [Area of Effect] must succeed on a Constitution saving throw or have the Poisoned condition until the end of the current turn. While Poisoned in this way, the creature can't take an action or a Bonus Action."
+    },
+    {
+      "name": "Summon Fey",
+      "level": 3,
+      "school": "C",
+      "time": "Action",
+      "range": "90 feet",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You call forth a Fey spirit. It manifests in an unoccupied space that you can see within range and uses the Fey Spirit stat block. When you cast the spell, choose a mood: Fuming, Mirthful, or Tricksy. The creature resembles a Fey creature of your choice marked by the chosen mood, which determines certain details in its stat block. The creature disappears when it drops to 0 Hit Points or when the spell ends. The creature is an ally to you and your allies. In combat, the creature shares your Initiative count, but it takes its turn immediately after yours. It obeys your verbal commands (no action required by you). If you don't issue any, it takes the Dodge action and uses its movement to avoid danger."
+    },
+    {
+      "name": "Summon Undead",
+      "level": 3,
+      "school": "N",
+      "time": "Action",
+      "range": "90 feet",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You call forth an Undead spirit. It manifests in an unoccupied space that you can see within range and uses the Undead Spirit stat block. When you cast the spell, choose the creature's form: Ghostly, Putrid, or Skeletal. The spirit resembles an Undead creature with the chosen form, which determines certain details in its stat block. The creature disappears when it drops to 0 Hit Points or when the spell ends. The creature is an ally to you and your allies. In combat, the creature shares your Initiative count, but it takes its turn immediately after yours. It obeys your verbal commands (no action required by you). If you don't issue any, it takes the Dodge action and uses its movement to avoid danger."
+    },
+    {
+      "name": "Tongues",
+      "level": 3,
+      "school": "D",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "VM",
+      "ritual": false,
+      "concentration": false,
+      "description": "This spell grants the creature you touch the ability to understand any spoken or signed language that it hears or sees. Moreover, when the target communicates by speaking or signing, any creature that knows at least one language can understand it if that creature can hear the speech or see the signing."
+    },
+    {
+      "name": "Vampiric Touch",
+      "level": 3,
+      "school": "N",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "The touch of your shadow-wreathed hand can siphon life force from others to heal your wounds. Make a melee spell attack against one creature within reach. On a hit, the target takes 3d6 Necrotic damage, and you regain Hit Points equal to half the amount of Necrotic damage dealt. Until the spell ends, you can make the attack again on each of your turns as a Magic action, targeting the same creature or a different one."
+    },
+    {
+      "name": "Water Breathing",
+      "level": 3,
+      "school": "T",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "24 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "This spell grants up to ten willing creatures of your choice within range the ability to breathe underwater until the spell ends. Affected creatures also retain their normal mode of respiration."
+    },
+    {
+      "name": "Water Walk",
+      "level": 3,
+      "school": "T",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "This spell grants the ability to move across any liquid surface—such as water, acid, mud, snow, quicksand, or lava—as if it were harmless solid ground (creatures crossing molten lava can still take damage from the heat). Up to ten willing creatures of your choice within range gain this ability for the duration. An affected target must take a Bonus Action to pass from the liquid's surface into the liquid itself and vice versa, but if the target falls into the liquid, the target passes through the surface into the liquid below."
+    },
+    {
+      "name": "Banishment",
+      "level": 4,
+      "school": "A",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "One creature that you can see within range must succeed on a Charisma saving throw or be transported to a harmless demiplane for the duration. While there, the target has the Incapacitated condition. When the spell ends, the target reappears in the space it left or in the nearest unoccupied space if that space is occupied. If the target is an Aberration, a Celestial, an Elemental, a Fey, or a Fiend, the target doesn't return if the spell lasts for 1 minute. The target is instead transported to a random location on a plane (DM's choice) associated with its creature type."
+    },
+    {
+      "name": "Blight",
+      "level": 4,
+      "school": "N",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "A creature that you can see within range makes a Constitution saving throw, taking 8d8 Necrotic damage on a failed save or half as much damage on a successful one. A Plant creature automatically fails the save. Alternatively, target a nonmagical plant that isn't a creature, such as a tree or shrub. It doesn't make a save; it simply withers and dies."
+    },
+    {
+      "name": "Charm Monster",
+      "level": 4,
+      "school": "E",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "1 hour",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "One creature you can see within range makes a Wisdom saving throw. It does so with Advantage if you or your allies are fighting it. On a failed save, the target has the Charmed condition until the spell ends or until you or your allies damage it. The Charmed creature is Friendly [Attitude] to you. When the spell ends, the target knows it was Charmed by you."
+    },
+    {
+      "name": "Confusion",
+      "level": 4,
+      "school": "E",
+      "time": "Action",
+      "range": "90 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Each creature in a 10-foot-radius Sphere [Area of Effect] centered on a point you choose within range must succeed on a Wisdom saving throw, or that target can't take Bonus Actions or Reactions and must roll 1d10 at the start of each of its turns to determine its behavior for that turn, consulting the table below. At the end of each of its turns, an affected target repeats the save, ending the spell on itself on a success."
+    },
+    {
+      "name": "Dimension Door",
+      "level": 4,
+      "school": "C",
+      "time": "Action",
+      "range": "500 feet",
+      "duration": "Instantaneous",
+      "components": "V",
+      "ritual": false,
+      "concentration": false,
+      "description": "You teleport to a location within range. You arrive at exactly the spot desired. It can be a place you can see, one you can visualize, or one you can describe by stating distance and direction, such as \"200 feet straight downward\" or \"300 feet upward to the northwest at a 45-degree angle.\" You can also teleport one willing creature. The creature must be within 5 feet of you when you teleport, and it teleports to a space within 5 feet of your destination space. If you, the other creature, or both would arrive in a space occupied by a creature or completely filled by one or more objects, you and any creature traveling with you each take 4d6 Force damage, and the teleportation fails."
+    },
+    {
+      "name": "Dominate Beast",
+      "level": 4,
+      "school": "E",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "One Beast you can see within range must succeed on a Wisdom saving throw or have the Charmed condition for the duration. The target has Advantage on the save if you or your allies are fighting it. Whenever the target takes damage, it repeats the save, ending the spell on itself on a success. You have a telepathic link with the Charmed target while the two of you are on the same plane of existence. On your turn, you can use this link to issue commands to the target (no action required), such as \"Attack that creature,\" \"Move over there,\" or \"Fetch that object.\" The target does its best to obey on its turn. If it completes an order and doesn't receive further direction from you, it acts and moves as it likes, focusing on protecting itself. You can command the target to take a Reaction but must take your own Reaction to do so."
+    },
+    {
+      "name": "Fire Shield",
+      "level": 4,
+      "school": "V",
+      "time": "Action",
+      "range": "Special",
+      "duration": "10 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Wispy flames wreathe your body for the duration, shedding Bright Light in a 10-foot radius and Dim Light for an additional 10 feet. The flames provide you with a warm shield or a chill shield, as you choose. The warm shield grants you Resistance to Cold damage, and the chill shield grants you Resistance to Fire damage. In addition, whenever a creature within 5 feet of you hits you with a melee attack roll, the shield erupts with flame. The attacker takes 2d8 Fire damage from a warm shield or 2d8 Cold damage from a chill shield."
+    },
+    {
+      "name": "Greater Invisibility",
+      "level": 4,
+      "school": "I",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "A creature you touch has the Invisible condition until the spell ends."
+    },
+    {
+      "name": "Hallucinatory Terrain",
+      "level": 4,
+      "school": "I",
+      "time": "10 minutes",
+      "range": "300 feet",
+      "duration": "24 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You make natural terrain in a 150-foot Cube [Area of Effect] in range look, sound, and smell like another sort of natural terrain. Thus, open fields or a road can be made to resemble a swamp, hill, crevasse, or some other difficult or impassable terrain. A pond can be made to seem like a grassy meadow, a precipice like a gentle slope, or a rock-strewn gully like a wide and smooth road. Manufactured structures, equipment, and creatures within the area aren't changed. The tactile characteristics of the terrain are unchanged, so creatures entering the area are likely to notice the illusion. If the difference isn't obvious by touch, a creature examining the illusion can take the Study action to make an Intelligence (Investigation) check against your spell save DC to disbelieve it. If a creature discerns that the terrain is illusory, the creature sees a vague image superimposed on the real terrain."
+    },
+    {
+      "name": "Ice Storm",
+      "level": 4,
+      "school": "V",
+      "time": "Action",
+      "range": "300 feet",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Hail falls in a 20-foot-radius, 40-foot-high Cylinder [Area of Effect] centered on a point within range. Each creature in the Cylinder [Area of Effect] makes a Dexterity saving throw. A creature takes 2d10 Bludgeoning damage and 4d6 Cold damage on a failed save or half as much damage on a successful one. Hailstones turn ground in the Cylinder [Area of Effect] into Difficult Terrain until the end of your next turn."
+    },
+    {
+      "name": "Polymorph",
+      "level": 4,
+      "school": "T",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You attempt to transform a creature that you can see within range into a Beast. The target must succeed on a Wisdom saving throw or shape-shift into Beast form for the duration. That form can be any you choose that has a Challenge Rating equal to or less than the target's (or the target's level if it doesn't have a Challenge Rating). The target's game statistics are replaced by the stat block of the chosen Beast, but the target retains its alignment, personality, creature type, Hit Points, and Hit Point Dice. The target gains a number of Temporary Hit Points equal to the Hit Points of the Beast form. These Temporary Hit Points vanish if any remain when the spell ends. The spell ends early on the target if it has no Temporary Hit Points left. The target is limited in the actions it can perform by the anatomy of its new form, and it can't speak or cast spells. The target's gear melds into the new form. The creature can't use or otherwise benefit from any of that equipment."
+    },
+    {
+      "name": "Stoneskin",
+      "level": 4,
+      "school": "T",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Until the spell ends, one willing creature you touch has Resistance to Bludgeoning, Piercing, and Slashing damage."
+    },
+    {
+      "name": "Summon Aberration",
+      "level": 4,
+      "school": "C",
+      "time": "Action",
+      "range": "90 feet",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You call forth an aberrant spirit. It manifests in an unoccupied space that you can see within range and uses the Aberrant Spirit stat block. When you cast the spell, choose Beholderkin, Mind Flayer, or Slaad. The creature resembles an Aberration of that kind, which determines certain details in its stat block. The creature disappears when it drops to 0 Hit Points or when the spell ends. The creature is an ally to you and your allies. In combat, it shares your Initiative count, but it takes its turn immediately after yours. It obeys your verbal commands (no action required by you). If you don't issue any, it takes the Dodge action and uses its movement to avoid danger."
+    },
+    {
+      "name": "Vitriolic Sphere",
+      "level": 4,
+      "school": "V",
+      "time": "Action",
+      "range": "150 feet",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You point at a location within range, and a glowing, 1-foot-diameter ball of acid streaks there and explodes in a 20-foot-radius Sphere [Area of Effect]. Each creature in that area makes a Dexterity saving throw. On a failed save, a creature takes 10d4 Acid damage and another 5d4 Acid damage at the end of its next turn. On a successful save, a creature takes half the initial damage only."
+    },
+    {
+      "name": "Wall of Fire",
+      "level": 4,
+      "school": "V",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create a wall of fire on a solid surface within range. You can make the wall up to 60 feet long, 20 feet high, and 1 foot thick, or a ringed wall up to 20 feet in diameter, 20 feet high, and 1 foot thick. The wall is opaque and lasts for the duration. When the wall appears, each creature in its area makes a Dexterity saving throw, taking 5d8 Fire damage on a failed save or half as much damage on a successful one. One side of the wall, selected by you when you cast this spell, deals 5d8 Fire damage to each creature that ends its turn within 10 feet of that side or inside the wall. A creature takes the same damage when it enters the wall for the first time on a turn or ends its turn there. The other side of the wall deals no damage."
+    },
+    {
+      "name": "Animate Objects",
+      "level": 5,
+      "school": "T",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "1 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "Objects animate at your command. Choose a number of nonmagical objects within range that aren't being worn or carried, aren't fixed to a surface, and aren't Gargantuan. The maximum number of objects is equal to your spellcasting ability modifier; for this number, a Medium or smaller target counts as one object, a Large target counts as two, and a Huge target counts as three. Each target animates, sprouts legs, and becomes a Construct that uses the Animated Object stat block; this creature is under your control until the spell ends or until it is reduced to 0 Hit Points. Each creature you make with this spell is an ally to you and your allies. In combat, it shares your Initiative count and takes its turn immediately after yours. Until the spell ends, you can take a Bonus Action to mentally command any creature you made with this spell if the creature is within 500 feet of you (if you control multiple creatures, you can command any of them at the same time, issuing the same command to each one). If you issue no commands, the creature takes the Dodge action and moves only to avoid harm. When the creature drops to 0 Hit Points, it reverts to its object form, and any remaining damage carries over to that form."
+    },
+    {
+      "name": "Bigby's Hand",
+      "level": 5,
+      "school": "V",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create a Large hand of shimmering magical energy in an unoccupied space that you can see within range. The hand lasts for the duration, and it moves at your command, mimicking the movements of your own hand. The hand is an object that has AC 20 and Hit Points equal to your Hit Points maximum. If it drops to 0 Hit Points, the spell ends. The hand doesn't occupy its space. When you cast the spell and as a Bonus Action on your later turns, you can move the hand up to 60 feet and then cause one of the following effects:"
+    },
+    {
+      "name": "Cloudkill",
+      "level": 5,
+      "school": "C",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "10 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create a 20-foot-radius Sphere [Area of Effect] of yellow-green fog centered on a point within range. The fog lasts for the duration or until strong wind (such as the one created by Gust of Wind) disperses it, ending the spell. Its area is Heavily Obscured. Each creature in the Sphere [Area of Effect] makes a Constitution saving throw, taking 5d8 Poison damage on a failed save or half as much damage on a successful one. A creature must also make this save when the Sphere [Area of Effect] moves into its space and when it enters the Sphere [Area of Effect] or ends its turn there. A creature makes this save only once per turn. The Sphere [Area of Effect] moves 10 feet away from you at the start of each of your turns."
+    },
+    {
+      "name": "Cone of Cold",
+      "level": 5,
+      "school": "V",
+      "time": "Action",
+      "range": "60 feet cone",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You unleash a blast of cold air. Each creature in a 60-foot Cone [Area of Effect] originating from you makes a Constitution saving throw, taking 8d8 Cold damage on a failed save or half as much damage on a successful one. A creature killed by this spell becomes a frozen statue until it thaws."
+    },
+    {
+      "name": "Contact Other Plane",
+      "level": 5,
+      "school": "D",
+      "time": "1 minute",
+      "range": "Special",
+      "duration": "1 minute",
+      "components": "V",
+      "ritual": false,
+      "concentration": false,
+      "description": "You mentally contact a demigod, the spirit of a long-dead sage, or some other knowledgeable entity from another plane. Contacting this otherworldly intelligence can break your mind. When you cast this spell, make a DC 15 Intelligence saving throw. On a successful save, you can ask the entity up to five questions. You must ask your questions before the spell ends. The DM answers each question with one word, such as \"yes,\" \"no,\" \"maybe,\" \"never,\" \"irrelevant,\" or \"unclear\" (if the entity doesn't know the answer to the question). If a one-word answer would be misleading, the DM might instead offer a short phrase as an answer. On a failed save, you take 6d6 Psychic damage and have the Incapacitated condition until you finish a Long Rest. A Greater Restoration spell cast on you ends this effect."
+    },
+    {
+      "name": "Creation",
+      "level": 5,
+      "school": "I",
+      "time": "1 minute",
+      "range": "30 feet",
+      "duration": "Special",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You pull wisps of shadow material from the Shadowfell to create an object within range. It is either an object of vegetable matter (soft goods, rope, wood, and the like) or mineral matter (stone, crystal, metal, and the like). The object must be no larger than a 5-foot Cube [Area of Effect], and the object must be of a form and material that you have seen. The spell's duration depends on the object's material, as shown in the Materials table. If the object is composed of multiple materials, use the shortest duration. Using any object created by this spell as another spell's Material component causes the other spell to fail."
+    },
+    {
+      "name": "Dominate Person",
+      "level": 5,
+      "school": "E",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "One Humanoid you can see within range must succeed on a Wisdom saving throw or have the Charmed condition for the duration. The target has Advantage on the save if you or your allies are fighting it. Whenever the target takes damage, it repeats the save, ending the spell on itself on a success. You have a telepathic link with the Charmed target while the two of you are on the same plane of existence. On your turn, you can use this link to issue commands to the target (no action required), such as \"Attack that creature,\" \"Move over there,\" or \"Fetch that object.\" The target does its best to obey on its turn. If it completes an order and doesn't receive further direction from you, it acts and moves as it likes, focusing on protecting itself. You can command the target to take a Reaction but must take your own Reaction to do so."
+    },
+    {
+      "name": "Dream",
+      "level": 5,
+      "school": "I",
+      "time": "1 minute",
+      "range": "Special",
+      "duration": "8 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You target a creature you know on the same plane of existence. You or a willing creature you touch enters a trance state to act as a dream messenger. While in the trance, the messenger is Incapacitated and has a Speed of 0. If the target is asleep, the messenger appears in the target's dreams and can converse with the target as long as it remains asleep, through the spell's duration. The messenger can also shape the dream's environment, creating landscapes, objects, and other images. The messenger can emerge from the trance at any time, ending the spell. The target recalls the dream perfectly upon waking. If the target is awake when you cast the spell, the messenger knows it and can either end the trance (and the spell) or wait for the target to sleep, at which point the messenger enters its dreams. You can make the messenger terrifying to the target. If you do so, the messenger can deliver a message of no more than ten words, and then the target makes a Wisdom saving throw. On a failed save, the target gains no benefit from its rest, and it takes 3d6 Psychic damage when it wakes up."
+    },
+    {
+      "name": "Hold Monster",
+      "level": 5,
+      "school": "E",
+      "time": "Action",
+      "range": "90 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Choose a creature that you can see within range. The target must succeed on a Wisdom saving throw or have the Paralyzed condition for the duration. At the end of each of its turns, the target repeats the save, ending the spell on itself on a success."
+    },
+    {
+      "name": "Insect Plague",
+      "level": 5,
+      "school": "C",
+      "time": "Action",
+      "range": "300 feet",
+      "duration": "10 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Swarming locusts fill a 20-foot-radius Sphere [Area of Effect] centered on a point you choose within range. The Sphere [Area of Effect] remains for the duration, and its area is Lightly Obscured and Difficult Terrain. When the swarm appears, each creature in it makes a Constitution saving throw, taking 4d10 Piercing damage on a failed save or half as much damage on a successful one. A creature also makes this save when it enters the spell's area for the first time on a turn or ends its turn there. A creature makes this save only once per turn."
+    },
+    {
+      "name": "Jallarzi's Storm of Radiance",
+      "level": 5,
+      "school": "V",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You unleash a storm of flashing light and raging thunder in a 10-foot-radius, 40-foot-high Cylinder [Area of Effect] centered on a point you can see within range. While in this area, creatures have the Blinded and Deafened conditions, and they can't cast spells with a Verbal component. When the storm appears, each creature in it makes a Constitution saving throw, taking 2d10 Radiant damage and 2d10 Thunder damage on a failed save or half as much damage on a successful one. A creature also makes this save when it enters the spell's area for the first time on a turn or ends its turn there. A creature makes this save only once per turn."
+    },
+    {
+      "name": "Mislead",
+      "level": 5,
+      "school": "I",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "S",
+      "ritual": false,
+      "concentration": false,
+      "description": "You gain the Invisible condition at the same time that an illusory double of you appears where you are standing. The double lasts for the duration, but the invisibility ends immediately after you make an attack roll, deal damage, or cast a spell. As a Magic action, you can move the illusory double up to twice your Speed and make it gesture, speak, and behave in whatever way you choose. It is intangible and invulnerable. You can see through its eyes and hear through its ears as if you were located where it is."
+    },
+    {
+      "name": "Planar Binding",
+      "level": 5,
+      "school": "A",
+      "time": "1 hour",
+      "range": "60 feet",
+      "duration": "24 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You attempt to bind a Celestial, an Elemental, a Fey, or a Fiend to your service. The creature must be within range for the entire casting of the spell. (Typically, the creature is first summoned into the center of the inverted version of the Magic Circle spell to trap it while this spell is cast.) At the completion of the casting, the target must succeed on a Charisma saving throw or be bound to serve you for the duration. If the creature was summoned or created by another spell, that spell's duration is extended to match the duration of this spell. A bound creature must follow your commands to the best of its ability. You might command the creature to accompany you on an adventure, to guard a location, or to deliver a message. If the creature is Hostile [Attitude], it strives to twist your commands to achieve its own objectives. If the creature carries out your commands completely before the spell ends, it travels to you to report this fact if you are on the same plane of existence. If you are on a different plane, it returns to the place where you bound it and remains there until the spell ends."
+    },
+    {
+      "name": "Scrying",
+      "level": 5,
+      "school": "D",
+      "time": "10 minutes",
+      "range": "Special",
+      "duration": "10 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You can see and hear a creature you choose that is on the same plane of existence as you. The target makes a Wisdom saving throw, which is modified (see the tables below) by how well you know the target and the sort of physical connection you have to it. The target doesn't know what it is making the save against, only that it feels uneasy. On a successful save, the target isn't affected, and you can't use this spell on it again for 24 hours. On a failed save, the spell creates an Invisible, intangible sensor within 10 feet of the target. You can see and hear through the sensor as if you were there. The sensor moves with the target, remaining within 10 feet of it for the duration. If something can see the sensor, it appears as a luminous orb about the size of your fist. Instead of targeting a creature, you can target a location you have seen. When you do so, the sensor appears at that location and doesn't move."
+    },
+    {
+      "name": "Seeming",
+      "level": 5,
+      "school": "I",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "8 hour",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You give an illusory appearance to each creature of your choice that you can see within range. An unwilling target can make a Charisma saving throw, and if it succeeds, it is unaffected by this spell. You can give the same appearance or different ones to the targets. The spell can change the appearance of the targets' bodies and equipment. You can make each creature seem 1 foot shorter or taller and appear heavier or lighter. A target's new appearance must have the same basic arrangement of limbs as the target, but the extent of the illusion is otherwise up to you. The spell lasts for the duration. The changes wrought by this spell fail to hold up to physical inspection. For example, if you use this spell to add a hat to a creature's outfit, objects pass through the hat. A creature that takes the Study action to examine a target can make an Intelligence (Investigation) check against your spell save DC. If it succeeds, it becomes aware that the target is disguised."
+    },
+    {
+      "name": "Synaptic Static",
+      "level": 5,
+      "school": "E",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You cause psychic energy to erupt at a point within range. Each creature in a 20-foot-radius Sphere [Area of Effect] centered on that point makes an Intelligence saving throw, taking 8d6 Psychic damage on a failed save or half as much damage on a successful one. On a failed save, a target also has muddled thoughts for 1 minute. During that time, it subtracts 1d6 from all its attack rolls and ability checks, as well as any Constitution saving throws to maintain Concentration. The target makes an Intelligence saving throw at the end of each of its turns, ending the effect on itself on a success."
+    },
+    {
+      "name": "Telekinesis",
+      "level": 5,
+      "school": "T",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "10 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You gain the ability to move or manipulate creatures or objects by thought. When you cast the spell and as a Magic action on your later turns before the spell ends, you can exert your will on one creature or object that you can see within range, causing the appropriate effect below. You can affect the same target round after round or choose a new one at any time. If you switch targets, the prior target is no longer affected by the spell. Creature: Object:"
+    },
+    {
+      "name": "Teleportation Circle",
+      "level": 5,
+      "school": "C",
+      "time": "1 minute",
+      "range": "10 feet",
+      "duration": "1 round",
+      "components": "VM",
+      "ritual": false,
+      "concentration": false,
+      "description": "As you cast the spell, you draw a 5-foot-radius circle on the ground inscribed with sigils that link your location to a permanent teleportation circle of your choice whose sigil sequence you know and that is on the same plane of existence as you. A shimmering portal opens within the circle you drew and remains open until the end of your next turn. Any creature that enters the portal instantly appears within 5 feet of the destination circle or in the nearest unoccupied space if that space is occupied. Many major temples, guildhalls, and other important places have permanent teleportation circles. Each circle includes a unique sigil sequence—a string of runes arranged in a particular pattern. When you first gain the ability to cast this spell, you learn the sigil sequences for two destinations on the Material Plane, determined by the DM. You might learn additional sigil sequences during your adventures. You can commit a new sigil sequence to memory after studying it for 1 minute. You can create a permanent teleportation circle by casting this spell in the same location every day for 365 days."
+    },
+    {
+      "name": "Wall of Stone",
+      "level": 5,
+      "school": "V",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "10 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "A nonmagical wall of solid stone springs into existence at a point you choose within range. The wall is 6 inches thick and is composed of ten 10-foot-by-10-foot panels. Each panel must be contiguous with another panel. Alternatively, you can create 10-foot-by-20-foot panels that are only 3 inches thick. If the wall cuts through a creature's space when it appears, the creature is pushed to one side of the wall (you choose which side). If a creature would be surrounded on all sides by the wall (or the wall and another solid surface), that creature can make a Dexterity saving throw. On a success, it can use its Reaction to move up to its Speed so that it is no longer enclosed by the wall. The wall can have any shape you desire, though it can't occupy the same space as a creature or object. The wall doesn't need to be vertical or rest on a firm foundation. It must, however, merge with and be solidly supported by existing stone. Thus, you can use this spell to bridge a chasm or create a ramp. If you create a span greater than 20 feet in length, you must halve the size of each panel to create supports. You can crudely shape the wall to create battlements and the like. The wall is an object made of stone that can be damaged and thus breached. Each panel has AC 15 and 30 Hit Points per inch of thickness, and it has Immunity to Poison and Psychic damage. Reducing a panel to 0 Hit Points destroys it and might cause connected panels to collapse at the DM's discretion. If you maintain your Concentration on this spell for its full duration, the wall becomes permanent and can't be dispelled. Otherwise, the wall disappears when the spell ends."
+    },
+    {
+      "name": "Arcane Gate",
+      "level": 6,
+      "school": "C",
+      "time": "Action",
+      "range": "500 feet",
+      "duration": "10 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create linked teleportation portals. Choose two Large, unoccupied spaces on the ground that you can see, one space within range and the other one within 10 feet of you. A circular portal opens in each of those spaces and remains for the duration. The portals are two-dimensional glowing rings filled with mist that blocks sight. They hover inches from the ground and are perpendicular to it. A portal is open on only one side (you choose which). Anything entering the open side of a portal exits from the open side of the other portal as if the two were adjacent to each other. As a Bonus Action, you can change the facing of the open sides."
+    },
+    {
+      "name": "Chain Lightning",
+      "level": 6,
+      "school": "V",
+      "time": "Action",
+      "range": "150 feet",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You launch a lightning bolt toward a target you can see within range. Three bolts then leap from that target to as many as three other targets of your choice, each of which must be within 30 feet of the first target. A target can be a creature or an object and can be targeted by only one of the bolts. Each target makes a Dexterity saving throw, taking 10d8 Lightning damage on a failed save or half as much damage on a successful one."
+    },
+    {
+      "name": "Circle of Death",
+      "level": 6,
+      "school": "N",
+      "time": "Action",
+      "range": "150 feet",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Negative energy ripples out in a 60-foot-radius Sphere [Area of Effect] from a point you choose within range. Each creature in that area makes a Constitution saving throw, taking 8d8 Necrotic damage on a failed save or half as much damage on a successful one."
+    },
+    {
+      "name": "Create Undead",
+      "level": 6,
+      "school": "N",
+      "time": "1 minute",
+      "range": "10 feet",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You can cast this spell only at night. Choose up to three corpses of Medium or Small Humanoids within range. Each one becomes a Ghoul under your control (see the Monster Manual for its stat block). As a Bonus Action on each of your turns, you can mentally command any creature you animated with this spell if the creature is within 120 feet of you (if you control multiple creatures, you can command any of them at the same time, issuing the same command to them). You decide what action the creature will take and where it will move on its next turn, or you can issue a general command, such as to guard a particular place. If you issue no commands, the creature takes the Dodge action and moves only to avoid harm. Once given an order, the creature continues to follow the order until its task is complete. The creature is under your control for 24 hours, after which it stops obeying any command you've given it. To maintain control of the creature for another 24 hours, you must cast this spell on the creature before the current 24-hour period ends. This use of the spell reasserts your control over up to three creatures you have animated with this spell rather than animating new ones."
+    },
+    {
+      "name": "Disintegrate",
+      "level": 6,
+      "school": "T",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You launch a green ray at a target you can see within range. The target can be a creature, a nonmagical object, or a creation of magical force, such as the wall created by Wall of Force. A creature targeted by this spell makes a Dexterity saving throw. On a failed save, the target takes 10d6 + 40 Force damage. If this damage reduces it to 0 Hit Points, it and everything nonmagical it is wearing and carrying are disintegrated into gray dust. The target can be revived only by a True Resurrection or a Wish spell. This spell automatically disintegrates a Large or smaller nonmagical object or a creation of magical force. If such a target is Huge or larger, this spell disintegrates a 10-foot-Cube [Area of Effect] portion of it."
+    },
+    {
+      "name": "Eyebite",
+      "level": 6,
+      "school": "N",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "For the duration, your eyes become an inky void. One creature of your choice within 60 feet of you that you can see must succeed on a Wisdom saving throw or be affected by one of the following effects of your choice for the duration. On each of your turns until the spell ends, you can take a Magic action to target another creature but can't target a creature again if it has succeeded on a save against this casting of the spell. Asleep: Panicked: Sickened:"
+    },
+    {
+      "name": "Flesh to Stone",
+      "level": 6,
+      "school": "T",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You attempt to turn one creature that you can see within range into stone. The target makes a Constitution saving throw. On a failed save, it has the Restrained condition for the duration. On a successful save, its Speed is 0 until the start of your next turn. Constructs automatically succeed on the save. A Restrained target makes another Constitution saving throw at the end of each of its turns. If it successfully saves against this spell three times, the spell ends. If it fails its saves three times, it is turned to stone and has the Petrified condition for the duration. The successes and failures needn't be consecutive; keep track of both until the target collects three of a kind. If you maintain your Concentration on this spell for the entire possible duration, the target is Petrified until the condition is ended by Greater Restoration or similar magic."
+    },
+    {
+      "name": "Globe of Invulnerability",
+      "level": 6,
+      "school": "A",
+      "time": "Action",
+      "range": "10 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "An immobile, shimmering barrier appears in a 10-foot Emanation [Area of Effect] around you and remains for the duration. Any spell of level 5 or lower cast from outside the barrier can't affect anything within it. Such a spell can target creatures and objects within the barrier, but the spell has no effect on them. Similarly, the area within the barrier is excluded from areas of effect created by such spells."
+    },
+    {
+      "name": "Mass Suggestion",
+      "level": 6,
+      "school": "E",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "24 hour",
+      "components": "VM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You suggest a course of activity—described in no more than 25 words—to twelve or fewer creatures you can see within range that can hear and understand you. The suggestion must sound achievable and not involve anything that would obviously deal damage to any of the targets or their allies. For example, you could say, \"Walk to the village down that road, and help the villagers there harvest crops until sunset.\" Or you could say, \"Now is not the time for violence. Drop your weapons, and dance! Stop in an hour.\" Each target must succeed on a Wisdom saving throw or have the Charmed condition for the duration or until you or your allies deal damage to the target. Each Charmed target pursues the suggestion to the best of its ability. The suggested activity can continue for the entire duration, but if the suggested activity can be completed in a shorter time, the spell ends for a target upon completing it."
+    },
+    {
+      "name": "Move Earth",
+      "level": 6,
+      "school": "T",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "2 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Choose an area of terrain no larger than 40 feet on a side within range. You can reshape dirt, sand, or clay in the area in any manner you choose for the duration. You can raise or lower the area's elevation, create or fill in a trench, erect or flatten a wall, or form a pillar. The extent of any such changes can't exceed half the area's largest dimension. For example, if you affect a 40-foot square, you can create a pillar up to 20 feet high, raise or lower the square's elevation by up to 20 feet, dig a trench up to 20 feet deep, and so on. It takes 10 minutes for these changes to complete. Because the terrain's transformation occurs slowly, creatures in the area can't usually be trapped or injured by the ground's movement. At the end of every 10 minutes you spend Concentration on the spell, you can choose a new area of terrain to affect within range. This spell can't manipulate natural stone or stone construction. Rocks and structures shift to accommodate the new terrain. If the way you shape the terrain would make a structure unstable, it might collapse. Similarly, this spell doesn't directly affect plant growth. The moved earth carries any plants along with it."
+    },
+    {
+      "name": "Otiluke's Freezing Sphere",
+      "level": 6,
+      "school": "V",
+      "time": "Action",
+      "range": "300 feet",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "A frigid globe streaks from you to a point of your choice within range, where it explodes in a 60-foot-radius Sphere [Area of Effect]. Each creature in that area makes a Constitution saving throw, taking 10d6 Cold damage on a failed save or half as much damage on a successful one. If the globe strikes a body of water, it freezes the water to a depth of 6 inches over an area 30 feet square. This ice lasts for 1 minute. Creatures that were swimming on the surface of frozen water are trapped in the ice and have the Restrained condition. A trapped creature can take an action to make a Strength (Athletics) check against your spell save DC to break free. You can refrain from firing the globe after completing the spell's casting. If you do so, a globe about the size of a sling bullet, cool to the touch, appears in your hand. At any time, you or a creature you give the globe to can throw the globe (to a range of 40 feet) or hurl it with a sling (to the sling's normal range). It shatters on impact, with the same effect as a normal casting of the spell. You can also set the globe down without shattering it. After 1 minute, if the globe hasn't already shattered, it explodes."
+    },
+    {
+      "name": "Summon Fiend",
+      "level": 6,
+      "school": "C",
+      "time": "Action",
+      "range": "90 feet",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You call forth a fiendish spirit. It manifests in an unoccupied space that you can see within range and uses the Fiendish Spirit stat block. When you cast the spell, choose Demon, Devil, or Yugoloth. The creature resembles a Fiend of the chosen type, which determines certain details in its stat block. The creature disappears when it drops to 0 Hit Points or when the spell ends. The creature is an ally to you and your allies. In combat, the creature shares your Initiative count, but it takes its turn immediately after yours. It obeys your verbal commands (no action required by you). If you don't issue any, it takes the Dodge action and uses its movement to avoid danger."
+    },
+    {
+      "name": "Sunbeam",
+      "level": 6,
+      "school": "V",
+      "time": "Action",
+      "range": "60 feet line",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You launch a sunbeam in a 5-foot-wide, 60-foot-long Line [Area of Effect]. Each creature in the Line [Area of Effect] makes a Constitution saving throw. On a failed save, a creature takes 6d8 Radiant damage and has the Blinded condition until the start of your next turn. On a successful save, it takes half as much damage only. Until the spell ends, you can take a Magic action to create a new Line [Area of Effect] of radiance. For the duration, a mote of brilliant radiance shines above you. It sheds Bright Light in a 30-foot radius and Dim Light for an additional 30 feet. This light is sunlight."
+    },
+    {
+      "name": "Tasha's Bubbling Cauldron",
+      "level": 6,
+      "school": "C",
+      "time": "Action",
+      "range": "5 feet",
+      "duration": "10 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You conjure a claw-footed cauldron filled with bubbling liquid. The cauldron appears in an unoccupied space on the ground within 5 feet of you and lasts for the duration. The cauldron can't be moved and disappears when the spell ends, along with the bubbling liquid inside it. The liquid in the cauldron duplicates the properties of a Common or an Uncommon potion of your choice (such as a Potion of Healing). As a Bonus Action, you or an ally can reach into the cauldron and withdraw one potion of that kind. The potion is contained in a vial that disappears when the potion is consumed. The cauldron can produce a number of these potions equal to your spellcasting ability modifier (minimum 1). When the last of these potions is withdrawn from the cauldron, the cauldron disappears, and the spell ends. Potions obtained from the cauldron that aren't consumed disappear when you cast this spell again."
+    },
+    {
+      "name": "True Seeing",
+      "level": 6,
+      "school": "D",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "For the duration, the willing creature you touch has Truesight with a range of 120 feet."
+    },
+    {
+      "name": "Delayed Blast Fireball",
+      "level": 7,
+      "school": "V",
+      "time": "Action",
+      "range": "150 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "A beam of yellow light flashes from you, then condenses at a chosen point within range as a glowing bead for the duration. When the spell ends, the bead explodes, and each creature in a 20-foot-radius Sphere [Area of Effect] centered on that point makes a Dexterity saving throw. A creature takes Fire damage equal to the total accumulated damage on a failed save or half as much damage on a successful one. The spell's base damage is 12d6, and the damage increases by 1d6 whenever your turn ends and the spell hasn't ended. If a creature touches the glowing bead before the spell ends, that creature makes a Dexterity saving throw. On a failed save, the spell ends, causing the bead to explode. On a successful save, the creature can throw the bead up to 40 feet. If the thrown bead enters a creature's space or collides with a solid object, the spell ends, and the bead explodes. When the bead explodes, flammable objects in the explosion that aren't being worn or carried start burning."
+    },
+    {
+      "name": "Etherealness",
+      "level": 7,
+      "school": "C",
+      "time": "Action",
+      "range": "Special",
+      "duration": "8 hour",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You step into the border regions of the Ethereal Plane, where it overlaps with your current plane. You remain in the Border Ethereal for the duration. During this time, you can move in any direction. If you move up or down, every foot of movement costs an extra foot. You can perceive the plane you left, which looks gray, and you can't see anything there more than 60 feet away. While on the Ethereal Plane, you can affect and be affected only by creatures, objects, and effects on that plane. Creatures that aren't on the Ethereal Plane can't perceive or interact with you unless a feature gives them the ability to do so. When the spell ends, you return to the plane you left in the spot that corresponds to your space in the Border Ethereal. If you appear in an occupied space, you are shunted to the nearest unoccupied space and take Force damage equal to twice the number of feet you are moved. This spell ends instantly if you cast it while you are on the Ethereal Plane or a plane that doesn't border it, such as one of the Outer Planes."
+    },
+    {
+      "name": "Finger of Death",
+      "level": 7,
+      "school": "N",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You unleash negative energy toward a creature you can see within range. The target makes a Constitution saving throw, taking 7d8 + 30 Necrotic damage on a failed save or half as much damage on a successful one. A Humanoid killed by this spell rises at the start of your next turn as a Zombie that follows your verbal orders."
+    },
+    {
+      "name": "Fire Storm",
+      "level": 7,
+      "school": "V",
+      "time": "Action",
+      "range": "150 feet",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "A storm of fire appears within range. The area of the storm consists of up to ten 10-foot Cubes, which you arrange as you like. Each Cube [Area of Effect] must be contiguous with at least one other Cube [Area of Effect]. Each creature in the area makes a Dexterity saving throw, taking 7d10 Fire damage on a failed save or half as much damage on a successful one. Flammable objects in the area that aren't being worn or carried start burning."
+    },
+    {
+      "name": "Forcecage",
+      "level": 7,
+      "school": "V",
+      "time": "Action",
+      "range": "100 feet",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "An immobile, Invisible, Cube [Area of Effect]-shaped prison composed of magical force springs into existence around an area you choose within range. The prison can be a cage or a solid box, as you choose. A prison in the shape of a cage can be up to 20 feet on a side and is made from 1/2-inch diameter bars spaced 1/2 inch apart. A prison in the shape of a box can be up to 10 feet on a side, creating a solid barrier that prevents any matter from passing through it and blocking any spells cast into or out from the area. When you cast the spell, any creature that is completely inside the cage's area is trapped. Creatures only partially within the area, or those too large to fit inside it, are pushed away from the center of the area until they are completely outside it. A creature inside the cage can't leave it by nonmagical means. If the creature tries to use teleportation or interplanar travel to leave, it must first make a Charisma saving throw. On a successful save, the creature can use that magic to exit the cage. On a failed save, the creature doesn't exit the cage and wastes the spell or effect. The cage also extends into the Ethereal Plane, blocking ethereal travel. This spell can't be dispelled by Dispel Magic."
+    },
+    {
+      "name": "Plane Shift",
+      "level": 7,
+      "school": "C",
+      "time": "Action",
+      "range": "Special",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You and up to eight willing creatures who link hands in a circle are transported to a different plane of existence. You can specify a target destination in general terms, such as the City of Brass on the Elemental Plane of Fire or the palace of Dispater on the second level of the Nine Hells, and you appear in or near that destination, as determined by the DM. Alternatively, if you know the sigil sequence of a teleportation circle on another plane of existence, this spell can take you to that circle. If the teleportation circle is too small to hold all the creatures you transported, they appear in the closest unoccupied spaces next to the circle."
+    },
+    {
+      "name": "Prismatic Spray",
+      "level": 7,
+      "school": "V",
+      "time": "Action",
+      "range": "60 feet cone",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "Eight rays of light flash from you in a 60-foot Cone [Area of Effect]. Each creature in the Cone [Area of Effect] makes a Dexterity saving throw. For each target, roll 1d8 to determine which color ray affects it, consulting the Prismatic Rays table."
+    },
+    {
+      "name": "Reverse Gravity",
+      "level": 7,
+      "school": "T",
+      "time": "Action",
+      "range": "100 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "This spell reverses gravity in a 50-foot-radius, 100-foot high Cylinder [Area of Effect] centered on a point within range. All creatures and objects in that area that aren't anchored to the ground fall upward and reach the top of the Cylinder [Area of Effect]. A creature can make a Dexterity saving throw to grab a fixed object it can reach, thus avoiding the fall upward. If a ceiling or an anchored object is encountered in this upward fall, creatures and objects strike it just as they would during a downward fall. If an affected creature or object reaches the Cylinder [Area of Effect]'s top without striking anything, it hovers there for the duration. When the spell ends, affected objects and creatures fall downward."
+    },
+    {
+      "name": "Teleport",
+      "level": 7,
+      "school": "C",
+      "time": "Action",
+      "range": "10 feet",
+      "duration": "Instantaneous",
+      "components": "V",
+      "ritual": false,
+      "concentration": false,
+      "description": "This spell instantly transports you and up to eight willing creatures that you can see within range, or a single object that you can see within range, to a destination you select. If you target an object, it must be Large or smaller, and it can't be held or carried by an unwilling creature. The destination you choose must be known to you, and it must be on the same plane of existence as you. Your familiarity with the destination determines whether you arrive there successfully. The DM rolls 1d100 and consults the Teleportation Outcome table and the explanations after it. Familiarity: Mishap: Similar Area: Off Target: On Target:"
+    },
+    {
+      "name": "Befuddlement",
+      "level": 8,
+      "school": "E",
+      "time": "Action",
+      "range": "150 feet",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You blast the mind of a creature that you can see within range. The target makes an Intelligence saving throw. On a failed save, the target takes 10d12 Psychic damage and can't cast spells or take the Magic action. At the end of every 30 days, the target repeats the save, ending the effect on a success. The effect can also be ended by the Greater Restoration, Heal, or Wish spell. On a successful save, the target takes half as much damage only."
+    },
+    {
+      "name": "Demiplane",
+      "level": 8,
+      "school": "C",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 hour",
+      "components": "S",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create a shadowy Medium door on a flat solid surface that you can see within range. This door can be opened and closed, and it leads to a demiplane that is an empty room 30 feet in each dimension, made of wood or stone (your choice). When the spell ends, the door vanishes, and any objects inside the demiplane remain there. Any creatures inside also remain unless they opt to be shunted through the door as it vanishes, landing with the Prone condition in the unoccupied spaces closest to the door's former space. Each time you cast this spell, you can create a new demiplane or connect the shadowy door to a demiplane you created with a previous casting of this spell. Additionally, if you know the nature and contents of a demiplane created by a casting of this spell by another creature, you can connect the shadowy door to that demiplane instead."
+    },
+    {
+      "name": "Dominate Monster",
+      "level": 8,
+      "school": "E",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 hour",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "One creature you can see within range must succeed on a Wisdom saving throw or have the Charmed condition for the duration. The target has Advantage on the save if you or your allies are fighting it. Whenever the target takes damage, it repeats the save, ending the spell on itself on a success. You have a telepathic link with the Charmed target while the two of you are on the same plane of existence. On your turn, you can use this link to issue commands to the target (no action required), such as \"Attack that creature,\" \"Move over there,\" or \"Fetch that object.\" The target does its best to obey on its turn. If it completes an order and doesn't receive further direction from you, it acts and moves as it likes, focusing on protecting itself. You can command the target to take a Reaction but must take your own Reaction to do so."
+    },
+    {
+      "name": "Earthquake",
+      "level": 8,
+      "school": "T",
+      "time": "Action",
+      "range": "500 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Choose a point on the ground that you can see within range. For the duration, an intense tremor rips through the ground in a 100-foot-radius circle centered on that point. The ground there is Difficult Terrain. When you cast this spell and at the end of each of your turns for the duration, each creature on the ground in the area makes a Dexterity saving throw. On a failed save, a creature has the Prone condition, and its Concentration is broken. You can also cause the effects below. Fissures: Structures:"
+    },
+    {
+      "name": "Glibness",
+      "level": 8,
+      "school": "E",
+      "time": "Action",
+      "range": "Special",
+      "duration": "1 hour",
+      "components": "V",
+      "ritual": false,
+      "concentration": false,
+      "description": "Until the spell ends, when you make a Charisma check, you can replace the number you roll with a 15. Additionally, no matter what you say, magic that would determine if you are telling the truth indicates that you are being truthful."
+    },
+    {
+      "name": "Incendiary Cloud",
+      "level": 8,
+      "school": "C",
+      "time": "Action",
+      "range": "150 feet",
+      "duration": "1 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "A swirling cloud of embers and smoke fills a 20-foot-radius Sphere [Area of Effect] centered on a point within range. The cloud's area is Heavily Obscured. It lasts for the duration or until a strong wind (like that created by Gust of Wind) disperses it. When the cloud appears, each creature in it makes a Dexterity saving throw, taking 10d8 Fire damage on a failed save or half as much damage on a successful one. A creature must also make this save when the Sphere [Area of Effect] moves into its space and when it enters the Sphere [Area of Effect] or ends its turn there. A creature makes this save only once per turn. The cloud moves 10 feet away from you in a direction you choose at the start of each of your turns."
+    },
+    {
+      "name": "Power Word Stun",
+      "level": 8,
+      "school": "E",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "Instantaneous",
+      "components": "V",
+      "ritual": false,
+      "concentration": false,
+      "description": "You overwhelm the mind of one creature you can see within range. If the target has 150 Hit Points or fewer, it has the Stunned condition. Otherwise, its Speed is 0 until the start of your next turn. The Stunned target makes a Constitution saving throw at the end of each of its turns, ending the condition on itself on a success."
+    },
+    {
+      "name": "Sunburst",
+      "level": 8,
+      "school": "V",
+      "time": "Action",
+      "range": "150 feet",
+      "duration": "Instantaneous",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Brilliant sunlight flashes in a 60-foot-radius Sphere [Area of Effect] centered on a point you choose within range. Each creature in the Sphere [Area of Effect] makes a Constitution saving throw. On a failed save, a creature takes 12d6 Radiant damage and has the Blinded condition for 1 minute. On a successful save, it takes half as much damage only. A creature Blinded by this spell makes another Constitution saving throw at the end of each of its turns, ending the effect on itself on a success. This spell dispels Darkness in its area that was created by any spell."
+    },
+    {
+      "name": "Astral Projection",
+      "level": 9,
+      "school": "N",
+      "time": "1 hour",
+      "range": "10 feet",
+      "duration": "Permanent",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You and up to eight willing creatures within range project your astral bodies into the Astral Plane (the spell ends instantly if you are already on that plane). Each target's body is left behind in a state of suspended animation; it has the Unconscious condition, doesn't need food or air, and doesn't age. A target's astral form resembles its body in almost every way, replicating its game statistics and possessions. The principal difference is the addition of a silvery cord that trails from between the shoulder blades of the astral form. The cord fades from view after 1 foot. If the cord is cut—which happens only when an effect states that it does so—the target's body and astral form both die. A target's astral form can travel through the Astral Plane. The moment an astral form leaves that plane, the target's body and possessions travel along the silver cord, causing the target to re-enter its body on the new plane. Any damage or other effects that apply to an astral form have no effect on the target's body and vice versa. If a target's body or astral form drops to 0 Hit Points, the spell ends for that target. The spell ends for all the targets if you take a Magic action to dismiss it. When the spell ends for a target who isn't dead, the target reappears in its body and exits the state of suspended animation."
+    },
+    {
+      "name": "Foresight",
+      "level": 9,
+      "school": "D",
+      "time": "1 minute",
+      "range": "Special",
+      "duration": "8 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You touch a willing creature and bestow a limited ability to see into the immediate future. For the duration, the target has Advantage on D20 Test, and other creatures have Disadvantage on attack rolls against it. The spell ends early if you cast it again."
+    },
+    {
+      "name": "Gate",
+      "level": 9,
+      "school": "C",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "1 minute",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You conjure a portal linking an unoccupied space you can see within range to a precise location on a different plane of existence. The portal is a circular opening, which you can make 5 to 20 feet in diameter. You can orient the portal in any direction you choose. The portal lasts for the duration, and the portal's destination is visible through it. The portal has a front and a back on each plane where it appears. Travel through the portal is possible only by moving through its front. Anything that does so is instantly transported to the other plane, appearing in the unoccupied space nearest to the portal. Deities and other planar rulers can prevent portals created by this spell from opening in their presence or anywhere within their domains. When you cast this spell, you can speak the name of a specific creature (a pseudonym, title, or nickname doesn't work). If that creature is on a plane other than the one you are on, the portal opens next to the named creature and transports it to the nearest unoccupied space on your side of the portal. You gain no special power over the creature, and it is free to act as the DM deems appropriate. It might leave, attack you, or help you."
+    },
+    {
+      "name": "Imprisonment",
+      "level": 9,
+      "school": "A",
+      "time": "1 minute",
+      "range": "30 feet",
+      "duration": "Permanent",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "You create a magical restraint to hold a creature that you can see within range. The target must make a Wisdom saving throw. On a successful save, the target is unaffected, and it is immune to this spell for the next 24 hours. On a failed save, the target is imprisoned. While imprisoned, the target doesn't need to breathe, eat, or drink, and it doesn't age. Divination spells can't locate or perceive the imprisoned target, and the target can't teleport. Until the spell ends, the target is also affected by one of the following effects of your choice: Ending the Spell:"
+    },
+    {
+      "name": "Meteor Swarm",
+      "level": 9,
+      "school": "V",
+      "time": "Action",
+      "range": "1 miles",
+      "duration": "Instantaneous",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "Blazing orbs of fire plummet to the ground at four different points you can see within range. Each creature in a 40-foot-radius Sphere [Area of Effect] centered on each of those points makes a Dexterity saving throw. A creature takes 20d6 Fire damage and 20d6 Bludgeoning damage on a failed save or half as much damage on a successful one. A creature in the area of more than one fiery Sphere [Area of Effect] is affected only once. A nonmagical object that isn't being worn or carried also takes the damage if it's in the spell's area, and the object starts burning if it's flammable."
+    },
+    {
+      "name": "Power Word Kill",
+      "level": 9,
+      "school": "E",
+      "time": "Action",
+      "range": "60 feet",
+      "duration": "Instantaneous",
+      "components": "V",
+      "ritual": false,
+      "concentration": false,
+      "description": "You compel one creature you can see within range to die. If the target has 100 Hit Points or fewer, it dies. Otherwise, it takes 12d12 Psychic damage."
+    },
+    {
+      "name": "Time Stop",
+      "level": 9,
+      "school": "T",
+      "time": "Action",
+      "range": "Special",
+      "duration": "Instantaneous",
+      "components": "V",
+      "ritual": false,
+      "concentration": false,
+      "description": "You briefly stop the flow of time for everyone but yourself. No time passes for other creatures, while you take 1d4 + 1 turns in a row, during which you can use actions and move as normal. This spell ends if one of the actions you use during this period, or any effects that you create during it, affects a creature other than you or an object being worn or carried by someone other than you. In addition, the spell ends if you move to a place more than 1,000 feet from the location where you cast it."
+    },
+    {
+      "name": "True Polymorph",
+      "level": 9,
+      "school": "T",
+      "time": "Action",
+      "range": "30 feet",
+      "duration": "1 hour",
+      "components": "VSM",
+      "ritual": false,
+      "concentration": false,
+      "description": "Choose one creature or nonmagical object that you can see within range. The creature shape-shifts into a different creature or a nonmagical object, or the object shape-shifts into a creature (the object must be neither worn nor carried). The transformation lasts for the duration or until the target dies or is destroyed, but if you maintain Concentration on this spell for the full duration, the spell lasts until dispelled. An unwilling creature can make a Wisdom saving throw, and if it succeeds, it isn't affected by this spell. Creature into Creature: Object into Creature: Creature into Object:"
+    },
+    {
+      "name": "Weird",
+      "level": 9,
+      "school": "I",
+      "time": "Action",
+      "range": "120 feet",
+      "duration": "1 minute",
+      "components": "VS",
+      "ritual": false,
+      "concentration": false,
+      "description": "You try to create illusory terrors in others' minds. Each creature of your choice in a 30-foot-radius Sphere [Area of Effect] centered on a point within range makes a Wisdom saving throw. On a failed save, a target takes 10d10 Psychic damage and has the Frightened condition for the duration. On a successful save, a target takes half as much damage only. A Frightened target makes a Wisdom saving throw at the end of each of its turns. On a failed save, it takes 5d10 Psychic damage. On a successful save, the spell ends on that target."
+    },
+    {
+      "name": "Wish",
+      "level": 9,
+      "school": "C",
+      "time": "Action",
+      "range": "Special",
+      "duration": "Instantaneous",
+      "components": "V",
+      "ritual": false,
+      "concentration": false,
+      "description": "Wish is the mightiest spell a mortal can cast. By simply speaking aloud, you can alter reality itself. The basic use of this spell is to duplicate any other spell of level 8 or lower. If you use it this way, you don't need to meet any requirements to cast that spell, including costly components. The spell simply takes effect. Alternatively, you can create one of the following effects of your choice: The stress of casting Wish to produce any effect other than duplicating another spell weakens you. After enduring that stress, each time you cast a spell until you finish a Long Rest, you take 1d10 Necrotic damage per level of that spell. This damage can't be reduced or prevented in any way. In addition, your Strength score becomes 3 for 2d4 days. For each of those days that you spend resting and doing nothing more than light activity, your remaining recovery time decreases by 2 days. Finally, there is a 33 chance that you are unable to cast Wish ever again if you suffer this stress."
     }
   ]
 }</script>
@@ -978,11 +3327,41 @@ input[type=range]::-moz-range-thumb{
     { key: 'elemPlus',  label: '+3d8',     rgb: '255,176,59', needs: 'elem' }
   ];
 
-  var state = load();
   var volley = null;
   var view = 'volley';
   var SURGE = { rows: [] };
   try { SURGE = JSON.parse(document.getElementById('surge-data').textContent); } catch (e) {}
+  var SPELLBOOK = { spells: [] };
+  try { SPELLBOOK = JSON.parse(document.getElementById('spell-data').textContent); } catch (e) {}
+  var SPELL_BY_NAME = {};
+  (SPELLBOOK.spells || []).forEach(function (s) { SPELL_BY_NAME[s.name] = s; });
+
+  /* the warlock slots sit on the second level row */
+  var WARLOCK_LEVEL = 2;
+  var LEVELS = [0, 1, 2, 3, 4, 5];
+
+  var SPELL_DEFAULTS = {
+    dc: 17,
+    sp: 8,
+    spMax: 8,
+    cunning: false,
+    sorcRest: false,
+    sorcererLevel: 5,
+    max: { 1: 4, 2: 3, 3: 3, 4: 2, 5: 0 },
+    left: { 1: 4, 2: 3, 3: 3, 4: 2, 5: 0 },
+    warlockMax: 2,
+    warlockLeft: 2,
+    selected: 1,
+    lists: {}
+  };
+
+  var SPELL_SEED = {
+    0: ['Eldritch Blast', 'Light', 'Prestidigitation', 'Shocking Grasp', 'Sorcerous Burst'],
+    1: ['Burning Hands', 'Detect Magic', 'Hex'],
+    2: ['Scorching Ray']
+  };
+
+  var state = load();
 
   var el = {
     spellName: document.getElementById('spellName'),
@@ -1004,7 +3383,24 @@ input[type=range]::-moz-range-thumb{
     surgeRoll: document.getElementById('surgeRoll'),
     surgeRange: document.getElementById('surgeRange'),
     surgeText: document.getElementById('surgeText'),
-    surgeDice: document.getElementById('surgeDice')
+    surgeDice: document.getElementById('surgeDice'),
+    tabSpells: document.getElementById('tab-spells'),
+    viewSpells: document.getElementById('view-spells'),
+    wrench: document.getElementById('wrench'),
+    dcValue: document.getElementById('dcValue'),
+    spValue: document.getElementById('spValue'),
+    cunning: document.getElementById('cunning'),
+    sorcRest: document.getElementById('sorcRest'),
+    levels: document.getElementById('levels'),
+    spellList: document.getElementById('spellList'),
+    sheet: document.getElementById('sheet'),
+    sheetTitle: document.getElementById('sheetTitle'),
+    sheetMeta: document.getElementById('sheetMeta'),
+    sheetText: document.getElementById('sheetText'),
+    sheetList: document.getElementById('sheetList'),
+    sheetActions: document.getElementById('sheetActions'),
+    sheetSearch: document.getElementById('sheetSearch'),
+    sheetClose: document.getElementById('sheetClose')
   };
 
   /* ---- state ---- */
@@ -1014,6 +3410,7 @@ input[type=range]::-moz-range-thumb{
     try { saved = JSON.parse(localStorage.getItem(STORE) || '{}') || {}; } catch (e) { saved = {}; }
     var merged = {};
     Object.keys(DEFAULTS).forEach(function (k) { merged[k] = DEFAULTS[k]; });
+    merged.spell = seedSpells(saved.spell || {});
     Object.keys(DEFAULTS).forEach(function (k) {
       if (Object.prototype.hasOwnProperty.call(saved, k) && saved[k] !== null && saved[k] !== undefined) merged[k] = saved[k];
     });
@@ -1022,6 +3419,26 @@ input[type=range]::-moz-range-thumb{
     if (!R.powerOf || merged.power !== R.powerOf(merged.power).id) merged.power = DEFAULTS.power;
     if (!merged.elem) merged.elemPlus = false;
     return merged;
+  }
+
+  function seedSpells(saved) {
+    var s = {};
+    Object.keys(SPELL_DEFAULTS).forEach(function (k) { s[k] = SPELL_DEFAULTS[k]; });
+    if (saved && typeof saved === 'object') {
+      Object.keys(SPELL_DEFAULTS).forEach(function (k) {
+        if (saved[k] !== undefined && saved[k] !== null && typeof saved[k] === typeof SPELL_DEFAULTS[k]) s[k] = saved[k];
+      });
+      if (saved.max) { s.max = {}; Object.keys(SPELL_DEFAULTS.max).forEach(function (k) { s.max[k] = Number(saved.max[k]) || 0; }); }
+      if (saved.left) { s.left = {}; Object.keys(SPELL_DEFAULTS.left).forEach(function (k) { s.left[k] = Number(saved.left[k]) || 0; }); }
+    }
+    var lists = {};
+    LEVELS.forEach(function (lv) {
+      var seed = (SPELL_SEED[lv] || []).filter(function (n) { return SPELL_BY_NAME[n]; });
+      var own = (saved.lists && saved.lists[lv]) || null;
+      lists[lv] = (own && own.length) ? own.filter(function (n) { return SPELL_BY_NAME[n]; }) : seed;
+    });
+    s.lists = lists;
+    return s;
   }
 
   function save() {
@@ -1080,6 +3497,7 @@ input[type=range]::-moz-range-thumb{
 
   el.tabVolley.addEventListener('click', function () { setView('volley'); });
   el.tabSurge.addEventListener('click', function () { setView('surge'); });
+  el.tabSpells.addEventListener('click', function () { setView('spells'); });
 
   el.cast.addEventListener('click', function () {
     if (view === 'surge') { castSurge(); return; }
@@ -1101,9 +3519,13 @@ input[type=range]::-moz-range-thumb{
     view = next;
     el.viewVolley.classList.toggle('on', next === 'volley');
     el.viewSurge.classList.toggle('on', next === 'surge');
+    el.viewSpells.classList.toggle('on', next === 'spells');
     el.tabVolley.setAttribute('aria-selected', next === 'volley' ? 'true' : 'false');
     el.tabSurge.setAttribute('aria-selected', next === 'surge' ? 'true' : 'false');
+    el.tabSpells.setAttribute('aria-selected', next === 'spells' ? 'true' : 'false');
     el.acField.style.visibility = next === 'volley' ? 'visible' : 'hidden';
+    el.wrench.hidden = next !== 'spells';
+    el.cast.hidden = next === 'spells';
     el.castLabel.textContent = next === 'volley' ? 'Cast' : 'Surge';
     render();
   }
@@ -1132,7 +3554,7 @@ input[type=range]::-moz-range-thumb{
   function render() {
     var power = R.powerOf(state.power);
 
-    el.spellName.textContent = view === 'volley' ? power.name : 'Wild magic surge';
+    el.spellName.textContent = view === 'volley' ? power.name : (view === 'surge' ? 'Wild magic surge' : 'Spells');
     el.power.value = String(R.POWERS.indexOf(power));
     var span = Number(el.power.max) - Number(el.power.min);
     el.power.style.setProperty('--fill', (span ? (Number(el.power.value) - Number(el.power.min)) / span * 100 : 0) + '%');
@@ -1156,6 +3578,7 @@ input[type=range]::-moz-range-thumb{
     renderSummary();
     renderBoard(false);
     renderTally();
+    renderSpells();
   }
 
   function renderBoard(animate) {
@@ -1299,6 +3722,346 @@ input[type=range]::-moz-range-thumb{
     if (t.flat) out += '<em>&middot; ' + t.flat + ' flat</em>';
     el.tally.innerHTML = out;
   }
+
+  /* ---- spells ---- */
+
+  var editing = false;
+  var dragged = false;
+
+  function commit() { save(); renderSpells(); }
+
+  function pipButton(full, lv, n, warlock) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'pip' + (warlock ? ' wl' : '') + (full ? ' full' : '');
+    b.dataset.lv = String(lv);
+    b.dataset.n = String(n);
+    if (warlock) b.dataset.wl = '1';
+    b.setAttribute('aria-label', (warlock ? 'Warlock slot ' : 'Slot ') + n);
+    return b;
+  }
+
+  function editButton(sign, lv, warlock) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'mini';
+    b.textContent = sign;
+    b.dataset.edit = sign === '+' ? 'add' : 'take';
+    b.dataset.lv = String(lv);
+    if (warlock) b.dataset.wl = '1';
+    return b;
+  }
+
+  function renderLevels() {
+    var S = state.spell;
+    el.levels.innerHTML = '';
+    LEVELS.forEach(function (lv) {
+      var max = S.max[lv] || 0;
+      var left = Math.min(S.left[lv] || 0, max);
+      var row = document.createElement('div');
+      row.className = 'lv' + (lv === S.selected ? ' on' : '') + (editing ? ' editing' : '');
+      if (lv > 0 && !max) row.classList.add('dim');
+      row.dataset.lv = String(lv);
+
+      var n = document.createElement('span');
+      n.className = 'n';
+      n.textContent = String(lv);
+      row.appendChild(n);
+
+      var pips = document.createElement('span');
+      pips.className = 'pips';
+      pips.style.display = '';
+      for (var i = 1; i <= max; i++) pips.appendChild(pipButton(i <= left, lv, i, false));
+      if (lv === WARLOCK_LEVEL && S.warlockMax) {
+        var plus = document.createElement('span');
+        plus.className = 'plus';
+        plus.textContent = '+';
+        pips.appendChild(plus);
+        for (var w = 1; w <= S.warlockMax; w++) pips.appendChild(pipButton(w <= S.warlockLeft, lv, w, true));
+      }
+      row.appendChild(pips);
+
+      var edit = document.createElement('span');
+      edit.className = 'edit';
+      if (lv > 0) {
+        edit.appendChild(editButton('-', lv, false));
+        edit.appendChild(editButton('+', lv, false));
+      }
+      if (lv === WARLOCK_LEVEL && S.warlockMax) {
+        var wl = document.createElement('span');
+        wl.className = 'plus';
+        wl.textContent = 'W';
+        edit.appendChild(wl);
+        edit.appendChild(editButton('-', lv, true));
+        edit.appendChild(editButton('+', lv, true));
+      }
+      row.appendChild(edit);
+
+      var arrow = document.createElement('button');
+      arrow.type = 'button';
+      arrow.className = 'arrow';
+      arrow.textContent = '›';
+      arrow.setAttribute('aria-label', 'Open the grimoire for level ' + lv);
+      row.appendChild(arrow);
+
+      el.levels.appendChild(row);
+    });
+  }
+
+  function renderSpellList() {
+    var S = state.spell;
+    var list = S.lists[S.selected] || [];
+    el.spellList.innerHTML = '';
+    if (!list.length) {
+      var empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'No spells at level ' + S.selected + ' yet. Open the grimoire with the arrow on the left to add some.';
+      el.spellList.appendChild(empty);
+      return;
+    }
+    list.forEach(function (name) {
+      var spell = SPELL_BY_NAME[name];
+      if (!spell) return;
+      var card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.name = name;
+      var meta = '<span>' + spell.time + '</span><span>' + spell.range + '</span><span>' + spell.duration + '</span>';
+      if (spell.components) meta += '<span class="cmp">' + spell.components + '</span>';
+      if (spell.ritual) meta += '<span class="rit">ritual</span>';
+      if (spell.concentration) meta += '<span class="rit">conc</span>';
+      card.innerHTML = '<div class="t">' + spell.name + '</div><div class="m">' + meta + '</div>';
+      el.spellList.appendChild(card);
+    });
+  }
+
+  function renderSpells() {
+    var S = state.spell;
+    el.dcValue.textContent = S.dc;
+    el.spValue.textContent = S.sp + '/' + S.spMax;
+    el.cunning.setAttribute('aria-pressed', S.cunning ? 'true' : 'false');
+    el.sorcRest.setAttribute('aria-pressed', S.sorcRest ? 'true' : 'false');
+    el.sorcRest.title = 'Restores ' + Math.floor(S.sorcererLevel / 2) + ' sorcery points';
+    el.wrench.setAttribute('aria-pressed', editing ? 'true' : 'false');
+    renderLevels();
+    renderSpellList();
+  }
+
+  function closeSheet() { el.sheet.hidden = true; }
+
+  function openSheet(name) {
+    var spell = SPELL_BY_NAME[name];
+    if (!spell) return;
+    el.sheetTitle.textContent = spell.name;
+    var meta = '<span>level ' + spell.level + '</span><span>' + spell.time + '</span><span>' + spell.range + '</span><span>' + spell.duration + '</span>';
+    if (spell.components) meta += '<span class="cmp">' + spell.components + '</span>';
+    if (spell.ritual) meta += '<span class="rit">ritual</span>';
+    if (spell.concentration) meta += '<span class="rit">concentration</span>';
+    el.sheetMeta.innerHTML = meta;
+    el.sheetText.textContent = spell.description;
+    el.sheetSearch.hidden = true;
+    el.sheetList.hidden = true;
+    el.sheetActions.innerHTML = '<button class="danger" type="button" id="dropSpell">Remove from level ' + state.spell.selected + '</button>';
+    el.sheet.hidden = false;
+    el.sheetActions.querySelector('#dropSpell').addEventListener('click', function () {
+      var list = state.spell.lists[state.spell.selected] || [];
+      var ix = list.indexOf(name);
+      if (ix >= 0) list.splice(ix, 1);
+      closeSheet();
+      commit();
+    });
+  }
+
+  function renderGrimoire(lv) {
+    var q = (el.sheetSearch.value || '').trim().toLowerCase();
+    var have = state.spell.lists[lv] || [];
+    var rows = (SPELLBOOK.spells || []).filter(function (s) { return s.level === lv; })
+      .filter(function (s) { return !q || s.name.toLowerCase().indexOf(q) >= 0; });
+    el.sheetList.innerHTML = '';
+    if (!rows.length) {
+      var none = document.createElement('div');
+      none.className = 'empty';
+      none.textContent = 'Nothing matches.';
+      el.sheetList.appendChild(none);
+      return;
+    }
+    rows.forEach(function (s) {
+      var row = document.createElement('div');
+      row.className = 'row';
+      var added = have.indexOf(s.name) >= 0;
+      var name = document.createElement('span');
+      name.textContent = s.name;
+      var side = document.createElement('span');
+      side.className = 'lv2';
+      side.textContent = added ? 'in the list' : s.time;
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = added ? '\u2713' : '+';
+      b.disabled = added;
+      b.setAttribute('aria-label', added ? 'Already in the list' : 'Add ' + s.name);
+      b.addEventListener('click', function () {
+        var list = state.spell.lists[lv] || (state.spell.lists[lv] = []);
+        if (list.indexOf(s.name) < 0) list.push(s.name);
+        renderGrimoire(lv);
+        renderSpellList();
+        save();
+      });
+      row.appendChild(name);
+      row.appendChild(side);
+      row.appendChild(b);
+      el.sheetList.appendChild(row);
+    });
+  }
+
+  function openGrimoire(lv) {
+    state.spell.selected = lv;
+    el.sheetTitle.textContent = 'Grimoire, level ' + lv;
+    el.sheetMeta.innerHTML = '<span>Tap + to add a spell to level ' + lv + '</span>';
+    el.sheetText.textContent = '';
+    el.sheetSearch.hidden = false;
+    el.sheetSearch.value = '';
+    el.sheetList.hidden = false;
+    el.sheetActions.innerHTML = '';
+    el.sheet.hidden = false;
+    renderGrimoire(lv);
+    commit();
+  }
+
+  el.wrench.addEventListener('click', function () { editing = !editing; commit(); });
+
+  el.cunning.addEventListener('click', function () {
+    var S = state.spell;
+    S.cunning = !S.cunning;
+    if (S.cunning) S.warlockLeft = Math.min(S.warlockMax, S.warlockLeft + 1);
+    else S.warlockLeft = Math.max(0, S.warlockLeft - 1);
+    commit();
+  });
+
+  el.sorcRest.addEventListener('click', function () {
+    var S = state.spell;
+    var gain = Math.floor(S.sorcererLevel / 2);
+    S.sorcRest = !S.sorcRest;
+    if (S.sorcRest) S.sp = Math.min(S.spMax, S.sp + gain);
+    else S.sp = Math.max(0, S.sp - gain);
+    commit();
+  });
+
+  el.viewSpells.addEventListener('click', function (ev) {
+    var m = ev.target.closest('.mini[data-act]');
+    if (!m) return;
+    var S = state.spell;
+    var act = m.dataset.act;
+    if (act === 'dc+') S.dc++;
+    else if (act === 'dc-') S.dc = Math.max(0, S.dc - 1);
+    else if (act === 'sp+') S.sp = Math.min(S.spMax, S.sp + 1);
+    else if (act === 'sp-') S.sp = Math.max(0, S.sp - 1);
+    commit();
+  });
+
+  el.levels.addEventListener('click', function (ev) {
+    var S = state.spell;
+    var pip = ev.target.closest('.pip');
+    if (pip) {
+      var lv = Number(pip.dataset.lv), n = Number(pip.dataset.n);
+      if (pip.dataset.wl) S.warlockLeft = n;
+      else S.left[lv] = n;
+      commit();
+      return;
+    }
+    var eb = ev.target.closest('.edit .mini');
+    if (eb) {
+      var l = Number(eb.dataset.lv);
+      var d = eb.dataset.edit === 'add' ? 1 : -1;
+      if (eb.dataset.wl) {
+        var wBefore = S.warlockMax;
+        S.warlockMax = Math.max(0, Math.min(9, wBefore + d));
+        if (S.warlockMax > wBefore) S.warlockLeft = Math.min(S.warlockMax, S.warlockLeft + (S.warlockMax - wBefore));
+        else S.warlockLeft = Math.min(S.warlockLeft, S.warlockMax);
+      } else {
+        var before = S.max[l] || 0;
+        S.max[l] = Math.max(0, Math.min(9, before + d));
+        if (S.max[l] > before) S.left[l] = Math.min(S.max[l], (S.left[l] || 0) + (S.max[l] - before));
+        else S.left[l] = Math.min(S.left[l], S.max[l]);
+      }
+      commit();
+      return;
+    }
+    var arrow = ev.target.closest('.arrow');
+    if (arrow) { openGrimoire(Number(arrow.closest('.lv').dataset.lv)); return; }
+    var row = ev.target.closest('.lv');
+    if (row) { S.selected = Number(row.dataset.lv); commit(); }
+  });
+
+  el.spellList.addEventListener('click', function (ev) {
+    if (dragged) { dragged = false; return; }
+    var card = ev.target.closest('.card');
+    if (card) openSheet(card.dataset.name);
+  });
+
+  el.spellList.addEventListener('pointerdown', function (ev) {
+    var card = ev.target.closest('.card');
+    if (!card) return;
+    var startY = ev.clientY, startX = ev.clientX, timer = null, dragging = false;
+
+    function begin() {
+      timer = null;
+      dragging = true;
+      card.classList.add('dragging');
+      if (navigator.vibrate) navigator.vibrate(12);
+    }
+
+    function move(e) {
+      if (!dragging) {
+        if (Math.abs(e.clientY - startY) > 8 || Math.abs(e.clientX - startX) > 8) {
+          if (timer) { clearTimeout(timer); timer = null; }
+          cleanup();
+        }
+        return;
+      }
+      if (e.cancelable) e.preventDefault();
+      var cards = Array.prototype.slice.call(el.spellList.querySelectorAll('.card'));
+      for (var i = 0; i < cards.length; i++) {
+        var r = cards[i].getBoundingClientRect();
+        if (e.clientY < r.top + r.height / 2 && cards[i] !== card) {
+          el.spellList.insertBefore(card, cards[i]);
+          startY = e.clientY;
+          dragged = true;
+          break;
+        }
+      }
+    }
+
+    function up() {
+      if (timer) { clearTimeout(timer); timer = null; }
+      if (dragging) {
+        card.classList.remove('dragging');
+        dragged = true;
+        setTimeout(function () { dragged = false; }, 80);
+        var order = Array.prototype.slice.call(el.spellList.querySelectorAll('.card'))
+          .map(function (c) { return c.dataset.name; });
+        state.spell.lists[state.spell.selected] = order;
+        save();
+      }
+      cleanup();
+    }
+
+    function blockScroll(e) { if (dragging && e.cancelable) e.preventDefault(); }
+    function cleanup() {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+      window.removeEventListener('touchmove', blockScroll);
+    }
+
+    timer = setTimeout(begin, 320);
+    window.addEventListener('pointermove', move, { passive: false });
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
+    window.addEventListener('touchmove', blockScroll, { passive: false });
+  });
+
+  el.sheetClose.addEventListener('click', closeSheet);
+  el.sheet.addEventListener('click', function (ev) { if (ev.target === el.sheet) closeSheet(); });
+  el.sheetSearch.addEventListener('input', function () { renderGrimoire(state.spell.selected); });
 
   render();
 })();

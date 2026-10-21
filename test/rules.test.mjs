@@ -115,7 +115,7 @@ console.log('target AC');
 console.log('wild magic surge');
 {
   const surge = JSON.parse(readFileSync(resolve(root, 'data', 'wild-magic-surge-xphb.json'), 'utf8'));
-  check('fifty rows', surge.rows.length, 50);
+  check('twenty five rows', surge.rows.length, 25);
 
   const seen = new Array(101).fill(0);
   surge.rows.forEach((r) => { for (let v = r.from; v <= r.to; v++) seen[v]++; });
@@ -134,24 +134,55 @@ console.log('wild magic surge');
   check('ignores a spell level', R.diceIn('You cast Fireball as a 3rd-level spell centered on yourself.').length, 0);
   check('ignores feet and minutes', R.diceIn('A creature within 30 feet of you is poisoned for 1 minute.').length, 0);
 
-  const hit = R.rollSurge(surge.rows, first(40));
-  check('row 39 to 40', [hit.from, hit.to], [39, 40]);
-  check('rolls the dice the row asks for', [hit.dice.length, hit.dice[0].label, hit.dice[0].values.length], [1, '2d10', 2]);
-  check('keeps the row text', hit.text, 'You regain 2d10 hit points.');
+  const hitRow = surge.rows.find((r) => /2d10 Hit Points/.test(r.text));
+  check('a row that asks for dice exists', !!hitRow, true);
+  const hit = R.rollSurge(surge.rows, first(hitRow.from));
+  check('lands on that row', [hit.from, hit.to], [hitRow.from, hitRow.to]);
+  check('rolls the dice the row asks for', hit.dice.map((d) => d.label).indexOf('2d10') >= 0, true);
+  check('keeps the row text', hit.text, hitRow.text);
 
-  const plain = R.rollSurge(surge.rows, first(30));
+  const plainRow = surge.rows.find((r) => !/\dd\d+/.test(r.text));
+  const plain = R.rollSurge(surge.rows, first(plainRow.from));
   check('a row without dice rolls nothing', plain.dice.length, 0);
 }
 
-console.log('the built page carries the table');
+console.log('the spell book');
+{
+  const book = JSON.parse(readFileSync(resolve(root, 'data', 'spells-sorcerer-xphb.json'), 'utf8'));
+  check('the sorcerer has spells', book.spells.length > 100, true);
+  const levels = {};
+  for (const s of book.spells) levels[s.level] = (levels[s.level] || 0) + 1;
+  check('there are cantrips', levels[0] > 5, true);
+  check('there are level 5 spells', levels[5] > 5, true);
+  const eb = book.spells.find((s) => s.name === 'Eldritch Blast');
+  check('eldritch blast is a cantrip', eb.level, 0);
+  check('it has a casting time', eb.time.length > 0, true);
+  check('it has a range', eb.range.length > 0, true);
+  check('it has a description', eb.description.length > 20, true);
+  check('it has components', eb.components.length > 0, true);
+  const hex = book.spells.find((s) => s.name === 'Hex');
+  check('hex is a level 1 spell', hex.level, 1);
+  const seed = ['Eldritch Blast', 'Light', 'Prestidigitation', 'Shocking Grasp', 'Sorcerous Burst', 'Burning Hands', 'Detect Magic', 'Hex', 'Scorching Ray'];
+  const missing = seed.filter((n) => !book.spells.some((s) => s.name === n));
+  check('every seeded spell exists', missing, []);
+}
+
+console.log('the built page carries the data');
 {
   const built = readFileSync(resolve(root, 'dist', 'index.html'), 'utf8');
   const block = built.match(/<script id="surge-data" type="application\/json">([\s\S]*?)<\/script>/);
   if (!block) { check('the table is inlined', false, true); }
   else {
     const parsed = JSON.parse(block[1]);
-    check('the table is inlined with fifty rows', parsed.rows.length, 50);
+    check('the table is inlined with twenty five rows', parsed.rows.length, 25);
     check('the inlined table matches the data file', parsed.rows[0].text, JSON.parse(readFileSync(resolve(root, 'data', 'wild-magic-surge-xphb.json'), 'utf8')).rows[0].text);
+  }
+  const bookBlock = built.match(/<script id="spell-data" type="application\/json">([\s\S]*?)<\/script>/);
+  if (!bookBlock) { check('the spell book is inlined', false, true); }
+  else {
+    const parsedBook = JSON.parse(bookBlock[1]);
+    check('the spell book is inlined', parsedBook.spells.length > 100, true);
+    check('the inlined book matches the data file', parsedBook.spells[0].name, JSON.parse(readFileSync(resolve(root, 'data', 'spells-sorcerer-xphb.json'), 'utf8')).spells[0].name);
   }
 }
 

@@ -18,6 +18,11 @@ if (!surgeTag.test(html)) throw new Error('surge data tag not found in src/index
 
 let built = html.replace(marker, `url('data:font/woff2;base64,${font}')`);
 built = built.replace(surgeTag, (m, open, close) => open + surge + close);
+
+const spells = readFileSync(resolve(root, 'data', 'spells-sorcerer-xphb.json'), 'utf8').trim();
+const spellTag = /(<script id="spell-data" type="application\/json">)[\s\S]*?(<\/script>)/;
+if (!spellTag.test(html)) throw new Error('spell data tag not found in src/index.html');
+built = built.replace(spellTag, (m, open, close) => open + spells + close);
 mkdirSync(out, { recursive: true });
 writeFileSync(resolve(out, 'index.html'), built, 'utf8');
 

@@ -1,0 +1,11 @@
+import { readFileSync } from 'node:fs';
+const x = JSON.parse(readFileSync('C:/agentic/bulle/workspace/spells-xphb.json', 'utf8')).spell;
+const keys = new Set();
+for (const s of x) Object.keys(s).forEach((k) => keys.add(k));
+console.log('xphb key union:', [...keys].join(', '));
+const withClass = x.filter((s) => s.class || s.classes);
+console.log('spells with a class field:', withClass.length);
+if (withClass.length) console.log('sample:', JSON.stringify(withClass[0].class || withClass[0].classes));
+console.log('--- a level 1 sorcerer-ish spell ---');
+const eb = x.find((s) => s.name === 'Eldritch Blast');
+console.log(JSON.stringify(eb, null, 1).slice(0, 900));

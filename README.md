@@ -20,14 +20,27 @@ The AC field is optional. Leave it empty and the app shows the damage of every b
 
 ![A critical roll with hex and elementals](shots/final-crit.png)
 
+## The spell tab
+
+A tracker for the character's slots and spell list, built for one hand at the table.
+
+- **The top bar** holds the DC and the sorcery points, each with its own minus and plus, and two toggles: Cunning restores one warlock slot, and a sorcerer rest restores half your sorcerer level in sorcery points.
+- **The left bar** lists the spell levels. Every slot is a pip: filled means you still have it, and tapping a pip sets that level to that count. The arrow at the end of a row opens the grimoire for that level.
+- **The spell list** shows one card per spell with its casting time, range, duration and components. Tap a card for the full description, and hold and drag a card to reorder the list.
+- **The wrench** in the top right turns on the edit mode, where each level row grows minus and plus buttons for the maximum number of slots. A level with no slots is dimmed, which is how level 5 starts out until you unlock it.
+
+The spell list is seeded with the cantrips and the spells the character is known to have, and everything else comes from the grimoire.
+
 ## The wild magic surge page
 
 The second tab rolls on the Wild Magic Surge table from the 2024 Player's Handbook, the same one 5e.tools serves under its XPHB source. It rolls d100, shows the range it landed on and the effect text, and rolls any dice the effect names: eight of the fifty rows ask for dice, so the app rolls them and shows the values and the total.
 
-The table is never typed by hand. `tools/fetch-surge-table.mjs` downloads it, parses the two column layout into `data/wild-magic-surge-xphb.json`, and refuses to write a table that does not cover 1 to 100 exactly once. The build inlines that JSON into the page, and the test suite checks the inlined copy against the file.
+The table is never typed by hand. `tools/fetch-5e-data.mjs` pulls it out of the 5e.tools class data, parses it into `data/wild-magic-surge-xphb.json`, and refuses to write a table that does not cover 1 to 100 exactly once. The build inlines that JSON into the page, and the test suite checks the inlined copy against the file.
+
+The same script pulls the spell book: every sorcerer and warlock spell of the 2024 Player's Handbook, with its casting time, range, duration, components and text, into `data/spells-sorcerer-xphb.json`.
 
 ```
-node tools/fetch-surge-table.mjs
+node tools/fetch-5e-data.mjs
 ```
 
 The 2014 table is a different file with the same shape, so swapping editions means pointing the build at it.
