@@ -1,3 +1,4 @@
 build/
 .stg/
 app/assets/
+tools/.5e-cache/
