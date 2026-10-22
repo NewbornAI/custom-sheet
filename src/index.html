@@ -328,7 +328,6 @@ input[type=range]::-moz-range-thumb{
   width:100%;
   max-width:28px;
   height:17px;
-  margin-top:auto;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -343,7 +342,26 @@ input[type=range]::-moz-range-thumb{
 .bolt:not(:disabled):active{background:rgba(255,212,71,.2);color:#fff3c4}
 .bolt:disabled{opacity:.55;cursor:default}
 .bolt:focus-visible{outline:2px solid var(--arcane);outline-offset:1px}
-.lv.editing .bolt{display:none}
+.boltspace{width:100%;max-width:28px;height:17px;flex:0 0 auto}
+.down{
+  width:100%;
+  max-width:28px;
+  height:17px;
+  margin-top:auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  border:1px solid transparent;
+  border-radius:5px;
+  background:none;
+  color:#7a7499;
+  cursor:pointer;
+}
+.down svg{width:13px;height:13px;display:block}
+.down:active{color:var(--arcane);background:rgba(155,123,255,.16)}
+.down:focus-visible{outline:2px solid var(--arcane);outline-offset:1px}
+.lv.editing .bolt,.lv.editing .down,.lv.editing .boltspace{display:none}
 .pip{
   width:100%;
   height:var(--pip-h);
@@ -355,7 +373,7 @@ input[type=range]::-moz-range-thumb{
   cursor:pointer;
 }
 .pip.full{background:var(--arcane);border-color:var(--arcane)}
-.pip.wl{height:calc(var(--pip-h) * .7);border-color:rgba(84,207,196,.4)}
+.pip.wl{border-color:rgba(84,207,196,.4)}
 .pip.wl.full{background:#54cfc4;border-color:#54cfc4}
 .lv .plus{font-size:9px;color:#4f4a6b;flex:0 0 auto}
 .lv.dim{opacity:.35}
@@ -363,8 +381,7 @@ input[type=range]::-moz-range-thumb{
 .lv.editing .edit{display:flex}
 .lv.editing .pips{display:none}
 .pips{display:flex;flex-direction:column;align-items:stretch;gap:2px;width:100%}
-.lanes{display:flex;flex-direction:row;align-items:flex-end;gap:2px;width:100%;justify-content:center}
-.lane{display:flex;flex-direction:column;align-items:stretch;gap:2px;min-width:0}
+.wlgroup{display:flex;flex-direction:column;align-items:stretch;gap:2px;width:100%;margin-top:4px}
 .lv .val{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
 .slotstrip.editing{gap:2px}
 .slotstrip.editing .lv{flex:0 0 auto;width:28px;padding:3px 1px}
@@ -1504,27 +1521,44 @@ input[type=range]::-moz-range-thumb{
     el.levels.innerHTML = '';
     el.levels.classList.toggle('editing', editing);
 
-    /* How each level is laid out: the sorcerer slots in one lane, and the
-       warlock slots in a lane of their own beside them at level 2. */
-    var plans = LEVELS.map(function (lv) {
-      var sorc = S.max[lv] || 0;
-      var wl = (lv === WARLOCK_LEVEL && S.warlockMax) ? S.warlockMax : 0;
-      return { sorc: sorc, wl: wl, lanes: wl ? 2 : 1, count: sorc + wl, tallest: Math.max(sorc, wl) };
+    /* How many slots each level holds, so the columns can share the width
+       and every slot can be the same size in the whole strip. */
+    var counts = LEVELS.map(function (lv) {
+      return (S.max[lv] || 0) + (lv === WARLOCK_LEVEL ? (S.warlockMax || 0) : 0);
     });
-
-    var busiest = Math.max.apply(null, plans.map(function (p) { return p.tallest; })) || 1;
+    var busiest = Math.max.apply(null, counts) || 1;
     var pipH = Math.max(9, Math.min(16, Math.floor((120 - (busiest - 1) * 2) / busiest)));
     el.levels.style.setProperty('--pip-h', pipH + 'px');
 
     LEVELS.forEach(function (lv, ix) {
-      var plan = plans[ix];
-      var max = plan.sorc;
+      var max = S.max[lv] || 0;
       var left = Math.min(S.left[lv] || 0, max);
       var col = document.createElement('div');
       col.className = 'lv' + (lv === S.selected ? ' on' : '') + (editing ? ' editing' : '');
-      if (lv > 0 && !plan.count) col.classList.add('dim');
+      if (lv > 0 && !counts[ix]) col.classList.add('dim');
       col.dataset.lv = String(lv);
-      col.style.flexGrow = String(Math.max(1, plan.count));
+      col.style.flexGrow = String(Math.max(1, counts[ix]));
+
+      if (lv > 0) {
+        var bolt = document.createElement('button');
+        bolt.type = 'button';
+        bolt.className = 'bolt';
+        bolt.dataset.bolt = String(lv);
+        bolt.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
+          '<path d="M13.6 2L4.2 13.4h5.4L9.6 22 19.4 10.2H14L13.6 2z"/></svg>';
+        var hasSlot = S.left[lv] > 0 || (lv === WARLOCK_LEVEL && S.warlockLeft > 0);
+        var why = S.sp >= S.spMax
+          ? 'Your sorcery points are full'
+          : (!hasSlot ? 'No level ' + lv + ' slot left' : '');
+        bolt.setAttribute('aria-label', 'Turn a level ' + lv + ' slot into ' + lv + ' sorcery points' + (why ? ', ' + why : ''));
+        bolt.title = why || ('Turn a level ' + lv + ' slot into ' + lv + ' sorcery points');
+        bolt.disabled = !!why;
+        col.appendChild(bolt);
+      } else {
+        var space = document.createElement('span');
+        space.className = 'boltspace';
+        col.appendChild(space);
+      }
 
       var head = document.createElement('span');
       head.className = 'head';
@@ -1536,43 +1570,25 @@ input[type=range]::-moz-range-thumb{
 
       var pips = document.createElement('span');
       pips.className = 'pips';
-      if (plan.lanes === 2) {
-        var lanes = document.createElement('span');
-        lanes.className = 'lanes';
-        var sorcLane = document.createElement('span');
-        sorcLane.className = 'lane';
-        sorcLane.style.flex = '0 1 ' + (plan.sorc / plan.count * 100) + '%';
-        for (var i = 1; i <= max; i++) sorcLane.appendChild(pipButton(i <= left, lv, i, false));
-        var wlLane = document.createElement('span');
-        wlLane.className = 'lane';
-        wlLane.style.flex = '0 1 ' + (plan.wl / plan.count * 100) + '%';
-        for (var w = 1; w <= plan.wl; w++) wlLane.appendChild(pipButton(w <= S.warlockLeft, lv, w, true));
-        lanes.appendChild(sorcLane);
-        lanes.appendChild(wlLane);
-        pips.appendChild(lanes);
-      } else {
-        for (var j = 1; j <= max; j++) pips.appendChild(pipButton(j <= left, lv, j, false));
+      for (var i = 1; i <= max; i++) pips.appendChild(pipButton(i <= left, lv, i, false));
+      if (lv === WARLOCK_LEVEL && S.warlockMax) {
+        var wlGroup = document.createElement('span');
+        wlGroup.className = 'wlgroup';
+        for (var w = 1; w <= S.warlockMax; w++) wlGroup.appendChild(pipButton(w <= S.warlockLeft, lv, w, true));
+        pips.appendChild(wlGroup);
       }
       col.appendChild(pips);
 
-      var bolt = document.createElement('button');
-      bolt.type = 'button';
-      bolt.className = 'bolt';
-      bolt.dataset.bolt = String(lv);
-      bolt.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
-        '<path d="M13.6 2L4.2 13.4h5.4L9.6 22 19.4 10.2H14L13.6 2z"/></svg>';
-      var hasSlot = S.left[lv] > 0 || (lv === WARLOCK_LEVEL && S.warlockLeft > 0);
-      var why = lv === 0
-        ? 'Cantrips have no slots to turn'
-        : (S.sp >= S.spMax
-            ? 'Your sorcery points are full'
-            : (!hasSlot ? 'No level ' + lv + ' slot left' : ''));
-      bolt.setAttribute('aria-label', lv === 0
-        ? 'Cantrips have no slots to turn'
-        : 'Turn a level ' + lv + ' slot into ' + lv + ' sorcery points' + (why ? ', ' + why : ''));
-      bolt.title = why || ('Turn a level ' + lv + ' slot into ' + lv + ' sorcery points');
-      bolt.disabled = !!why;
-      col.appendChild(bolt);
+      var down = document.createElement('button');
+      down.type = 'button';
+      down.className = 'down';
+      down.dataset.lv = String(lv);
+      down.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" ' +
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+        '<path d="M6 9.5l6 6 6-6"/></svg>';
+      down.setAttribute('aria-label', 'Show the spells of level ' + lv);
+      down.title = 'Show the spells of level ' + lv;
+      col.appendChild(down);
 
       var edit = document.createElement('span');
       edit.className = 'edit';
@@ -1610,11 +1626,11 @@ input[type=range]::-moz-range-thumb{
       var ed = document.createElement('span');
       ed.className = 'edit';
       ed.style.display = 'flex';
-      var down = document.createElement('button');
-      down.type = 'button'; down.className = 'mini'; down.textContent = '-'; down.dataset.lvl = '-1';
+      var down2 = document.createElement('button');
+      down2.type = 'button'; down2.className = 'mini'; down2.textContent = '-'; down2.dataset.lvl = '-1';
       var up = document.createElement('button');
       up.type = 'button'; up.className = 'mini'; up.textContent = '+'; up.dataset.lvl = '1';
-      ed.appendChild(down); ed.appendChild(up);
+      ed.appendChild(down2); ed.appendChild(up);
       cell.appendChild(ed);
       el.levels.appendChild(cell);
     }
@@ -1861,8 +1877,19 @@ input[type=range]::-moz-range-thumb{
       commit();
       return;
     }
+    var down = ev.target.closest('.down');
+    if (down) {
+      S.selected = Number(down.dataset.lv);
+      commit();
+      el.spellList.scrollTop = 0;
+      return;
+    }
     var row = ev.target.closest('.lv');
-    if (row && row.dataset.lv !== undefined) { S.selected = Number(row.dataset.lv); commit(); }
+    if (row && row.dataset.lv !== undefined) {
+      S.selected = Number(row.dataset.lv);
+      commit();
+      el.spellList.scrollTop = 0;
+    }
   });
 
   el.spellList.addEventListener('click', function (ev) {
