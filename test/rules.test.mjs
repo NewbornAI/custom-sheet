@@ -512,6 +512,7 @@ console.log('seeding a character from the data');
   const features = JSON.parse(readFileSync(resolve(root, 'data', 'features.json'), 'utf8'));
   const book = JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8'));
   const presets = JSON.parse(readFileSync(resolve(root, 'data', 'characters.json'), 'utf8')).presets;
+  const classes = JSON.parse(readFileSync(resolve(root, 'data', 'classes.json'), 'utf8')).classes;
   const bard = presets[0];
   const levelOf = {};
   book.spells.forEach((s) => { levelOf[s.name] = s.level; });
@@ -562,6 +563,11 @@ console.log('seeding a character from the data');
       spells: (book.seed || []).map((s) => ({ name: s.name, level: s.level }))
     },
     data: () => Promise.resolve(true),
+    classInfo: (name) => classes.filter((c) => c.name === name)[0] || null,
+    classRows: (ch) => (ch.classes || []).map((k) => {
+      const info = classes.filter((c) => c.name === k.name)[0] || {};
+      return { name: k.name, level: k.level, subclass: k.subclass || '', ability: info.ability, caster: info.caster, hd: info.hd };
+    }),
     canonSource: (s) => s
   };
   book.spells.forEach((s) => { core.bookByName[s.name] = s; });
@@ -579,9 +585,12 @@ console.log('seeding a character from the data');
   check('the class survives it too', char.classes.length + ' ' + char.classes[0].name, '1 Bard');
   check('charisma 19 and level 11 give a spell attack of +8', C.spellAttack(char), 8);
   check('and a save DC of 16', C.spellDC(char), 16);
+  check('the bard rolls eleven d8', char.dice.filter((d) => d.type === 8).length + 'd8', '11d8');
+  check('and no other die', char.dice.filter((d) => d.type !== 8).length, 0);
   check('and an initiative of +2', C.initMod(char), 2);
   const own = taken.character.seed({}, false);
   check('the app\'s own character keeps its features', own.features.length, 19);
+  check('the dice of the app\'s own character come from the classes', own.dice.filter((d) => d.type === 6).length + 'd6 and ' + own.dice.filter((d) => d.type === 8).length + 'd8', '8d6 and 3d8');
   check('and its own numbers', own.level + '/' + own.abilities.cha, '11/20');
   const blank = taken.character.seed({}, true);
   check('a character from nothing has no feature', blank.features.length, 0);

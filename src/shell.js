@@ -748,12 +748,19 @@
 
   /* ---- the elements of the shell ---- */
 
+  /* The characters are one tap from the head of the app, beside the wrench,
+     so they can be changed from any page. */
+  function wireHead() {
+    if (el.charBtn) el.charBtn.addEventListener('click', openCharacters);
+  }
+
   var el = {
     sigil: document.getElementById('sigil'),
     pageTitle: document.getElementById('pageTitle'),
     head: document.getElementById('headSlot'),
     tabs: document.getElementById('tabList'),
     gear: document.getElementById('gear'),
+    charBtn: document.getElementById('charBtn'),
     views: document.getElementById('views'),
     spentToast: document.getElementById('spentToast'),
     sheet: document.getElementById('sheet'),
@@ -887,6 +894,7 @@
   /* ---- the wiring of the shell ---- */
 
   el.gear.addEventListener('click', function () { show('settings'); });
+wireHead();
   el.sheetClose.addEventListener('click', function () { sheet.close(); });
   el.sheet.addEventListener('click', function (ev) { if (ev.target === el.sheet) sheet.close(); });
   el.sheetSearch.addEventListener('input', function () {

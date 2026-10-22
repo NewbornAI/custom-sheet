@@ -802,6 +802,14 @@ input[type=range]::-moz-range-thumb{
 .die.spent{color:#6a6592}
 .die.spent svg polygon{stroke-dasharray:3 2.5}
 .dicebox .dnote{font-size:9.5px;color:#6f6a8d;letter-spacing:.04em}
+.dcount{display:flex;align-items:center;gap:5px;padding:2px 4px 2px 2px;border:1px solid var(--edge);border-radius:7px}
+.dcount .dico{width:22px;height:22px;display:flex;align-items:center;justify-content:center;color:var(--arcane)}
+.dcount .dico svg{width:20px;height:20px;display:block}
+.dcount .dnum{font-family:var(--display);font-size:15px;color:var(--ink);line-height:1;white-space:nowrap}
+.dcount .dof{font-size:10px;color:var(--muted);margin-left:3px}
+.dsp{width:23px;height:23px;border-radius:5px;border:1px solid var(--edge);background:none;color:var(--muted);font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.dsp:active{color:var(--arcane);border-color:rgba(var(--arcane-rgb),.6)}
+.cname-show{font-family:var(--display);font-size:17px;color:var(--ink);letter-spacing:.02em;padding:2px 2px 3px}
 .diceedit{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 10px;width:100%}
 .diceedit .drow{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted)}
 .diceedit .dico{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--arcane)}
@@ -1224,6 +1232,12 @@ input[type=range]::-moz-range-thumb{
     </svg>
     <h1 class="title" id="pageTitle">Character</h1>
     <div class="headslot" id="headSlot"></div>
+    <button class="gear" id="charBtn" type="button" aria-label="The characters">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <circle cx="9.2" cy="8" r="3.2"/><path d="M3 19.4c0-3.2 2.8-5.4 6.2-5.4s6.2 2.2 6.2 5.4"/>
+        <path d="M15.6 4.9a3 3 0 0 1 0 5.6M17 14.4c2.4.5 4 2.3 4 5"/>
+      </svg>
+    </button>
     <button class="gear" id="gear" type="button" aria-pressed="false" aria-label="The pages of the app">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false">
         <path d="M3 7h7.7M15.3 7h5.7M3 12h3.7M11.3 12h9.7M3 17h11.7M19.3 17h1.7"/>

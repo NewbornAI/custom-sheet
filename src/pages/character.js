@@ -196,6 +196,17 @@
       if (saved.dice && saved.dice.length) {
         c.dice = saved.dice.map(function (d) { return { type: Number(d.type) || 6, spent: !!d.spent }; });
       }
+      /* The classes own the dice, and the record says which of them were
+         spent, so a level up brings the new dice and keeps the old marks. */
+      var fromClasses = diceFromClasses(c.classes);
+      if (fromClasses.length) {
+        var spentByType = {};
+        (c.dice || []).forEach(function (d) { if (d.spent) spentByType[d.type] = (spentByType[d.type] || 0) + 1; });
+        fromClasses.forEach(function (d) {
+          if (spentByType[d.type]) { d.spent = true; spentByType[d.type] -= 1; }
+        });
+        c.dice = fromClasses;
+      }
       if (saved.features && saved.features.length) {
         var savedByKey = {};
         saved.features.forEach(function (f) { savedByKey[f.key] = f; });
@@ -268,12 +279,8 @@
   function renderChar() {
     E.charBody.classList.toggle('editing', editingChar);
     E.charName.hidden = !editingChar;
-    E.charSwitch.hidden = editingChar;
-    if (!editingChar) {
-      E.charSwitch.innerHTML = '<span>' + C.esc(CH.name || 'Unnamed character') + '</span>' +
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
-        '<path d="M6 9.5l6 6 6-6"/></svg>';
-    }
+    E.charNameShow.hidden = editingChar;
+    if (!editingChar) E.charNameShow.textContent = CH.name || 'Unnamed character';
 
     if (document.activeElement !== E.charName) E.charName.value = CH.name;
     if (document.activeElement !== E.charAc) {
@@ -499,6 +506,21 @@
       'font-family="Cinzel, Georgia, serif">' + type + '</text></svg>';
   }
 
+  /* The dice of a character are the dice of its classes: a sorcerer rolls
+     a d6 and a warlock a d8. A character with no class keeps the ones it
+     was given. */
+  function diceFromClasses(classes) {
+    var out = [];
+    (classes || []).forEach(function (k) {
+      var info = C.classInfo(k.name);
+      var known = (C.seeds && C.seeds.dice) || {};
+      var die = (info && info.hd) || known[k.name] || 6;
+      var n = Number(k.level) || 0;
+      for (var i = 0; i < n; i++) out.push({ type: die, spent: false });
+    });
+    return out;
+  }
+
   function countDice(type) {
     var n = 0;
     (CH.dice || []).forEach(function (d) { if (d.type === type) n++; });
@@ -509,6 +531,13 @@
     E.diceBox.innerHTML = '';
 
     if (editingChar) {
+      if (C.classRows(CH).length) {
+        var from = document.createElement('span');
+        from.className = 'dnote';
+        from.textContent = 'The dice come from the classes.';
+        E.diceBox.appendChild(from);
+        return;
+      }
       var grid = document.createElement('div');
       grid.className = 'diceedit';
       [12, 10, 8, 6].forEach(function (t) {
@@ -525,23 +554,46 @@
       return;
     }
 
-    var dice = (CH.dice || []).map(function (d, ix) { return { d: d, ix: ix }; });
-    dice.sort(function (a, b) { return b.d.type - a.d.type; });
-    if (!dice.length) {
+    /* One counter for each kind of die, so a row of eleven dice does not
+       wrap on a phone: the shape of the die, what is left of it, and a
+       button to spend one or to take one back. */
+    var kinds = {};
+    (CH.dice || []).forEach(function (d) {
+      if (!kinds[d.type]) kinds[d.type] = { total: 0, left: 0 };
+      kinds[d.type].total += 1;
+      if (!d.spent) kinds[d.type].left += 1;
+    });
+    var types = Object.keys(kinds).map(Number).sort(function (a, b) { return b - a; });
+    if (!types.length) {
       var none = document.createElement('span');
       none.className = 'dnote';
-      none.textContent = 'No hit dice yet. The wrench sets them.';
+      none.textContent = 'No hit dice yet.';
       E.diceBox.appendChild(none);
       return;
     }
-    dice.forEach(function (item) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'die' + (item.d.spent ? ' spent' : '');
-      b.innerHTML = dieSvg(item.d.type);
-      b.dataset.ix = String(item.ix);
-      b.setAttribute('aria-label', 'd' + item.d.type + (item.d.spent ? ', spent' : ', left'));
-      E.diceBox.appendChild(b);
+    types.forEach(function (t) {
+      var row = document.createElement('div');
+      row.className = 'dcount';
+      row.innerHTML = '<span class="dico">' + dieSvg(t) + '</span>' +
+        '<span class="dnum">' + kinds[t].left + '<span class="dof"> of ' + kinds[t].total + '</span></span>';
+      var spend = document.createElement('button');
+      spend.type = 'button';
+      spend.className = 'dsp';
+      spend.dataset.type = String(t);
+      spend.setAttribute('aria-label', 'Spend one d' + t);
+      spend.textContent = '\u2212';
+      row.appendChild(spend);
+      if (kinds[t].left < kinds[t].total) {
+        var back = document.createElement('button');
+        back.type = 'button';
+        back.className = 'dsp';
+        back.dataset.type = String(t);
+        back.dataset.back = '1';
+        back.setAttribute('aria-label', 'Take one d' + t + ' back');
+        back.textContent = '+';
+        row.appendChild(back);
+      }
+      E.diceBox.appendChild(row);
     });
   }
 
@@ -636,7 +688,7 @@
       '  <div class="csname" id="charNameWrap">',
       '    <span class="ck">NAME</span>',
       '    <input class="cinput" id="charName" type="text" placeholder="your character" aria-label="Character name">',
-      '    <button class="cname-btn" id="charSwitch" type="button" aria-label="The characters"></button>',
+      '    <span class="cname-show" id="charNameShow"></span>',
       '  </div>',
       '  <div class="clsum" id="charClassSum"></div>',
       '  <div class="ctop">',
@@ -702,7 +754,7 @@
         charBody: root.querySelector('#charBody'),
         charNameWrap: root.querySelector('#charNameWrap'),
         charName: root.querySelector('#charName'),
-        charSwitch: root.querySelector('#charSwitch'),
+        charNameShow: root.querySelector('#charNameShow'),
         charAc: root.querySelector('#charAc'),
         charInit: root.querySelector('#charInit'),
         charLevel: root.querySelector('#charLevel'),
@@ -733,8 +785,7 @@
       });
 
       /* The name opens the list of the characters. */
-      E.charSwitch.addEventListener('click', function () { api.openCharacters(); });
-
+  
       /* The classes are set in the section the wrench opens. */
       E.charClasses.addEventListener('click', function (ev) {
         var row = ev.target.closest('.clrow');
@@ -870,13 +921,22 @@
           commitChar();
           return;
         }
-        var die = ev.target.closest('.die');
-        if (!die) return;
-        var d = (CH.dice || [])[Number(die.dataset.ix)];
-        if (!d) return;
-        pushSnapshot();
-        d.spent = !d.spent;
-        commitChar();
+        var counter = ev.target.closest('.dsp');
+        if (counter) {
+          var ctype = Number(counter.dataset.type);
+          var give = counter.dataset.back === '1';
+          var list = CH.dice || (CH.dice = []);
+          var ix = -1;
+          for (var i = 0; i < list.length; i++) {
+            if (list[i].type !== ctype) continue;
+            if (give ? list[i].spent : !list[i].spent) { ix = i; break; }
+          }
+          if (ix < 0) return;
+          pushSnapshot();
+          list[ix].spent = !give;
+          commitChar();
+          return;
+        }
       });
 
       /* The proficiencies only move in the edit mode, so a stray tap at the

@@ -503,9 +503,19 @@
         if (!active.length) return true;
         return (s.classes || []).some(function (c) { return active.indexOf(c) >= 0; });
       })
-      .filter(function (s) { return !q || s.name.toLowerCase().indexOf(q) >= 0; });
+      .filter(function (s) {
+        if (!q) return true;
+        var needle = q.toLowerCase();
+        if (s.name.toLowerCase().indexOf(needle) >= 0) return true;
+        /* A player looking for the spells of a class says its name, so the
+           classes of a spell answer to it as well. */
+        return (s.classes || []).some(function (c) { return c.toLowerCase().indexOf(needle) >= 0; });
+      });
 
     if (!rows.length) {
+      if (!(C.book.spells || []).length) {
+        return '<div class="empty">The book has not arrived yet.</div>';
+      }
       return '<div class="empty">' + C.esc(active.length
         ? 'No spell of ' + active.join(', ') + (byLevel ? ' at this level' : '') + '.'
         : 'Nothing matches.') + '</div>';

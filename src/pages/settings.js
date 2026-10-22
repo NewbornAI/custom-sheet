@@ -27,6 +27,31 @@
     api.refresh();
   }
 
+  /* What has arrived, so a phone that cannot read a file can say so. */
+  function files() {
+    var rows = [
+      { name: 'The book', got: (C.book.spells || []).length, what: 'spells' },
+      { name: 'The library of features', got: Object.keys(C.featureByKey).length, what: 'features' },
+      { name: 'The classes', got: (C.classData || []).length, what: 'classes' }
+    ];
+    E.files.innerHTML = '';
+    rows.forEach(function (r) {
+      var row = document.createElement('div');
+      row.className = 'srow';
+      var on = r.got > 0;
+      row.innerHTML = '<span class="t">' + C.esc(r.name) + '</span>' +
+        '<span class="d">' + (on ? r.got + ' ' + r.what + ' ready' : 'not here yet') + '</span>';
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'stog' + (on ? ' on' : '');
+      b.textContent = on ? 'Here' : 'Read';
+      b.setAttribute('aria-label', (on ? r.name + ' is ready' : 'Read ' + r.name));
+      b.addEventListener('click', function () { C.data(r.what === 'spells' ? 'spellbook' : r.what); });
+      row.appendChild(b);
+      E.files.appendChild(row);
+    });
+  }
+
   Volley.page({
     id: 'settings',
     title: 'Settings',
@@ -38,6 +63,9 @@
       '  <div class="cshead"><span>Pages</span><span class="rule"></span></div>',
       '  <div class="fcards" id="settingsList"></div>',
       '  <p class="note">A page that is off keeps its numbers. Turning it back on brings them back.</p>',
+      '  <div class="cshead"><span>The files</span><span class="rule"></span></div>',
+      '  <div class="fcards" id="settingsFiles"></div>',
+      '  <p class="note">The book, the library of features and the classes sit beside the app and are read when a page asks for one.</p>',
       '</div>'
     ].join('\n'),
 
@@ -45,13 +73,15 @@
       api = a;
       E = {
         body: root.querySelector('#settingsBody'),
-        list: root.querySelector('#settingsList')
+        list: root.querySelector('#settingsList'),
+        files: root.querySelector('#settingsFiles')
       };
     },
 
     render: function (a) {
       api = a;
       E.list.innerHTML = '';
+      files();
       api.pages.forEach(function (p) {
         if (p.hidden) return;
         var on = p.home || pages().indexOf(p.id) >= 0;

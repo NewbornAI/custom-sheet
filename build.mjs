@@ -31,9 +31,13 @@ writeFileSync(resolve(out, 'data', 'classes.json'), readFileSync(resolve(root, '
 
 /* What a character needs at the start: the features it is seeded with, and
    the spells of the app's own sheet. */
+const classJson = JSON.parse(readFileSync(resolve(root, 'data', 'classes.json'), 'utf8'));
+const hitDice = {};
+(classJson.classes || []).forEach((c) => { hitDice[c.name] = Number(c.hd) || 6; });
 const seeds = {
   features: (featuresJson.features || []).filter((f) => f.seed),
-  spells: ((bookJson.seed || [])).map((s) => ({ name: s.name, level: s.level }))
+  spells: ((bookJson.seed || [])).map((s) => ({ name: s.name, level: s.level })),
+  dice: hitDice
 };
 built = built.replace(/(<script id="seed-data" type="application\/json">)[\s\S]*?(<\/script>)/, (m, open, close) => open + JSON.stringify(seeds) + close);
 
