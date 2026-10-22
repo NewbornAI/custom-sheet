@@ -85,6 +85,18 @@ at all. Drop a character in `characters/` and commit it, and every app brings
 it in with one tap. Open a branch and the branch is a shelf of your own, and
 the app lists the branches too.
 
+The shelf also writes back. Connect the app to GitHub once, and the character
+being played goes onto the shelf with a tap, one file per character, on the
+branch you name. The connection is a token, and the app never asks you to
+type one: on a phone the app asks GitHub for a code, you approve it in the
+browser, and the token lands by itself. A page of a browser cannot ask
+GitHub for a sign in, so on a desktop you paste a token instead, and a paste
+is accurate where a typing is not.
+
+The shared shelf is this repository, and it holds the characters of the
+project. A shelf of your own is a repository of your own, made by the app or
+forked from this one, and the app points at whichever you name.
+
 ## Install it
 
 ### On a phone
@@ -119,6 +131,7 @@ page says which of them have arrived.
 ```
 node build.mjs                                  # src to dist, the font and the data inlined
 node test/rules.test.mjs                        # the rules engine and the data
+node test/github.test.mjs                       # the sign in and the calls to GitHub
 node tools/fetch-5e-data.mjs                    # refetch the data from 5e.tools
 powershell -ExecutionPolicy Bypass -File tools/build-apk.ps1
 ```
@@ -179,6 +192,7 @@ Wizards of the Coast. The font Cinzel is under the SIL Open Font Licence 1.1.
 ```
 src/index.html       the shell, the styles and the two rules blocks
 src/shell.js         the registry, the store, the overlay, the packages, the shelf
+src/github.js        the sign in and the calls to GitHub
 src/pages/*.js       one file per page
 data/*.json          the rules data
 app/                 the Android shell that wraps the same page

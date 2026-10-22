@@ -12,3 +12,12 @@ under the shelf, and a branch may hold a character of its own.
 
 A character exported from the app is a package, and the file the app writes
 is that package. The name of the file is the name of the character.
+
+The shared characters live on `main`, one file per character. A branch is
+for a character that is not ready to be shared yet, and the app lists the
+branches under the shelf, so a player opens their own.
+
+The app can write here too. Connect it to GitHub in the settings, under The
+shelf, and the character being played goes onto the shelf with a tap, on the
+branch named there. Two characters are here to start: the sorcerer of the app
+and Yngwie the bard.

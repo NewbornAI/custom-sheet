@@ -13,11 +13,13 @@ are, so an agent can change the app without reading all of it.
 |---|---|
 | `src/index.html` | the shell, the styles, and the two rules blocks |
 | `src/shell.js` | the registry, the store, the overlay, the packages, the repository, the library |
+| `src/github.js` | the sign in and the calls to GitHub |
 | `src/pages/*.js` | one file per page |
 | `data/*.json` | the rules data, fetched by `tools/fetch-5e-data.mjs` |
 | `app/` | the Android shell that wraps the same page |
 | `tools/` | the build, the data fetch, the icon maker |
 | `test/rules.test.mjs` | the rules engine and the data |
+| `test/github.test.mjs` | the sign in and the calls to GitHub |
 
 The README is the human entry point. This file is the agent one.
 
@@ -26,6 +28,7 @@ The README is the human entry point. This file is the agent one.
 ```
 node build.mjs                                  # src to dist, the font and the data inlined
 node test/rules.test.mjs                        # the rules engine and the data
+node test/github.test.mjs                       # the sign in and the calls to GitHub
 node tools/fetch-5e-data.mjs                    # refetch the data from 5e.tools
 powershell -ExecutionPolicy Bypass -File tools/build-apk.ps1
 ```
@@ -144,6 +147,27 @@ arrive. None of them asks the player to type a secret.
   secret: `shelfCharacters(ref)` and `shelfBranches()`. A branch is a shelf
   of a player, and anybody may open one.
 
+## The shelf writes back
+
+`src/github.js` holds the sign in and the calls. It answers to two
+transports: the shell of the phone (`SheetNet.request(url, method, body,
+token)`, which answers with `{status, body}`) and the network of a browser
+(`fetch`, which GitHub lets across origins for the API but not for a sign
+in). The device flow is a POST to `https://github.com/login/device/code`
+then a poll of `https://github.com/login/oauth/access_token`; the client id
+is public and lives in that file, and no secret is needed.
+
+The token is kept in `state.ui.token` and the login in `state.ui.login`.
+The write path is one call: `putFile` PUTs a file into `characters/` on a
+branch, through the contents API, so a branch that is not there yet is made
+with `createBranch` first. `createRepo` makes a repository of the player and
+`forkRepo` forks the one of the project.
+
+The helpers the shell exposes: `shelfWrite(pkgText, fileName)`,
+`shelfBranch(name)`, `shelfCreateRepo(name, isPrivate)`, `shelfFork()`,
+`ghToken()`, `ghSetToken(t)`, `ghLogin()`, `ghSetLogin(l)`,
+`ghBranch()`, `ghSetBranch(b)`.
+
 ## The house rules
 
 - English, and the prose has no em dashes.
@@ -154,3 +178,5 @@ arrive. None of them asks the player to type a secret.
   let anybody sign an update of the app. The build makes one when it is
   missing.
 - One writer per file. Read before you write, and run the test after.
+- The shelf holds one file per character on `main`, and a branch is for a
+  character that is not ready to be shared yet.

@@ -25,7 +25,7 @@
      is not. Both are read here, so the app does not care which came. */
   function parse(text) {
     var t = String(text || '');
-    if (t.charAt(0) === '{') { try { return JSON.parse(t); } catch (e) {} }
+    if (t.charAt(0) === '{' || t.charAt(0) === '[') { try { return JSON.parse(t); } catch (e) {} }
     var out = {};
     t.split('&').forEach(function (pair) {
       var i = pair.indexOf('=');
