@@ -19,7 +19,9 @@ $assets = Join-Path $app 'assets'
 if (Test-Path $assets) { Remove-Item $assets -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $assets | Out-Null
 Copy-Item (Join-Path $root 'dist\index.html') (Join-Path $assets 'index.html') -Force
-Copy-Item (Join-Path $root 'dist\data') (Join-Path $assets 'data') -Recurse -Force
+Get-ChildItem (Join-Path $root 'dist\data') -Filter *.json | ForEach-Object {
+  Copy-Item $_.FullName (Join-Path $assets $_.Name) -Force
+}
 
 Write-Output "2. compiling resources"
 $resZip = Join-Path $out 'res.zip'

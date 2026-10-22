@@ -90,17 +90,27 @@ public class MainActivity extends Activity {
             String path = name.replace("\\", "/");
             while (path.startsWith("/")) path = path.substring(1);
             path = path.replace("..", "");
-            try {
-                InputStream in = host.getAssets().open(path);
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                byte[] chunk = new byte[8192];
-                int n;
-                while ((n = in.read(chunk)) > 0) out.write(chunk, 0, n);
-                in.close();
-                return out.toString("UTF-8");
-            } catch (IOException e) {
-                return null;
+            /* The assets are packed flat, because aapt2 on a windows machine
+               writes a backslash into the name of an asset that sits in a
+               folder, and the phone then looks for a name that is not there. */
+            String flat = path;
+            int slash = flat.lastIndexOf('/');
+            if (slash >= 0) flat = flat.substring(slash + 1);
+            String[] names = path.equals(flat) ? new String[] { path } : new String[] { path, flat };
+            for (String candidate : names) {
+                try {
+                    InputStream in = host.getAssets().open(candidate);
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    byte[] chunk = new byte[8192];
+                    int n;
+                    while ((n = in.read(chunk)) > 0) out.write(chunk, 0, n);
+                    in.close();
+                    return out.toString("UTF-8");
+                } catch (IOException e) {
+                    /* the next name */
+                }
             }
+            return null;
         }
     }
 
@@ -173,13 +183,20 @@ public class MainActivity extends Activity {
             if (path == null || path.equals("/") || path.isEmpty()) path = "/index.html";
             while (path.startsWith("/")) path = path.substring(1);
             path = path.replace("..", "");
-            try {
-                InputStream in = host.getAssets().open(path);
-                return new WebResourceResponse(mimeOf(path), "utf-8", in);
-            } catch (IOException e) {
-                byte[] none = new byte[0];
-                return new WebResourceResponse("text/plain", "utf-8", new ByteArrayInputStream(none));
+            String flat = path;
+            int slash = flat.lastIndexOf('/');
+            if (slash >= 0) flat = flat.substring(slash + 1);
+            String[] names = path.equals(flat) ? new String[] { path } : new String[] { path, flat };
+            for (String candidate : names) {
+                try {
+                    InputStream in = host.getAssets().open(candidate);
+                    return new WebResourceResponse(mimeOf(candidate), "utf-8", in);
+                } catch (IOException e) {
+                    /* the next name */
+                }
             }
+            byte[] none = new byte[0];
+            return new WebResourceResponse("text/plain", "utf-8", new ByteArrayInputStream(none));
         }
 
         @Override
