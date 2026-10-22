@@ -127,6 +127,131 @@
     E.update.appendChild(holder);
   }
 
+  /* The exchange: the character being played goes out, and one comes in. */
+  function exchange() {
+    E.exchange.innerHTML = '';
+
+    var out = document.createElement('div');
+    out.className = 'srow';
+    out.innerHTML = '<span class="t">The character being played</span><span class="d">a package of it</span>';
+    var send = document.createElement('button');
+    send.type = 'button';
+    send.className = 'stog';
+    send.textContent = 'Send';
+    send.setAttribute('aria-label', 'Send the character being played');
+    send.addEventListener('click', function () {
+      var answer = C.exportCharacter();
+      C.toast(answer.ok ? answer.name + ' is ready to send' : answer.why);
+    });
+    out.appendChild(send);
+    E.exchange.appendChild(out);
+
+    var into = document.createElement('div');
+    into.className = 'srow';
+    into.innerHTML = '<span class="t">A character</span><span class="d">from a file on the phone</span>';
+    var open = document.createElement('button');
+    open.type = 'button';
+    open.className = 'stog';
+    open.textContent = 'Open';
+    open.setAttribute('aria-label', 'Open a file from the phone');
+    open.addEventListener('click', function () { C.pickFile(); });
+    into.appendChild(open);
+    E.exchange.appendChild(into);
+  }
+
+  /* The repository: its address and its token, and the window that holds the
+     characters it keeps. */
+  function repositoryRows() {
+    E.repository.innerHTML = '';
+    var repo = C.repository();
+
+    var address = document.createElement('div');
+    address.className = 'srow';
+    var input = document.createElement('input');
+    input.className = 'cinput';
+    input.type = 'url';
+    input.value = repo.address;
+    input.placeholder = 'https://....upstash.io';
+    input.setAttribute('aria-label', 'The address of the repository');
+    input.addEventListener('input', function () {
+      api.state.ui = api.state.ui || {};
+      api.state.ui.repo = input.value;
+      api.save();
+    });
+    address.appendChild(input);
+    E.repository.appendChild(address);
+
+    var token = document.createElement('div');
+    token.className = 'srow';
+    var secret = document.createElement('input');
+    secret.className = 'cinput';
+    secret.type = 'password';
+    secret.value = repo.token;
+    secret.placeholder = 'the token of the repository';
+    secret.setAttribute('aria-label', 'The token of the repository');
+    secret.addEventListener('input', function () {
+      api.state.ui = api.state.ui || {};
+      api.state.ui.token = secret.value;
+      api.save();
+    });
+    token.appendChild(secret);
+    E.repository.appendChild(token);
+
+    var row = document.createElement('div');
+    row.className = 'srow';
+    row.innerHTML = '<span class="t">The characters</span><span class="d">the ones it holds</span>';
+    var list = document.createElement('button');
+    list.type = 'button';
+    list.className = 'stog';
+    list.textContent = 'Open';
+    list.setAttribute('aria-label', 'The characters the repository holds');
+    list.addEventListener('click', openRepository);
+    row.appendChild(list);
+    E.repository.appendChild(row);
+  }
+
+  /* The window of the repository: a list of the characters it holds, and the
+     two arrows. The arrow down brings one in, the arrow up leaves the
+     character being played in its place. */
+  function openRepository() {
+    C.repoList().then(function (names) {
+      var html = names.map(function (n) {
+        return '<div class="crow" data-name="' + C.esc(n) + '">' +
+          '<span class="cn">' + C.esc(n) + '</span>' +
+          '<button class="mini" type="button" data-down="' + C.esc(n) + '" aria-label="Bring ' + C.esc(n) + ' in">&darr;</button>' +
+          '<button class="mini" type="button" data-up="' + C.esc(n) + '" aria-label="Put the character being played in place of ' + C.esc(n) + '">&uarr;</button>' +
+          '</div>';
+      }).join('');
+      if (!html) html = '<div class="empty">The repository is empty.</div>';
+      api.sheet.open({
+        id: 'repository',
+        title: 'The repository',
+        metaClass: 'sheet-meta one',
+        meta: '<span>The characters it holds. The arrow down brings one in.</span>',
+        list: html,
+        onList: function (ev) {
+          var down = ev.target.closest('[data-down]');
+          if (down) {
+            C.repoGet(down.dataset.down).then(function (pkg) {
+              if (!pkg) { C.toast('that one is not there'); return; }
+              var answer = C.importPackage(JSON.stringify(pkg));
+              C.toast(answer.ok ? answer.name + ' is here' : answer.why);
+            }).catch(function (e) { C.toast(String((e && e.message) || e)); });
+            return;
+          }
+          var up = ev.target.closest('[data-up]');
+          if (up) {
+            var rec = api.character();
+            var pkg = { kind: 'dnd-sheet-character', version: 1, name: up.dataset.up, saved: new Date().toISOString(), record: { char: rec.char, spells: rec.spells, volley: rec.volley, pages: rec.pages, theme: rec.theme, icon: rec.icon } };
+            C.repoPut(pkg).then(function (ok) {
+              C.toast(ok ? up.dataset.up + ' is in the repository' : 'the repository said no');
+            }).catch(function (e) { C.toast(String((e && e.message) || e)); });
+          }
+        }
+      });
+    }).catch(function (e) { C.toast(String((e && e.message) || e)); });
+  }
+
   Volley.page({
     id: 'settings',
     title: 'Settings',
@@ -141,6 +266,11 @@
       '  <div class="cshead"><span>The files</span><span class="rule"></span></div>',
       '  <div class="fcards" id="settingsFiles"></div>',
       '  <p class="note">The book, the library of features and the classes sit beside the app and are read when a page asks for one.</p>',
+      '  <div class="cshead"><span>Exchange</span><span class="rule"></span></div>',
+      '  <div class="fcards" id="settingsExchange"></div>',
+      '  <p class="note">A character is a package: the data in JSON. It can leave the phone as a file, or sit in a repository that the players share.</p>',
+      '  <div class="cshead"><span>The repository</span><span class="rule"></span></div>',
+      '  <div class="fcards" id="settingsRepository"></div>',
       '  <div class="cshead"><span>Update</span><span class="rule"></span></div>',
       '  <div class="fcards" id="settingsUpdate"></div>',
       '  <p class="note">The app is served from the machine that holds it. Give that address here and the app will tell you when a newer build is there.</p>',
@@ -153,6 +283,8 @@
         body: root.querySelector('#settingsBody'),
         list: root.querySelector('#settingsList'),
         files: root.querySelector('#settingsFiles'),
+        exchange: root.querySelector('#settingsExchange'),
+        repository: root.querySelector('#settingsRepository'),
         update: root.querySelector('#settingsUpdate')
       };
     },
@@ -162,6 +294,8 @@
       E.list.innerHTML = '';
       files();
       update();
+      exchange();
+      repositoryRows();
       api.pages.forEach(function (p) {
         if (p.hidden) return;
         var on = p.home || pages().indexOf(p.id) >= 0;

@@ -20,8 +20,8 @@ public class ApkProvider extends ContentProvider {
 
     public static final String AUTHORITY = "net.volley.app.apk";
 
-    public static Uri uriFor(Context context) {
-        return new Uri.Builder().scheme("content").authority(AUTHORITY).path("update.apk").build();
+    public static Uri uriFor(Context context, String name) {
+        return new Uri.Builder().scheme("content").authority(AUTHORITY).path(name).build();
     }
 
     @Override
@@ -31,6 +31,8 @@ public class ApkProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
+        String path = uri.getPath();
+        if (path != null && path.endsWith(".json")) return "application/json";
         return "application/vnd.android.package-archive";
     }
 
@@ -59,7 +61,9 @@ public class ApkProvider extends ContentProvider {
 
     @Override
     public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException {
-        File file = new File(getContext().getFilesDir(), "update.apk");
+        String path = uri.getPath();
+        String name = path == null ? "update.apk" : path.substring(path.lastIndexOf('/') + 1);
+        File file = new File(getContext().getFilesDir(), name);
         return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
     }
 }

@@ -90,6 +90,8 @@ The list of what the character can do, and what is left of it.
 
 **The data is read when a page asks for it.** The book, the library of features and the classes are files beside the page, so a launch carries the character and nothing else. A page asks for its file as it opens and repaints when it lands. The Android shell reads the files out of the app for the page, and the settings page lists which of them are here, with a button to read one that did not arrive.
 
+**A character is a package.** The record in JSON, with a name, a kind and a version. It can leave the app as a file, which the phone offers to send, and come back in through the explorer of the phone. A repository holds the shared ones: its address and its token sit in the settings, and a window lists the characters it keeps, an arrow down to bring one in and an arrow up to leave the character being played in its place. An import never replaces a character that is already there.
+
 **The app can update itself.** The build stamps a version into the page and writes the same one beside it. The settings page asks the machine that serves the app whether a newer build is there, and the app then fetches that build and hands it to the installer of the phone, which asks the player before it puts anything in place. On the web, the build opens in the browser instead.
 
 **A feature of the library starts with no counter.** The data holds every class and subclass feature of the twelve classes and their newest archetypes, 1017 of them with their text, and a character names the ones it holds. A library feature carries its class, its level and its text, and its uses are for the player to set in the edit mode.

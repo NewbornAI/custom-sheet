@@ -474,6 +474,14 @@
     dataError: DATA_ERROR,
     version: VERSION,
     readUrl: readUrl,
+    exportCharacter: exportCharacter,
+    importPackage: importPackage,
+    pickFile: pickFile,
+    repoList: repoList,
+    repoPut: repoPut,
+    repoGet: repoGet,
+    repository: repository,
+    toast: toast,
     installUpdate: installUpdate,
     plugFeature: plugFeature,
     esc: esc,
@@ -771,6 +779,165 @@
         if (ev.target.closest('[data-blank]')) openBlankCharacter();
       }
     });
+  }
+
+  /* ---- the packages ---- */
+
+  /* A character leaves the app as a package: the record, a name, a kind and
+     a version. What comes back in is turned into a character again, and the
+     pages it carries are registered with the app. */
+  function packageOf(rec) {
+    return {
+      kind: 'dnd-sheet-character',
+      version: 1,
+      name: (rec.char && rec.char.name) || 'Unnamed character',
+      record: {
+        char: rec.char,
+        spells: rec.spells,
+        volley: rec.volley,
+        pages: rec.pages,
+        theme: rec.theme,
+        icon: rec.icon
+      }
+    };
+  }
+
+  function packageName(rec) {
+    var name = ((rec.char && rec.char.name) || 'character').toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'character';
+    return 'dnd-sheet-' + name + '.json';
+  }
+
+  /* A name that is taken does not stop the import: the new one is called
+     something else, so nothing is ever replaced by accident. */
+  function freeName(name) {
+    var taken = {};
+    Object.keys(state.characters).forEach(function (id) {
+      taken[((state.characters[id].char || {}).name || '').toLowerCase()] = true;
+    });
+    var out = name;
+    var n = 2;
+    while (taken[out.toLowerCase()]) { out = name + ' ' + n; n += 1; }
+    return out;
+  }
+
+  function importPackage(text) {
+    var pkg = null;
+    try { pkg = JSON.parse(text); } catch (e) { return { ok: false, why: 'that file is not a character' }; }
+    if (!pkg || pkg.kind !== 'dnd-sheet-character' || !pkg.record) {
+      return { ok: false, why: 'that file is not a character' };
+    }
+    var rec = seedCharacter(JSON.parse(JSON.stringify(pkg.record)), false);
+    rec.char.name = freeName((rec.char.name || pkg.name || 'Unnamed character'));
+    addCharacter(rec);
+    return { ok: true, name: rec.char.name };
+  }
+
+  /* The export goes to the phone, which offers it to send. */
+  function exportCharacter() {
+    var rec = state.characters[state.current];
+    if (!rec) return { ok: false, why: 'no character' };
+    var name = packageName(rec);
+    var text = JSON.stringify(packageOf(rec), null, 2);
+    if (window.DndShell && window.DndShell.share) {
+      try {
+        var answer = window.DndShell.share(name, text);
+        if (answer && answer.indexOf('error ') === 0) return { ok: false, why: answer };
+        return { ok: true, name: name };
+      } catch (e) {
+        return { ok: false, why: String((e && e.message) || e) };
+      }
+    }
+    /* On the web the file is offered as a download. */
+    try {
+      var blob = new Blob([text], { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+      return { ok: true, name: name };
+    } catch (e) {
+      return { ok: false, why: String((e && e.message) || e) };
+    }
+  }
+
+  /* ---- the repository ---- */
+
+  /* The repository holds the characters that are shared. Its address and its
+     token are the player's, so it can be a temporary one that goes away. */
+  function repository() {
+    var ui = state.ui || {};
+    return { address: String(ui.repo || ''), token: String(ui.token || '') };
+  }
+
+  function repoCall(command) {
+    var r = repository();
+    if (!r.address || !r.token) return Promise.reject(new Error('the repository has no address yet'));
+    var url = r.address.replace(/\/$/, '') + '/pipeline';
+    var body = JSON.stringify([command]);
+    if (window.DndNet && window.DndNet.postUrl) {
+      try {
+        var answer = window.DndNet.postUrl(url, body, r.token);
+        if (answer && typeof answer.then === 'function') {
+          return answer.then(function (text) { return JSON.parse(text); });
+        }
+        return Promise.resolve(JSON.parse(answer));
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    }
+    return fetch(url, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + r.token, 'Content-Type': 'application/json' },
+      body: body
+    }).then(function (res) { return res.json(); });
+  }
+
+  function repoList() {
+    return repoCall(['KEYS', 'dnd-sheet:*']).then(function (out) {
+      var rows = (out && out[0] && out[0].result) || [];
+      return rows.map(function (key) { return String(key).replace(/^dnd-sheet:/, ''); });
+    });
+  }
+
+  function repoPut(pkg) {
+    var key = 'dnd-sheet:' + (pkg.name || 'character');
+    return repoCall(['SET', key, JSON.stringify(pkg)]).then(function (out) {
+      return !!(out && out[0] && out[0].result === 'OK');
+    });
+  }
+
+  function repoGet(name) {
+    return repoCall(['GET', 'dnd-sheet:' + name]).then(function (out) {
+      var raw = out && out[0] && out[0].result;
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch (e) { return null; }
+    });
+  }
+
+  /* The file the player picked comes back to the page. */
+  window.__dndPicked = function (name) {
+    var text = (window.DndShell && window.DndShell.pickedText) ? window.DndShell.pickedText() : '';
+    if (!text) return;
+    var answer = importPackage(text);
+    if (answer && answer.ok) toast(answer.name + ' is here.');
+    else toast(answer.why || 'that file is not a character');
+  };
+
+  function pickFile() {
+    if (window.DndShell && window.DndShell.pick) {
+      try {
+        var answer = window.DndShell.pick();
+        if (answer && answer.indexOf('error ') === 0) toast(answer);
+        return true;
+      } catch (e) {
+        toast(String((e && e.message) || e));
+        return false;
+      }
+    }
+    toast('the phone opens the explorer, the web does not.');
+    return false;
   }
 
   /* A character from a class. The skeleton is built from the class data

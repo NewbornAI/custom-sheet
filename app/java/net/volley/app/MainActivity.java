@@ -28,9 +28,16 @@ import java.io.InputStream;
 public class MainActivity extends Activity {
 
     private static final String ORIGIN = "https://dnd.local/";
+    private static final int PICK = 41;
     private static final int VOID = 0xff08070f;
 
     private WebView view;
+    private String pickedText = "";
+
+    /* The words of the file the player picked. */
+    public String pickedWords() {
+        return pickedText;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +73,27 @@ public class MainActivity extends Activity {
         view.loadUrl(ORIGIN + "index.html");
     }
 
+    /* The player picked a file: the page is told the name of it and asks for
+       the words through the bridge. */
+    @Override
+    protected void onActivityResult(int request, int result, Intent data) {
+        super.onActivityResult(request, result, data);
+        if (request != PICK || result != RESULT_OK || data == null || data.getData() == null) return;
+        try {
+            InputStream in = getContentResolver().openInputStream(data.getData());
+            if (in == null) return;
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte[] chunk = new byte[16384];
+            int n;
+            while ((n = in.read(chunk)) > 0) out.write(chunk, 0, n);
+            in.close();
+            pickedText = out.toString("UTF-8");
+            view.evaluateJavascript("window.__dndPicked && window.__dndPicked('package.json')", null);
+        } catch (Exception e) {
+            pickedText = "";
+        }
+    }
+
     @Override
     public void onBackPressed() {
         if (view != null && view.canGoBack()) {
@@ -78,9 +106,9 @@ public class MainActivity extends Activity {
     /* Reads a file out of the assets for the page. */
     private static class AssetBridge {
 
-        private final Activity host;
+        private final MainActivity host;
 
-        AssetBridge(Activity host) {
+        AssetBridge(MainActivity host) {
             this.host = host;
         }
 
@@ -119,9 +147,9 @@ public class MainActivity extends Activity {
        answer comes from another one. */
     private static class FetchBridge {
 
-        private final Activity host;
+        private final MainActivity host;
 
-        FetchBridge(Activity host) {
+        FetchBridge(MainActivity host) {
             this.host = host;
         }
 
@@ -162,12 +190,88 @@ public class MainActivity extends Activity {
             try {
                 java.io.File file = new java.io.File(host.getFilesDir(), "update.apk");
                 if (!file.exists() || file.length() == 0) return "error nothing downloaded";
-                Uri uri = ApkProvider.uriFor(host);
+                Uri uri = ApkProvider.uriFor(host, "update.apk");
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(uri, "application/vnd.android.package-archive");
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 host.startActivity(intent);
                 return "ok";
+            } catch (Exception e) {
+                return "error " + e.getClass().getSimpleName();
+            }
+        }
+
+        /* Opens the explorer of the phone, so a file can be picked. */
+        @JavascriptInterface
+        public String pick() {
+            try {
+                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                i.setType("*/*");
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                host.startActivityForResult(i, PICK);
+                return "picking";
+            } catch (Exception e) {
+                return "error " + e.getClass().getSimpleName();
+            }
+        }
+
+        /* The words of the file that was picked. */
+        @JavascriptInterface
+        public String pickedText() {
+            return host.pickedWords();
+        }
+
+        /* Writes a character out and offers it to the phone, so it can be
+           sent to somebody. */
+        @JavascriptInterface
+        public String share(String name, String text) {
+            try {
+                java.io.File file = new java.io.File(host.getFilesDir(), name);
+                java.io.FileOutputStream out = new java.io.FileOutputStream(file);
+                out.write(text.getBytes("UTF-8"));
+                out.close();
+                Uri uri = ApkProvider.uriFor(host, name);
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("application/json");
+                intent.putExtra(Intent.EXTRA_STREAM, uri);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Intent chooser = Intent.createChooser(intent, "Send the character");
+                chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                host.startActivity(chooser);
+                return "ok";
+            } catch (Exception e) {
+                return "error " + e.getClass().getSimpleName();
+            }
+        }
+
+        /* Asks the repository something, with the token of the player. */
+        @JavascriptInterface
+        public String postUrl(String url, String body, String token) {
+            if (url == null) return null;
+            try {
+                java.net.HttpURLConnection c = (java.net.HttpURLConnection) new java.net.URL(url).openConnection();
+                c.setConnectTimeout(5000);
+                c.setReadTimeout(15000);
+                c.setRequestMethod("POST");
+                c.setDoOutput(true);
+                c.setRequestProperty("Content-Type", "application/json");
+                if (token != null && token.length() > 0) c.setRequestProperty("Authorization", "Bearer " + token);
+                if (body != null) {
+                    java.io.OutputStream out = c.getOutputStream();
+                    out.write(body.getBytes("UTF-8"));
+                    out.close();
+                }
+                int code = c.getResponseCode();
+                java.io.InputStream in = (code >= 200 && code <= 299) ? c.getInputStream() : c.getErrorStream();
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                if (in != null) {
+                    byte[] chunk = new byte[8192];
+                    int n;
+                    while ((n = in.read(chunk)) > 0) out.write(chunk, 0, n);
+                    in.close();
+                }
+                c.disconnect();
+                return out.toString("UTF-8");
             } catch (Exception e) {
                 return "error " + e.getClass().getSimpleName();
             }
@@ -204,9 +308,9 @@ public class MainActivity extends Activity {
        out of the app. */
     private static class ShellClient extends WebViewClient {
 
-        private final Activity host;
+        private final MainActivity host;
 
-        ShellClient(Activity host) {
+        ShellClient(MainActivity host) {
             this.host = host;
         }
 
