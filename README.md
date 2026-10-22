@@ -25,9 +25,9 @@ The AC field is optional. Leave it empty and the app shows the damage of every b
 A tracker for the character's slots and spell list, built for one hand at the table.
 
 - **The top bar** holds the DC and the sorcery points, each with its own minus and plus, and two toggles: Cunning restores one warlock slot, and a sorcerer rest restores half your sorcerer level in sorcery points.
-- **The left bar** lists the spell levels. Every slot is a pip: filled means you still have it, and tapping a pip sets that level to that count. The arrow at the end of a row opens the grimoire for that level.
-- **The spell list** shows one card per spell with its casting time, range, duration and components. Tap a card for the full description, and hold and drag a card to reorder the list.
-- **The wrench** in the top right turns on the edit mode, where each level row grows minus and plus buttons for the maximum number of slots. A level with no slots is dimmed, which is how level 5 starts out until you unlock it.
+- **The slot strip** runs across the top: the levels left to right, and under each one its slots stacked as pips. Filled means you still have it, and tapping a pip sets that level to that count. The arrow beside a level shows the spells of that level.
+- **The spell list** shows one card per spell with its casting time, range, duration and components. Tap a card for the full description, and hold and drag a card to reorder the list. The plus at the head of the list opens the grimoire for that level.
+- **The wrench** in the top right turns on the edit mode, where each level grows minus and plus buttons for the maximum number of slots, and the sorcerer level can be changed. A level with no slots is dimmed, which is how level 5 starts out until you unlock it.
 
 The spell list is seeded with the cantrips and the spells the character is known to have, and everything else comes from the grimoire.
 

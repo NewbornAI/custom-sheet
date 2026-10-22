@@ -293,15 +293,24 @@ input[type=range]::-moz-range-thumb{
 .tog[aria-pressed="true"]{border-color:rgba(255,196,77,.5);background:rgba(255,196,77,.10);color:var(--gold)}
 .tog:disabled{opacity:.4;cursor:default}
 
-.sbody{flex:1 1 auto;min-height:0;display:flex;gap:8px}
-.levels{flex:0 0 100px;display:flex;flex-direction:column;gap:3px;overflow-y:auto;scrollbar-width:none}
-.levels::-webkit-scrollbar{width:0}
-.lv{display:flex;align-items:center;gap:5px;padding:3px 2px;border-radius:4px;cursor:pointer}
+.sbody{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:7px}
+.slotstrip{
+  flex:0 0 auto;
+  display:flex;
+  align-items:flex-start;
+  gap:7px;
+  padding:2px 0 6px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.slotstrip::-webkit-scrollbar{height:0}
+.lv{display:flex;flex-direction:column;align-items:center;gap:5px;padding:3px;border-radius:6px;cursor:pointer;flex:0 0 auto}
 .lv.on{background:rgba(155,123,255,.12)}
-.lv .n{font-size:11px;color:var(--muted);width:11px;flex:0 0 auto}
+.lv .head{display:flex;align-items:center;gap:1px}
+.lv .n{font-size:11px;color:var(--muted);line-height:1}
 .lv.on .n{color:var(--arcane)}
 .pip{
-  width:11px;height:11px;
+  width:14px;height:14px;
   border-radius:50%;
   border:1px solid #3a3454;
   background:transparent;
@@ -310,15 +319,21 @@ input[type=range]::-moz-range-thumb{
   cursor:pointer;
 }
 .pip.full{background:var(--arcane);border-color:var(--arcane)}
-.pip.wl{border-radius:2px}
+.pip.wl{border-radius:3px}
 .pip.wl.full{background:#54cfc4;border-color:#54cfc4}
 .lv .plus{font-size:9px;color:#4f4a6b;flex:0 0 auto}
-.lv .arrow{margin-left:auto;background:none;border:0;color:#615c7d;font-size:13px;padding:0 1px;cursor:pointer;flex:0 0 auto;line-height:1}
+.lv .arrow{background:none;border:0;color:#615c7d;font-size:13px;padding:0;cursor:pointer;flex:0 0 auto;line-height:1}
 .lv.dim{opacity:.35}
 .lv .edit{display:none;gap:3px;flex:0 0 auto}
 .lv.editing .edit{display:flex}
 .lv.editing .pips{display:none}
-.pips{display:flex;align-items:center;gap:3px}
+.pips{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:14px}
+.wlgroup{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:4px}
+.lv .val{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+.listhead{flex:0 0 auto;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)}
+.listhead .t{color:var(--ink);font-size:12px}
+.listhead .mini{margin-left:auto}
 
 .grimoire{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px;overflow-y:auto;scrollbar-width:none}
 .grimoire::-webkit-scrollbar{width:0}
@@ -717,7 +732,11 @@ input[type=range]::-moz-range-thumb{
     </div>
 
     <div class="sbody">
-      <div class="levels" id="levels"></div>
+      <div class="slotstrip" id="levels"></div>
+      <div class="listhead">
+        <span class="t" id="listTitle">Level 1 spells</span>
+        <button class="mini" id="addSpell" type="button" aria-label="Add a spell">+</button>
+      </div>
       <div class="grimoire" id="spellList"></div>
     </div>
   </section>
@@ -3346,7 +3365,7 @@ input[type=range]::-moz-range-thumb{
     spMax: 8,
     cunning: false,
     sorcRest: false,
-    sorcererLevel: 5,
+    sorcererLevel: 8,
     max: { 1: 4, 2: 3, 3: 3, 4: 2, 5: 0 },
     left: { 1: 4, 2: 3, 3: 3, 4: 2, 5: 0 },
     warlockMax: 2,
@@ -3392,6 +3411,8 @@ input[type=range]::-moz-range-thumb{
     cunning: document.getElementById('cunning'),
     sorcRest: document.getElementById('sorcRest'),
     levels: document.getElementById('levels'),
+    listTitle: document.getElementById('listTitle'),
+    addSpell: document.getElementById('addSpell'),
     spellList: document.getElementById('spellList'),
     sheet: document.getElementById('sheet'),
     sheetTitle: document.getElementById('sheetTitle'),
@@ -3758,28 +3779,35 @@ input[type=range]::-moz-range-thumb{
     LEVELS.forEach(function (lv) {
       var max = S.max[lv] || 0;
       var left = Math.min(S.left[lv] || 0, max);
-      var row = document.createElement('div');
-      row.className = 'lv' + (lv === S.selected ? ' on' : '') + (editing ? ' editing' : '');
-      if (lv > 0 && !max) row.classList.add('dim');
-      row.dataset.lv = String(lv);
+      var col = document.createElement('div');
+      col.className = 'lv' + (lv === S.selected ? ' on' : '') + (editing ? ' editing' : '');
+      if (lv > 0 && !max) col.classList.add('dim');
+      col.dataset.lv = String(lv);
 
+      var head = document.createElement('span');
+      head.className = 'head';
       var n = document.createElement('span');
       n.className = 'n';
       n.textContent = String(lv);
-      row.appendChild(n);
+      head.appendChild(n);
+      var arrow = document.createElement('button');
+      arrow.type = 'button';
+      arrow.className = 'arrow';
+      arrow.textContent = '›';
+      arrow.setAttribute('aria-label', 'Show the spells of level ' + lv);
+      head.appendChild(arrow);
+      col.appendChild(head);
 
       var pips = document.createElement('span');
       pips.className = 'pips';
-      pips.style.display = '';
       for (var i = 1; i <= max; i++) pips.appendChild(pipButton(i <= left, lv, i, false));
       if (lv === WARLOCK_LEVEL && S.warlockMax) {
-        var plus = document.createElement('span');
-        plus.className = 'plus';
-        plus.textContent = '+';
-        pips.appendChild(plus);
-        for (var w = 1; w <= S.warlockMax; w++) pips.appendChild(pipButton(w <= S.warlockLeft, lv, w, true));
+        var wlGroup = document.createElement('span');
+        wlGroup.className = 'wlgroup';
+        for (var w = 1; w <= S.warlockMax; w++) wlGroup.appendChild(pipButton(w <= S.warlockLeft, lv, w, true));
+        pips.appendChild(wlGroup);
       }
-      row.appendChild(pips);
+      col.appendChild(pips);
 
       var edit = document.createElement('span');
       edit.className = 'edit';
@@ -3795,17 +3823,36 @@ input[type=range]::-moz-range-thumb{
         edit.appendChild(editButton('-', lv, true));
         edit.appendChild(editButton('+', lv, true));
       }
-      row.appendChild(edit);
+      col.appendChild(edit);
 
-      var arrow = document.createElement('button');
-      arrow.type = 'button';
-      arrow.className = 'arrow';
-      arrow.textContent = '›';
-      arrow.setAttribute('aria-label', 'Open the grimoire for level ' + lv);
-      row.appendChild(arrow);
-
-      el.levels.appendChild(row);
+      el.levels.appendChild(col);
     });
+
+    if (editing) {
+      var cell = document.createElement('div');
+      cell.className = 'lv editing';
+      var head2 = document.createElement('span');
+      head2.className = 'head';
+      var lbl = document.createElement('span');
+      lbl.className = 'n';
+      lbl.textContent = 'Lv';
+      head2.appendChild(lbl);
+      cell.appendChild(head2);
+      var val = document.createElement('span');
+      val.className = 'val';
+      val.textContent = String(S.sorcererLevel);
+      cell.appendChild(val);
+      var ed = document.createElement('span');
+      ed.className = 'edit';
+      ed.style.display = 'flex';
+      var down = document.createElement('button');
+      down.type = 'button'; down.className = 'mini'; down.textContent = '-'; down.dataset.lvl = '-1';
+      var up = document.createElement('button');
+      up.type = 'button'; up.className = 'mini'; up.textContent = '+'; up.dataset.lvl = '1';
+      ed.appendChild(down); ed.appendChild(up);
+      cell.appendChild(ed);
+      el.levels.appendChild(cell);
+    }
   }
 
   function renderSpellList() {
@@ -3842,6 +3889,8 @@ input[type=range]::-moz-range-thumb{
     el.sorcRest.setAttribute('aria-pressed', S.sorcRest ? 'true' : 'false');
     el.sorcRest.title = 'Restores ' + Math.floor(S.sorcererLevel / 2) + ' sorcery points';
     el.wrench.setAttribute('aria-pressed', editing ? 'true' : 'false');
+    var list = S.lists[S.selected] || [];
+    el.listTitle.textContent = 'Level ' + S.selected + ' spells · ' + list.length;
     renderLevels();
     renderSpellList();
   }
@@ -3985,10 +4034,14 @@ input[type=range]::-moz-range-thumb{
       commit();
       return;
     }
-    var arrow = ev.target.closest('.arrow');
-    if (arrow) { openGrimoire(Number(arrow.closest('.lv').dataset.lv)); return; }
+    var lvBtn = ev.target.closest('.mini[data-lvl]');
+    if (lvBtn) {
+      S.sorcererLevel = Math.max(1, Math.min(20, S.sorcererLevel + Number(lvBtn.dataset.lvl)));
+      commit();
+      return;
+    }
     var row = ev.target.closest('.lv');
-    if (row) { S.selected = Number(row.dataset.lv); commit(); }
+    if (row && row.dataset.lv !== undefined) { S.selected = Number(row.dataset.lv); commit(); }
   });
 
   el.spellList.addEventListener('click', function (ev) {
@@ -4058,6 +4111,8 @@ input[type=range]::-moz-range-thumb{
     window.addEventListener('pointercancel', up);
     window.addEventListener('touchmove', blockScroll, { passive: false });
   });
+
+  el.addSpell.addEventListener('click', function () { openGrimoire(state.spell.selected); });
 
   el.sheetClose.addEventListener('click', closeSheet);
   el.sheet.addEventListener('click', function (ev) { if (ev.target === el.sheet) closeSheet(); });
