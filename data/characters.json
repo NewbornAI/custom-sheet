@@ -1,7 +1,7 @@
 {
   "edition": "Mandal's second character, the bard, ready to add from the switcher",
   "source": "Mandal's sheet of 2026-10-22",
-  "note": "The six scores are the sheet. The initiative follows the dexterity, so the record carries none; the hit points, the armour class and the skills wait to be typed. The two adept feats always have their ten spells prepared, so those travel with the character. A record can also carry a theme and an icon.",
+  "note": "The six scores are the sheet. The initiative follows the dexterity, so the record carries none; the hit points, the armour class and the skills wait to be typed. The two adept feats always have their ten spells prepared, so those travel with the character, each named by the feat that grants it. A record can also carry a theme and an icon.",
   "presets": [
     {
       "id": "bardCreation",
@@ -161,7 +161,20 @@
           },
           "levelFilter": true,
           "cunning": false,
-          "sorcRest": false
+          "sorcRest": false,
+          "sources": {
+            "Entangle": "Conjuration adept",
+            "Shield": "Abjuration adept",
+            "Misty Step": "Conjuration adept",
+            "Lesser Restoration": "Abjuration adept",
+            "Conjure Animals": "Conjuration adept",
+            "Protection from Energy": "Abjuration adept",
+            "Dimension Door": "Conjuration adept",
+            "Banishment": "Abjuration adept",
+            "Conjure Elemental": "Conjuration adept",
+            "Mass Cure Wounds": "Abjuration adept"
+          },
+          "pick": "Bard"
         }
       }
     }

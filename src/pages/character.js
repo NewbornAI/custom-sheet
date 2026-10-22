@@ -57,7 +57,7 @@
 
   var CHAR_DEFAULTS = {
     name: '',
-    level: 9,
+    level: 11,
     abilities: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 20 },
     saves: { str: 0, dex: 0, con: 1, int: 0, wis: 0, cha: 1 },
     skills: {},

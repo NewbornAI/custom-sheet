@@ -327,6 +327,11 @@ input[type=range]::-moz-range-thumb{
 .sbar{display:flex;gap:8px;align-items:center;flex:0 0 auto;flex-wrap:wrap}
 .stat{display:flex;align-items:center;gap:3px;font-size:10.5px;color:var(--muted)}
 .stat[hidden]{display:none}
+.srcpick{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:7px}
+.srcpick .k{font-size:9.5px;letter-spacing:.08em;color:var(--muted);margin-right:1px}
+.spick{font:inherit;font-size:10px;line-height:1;padding:4px 7px;border-radius:4px;border:1px solid var(--edge);background:none;color:var(--muted);cursor:pointer}
+.spick.on{border-color:rgba(var(--arcane-rgb),.55);color:var(--arcane);background:rgba(var(--arcane-rgb),.12)}
+.spick:focus-visible{outline:2px solid var(--arcane);outline-offset:1px}
 .tog[hidden]{display:none}
 .stat .k{letter-spacing:.08em}
 .stat .mini{display:none}

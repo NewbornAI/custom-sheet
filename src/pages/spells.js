@@ -28,6 +28,10 @@
     warlockLeft: 2,
     selected: 1,
     lists: {},
+    /* The source of each spell is the character's own: the class or the
+       feature that granted it. A spell with no entry has no source. */
+    sources: {},
+    pick: '',
     classes: {},
     levelFilter: true,
     surge: null
@@ -91,6 +95,24 @@
       });
     });
     s.lists = lists;
+    /* A record that names its own sources keeps exactly those. One saved
+       before a character could name them takes the ones of the book, which
+       are the ones of the sheet the book was built from, and a character
+       that is new starts with none. */
+    var declared = saved && saved.sources && typeof saved.sources === 'object';
+    s.sources = {};
+    if (declared) {
+      Object.keys(saved.sources).forEach(function (n) {
+        if (C.bookByName[n] && saved.sources[n]) s.sources[n] = String(saved.sources[n]);
+      });
+    } else if (!fresh) {
+      LEVELS.forEach(function (lv) {
+        (lists[lv] || []).forEach(function (n) {
+          var spell = C.bookByName[n];
+          if (spell && spell.source) s.sources[n] = C.canonSource(spell.source);
+        });
+      });
+    }
     return s;
   }
 
@@ -272,7 +294,7 @@
       card.className = 'card';
       card.dataset.name = name;
       card.innerHTML = '<div class="top"><span class="t">' + C.esc(spell.name) + '</span>' +
-        C.sourceTag(spell.source) + '</div><div class="m">' + spellFields(spell) + '</div>';
+        C.sourceTag(S.sources[name]) + '</div><div class="m">' + spellFields(spell) + '</div>';
       E.spellList.appendChild(card);
     });
   }
@@ -316,6 +338,59 @@
     renderSpellList();
   }
 
+  /* ---- the source of a spell ---- */
+
+  /* What a character can declare as the source of a spell: the sources its
+     own features name, which are its classes and the features that grant a
+     spell, and the ones it already uses. A feat is a feature of its own and
+     not a class, so it is left out. */
+  function sourceChoices() {
+    var ch = api.character().char || {};
+    var out = [];
+    function add(name) {
+      name = String(name || '').trim();
+      if (!name || name === 'Feat') return;
+      if (out.indexOf(name) < 0) out.push(name);
+    }
+    (ch.features || []).forEach(function (f) { add(f.source); });
+    Object.keys(S.sources || {}).forEach(function (n) { add(S.sources[n]); });
+    return out;
+  }
+
+  /* The source the next spell learns with. Nothing picked means the first
+     class of the character, which is what a spell usually comes from. */
+  function pickValue() {
+    if (S.pick === 'none') return '';
+    if (S.pick && sourceChoices().indexOf(S.pick) >= 0) return S.pick;
+    return sourceChoices()[0] || '';
+  }
+
+  /* The row that declares it. */
+  function sourceRow() {
+    var chosen = pickValue();
+    var html = '<div class="srcpick" id="srcpick"><span class="k">SOURCE</span>';
+    sourceChoices().forEach(function (name) {
+      var on = name === chosen;
+      html += '<button type="button" class="spick' + (on ? ' on' : '') + '" data-src="' + C.esc(name) + '" ' +
+        'aria-pressed="' + (on ? 'true' : 'false') + '">' + C.esc(name) + '</button>';
+    });
+    html += '<button type="button" class="spick' + (chosen ? '' : ' on') + '" data-src="none" ' +
+      'aria-pressed="' + (chosen ? 'false' : 'true') + '">None</button></div>';
+    return html;
+  }
+
+  function pickOn(root, onPick, onDone) {
+    var row = root.querySelector('#srcpick');
+    if (!row) return;
+    row.addEventListener('click', function (ev) {
+      var b = ev.target.closest('.spick');
+      if (!b) return;
+      S.pick = b.dataset.src;
+      onPick(b.dataset.src === 'none' ? '' : b.dataset.src);
+      onDone();
+    });
+  }
+
   /* ---- the spell of the page ---- */
 
   function openSpell(name) {
@@ -324,8 +399,8 @@
     api.sheet.open({
       id: 'spell:' + name,
       title: spell.name,
-      meta: C.field('Level', spell.level) + spellFields(spell, true) + C.sourceTag(spell.source),
-      text: C.renderBlocks(spell.blocks),
+      meta: C.field('Level', spell.level) + spellFields(spell, true) + C.sourceTag(S.sources[name]),
+      text: sourceRow() + C.renderBlocks(spell.blocks),
       actions: [{
         label: 'Remove from level ' + S.selected,
         kind: 'danger',
@@ -333,10 +408,21 @@
           var list = S.lists[S.selected] || [];
           var ix = list.indexOf(name);
           if (ix >= 0) list.splice(ix, 1);
+          delete S.sources[name];
           api.sheet.close();
           commit();
         }
-      }]
+      }],
+      onPaint: function (root) {
+        pickOn(root, function (source) {
+          if (source) S.sources[name] = source;
+          else delete S.sources[name];
+        }, function () {
+          api.save();
+          openSpell(name);
+          renderSpellList();
+        });
+      }
     });
   }
 
@@ -395,7 +481,7 @@
       id: 'grimoire',
       title: grimoireTitle(lv),
       metaClass: 'sheet-meta one',
-      meta: '<span>Tap a spell to read it, a class to filter, + learns, a check unlearns</span>',
+      meta: '<span>Tap to read, + learns, a check unlearns</span>' + sourceRow(),
       list: true,
       search: true,
       level: true,
@@ -404,6 +490,7 @@
       onPaint: function (root) {
         root.querySelector('#sheetTitle').textContent = grimoireTitle(lv);
         root.querySelector('#sheetList').innerHTML = grimoireList(lv, (api.sheet.search() || '').toLowerCase());
+        pickOn(root, function () {}, function () { api.save(); openGrimoire(lv); });
         var tog = root.querySelector('#grimoireLevel');
         tog.textContent = S.levelFilter !== false ? 'Level ' + lv : 'All levels';
         tog.setAttribute('aria-pressed', S.levelFilter !== false ? 'true' : 'false');
@@ -432,9 +519,13 @@
             var list = S.lists[level] || [];
             var ix = list.indexOf(spell);
             if (ix >= 0) list.splice(ix, 1);
+            delete S.sources[spell];
           } else {
             var target = S.lists[S.selected] || (S.lists[S.selected] = []);
             if (target.indexOf(spell) < 0) target.push(spell);
+            /* the spell takes the source declared above the list */
+            if (pickValue()) S.sources[spell] = pickValue();
+            else delete S.sources[spell];
           }
           api.save();
           openGrimoire(lv);

@@ -502,6 +502,14 @@ console.log('seeding a character from the data');
   check('every spell it holds is in the book', listed.every((x) => levelOf[x.split(':')[1]] !== undefined), true);
   check('every spell sits at its own level', listed.every((x) => levelOf[x.split(':')[1]] === Number(x.split(':')[0])), true);
   check('the ten spells of the two adept feats', listed.length, 10);
+  const declared = bard.rec.spells.sources;
+  check('every spell of the preset names its source', Object.keys(declared).length, 10);
+  check('five come from the conjuration adept', Object.keys(declared).filter((n) => declared[n] === 'Conjuration adept').length, 5);
+  check('shield comes from the abjuration adept', declared.Shield, 'Abjuration adept');
+  check('each source is the feature that grants it', Object.keys(declared).every((n) => {
+    const feat = features.features.filter((f) => f.name === declared[n])[0];
+    return !!feat && JSON.stringify(feat.blocks).indexOf('"' + n + '"') >= 0;
+  }), true);
   check('the grimoire opens on the bard list', JSON.stringify(bard.rec.spells.classes), '{"Bard":true}');
 
   /* The two pages that hold a character read their own slice, so the way
@@ -529,7 +537,7 @@ console.log('seeding a character from the data');
   check('and an initiative of +2', C.initMod(char), 2);
   const own = taken.character.seed({}, false);
   check('the app\'s own character keeps its features', own.features.length, 19);
-  check('and its own numbers', own.level + '/' + own.abilities.cha, '9/20');
+  check('and its own numbers', own.level + '/' + own.abilities.cha, '11/20');
   const blank = taken.character.seed({}, true);
   check('a character from nothing has no feature', blank.features.length, 0);
   check('and the scores of the floor', blank.abilities.cha, 10);
@@ -537,6 +545,13 @@ console.log('seeding a character from the data');
   check('the ready-made spells travel', spell.lists[1].join(','), 'Entangle,Shield');
   check('a level it left empty stays empty', spell.lists[0].length, 0);
   check('the slots travel too', [spell.max[1], spell.max[5]].join('/'), '4/2');
+  check('the source of a spell is the character\'s own', spell.sources.Shield, 'Abjuration adept');
+  const old = taken.spells.seed({ lists: { 1: ['Shield'] } }, false);
+  check('a record saved before this takes the sources of the book', old.sources.Shield, 'Hexblade');
+  const mine = taken.spells.seed({ lists: { 1: ['Shield'] }, sources: { Shield: 'Warlock' } }, false);
+  check('a record that names its own keeps exactly them', JSON.stringify(mine.sources), '{"Shield":"Warlock"}');
+  const silent = taken.spells.seed({ lists: { 1: ['Shield'] }, sources: {} }, false);
+  check('a record that names none keeps none', JSON.stringify(silent.sources), '{}');
   const kept = taken.spells.seed({ lists: { 1: [] } }, false);
   check('a level the player emptied stays empty', kept.lists[1].length, 0);
   check('and the rest keeps the app\'s spells', kept.lists[0].length, 10);
