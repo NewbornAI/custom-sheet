@@ -177,6 +177,14 @@ console.log('the spell book');
   check('the sheet seeded the level 2 spells', book.seed.filter((s) => s.level === 2).length, 11);
 }
 
+console.log('the spell levels');
+{
+  check('cantrip to ninth', R.LEVELS.join(','), '0,1,2,3,4,5,6,7,8,9');
+  check('the warlock slots sit at level 2', R.WARLOCK_LEVEL, 2);
+  const book = JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8'));
+  check('the book has spells for every level shown', R.LEVELS.every((lv) => book.spells.some((s) => s.level === lv)), true);
+}
+
 console.log('turning a spell slot into sorcery points');
 {
   const spell = { sp: 3, spMax: 8, left: { 1: 4, 2: 3, 3: 3 } };

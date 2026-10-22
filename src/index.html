@@ -303,7 +303,7 @@ input[type=range]::-moz-range-thumb{
   --pip-h:16px;
   display:flex;
   align-items:flex-start;
-  gap:4px;
+  gap:3px;
   padding:2px 0 6px;
   overflow-x:auto;
   scrollbar-width:none;
@@ -314,11 +314,11 @@ input[type=range]::-moz-range-thumb{
   flex-direction:column;
   align-items:center;
   gap:4px;
-  padding:3px 2px;
+  padding:3px 1px;
   border-radius:6px;
   cursor:pointer;
-  flex:1 1 30px;
-  min-width:30px;
+  flex:1 1 26px;
+  min-width:26px;
 }
 .lv.on{background:rgba(155,123,255,.12)}
 .lv .head{display:flex;align-items:center;gap:1px}
@@ -357,7 +357,6 @@ input[type=range]::-moz-range-thumb{
 .pip.wl{border-color:rgba(84,207,196,.4)}
 .pip.wl.full{background:#54cfc4;border-color:#54cfc4}
 .lv .plus{font-size:9px;color:#4f4a6b;flex:0 0 auto}
-.lv .arrow{background:none;border:0;color:#615c7d;font-size:13px;padding:0;cursor:pointer;flex:0 0 auto;line-height:1}
 .lv.dim{opacity:.35}
 .lv .edit{display:none;gap:3px;flex:0 0 auto;flex-wrap:wrap;justify-content:center}
 .lv.editing .edit{display:flex}
@@ -365,9 +364,9 @@ input[type=range]::-moz-range-thumb{
 .pips{display:flex;flex-direction:column;align-items:stretch;gap:2px;width:100%}
 .wlgroup{display:flex;flex-direction:column;align-items:stretch;gap:2px;width:100%;margin-top:4px}
 .lv .val{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
-.slotstrip.editing{gap:3px}
-.slotstrip.editing .lv{flex:0 0 auto;width:44px}
-.slotstrip.editing .mini{width:18px}
+.slotstrip.editing{gap:2px}
+.slotstrip.editing .lv{flex:0 0 auto;width:28px;padding:3px 1px}
+.slotstrip.editing .edit{flex-direction:column;align-items:center;gap:2px}
 
 .listhead{flex:0 0 auto;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)}
 .listhead .t{color:var(--ink);font-size:12px}
@@ -847,6 +846,11 @@ input[type=range]::-moz-range-thumb{
     { id: 'sr5', name: 'Scorching ray 5', short: 'SR5', attacks: 6, dice: [{ n: 2, s: 6, type: 'fire' }],   flat: 0 }
   ];
 
+  /* The spell levels the app shows, cantrip first, and the level where the
+     warlock slots sit. */
+  var LEVELS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  var WARLOCK_LEVEL = 2;
+
   /* Extra damage each toggle adds, on top of the spell's own dice.
      A critical doubles the dice of every group, of any type. */
   var EXTRAS = {
@@ -988,6 +992,8 @@ input[type=range]::-moz-range-thumb{
     ATTACK_MOD: ATTACK_MOD,
     POWERS: POWERS,
     EXTRAS: EXTRAS,
+    LEVELS: LEVELS,
+    WARLOCK_LEVEL: WARLOCK_LEVEL,
     powerOf: powerOf,
     rollVolley: rollVolley,
     tally: tally,
@@ -1033,8 +1039,8 @@ input[type=range]::-moz-range-thumb{
   (SPELLBOOK.spells || []).forEach(function (s) { SPELL_BY_NAME[s.name] = s; });
 
   /* the warlock slots sit on the second level row */
-  var WARLOCK_LEVEL = 2;
-  var LEVELS = [0, 1, 2, 3, 4, 5];
+  var WARLOCK_LEVEL = R.WARLOCK_LEVEL;
+  var LEVELS = R.LEVELS;
 
   var SPELL_DEFAULTS = {
     dc: 17,
@@ -1043,8 +1049,8 @@ input[type=range]::-moz-range-thumb{
     cunning: false,
     sorcRest: false,
     sorcererLevel: 8,
-    max: { 1: 4, 2: 3, 3: 3, 4: 2, 5: 0 },
-    left: { 1: 4, 2: 3, 3: 3, 4: 2, 5: 0 },
+    max: { 1: 4, 2: 3, 3: 3, 4: 2, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
+    left: { 1: 4, 2: 3, 3: 3, 4: 2, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
     warlockMax: 2,
     warlockLeft: 2,
     selected: 1,
@@ -1499,21 +1505,23 @@ input[type=range]::-moz-range-thumb{
       col.dataset.lv = String(lv);
       col.style.flexGrow = String(Math.max(1, counts[ix]));
 
-      if (lv > 0) {
-        var bolt = document.createElement('button');
-        bolt.type = 'button';
-        bolt.className = 'bolt';
-        bolt.dataset.bolt = String(lv);
-        bolt.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
-          '<path d="M13.6 2L4.2 13.4h5.4L9.6 22 19.4 10.2H14L13.6 2z"/></svg>';
-        var why = S.sp >= S.spMax
-          ? 'Your sorcery points are full'
-          : (!(S.left[lv] > 0) ? 'No level ' + lv + ' slot left' : '');
-        bolt.setAttribute('aria-label', 'Turn a level ' + lv + ' slot into ' + lv + ' sorcery points' + (why ? ', ' + why : ''));
-        bolt.title = why || ('Turn a level ' + lv + ' slot into ' + lv + ' sorcery points');
-        bolt.disabled = !!why;
-        col.appendChild(bolt);
-      }
+      var bolt = document.createElement('button');
+      bolt.type = 'button';
+      bolt.className = 'bolt';
+      bolt.dataset.bolt = String(lv);
+      bolt.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
+        '<path d="M13.6 2L4.2 13.4h5.4L9.6 22 19.4 10.2H14L13.6 2z"/></svg>';
+      var why = lv === 0
+        ? 'Cantrips have no slots to turn'
+        : (S.sp >= S.spMax
+            ? 'Your sorcery points are full'
+            : (!(S.left[lv] > 0) ? 'No level ' + lv + ' slot left' : ''));
+      bolt.setAttribute('aria-label', lv === 0
+        ? 'Cantrips have no slots to turn'
+        : 'Turn a level ' + lv + ' slot into ' + lv + ' sorcery points' + (why ? ', ' + why : ''));
+      bolt.title = why || ('Turn a level ' + lv + ' slot into ' + lv + ' sorcery points');
+      bolt.disabled = !!why;
+      col.appendChild(bolt);
 
       var head = document.createElement('span');
       head.className = 'head';
@@ -1521,12 +1529,6 @@ input[type=range]::-moz-range-thumb{
       n.className = 'n';
       n.textContent = String(lv);
       head.appendChild(n);
-      var arrow = document.createElement('button');
-      arrow.type = 'button';
-      arrow.className = 'arrow';
-      arrow.textContent = '›';
-      arrow.setAttribute('aria-label', 'Show the spells of level ' + lv);
-      head.appendChild(arrow);
       col.appendChild(head);
 
       var pips = document.createElement('span');
