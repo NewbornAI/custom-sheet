@@ -489,6 +489,7 @@
     version: VERSION,
     readUrl: readUrl,
     exportCharacter: exportCharacter,
+    isPhone: isPhone,
     importPackage: importPackage,
     importUrl: importUrl,
     importAny: importAny,
@@ -1021,19 +1022,25 @@
     if (window.SheetShell && window.SheetShell.shareText) {
       try {
         var answer = window.SheetShell.shareText(url);
-        if (answer && answer.indexOf('error ') === 0) return answer;
-        return 'ok';
+        if (answer && answer.indexOf('error ') === 0) return Promise.resolve(answer);
+        return Promise.resolve('ok');
       } catch (e) {
-        return String((e && e.message) || e);
+        return Promise.resolve(String((e && e.message) || e));
       }
     }
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(url).then(function () {
         return 'copied';
-      }
-    } catch (e) {}
-    return 'the link is in the field';
+      }).catch(function () {
+        return 'not copied';
+      });
+    }
+    return Promise.resolve('not copied');
+  }
+
+  /* The phone has an explorer and a share sheet, the web has neither. */
+  function isPhone() {
+    return !!(window.SheetShell && window.SheetShell.pick);
   }
 
   /* ---- the shelf ---- */
@@ -1119,8 +1126,26 @@
         return false;
       }
     }
-    toast('the phone opens the explorer, the web does not.');
-    return false;
+    /* There is no explorer of the phone on the web, so the page opens one
+       of its own and reads the package the player chose. */
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json,.json';
+    input.style.display = 'none';
+    input.addEventListener('change', function () {
+      var file = input.files && input.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        var answer = importPackage(String(reader.result || ''));
+        toast(answer && answer.ok ? answer.name + ' is here.' : (answer.why || 'that file is not a character'));
+        if (input.parentNode) input.parentNode.removeChild(input);
+      };
+      reader.readAsText(file);
+    });
+    document.body.appendChild(input);
+    input.click();
+    return true;
   }
 
   /* A character from a class. The skeleton is built from the class data

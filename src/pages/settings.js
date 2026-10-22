@@ -72,7 +72,7 @@
     var field = document.createElement('div');
     field.className = 'srow';
     var input = document.createElement('input');
-    input.className = 'cinput';
+    input.className = 'cinput slim';
     input.type = 'url';
     input.value = server();
     input.setAttribute('aria-label', 'The address of the machine that serves the app');
@@ -140,62 +140,83 @@
   /* The exchange: the character being played goes out, and one comes in. */
   function exchange() {
     E.exchange.innerHTML = '';
+    var phone = C.isPhone();
+    var field;
 
+    /* The character being played, as a file. The phone offers it to send,
+       the desktop saves it. */
     var out = document.createElement('div');
     out.className = 'srow';
-    out.innerHTML = '<span class="t">The character being played</span><span class="d">a package of it</span>';
+    out.innerHTML = '<span class="t">The character as a file</span><span class="d">a package of it</span>';
     var send = document.createElement('button');
     send.type = 'button';
     send.className = 'stog';
-    send.textContent = 'Send';
-    send.setAttribute('aria-label', 'Send the character being played');
+    send.textContent = phone ? 'Send' : 'Save';
+    send.setAttribute('aria-label', 'Save the character being played as a file');
     send.addEventListener('click', function () {
       var answer = C.exportCharacter();
-      C.toast(answer.ok ? answer.name + ' is ready to send' : answer.why);
+      if (!answer.ok) { C.toast(answer.why); return; }
+      C.toast(answer.name + (phone ? ' is ready to send' : ' was saved'));
     });
     out.appendChild(send);
-    /* The link carries the character itself, so the other end needs nothing
-       but the link. */
+    E.exchange.appendChild(out);
+
+    /* The character being played, as a link. The link carries the character
+       itself, so the other end needs nothing but the link. */
+    var asLink = document.createElement('div');
+    asLink.className = 'srow';
+    asLink.innerHTML = '<span class="t">The character as a link</span><span class="d">a link that carries it</span>';
     var link = document.createElement('button');
     link.type = 'button';
     link.className = 'stog';
-    link.textContent = 'Link';
+    link.textContent = phone ? 'Send' : 'Copy';
     link.setAttribute('aria-label', 'Make a link of the character being played');
     link.addEventListener('click', function () {
       C.linkOf(C.packageOf(api.character())).then(function (where) {
-        var answer = C.shareLink(where);
-        C.toast(answer === 'ok' ? 'the link is ready to send' : 'the link is in the clipboard');
+        return C.shareLink(where).then(function (answer) {
+          if (answer === 'copied') { C.toast('the link is in the clipboard'); return; }
+          if (answer === 'ok') { C.toast('the link is ready to send'); return; }
+          /* The clipboard was refused, so the link goes in the field and can
+             still be copied by hand. */
+          field.value = where;
+          C.toast('the link is in the field below');
+        });
       }).catch(function (e) { C.toast(String((e && e.message) || e)); });
     });
-    out.appendChild(link);
-    E.exchange.appendChild(out);
+    asLink.appendChild(link);
+    E.exchange.appendChild(asLink);
 
+    /* A character from a file: the explorer of the phone, or the file picker
+       of the browser on the desktop. */
     var into = document.createElement('div');
     into.className = 'srow';
-    into.innerHTML = '<span class="t">A character</span><span class="d">from a file on the phone</span>';
+    into.innerHTML = '<span class="t">From a file</span><span class="d">a package to bring in</span>';
     var open = document.createElement('button');
     open.type = 'button';
     open.className = 'stog';
     open.textContent = 'Open';
-    open.setAttribute('aria-label', 'Open a file from the phone');
+    open.setAttribute('aria-label', 'Open a file that holds a character');
     open.addEventListener('click', function () { C.pickFile(); });
     into.appendChild(open);
     E.exchange.appendChild(into);
 
-    /* A package that comes in by a link: the machine that holds the file
-       answers for it, so a phone and a desktop can swap without a cable. */
-    var link = document.createElement('div');
-    link.className = 'srow';
-    var field = document.createElement('input');
-    field.className = 'cinput';
+    /* A character from a link. */
+    var fromLink = document.createElement('div');
+    fromLink.className = 'srow';
+    var title = document.createElement('span');
+    title.className = 't';
+    title.textContent = 'From a link';
+    fromLink.appendChild(title);
+    field = document.createElement('input');
+    field.className = 'cinput slim';
     field.type = 'url';
-    field.placeholder = 'the link of a package';
-    field.setAttribute('aria-label', 'The link of a package to bring in');
+    field.placeholder = 'the link of a character';
+    field.setAttribute('aria-label', 'The link of a character to bring in');
     var take = document.createElement('button');
     take.type = 'button';
     take.className = 'stog';
     take.textContent = 'Fetch';
-    take.setAttribute('aria-label', 'Fetch the package at that link');
+    take.setAttribute('aria-label', 'Fetch the character at that link');
     take.addEventListener('click', function () {
       take.disabled = true;
       C.importAny(field.value).then(function (answer) {
@@ -204,9 +225,9 @@
           : ((answer && answer.why) || 'that link holds no character'));
       });
     });
-    link.appendChild(field);
-    link.appendChild(take);
-    E.exchange.appendChild(link);
+    fromLink.appendChild(field);
+    fromLink.appendChild(take);
+    E.exchange.appendChild(fromLink);
   }
 
   /* The shelf: a folder in the public repository of the app. The app reads
@@ -218,7 +239,7 @@
     var address = document.createElement('div');
     address.className = 'srow';
     var input = document.createElement('input');
-    input.className = 'cinput';
+    input.className = 'cinput slim';
     input.type = 'text';
     input.value = C.shelfRepo();
     input.placeholder = 'NewbornAI/custom-sheet';
