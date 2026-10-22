@@ -429,40 +429,47 @@
 
   /* The colours and the icon are the character's own, and they are set
      here, in the edit mode, so a stray tap never repaints the app at the
-     table. */
-  function styleRow(list, on, label, blurb, svg, onClick) {
-    var row = document.createElement('div');
-    row.className = 'srow';
-    row.innerHTML = (svg ? '<span class="sico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + svg + '</svg></span>' : '') +
-      '<span class="t">' + C.esc(label) + '</span><span class="d">' + C.esc(blurb) + '</span>';
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'stog' + (on ? ' on' : '');
-    b.textContent = on ? 'On' : 'Off';
-    b.setAttribute('aria-label', label + ', ' + (on ? 'on' : 'off'));
-    b.addEventListener('click', onClick);
-    row.appendChild(b);
-    list.appendChild(row);
-  }
-
+     table. The gallery shows every one of them at once. */
   function buildStyle() {
     if (!E.charThemes) return;
     var rec = api.character();
     E.charThemes.innerHTML = '';
     E.charIcons.innerHTML = '';
+
     C.themes.forEach(function (t) {
-      styleRow(E.charThemes, (rec.theme || '') === t.id, t.label, t.blurb, '', function () {
+      var on = (rec.theme || '') === t.id;
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'gcell' + (on ? ' on' : '');
+      b.dataset.theme = t.id;
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.setAttribute('aria-label', t.label + ', ' + t.blurb + (on ? ', on' : ''));
+      b.innerHTML = '<span class="gprev" style="background:' + t.swatch[0] + ';border-color:' + t.swatch[1] + '">' +
+        '<i style="background:' + t.swatch[1] + '"></i><i style="background:' + t.swatch[2] + '"></i></span>' +
+        '<span class="gname">' + C.esc(t.label) + '</span>';
+      b.addEventListener('click', function () {
         if ((rec.theme || '') === t.id) return;
         rec.theme = t.id;
         commitChar();
       });
+      E.charThemes.appendChild(b);
     });
+
     Object.keys(C.icons).forEach(function (key) {
-      styleRow(E.charIcons, C.iconOf(rec) === key, C.icons[key].label, C.icons[key].blurb, C.icons[key].svg, function () {
+      var on = C.iconOf(rec) === key;
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'gcell' + (on ? ' on' : '');
+      b.dataset.icon = key;
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.setAttribute('aria-label', C.icons[key].label + ', ' + C.icons[key].blurb + (on ? ', on' : ''));
+      b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + C.icons[key].svg + '</svg>';
+      b.addEventListener('click', function () {
         if (C.iconOf(rec) === key) return;
         rec.icon = key;
         commitChar();
       });
+      E.charIcons.appendChild(b);
     });
   }
 
@@ -663,9 +670,10 @@
       '  <div class="charstyle" id="charStyle">',
       '    <div class="cshead"><span>Classes</span><span class="rule"></span><button class="mini" id="addClass" type="button" aria-label="Add a class">+</button></div>',
       '    <div class="fcards" id="charClasses"></div>',
-      '    <div class="cshead"><span>Style</span><span class="rule"></span></div>',
-      '    <div class="fcards" id="charThemes"></div>',
-      '    <div class="fcards" id="charIcons"></div>',
+      '    <div class="cshead"><span>Colours</span><span class="rule"></span></div>',
+      '    <div class="gal" id="charThemes"></div>',
+      '    <div class="cshead"><span>Icon</span><span class="rule"></span></div>',
+      '    <div class="gal icons" id="charIcons"></div>',
       '  </div>',
       '</div>',
       '<div class="charfoot">',

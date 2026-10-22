@@ -41,13 +41,27 @@
   /* ---- the style of a character ---- */
 
   /* The colours the app can wear. The first has no attribute of its own:
-     it is the one the app came with. */
+     it is the one the app came with. The three colours of the swatch are
+     the ground, the accent and the light. */
   var THEMES = [
-    { id: '', label: 'Violet', blurb: 'The colours the app came with' },
-    { id: 'blueRed', label: 'Blue and red', blurb: 'An electric blue, a hot red' }
+    { id: '', label: 'Violet', blurb: 'The colours the app came with', swatch: ['#08070f', '#9b7bff', '#ffc44d'] },
+    { id: 'blueRed', label: 'Blue and red', blurb: 'An electric blue, a hot red', swatch: ['#070a14', '#4c8dff', '#ff4b5c'] },
+    { id: 'emerald', label: 'Emerald', blurb: 'A deep green, a warm gold', swatch: ['#060f0b', '#34d399', '#ffd166'] },
+    { id: 'ember', label: 'Ember', blurb: 'A forge and its coals', swatch: ['#100807', '#ff7a45', '#ffd23f'] },
+    { id: 'frost', label: 'Frost', blurb: 'Ice and pale light', swatch: ['#060a12', '#7fd8ff', '#c7a4ff'] },
+    { id: 'crimson', label: 'Crimson', blurb: 'Blood and brass', swatch: ['#0d0509', '#ff4d6d', '#ffc44d'] },
+    { id: 'verdigris', label: 'Verdigris', blurb: 'Old copper, green patina', swatch: ['#05100f', '#2dd4bf', '#f0b27a'] },
+    { id: 'steel', label: 'Steel', blurb: 'Grey iron and a flame', swatch: ['#0a0b0e', '#b8c6e0', '#ff9f43'] }
   ];
 
-  /* The icon the head of the app carries. */
+
+  /* The line icons share one dress. */
+  function o(body) {
+    return '<g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">' + body + '</g>';
+  }
+
+  /* The icons the head of the app can carry, all drawn in the same box and
+     the same weight. */
   var ICONS = {
     sigil: {
       label: 'Rune',
@@ -58,14 +72,75 @@
         '<circle cx="12" cy="12" r="1.7" fill="currentColor"/>'
     },
     guitar: {
-      label: 'Electric guitar',
+      label: 'Guitar',
       blurb: 'Six strings, plugged in',
       svg: '<g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">' +
         '<path d="M12.9 10.6c-.5-2 .3-3.6 1.7-4.6-1.5-.9-3.4-.6-4.4.8-.7 1-1.4 1.7-2.6 2.1-2.1.7-3.4 2.8-3.1 4.9.4 2.1 2.4 3.6 4.5 3.2 1.6-.2 2.8-1.3 3.3-2.9.4-1.1 1-1.8 2.2-2.1"/>' +
         '<path d="M12.6 12.1 18.4 6.3"/><path d="M17.5 5.2l1.4 1.4 2.3-2.3a1 1 0 0 0-1.4-1.4z"/>' +
         '<path d="M6 14.8l1.9 1.9"/></g>'
+    },
+    sword: {
+      label: 'Sword',
+      blurb: 'A blade and its guard',
+      svg: o('<path d="M12 2.6 13.7 8v7.2h-3.4V8Z"/><path d="M7.4 16.6h9.2"/><path d="M12 16.6v4.2"/><path d="M10.2 20.8h3.6"/>')
+    },
+    shield: {
+      label: 'Shield',
+      blurb: 'A heater shield',
+      svg: o('<path d="M12 3.2 19 5.8v5.7c0 5-3.2 8.3-7 9.9-3.8-1.6-7-4.9-7-9.9V5.8Z"/><path d="M8.8 9.6 12 7.6l3.2 2"/>')
+    },
+    hammer: {
+      label: 'Hammer',
+      blurb: 'A warhammer',
+      svg: o('<path d="M12 21V9.4"/><path d="M7 4.4h10v5H7Z"/><path d="M9.4 4.4v5M14.6 4.4v5"/>')
+    },
+    bow: {
+      label: 'Bow',
+      blurb: 'A drawn bow',
+      svg: o('<path d="M7 3.6c7 2.6 7 14.2 0 16.8"/><path d="M7 3.6v16.8"/><path d="M7 12h11.4"/><path d="M15.6 9.4 18.6 12l-3 2.6"/><path d="M9.8 10.4 7.6 12l2.2 1.6"/>')
+    },
+    dagger: {
+      label: 'Dagger',
+      blurb: 'A short blade',
+      svg: o('<path d="M12 3.2 13.2 8.6v4h-2.4v-4Z"/><path d="M8.8 12.8h6.4"/><path d="M12 12.8v4.6"/><path d="M10.4 17.6h3.2"/>')
+    },
+    flame: {
+      label: 'Flame',
+      blurb: 'A fire that burns',
+      svg: o('<path d="M12 2.8c2.8 3.6 6.4 6.4 6.4 10.8a6.4 6.4 0 0 1-12.8 0c0-3 1.8-4.6 3-6.2.6 1.6 1.2 2.6 2.4 3.2-.6-3.2 0-5.6 1-7.8Z"/><path d="M12 11c1 2 2.4 3.4 2.4 5.4a2.4 2.4 0 0 1-4.8 0c0-1.4.8-2.6 2.4-5.4Z"/>')
+    },
+    eye: {
+      label: 'Eye',
+      blurb: 'A watching eye',
+      svg: o('<path d="M2.8 12C5.6 7.6 8.6 5.8 12 5.8s6.4 1.8 9.2 6.2c-2.8 4.4-5.8 6.2-9.2 6.2S5.6 16.4 2.8 12Z"/><circle cx="12" cy="12" r="2.6"/>')
+    },
+    leaf: {
+      label: 'Leaf',
+      blurb: 'A leaf and its rib',
+      svg: o('<path d="M19.6 4.4C9.4 4.2 4.4 10 4.4 15.4c0 3 1.6 4.8 4 4.8 7 0 11.4-6.8 11.2-15.8Z"/><path d="M6.6 18.2c2.4-3.6 5.8-7.6 11-11"/>')
+    },
+    book: {
+      label: 'Book',
+      blurb: 'An open book',
+      svg: o('<path d="M4.6 4.4c2.4-1 5.2-.7 7.4.6 2.2-1.3 5-1.6 7.4-.6v14.2c-2.4-1-5.2-.7-7.4.6-2.2-1.3-5-1.6-7.4-.6Z"/><path d="M12 5v14.2"/>')
+    },
+    sun: {
+      label: 'Sun',
+      blurb: 'A sun and its rays',
+      svg: o('<circle cx="12" cy="12" r="3.8"/><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.8 1.8M16.8 16.8l1.8 1.8M18.6 5.4l-1.8 1.8M7.2 16.8l-1.8 1.8"/>')
+    },
+    fist: {
+      label: 'Fist',
+      blurb: 'A closed fist',
+      svg: o('<path d="M6.4 11.6V9a1.5 1.5 0 0 1 3 0V7a1.5 1.5 0 0 1 3 0v.4a1.5 1.5 0 0 1 3 0v2.4a1.6 1.6 0 0 1 2.8 1v3.8c0 3.4-2.4 5.8-6.1 5.8s-5.7-2.4-5.7-5.8Z"/><path d="M9.4 12.4v2.2M12.4 12.2v2.4"/>')
+    },
+    skull: {
+      label: 'Skull',
+      blurb: 'A skull',
+      svg: o('<path d="M12 3.4c4.4 0 7.4 3 7.4 6.8 0 2.2-1.2 3.8-2.8 4.8v4H14v-2.2h-1.2V19h-1.6v-2.2H10V19H7.4v-4c-1.6-1-2.8-2.6-2.8-4.8C4.6 6.4 7.6 3.4 12 3.4Z"/><circle cx="9.4" cy="10.2" r="1.7"/><circle cx="14.6" cy="10.2" r="1.7"/><path d="M12 12.4 13 14.2h-2Z"/>')
     }
   };
+;
 
   function themeOf(rec) {
     var wanted = rec && rec.theme;

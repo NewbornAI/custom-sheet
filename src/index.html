@@ -49,6 +49,66 @@ body[data-theme="blueRed"]{
   --gold:#ff4b5c;
   --gold-rgb:255,75,92;
 }
+body[data-theme="emerald"]{
+  --void:#060f0b;
+  --edge:#1f3b2c;
+  --ink:#eaf6ef;
+  --muted:#82a894;
+  --arcane:#34d399;
+  --arcane-rgb:52,211,153;
+  --gold:#ffd166;
+  --gold-rgb:255,209,102;
+}
+body[data-theme="ember"]{
+  --void:#100807;
+  --edge:#43241f;
+  --ink:#fdeee9;
+  --muted:#b08a7f;
+  --arcane:#ff7a45;
+  --arcane-rgb:255,122,69;
+  --gold:#ffd23f;
+  --gold-rgb:255,210,63;
+}
+body[data-theme="frost"]{
+  --void:#060a12;
+  --edge:#24344f;
+  --ink:#eaf4ff;
+  --muted:#8aa0bd;
+  --arcane:#7fd8ff;
+  --arcane-rgb:127,216,255;
+  --gold:#c7a4ff;
+  --gold-rgb:199,164,255;
+}
+body[data-theme="crimson"]{
+  --void:#0d0509;
+  --edge:#3e1b28;
+  --ink:#fdebf1;
+  --muted:#b2859a;
+  --arcane:#ff4d6d;
+  --arcane-rgb:255,77,109;
+  --gold:#ffc44d;
+  --gold-rgb:255,196,77;
+}
+body[data-theme="verdigris"]{
+  --void:#05100f;
+  --edge:#1d3b3a;
+  --ink:#e8f5f2;
+  --muted:#84a8a4;
+  --arcane:#2dd4bf;
+  --arcane-rgb:45,212,191;
+  --gold:#f0b27a;
+  --gold-rgb:240,178,122;
+}
+body[data-theme="steel"]{
+  --void:#0a0b0e;
+  --edge:#2a303c;
+  --ink:#eceff5;
+  --muted:#8f97a6;
+  --arcane:#b8c6e0;
+  --arcane-rgb:184,198,224;
+  --gold:#ff9f43;
+  --gold-rgb:255,159,67;
+}
 
 *,*::before,*::after{box-sizing:border-box}
 
@@ -840,6 +900,17 @@ input[type=range]::-moz-range-thumb{
 .clsub:active{color:var(--arcane)}
 .clrow .cdel{background:none;border:none;color:var(--muted);font:inherit;font-size:16px;line-height:1;padding:0 3px;cursor:pointer}
 .clrow .cdel:active{color:var(--gold)}
+.gal{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.gal.icons{grid-template-columns:repeat(7,1fr);gap:4px}
+.gcell{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;background:none;border:1px solid var(--edge);border-radius:6px;color:var(--muted);cursor:pointer;font:inherit;min-width:0}
+.gcell.on{border-color:rgba(var(--arcane-rgb),.6);color:var(--ink);background:rgba(var(--arcane-rgb),.10)}
+.gcell:focus-visible{outline:2px solid var(--arcane);outline-offset:1px}
+.gprev{width:26px;height:17px;border-radius:4px;border:1px solid;display:flex;align-items:center;justify-content:center;gap:3px}
+.gprev i{width:5px;height:5px;border-radius:50%;display:block}
+.gname{font-size:9px;line-height:1.1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.gal.icons .gcell{padding:7px 2px}
+.gal.icons svg{width:21px;height:21px;display:block}
+.gal.icons .gname{display:none}
 .clvl{min-width:16px;text-align:center;font-variant-numeric:tabular-nums}
 .charstyle{display:none}
 .charbody.editing .charstyle{display:block}
