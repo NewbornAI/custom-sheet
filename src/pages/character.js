@@ -38,7 +38,7 @@
       name: f.name,
       source: f.source || '',
       active: !!f.active,
-      recovery: f.recovery,
+      recovery: f.recovery || 'passive',
       bind: f.bind || null,
       max: f.max || 0,
       left: f.left || 0,
@@ -99,19 +99,24 @@
   /* ---- the state ---- */
 
   function seed(saved, fresh) {
-    /* The features the character was given. One that names them keeps
-       exactly those; one that names none is the app's own character,
-       unless it is new, in which case it starts with nothing. */
+    /* The features the character was given. A record that holds its own
+       list is the truth, in the order it keeps them, and a list it emptied
+       stays empty. One that holds none is built from the names it was made
+       with, or from the list of the app's own character, and one that is
+       new starts with nothing. */
+    var own = (saved && Array.isArray(saved.features)) ? saved.features : null;
     var keys = null;
-    if (saved && Array.isArray(saved.featureKeys)) keys = saved.featureKeys;
-    else if (!fresh) keys = CHAR_DEFAULTS.features.map(function (f) { return f.key; });
+    if (!own) {
+      if (saved && Array.isArray(saved.featureKeys)) keys = saved.featureKeys;
+      else if (!fresh) keys = CHAR_DEFAULTS.features.map(function (f) { return f.key; });
+    }
     var c = {
       name: '',
       level: CHAR_DEFAULTS.level,
       abilities: {},
       saves: {},
       skills: {},
-      features: (keys || []).map(function (k) {
+      features: own ? [] : (keys || []).map(function (k) {
         return FEATURE_BY_KEY[k] ? copyRow(FEATURE_BY_KEY[k]) : null;
       }).filter(Boolean),
       init: CHAR_DEFAULTS.init,
@@ -181,7 +186,7 @@
         /* the features that are not in the seed any more */
         saved.features.forEach(function (f) {
           var known = c.features.some(function (x) { return x.key === f.key; });
-          if (!known) c.features.push(f);
+          if (!known) c.features.push(copyRow(f));
         });
       }
       if (saved.history && saved.history.length) {

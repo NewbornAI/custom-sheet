@@ -12,6 +12,7 @@
   var deleting = null;
   var editingFeatures = false;
   var dragged = false;
+  var built = null;   /* the character the cards were built for */
 
   var FEATURE_BY_KEY = {};
   (C.features.features || []).forEach(function (f) { FEATURE_BY_KEY[f.key] = f; });
@@ -273,6 +274,7 @@
       };
 
       buildFeatureCards();
+      built = a.state.current;
 
       E.featureBody.addEventListener('input', function (ev) {
         var roleEl = ev.target.closest ? ev.target.closest('[data-role]') : null;
@@ -409,6 +411,13 @@
 
     render: function (a) {
       api = a;
+      /* The cards are built for one character. Playing another one builds
+         its own list, so the first character's cards never stay on screen,
+         and coming back does not stack a second set. */
+      if (built !== a.state.current) {
+        built = a.state.current;
+        buildFeatureCards();
+      }
       if (E.wrench) E.wrench.setAttribute('aria-pressed', editingFeatures ? 'true' : 'false');
       renderFeatureCards();
     }
