@@ -5,8 +5,10 @@
 
   var R = window.Rules;
   var SR = window.SheetRules;
-  var STORE = 'volley.state.v2';
-  var OLD_STORE = 'volley.state.v1';
+  var STORE = 'dndsheet.state.v3';
+  /* The stores of the two first versions, read once and moved into the
+     characters. */
+  var OLD_STORES = ['volley.state.v1', 'volley.state.v2'];
 
   /* ---- the registry ---- */
 
@@ -144,8 +146,8 @@
   /* The history of the character: a snapshot before every change a rest
      can take back. */
   function pushSnapshot(api) {
-    var ch = api.state.char;
-    ch.history.push(SR.snapshot(ch, api.state.spells));
+    var ch = api.character().char;
+    ch.history.push(SR.snapshot(ch, api.character().spells));
     if (ch.history.length > 60) ch.history.shift();
   }
 
@@ -189,28 +191,68 @@
   var state = load();
 
   function load() {
-    var saved = {};
-    try { saved = JSON.parse(localStorage.getItem(STORE) || '{}') || {}; } catch (e) { saved = {}; }
-    if (!saved.volley && !saved.spells && !saved.char) saved = fromOld();
-    var out = { volley: {}, spells: {}, char: {}, ui: { pages: null } };
+    var saved = readStore();
+    if (!saved.characters) saved = migrate(saved);
+    var out = { characters: {}, current: '', ui: { pages: null } };
     Object.keys(out).forEach(function (k) {
       if (saved[k] !== undefined && saved[k] !== null) out[k] = saved[k];
     });
     if (!out.ui) out.ui = { pages: null };
     if (out.ui.pages === undefined) out.ui.pages = null;
+    if (!out.current || !out.characters[out.current]) {
+      out.current = Object.keys(out.characters)[0] || '';
+    }
     return out;
   }
 
-  /* The state of the first version, moved into the slices. */
-  function fromOld() {
-    var old = {};
-    try { old = JSON.parse(localStorage.getItem(OLD_STORE) || '{}') || {}; } catch (e) { old = {}; }
-    if (!old || (!old.spell && !old.char && old.power === undefined)) return {};
-    var out = { volley: {}, spells: old.spell || {}, char: old.char || {}, ui: { pages: null } };
-    ['power', 'advantage', 'hex', 'curse', 'elem', 'elemPlus', 'quicken', 'ac'].forEach(function (k) {
-      if (old[k] !== undefined) out.volley[k] = old[k];
-    });
+  function readStore() {
+    var keys = [STORE].concat(OLD_STORES);
+    for (var i = 0; i < keys.length; i++) {
+      try {
+        var raw = localStorage.getItem(keys[i]);
+        if (raw) {
+          var saved = JSON.parse(raw) || {};
+          if (saved && typeof saved === 'object') return saved;
+        }
+      } catch (e) {}
+    }
+    return {};
+  }
+
+  /* The two first versions, moved into the characters. The first held the
+     slices of the volley and one character, the second held the same three
+     slices. */
+  function migrate(saved) {
+    var out = { characters: {}, current: 'c1', ui: saved.ui || { pages: null } };
+    var rec = {};
+    if (saved.spells || saved.volley) {
+      /* the second version: three slices */
+      rec.volley = saved.volley || {};
+      rec.spells = saved.spells || {};
+      rec.char = saved.char || {};
+    } else {
+      /* the first version: the slices of the spell tab and the fields of
+         the volley, side by side */
+      rec.volley = {};
+      ['power', 'advantage', 'hex', 'curse', 'elem', 'elemPlus', 'quicken', 'ac'].forEach(function (k) {
+        if (saved[k] !== undefined) rec.volley[k] = saved[k];
+      });
+      rec.spells = saved.spell || {};
+      rec.char = saved.char || {};
+    }
+    out.characters.c1 = rec;
     return out;
+  }
+
+  /* Every page seeds the slice it owns, and a character that is new starts
+     from nothing. */
+  function seedCharacter(rec, fresh) {
+    PAGES.forEach(function (p) {
+      if (!p.seed) return;
+      var key = p.slice || p.id;
+      rec[key] = p.seed(rec[key] || {}, !!fresh);
+    });
+    return rec;
   }
 
   function save() {
@@ -281,9 +323,21 @@
       if (layer.onPaint) layer.onPaint(el.sheet);
     }
 
+    function closeAll() {
+      while (stack.length) {
+        var layer = stack.pop();
+        if (layer && layer.onClose) layer.onClose();
+      }
+      el.sheet.hidden = true;
+      el.sheetMeta.innerHTML = '';
+      el.sheetText.innerHTML = '';
+      el.sheetList.innerHTML = '';
+    }
+
     return {
       open: open,
       close: close,
+      closeAll: closeAll,
       top: top,
       search: function () { return term; },
       setSearch: function (v) { term = v; }
@@ -299,6 +353,119 @@
     el.spentToast.classList.add('on');
     if (toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { el.spentToast.classList.remove('on'); }, 3000);
+  }
+
+  /* ---- the characters ---- */
+
+  function characterList() {
+    return Object.keys(state.characters).map(function (id) {
+      var rec = state.characters[id] || {};
+      var ch = rec.char || {};
+      return {
+        id: id,
+        name: ch.name || 'Unnamed character',
+        level: ch.level ? 'level ' + ch.level : '',
+        current: id === state.current
+      };
+    });
+  }
+
+  function homeId() {
+    var home = PAGES.filter(function (p) { return p.home; })[0];
+    return home ? home.id : current;
+  }
+
+  /* The list of the characters, top down, and the way to add one. */
+  function openCharacters() {
+    var list = characterList();
+    var html = list.map(function (c) {
+      return '<div class="crow" data-id="' + c.id + '">' +
+        '<span class="cn">' + esc(c.name) + '</span>' +
+        '<span class="cl">' + esc(c.level) + '</span>' +
+        (c.current ? '<span class="cm">playing</span>' : '') +
+        (list.length > 1
+          ? '<button class="cdel" type="button" data-del="' + c.id + '" aria-label="Remove ' + esc(c.name) + '">&times;</button>'
+          : '') +
+        '</div>';
+    }).join('');
+    html += '<div class="crow cadd" data-add="1"><span class="cn">Add a character</span>' +
+      '<span class="cx">+</span></div>';
+
+    sheet.open({
+      id: 'characters',
+      title: 'Characters',
+      metaClass: 'sheet-meta one',
+      meta: '<span>Tap a character to play it.</span>',
+      list: html,
+      onList: function (ev) {
+        var del = ev.target.closest('[data-del]');
+        if (del) { openRemoveCharacter(del.dataset.del); return; }
+        if (ev.target.closest('[data-add]')) { openNewCharacter(); return; }
+        var row = ev.target.closest('.crow[data-id]');
+        if (!row) return;
+        switchCharacter(row.dataset.id);
+      }
+    });
+  }
+
+  function switchCharacter(id) {
+    if (!state.characters[id]) return;
+    state.current = id;
+    save();
+    sheet.closeAll();
+    show(current);
+  }
+
+  function openNewCharacter() {
+    sheet.open({
+      id: 'newcharacter',
+      title: 'New character',
+      metaClass: 'sheet-meta one',
+      meta: '<input class="sheet-search" id="newCharName" type="text" placeholder="Name of the character" aria-label="Name of the character">',
+      actions: [{
+        label: 'Create',
+        onClick: function (root) {
+          var field = root.querySelector('#newCharName');
+          var name = (field && field.value ? field.value : '').trim() || 'New character';
+          var id = 'c' + Date.now();
+          var rec = seedCharacter({}, true);
+          rec.char.name = name;
+          state.characters[id] = rec;
+          state.current = id;
+          save();
+          sheet.closeAll();
+          show(homeId());
+        }
+      }]
+    });
+  }
+
+  function openRemoveCharacter(id) {
+    var c = characterList().filter(function (x) { return x.id === id; })[0];
+    if (!c) return;
+    sheet.open({
+      id: 'remove:' + id,
+      title: 'Remove ' + c.name + '?',
+      metaClass: 'sheet-meta one',
+      meta: '<span>The character and everything on it goes away.</span>',
+      actions: [
+        { label: 'Keep', onClick: function () { sheet.close(); } },
+        { label: 'Remove', kind: 'danger', onClick: function () { removeCharacter(id); } }
+      ]
+    });
+  }
+
+  function removeCharacter(id) {
+    var ids = Object.keys(state.characters);
+    if (ids.length <= 1) return;
+    delete state.characters[id];
+    if (state.current === id) {
+      state.current = ids.filter(function (x) { return x !== id; })[0];
+    }
+    save();
+    sheet.closeAll();
+    show(current);
+    openCharacters();
   }
 
   /* ---- the elements of the shell ---- */
@@ -335,9 +502,14 @@
     }).sort(function (a, b) { return a.order - b.order; });
   }
 
-  /* The label of a tab, which can be shorter than the name of the page. */
+  /* The label of a tab, which can be shorter than the name of the page, and
+     the name of the page itself, which the head of the app carries. */
   function label(p) {
     if (p.tab) return p.tab;
+    return titleOf(p);
+  }
+
+  function titleOf(p) {
     return typeof p.title === 'function' ? p.title(api) : p.title;
   }
 
@@ -393,7 +565,7 @@
     if (p.head) p.head(el.head, api);
 
     renderTabs();
-    el.pageTitle.textContent = label(p);
+    el.pageTitle.textContent = titleOf(p);
     if (p.render) p.render(api);
   }
 
@@ -414,7 +586,11 @@
     sheet: sheet,
     core: core,
     pages: PAGES,
-    defaultPages: DEFAULT_PAGES
+    defaultPages: DEFAULT_PAGES,
+    /* the character being played */
+    character: function () { return state.characters[state.current] || {}; },
+    characters: function () { return state.characters; },
+    openCharacters: openCharacters
   };
 
   /* ---- the wiring of the shell ---- */
@@ -447,12 +623,11 @@
   /* ---- the boot ---- */
 
   function boot() {
-    /* every page seeds its own slice */
-    PAGES.forEach(function (p) {
-      if (!p.seed) return;
-      var key = p.slice || p.id;
-      state[key] = p.seed(state[key] || {});
+    /* every page seeds the slice it owns, for every character */
+    Object.keys(state.characters).forEach(function (id) {
+      seedCharacter(state.characters[id], false);
     });
+    save();
     var home = PAGES.filter(function (p) { return p.home; })[0];
     show(home ? home.id : (enabled()[0] || PAGES[0]).id);
   }

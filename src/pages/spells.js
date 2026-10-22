@@ -41,7 +41,7 @@
 
   /* ---- the state ---- */
 
-  function seed(saved) {
+  function seed(saved, fresh) {
     var s = {};
     Object.keys(SPELL_DEFAULTS).forEach(function (k) { s[k] = SPELL_DEFAULTS[k]; });
     if (saved && typeof saved === 'object') {
@@ -54,11 +54,16 @@
         Object.keys(saved.classes).forEach(function (k) { s.classes[C.canonSource(k)] = !!saved.classes[k]; });
       }
       if (saved.levelFilter !== undefined) s.levelFilter = !!saved.levelFilter;
+      /* A save DC the player moved in an earlier version stays where it was
+         put, and from now on it follows the character. */
+      if (saved.dc !== undefined && Number(saved.dc) !== 17) s.dcTouched = true;
       if (saved.max) { s.max = {}; Object.keys(SPELL_DEFAULTS.max).forEach(function (k) { s.max[k] = Number(saved.max[k]) || 0; }); }
       if (saved.left) { s.left = {}; Object.keys(SPELL_DEFAULTS.left).forEach(function (k) { s.left[k] = Number(saved.left[k]) || 0; }); }
     }
     var lists = {};
     LEVELS.forEach(function (lv) {
+      /* A character that is new knows no spell and holds no slot. */
+      if (fresh) { lists[lv] = []; return; }
       var seed = SPELL_SEED.filter(function (n) {
         var sp = C.bookByName[n];
         return sp && sp.level === lv;
@@ -67,6 +72,18 @@
       lists[lv] = (own && own.length) ? own.filter(function (n) { return C.bookByName[n]; }) : seed;
     });
     s.lists = lists;
+    if (fresh) {
+      s.sp = 0;
+      s.spMax = 0;
+      s.max = {};
+      s.left = {};
+      s.warlockMax = 0;
+      s.warlockLeft = 0;
+      s.sorcererLevel = 1;
+      s.classes = {};
+      s.levelFilter = true;
+      s.dcTouched = false;
+    }
     return s;
   }
 
@@ -263,7 +280,7 @@
   /* The save DC is the character's, until the player moves it here. */
   function saveDC() {
     if (S.dcTouched) return S.dc;
-    var ch = api.state.char;
+    var ch = api.character().char;
     if (ch && ch.abilities) return C.SR.spellDC(ch);
     return S.dc;
   }
@@ -495,7 +512,7 @@
 
     mount: function (root, a) {
       api = a;
-      S = a.state.spells;
+      S = a.character().spells;
       E = {
         dcStat: root.querySelector('#dcStat'),
         dcValue: root.querySelector('#dcValue'),
@@ -681,7 +698,7 @@
     /* The wrench edits the maximum of the slots. */
     head: function (root, a) {
       api = a;
-      S = a.state.spells;
+      S = a.character().spells;
       var b = C.wrenchButton('Edit the slot maximums', function () {
         editing = !editing;
         api.save();
@@ -693,7 +710,7 @@
 
     render: function (a) {
       api = a;
-      S = a.state.spells;
+      S = a.character().spells;
       if (E.wrench) E.wrench.setAttribute('aria-pressed', editing ? 'true' : 'false');
       renderSpells();
     }

@@ -67,7 +67,7 @@
 
   /* ---- the state ---- */
 
-  function seed(saved) {
+  function seed(saved, fresh) {
     var c = {
       name: '',
       level: CHAR_DEFAULTS.level,
@@ -100,6 +100,22 @@
       c.saves[a.key] = CHAR_DEFAULTS.saves[a.key];
     });
     SKILLS.forEach(function (s) { c.skills[s.key] = 0; });
+    /* A character that is new starts from nothing: no name, no features,
+       no dice, and the scores at ten. */
+    if (fresh) {
+      c.name = '';
+      c.level = 1;
+      ABILITIES.forEach(function (a) {
+        c.abilities[a.key] = 10;
+        c.saves[a.key] = 0;
+      });
+      c.features = [];
+      c.dice = [];
+      c.init = 0;
+      c.ac = null;
+      c.hp = { current: 0, max: 0 };
+      c.history = [];
+    }
     if (saved && typeof saved === 'object') {
       if (typeof saved.name === 'string') c.name = saved.name;
       if (saved.level) c.level = Math.max(1, Math.min(20, Number(saved.level) || CHAR_DEFAULTS.level));
@@ -190,7 +206,13 @@
 
   function renderChar() {
     E.charBody.classList.toggle('editing', editingChar);
-    E.charNameWrap.hidden = !editingChar;
+    E.charName.hidden = !editingChar;
+    E.charSwitch.hidden = editingChar;
+    if (!editingChar) {
+      E.charSwitch.innerHTML = '<span>' + C.esc(CH.name || 'Unnamed character') + '</span>' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+        '<path d="M6 9.5l6 6 6-6"/></svg>';
+    }
 
     if (document.activeElement !== E.charName) E.charName.value = CH.name;
     if (document.activeElement !== E.charAc) {
@@ -315,7 +337,7 @@
   /* ---- the rests ---- */
 
   function pushSnapshot() {
-    CH.history.push(SR.snapshot(CH, api.state.spells));
+    CH.history.push(SR.snapshot(CH, api.character().spells));
     if (CH.history.length > 60) CH.history.shift();
   }
 
@@ -331,7 +353,7 @@
     CH.hp.max = result.hpmax;
     if (result.dice) CH.dice = result.dice;
     CH.features = result.features;
-    var S = api.state.spells;
+    var S = api.character().spells;
     S.left = result.left;
     S.warlockLeft = result.warlockLeft;
     S.sp = result.sp;
@@ -348,8 +370,8 @@
   }
 
   function doRest(kind) {
-    var before = SR.snapshot(CH, api.state.spells);
-    var after = kind === 'long' ? SR.longRest(CH, api.state.spells) : SR.shortRest(CH, api.state.spells);
+    var before = SR.snapshot(CH, api.character().spells);
+    var after = kind === 'long' ? SR.longRest(CH, api.character().spells) : SR.shortRest(CH, api.character().spells);
     CH.history.push(before);
     if (CH.history.length > 60) CH.history.shift();
     applyRest(after);
@@ -389,7 +411,10 @@
 
   Volley.page({
     id: 'character',
-    title: function (a) { return a.state.char.name || 'Character'; },
+    title: function (a) {
+      var c = a.character().char || {};
+      return c.name || 'Character';
+    },
     tab: 'Character',
     home: true,
     order: 0,
@@ -397,9 +422,10 @@
     blurb: 'The sheet of the character. It is always there.',
     html: [
       '<div class="charbody" id="charBody">',
-      '  <div class="csname" id="charNameWrap" hidden>',
+      '  <div class="csname" id="charNameWrap">',
       '    <span class="ck">NAME</span>',
       '    <input class="cinput" id="charName" type="text" placeholder="your character" aria-label="Character name">',
+      '    <button class="cname-btn" id="charSwitch" type="button" aria-label="The characters"></button>',
       '  </div>',
       '  <div class="ctop">',
       '    <label class="ctile" for="charAc">',
@@ -450,11 +476,12 @@
 
     mount: function (root, a) {
       api = a;
-      CH = a.state.char;
+      CH = a.character().char;
       E = {
         charBody: root.querySelector('#charBody'),
         charNameWrap: root.querySelector('#charNameWrap'),
         charName: root.querySelector('#charName'),
+        charSwitch: root.querySelector('#charSwitch'),
         charAc: root.querySelector('#charAc'),
         charInit: root.querySelector('#charInit'),
         charLevel: root.querySelector('#charLevel'),
@@ -478,6 +505,9 @@
         CH.name = E.charName.value;
         commitChar();
       });
+
+      /* The name opens the list of the characters. */
+      E.charSwitch.addEventListener('click', function () { api.openCharacters(); });
 
       E.charAc.addEventListener('input', function () {
         var v = E.charAc.value.trim();
@@ -511,7 +541,7 @@
       var hpBefore = null;
 
       E.charHpNow.addEventListener('focus', function () {
-        hpBefore = SR.snapshot(CH, api.state.spells);
+        hpBefore = SR.snapshot(CH, api.character().spells);
       });
 
       E.charHpNow.addEventListener('input', function () {
@@ -599,7 +629,7 @@
     /* The wrench edits the proficiencies. */
     head: function (root, a) {
       api = a;
-      CH = a.state.char;
+      CH = a.character().char;
       var b = C.wrenchButton('Edit the proficiencies', function () {
         editingChar = !editingChar;
         api.save();
@@ -611,7 +641,7 @@
 
     render: function (a) {
       api = a;
-      CH = a.state.char;
+      CH = a.character().char;
       if (E.wrench) E.wrench.setAttribute('aria-pressed', editingChar ? 'true' : 'false');
       renderChar();
     }

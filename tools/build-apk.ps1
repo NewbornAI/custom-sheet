@@ -1,5 +1,7 @@
 $ErrorActionPreference = 'Continue'
-$root = 'C:\agentic\eldritch-blast'
+# the app folder is the folder this script lives in, so the repo can
+# move without this file knowing about it
+$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $sdk = 'C:\Android\sdk'
 $bt = Join-Path $sdk 'build-tools\34.0.0'
 $androidJar = Join-Path $sdk 'platforms\android-34\android.jar'
@@ -74,12 +76,12 @@ if (-not (Test-Path $keystore)) {
   & "$javaHome\bin\keytool.exe" -genkeypair -v -keystore $keystore -alias volley -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Volley, OU=Table, O=Volley, L=, S=, C=FR"
   if ($LASTEXITCODE -ne 0) { throw "keytool failed" }
 }
-$signed = Join-Path $root 'dist\volley.apk'
+$signed = Join-Path $root 'dist\dnd-sheet.apk'
 if (Test-Path $signed) { Remove-Item $signed -Force }
 & "$bt\apksigner.bat" sign --ks $keystore --ks-pass pass:android --key-pass pass:android --min-sdk-version 24 --out $signed $aligned
 if ($LASTEXITCODE -ne 0) { throw "apksigner failed" }
 
 Write-Output "9. verifying"
 & "$bt\apksigner.bat" verify --print-certs $signed
-Copy-Item $signed (Join-Path $out 'volley.apk') -Force
+Copy-Item $signed (Join-Path $out 'dnd-sheet.apk') -Force
 Write-Output ("APK ready: " + (Get-Item $signed).Length + " bytes at " + $signed)

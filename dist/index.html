@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#08070f">
-<meta name="description" content="Eldritch blast and scorching ray roller for one sorcerer.">
+<meta name="description" content="A character sheet and a dice roller for a table of one.">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Volley">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Volley</title>
+<title>DND-sheet</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2308070f'/%3E%3Cpath d='M16 5l11 11-11 11L5 16z' fill='none' stroke='%239b7bff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2.4' fill='%239b7bff'/%3E%3C/svg%3E">
 <style>
 @font-face{
@@ -615,6 +615,47 @@ input[type=range]::-moz-range-thumb{
 
 .csname{display:flex;align-items:center;gap:8px;flex:0 0 auto}
 .csname[hidden]{display:none}
+.cname-btn{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:3px 8px;
+  border:1px solid var(--edge);
+  border-radius:7px;
+  background:rgba(255,255,255,.03);
+  color:var(--ink);
+  font-family:var(--display);
+  font-size:15px;
+  text-align:left;
+  cursor:pointer;
+}
+.cname-btn span{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cname-btn svg{width:12px;height:12px;flex:0 0 auto;color:var(--muted)}
+.cname-btn:active{border-color:rgba(155,123,255,.5);color:var(--arcane)}
+
+/* ---- the characters ---- */
+
+.crow{display:flex;align-items:center;gap:8px;padding:8px 9px;border:1px solid var(--edge);border-radius:8px;background:rgba(255,255,255,.03);cursor:pointer}
+.crow .cn{flex:1 1 auto;min-width:0;font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.crow .cl{flex:0 0 auto;font-size:10px;color:var(--muted);letter-spacing:.04em}
+.crow .cm{flex:0 0 auto;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--arcane)}
+.crow .cx{flex:0 0 auto;font-size:15px;color:var(--muted)}
+.crow .cdel{
+  flex:0 0 auto;
+  width:24px;height:24px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--edge);
+  border-radius:6px;
+  background:none;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1;
+  cursor:pointer;
+}
+.crow.cadd{border-style:dashed;color:var(--muted)}
+.crow.cadd .cn{flex:1 1 auto;font-family:var(--sans);font-size:12px;color:var(--muted)}
 .csname .ck{flex:0 0 auto;font-size:9px;letter-spacing:.16em;color:var(--muted)}
 .csname .cinput{font-size:17px}
 
@@ -16227,8 +16268,10 @@ input[type=range]::-moz-range-thumb{
 
   var R = window.Rules;
   var SR = window.SheetRules;
-  var STORE = 'volley.state.v2';
-  var OLD_STORE = 'volley.state.v1';
+  var STORE = 'dndsheet.state.v3';
+  /* The stores of the two first versions, read once and moved into the
+     characters. */
+  var OLD_STORES = ['volley.state.v1', 'volley.state.v2'];
 
   /* ---- the registry ---- */
 
@@ -16366,8 +16409,8 @@ input[type=range]::-moz-range-thumb{
   /* The history of the character: a snapshot before every change a rest
      can take back. */
   function pushSnapshot(api) {
-    var ch = api.state.char;
-    ch.history.push(SR.snapshot(ch, api.state.spells));
+    var ch = api.character().char;
+    ch.history.push(SR.snapshot(ch, api.character().spells));
     if (ch.history.length > 60) ch.history.shift();
   }
 
@@ -16411,28 +16454,68 @@ input[type=range]::-moz-range-thumb{
   var state = load();
 
   function load() {
-    var saved = {};
-    try { saved = JSON.parse(localStorage.getItem(STORE) || '{}') || {}; } catch (e) { saved = {}; }
-    if (!saved.volley && !saved.spells && !saved.char) saved = fromOld();
-    var out = { volley: {}, spells: {}, char: {}, ui: { pages: null } };
+    var saved = readStore();
+    if (!saved.characters) saved = migrate(saved);
+    var out = { characters: {}, current: '', ui: { pages: null } };
     Object.keys(out).forEach(function (k) {
       if (saved[k] !== undefined && saved[k] !== null) out[k] = saved[k];
     });
     if (!out.ui) out.ui = { pages: null };
     if (out.ui.pages === undefined) out.ui.pages = null;
+    if (!out.current || !out.characters[out.current]) {
+      out.current = Object.keys(out.characters)[0] || '';
+    }
     return out;
   }
 
-  /* The state of the first version, moved into the slices. */
-  function fromOld() {
-    var old = {};
-    try { old = JSON.parse(localStorage.getItem(OLD_STORE) || '{}') || {}; } catch (e) { old = {}; }
-    if (!old || (!old.spell && !old.char && old.power === undefined)) return {};
-    var out = { volley: {}, spells: old.spell || {}, char: old.char || {}, ui: { pages: null } };
-    ['power', 'advantage', 'hex', 'curse', 'elem', 'elemPlus', 'quicken', 'ac'].forEach(function (k) {
-      if (old[k] !== undefined) out.volley[k] = old[k];
-    });
+  function readStore() {
+    var keys = [STORE].concat(OLD_STORES);
+    for (var i = 0; i < keys.length; i++) {
+      try {
+        var raw = localStorage.getItem(keys[i]);
+        if (raw) {
+          var saved = JSON.parse(raw) || {};
+          if (saved && typeof saved === 'object') return saved;
+        }
+      } catch (e) {}
+    }
+    return {};
+  }
+
+  /* The two first versions, moved into the characters. The first held the
+     slices of the volley and one character, the second held the same three
+     slices. */
+  function migrate(saved) {
+    var out = { characters: {}, current: 'c1', ui: saved.ui || { pages: null } };
+    var rec = {};
+    if (saved.spells || saved.volley) {
+      /* the second version: three slices */
+      rec.volley = saved.volley || {};
+      rec.spells = saved.spells || {};
+      rec.char = saved.char || {};
+    } else {
+      /* the first version: the slices of the spell tab and the fields of
+         the volley, side by side */
+      rec.volley = {};
+      ['power', 'advantage', 'hex', 'curse', 'elem', 'elemPlus', 'quicken', 'ac'].forEach(function (k) {
+        if (saved[k] !== undefined) rec.volley[k] = saved[k];
+      });
+      rec.spells = saved.spell || {};
+      rec.char = saved.char || {};
+    }
+    out.characters.c1 = rec;
     return out;
+  }
+
+  /* Every page seeds the slice it owns, and a character that is new starts
+     from nothing. */
+  function seedCharacter(rec, fresh) {
+    PAGES.forEach(function (p) {
+      if (!p.seed) return;
+      var key = p.slice || p.id;
+      rec[key] = p.seed(rec[key] || {}, !!fresh);
+    });
+    return rec;
   }
 
   function save() {
@@ -16503,9 +16586,21 @@ input[type=range]::-moz-range-thumb{
       if (layer.onPaint) layer.onPaint(el.sheet);
     }
 
+    function closeAll() {
+      while (stack.length) {
+        var layer = stack.pop();
+        if (layer && layer.onClose) layer.onClose();
+      }
+      el.sheet.hidden = true;
+      el.sheetMeta.innerHTML = '';
+      el.sheetText.innerHTML = '';
+      el.sheetList.innerHTML = '';
+    }
+
     return {
       open: open,
       close: close,
+      closeAll: closeAll,
       top: top,
       search: function () { return term; },
       setSearch: function (v) { term = v; }
@@ -16521,6 +16616,119 @@ input[type=range]::-moz-range-thumb{
     el.spentToast.classList.add('on');
     if (toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { el.spentToast.classList.remove('on'); }, 3000);
+  }
+
+  /* ---- the characters ---- */
+
+  function characterList() {
+    return Object.keys(state.characters).map(function (id) {
+      var rec = state.characters[id] || {};
+      var ch = rec.char || {};
+      return {
+        id: id,
+        name: ch.name || 'Unnamed character',
+        level: ch.level ? 'level ' + ch.level : '',
+        current: id === state.current
+      };
+    });
+  }
+
+  function homeId() {
+    var home = PAGES.filter(function (p) { return p.home; })[0];
+    return home ? home.id : current;
+  }
+
+  /* The list of the characters, top down, and the way to add one. */
+  function openCharacters() {
+    var list = characterList();
+    var html = list.map(function (c) {
+      return '<div class="crow" data-id="' + c.id + '">' +
+        '<span class="cn">' + esc(c.name) + '</span>' +
+        '<span class="cl">' + esc(c.level) + '</span>' +
+        (c.current ? '<span class="cm">playing</span>' : '') +
+        (list.length > 1
+          ? '<button class="cdel" type="button" data-del="' + c.id + '" aria-label="Remove ' + esc(c.name) + '">&times;</button>'
+          : '') +
+        '</div>';
+    }).join('');
+    html += '<div class="crow cadd" data-add="1"><span class="cn">Add a character</span>' +
+      '<span class="cx">+</span></div>';
+
+    sheet.open({
+      id: 'characters',
+      title: 'Characters',
+      metaClass: 'sheet-meta one',
+      meta: '<span>Tap a character to play it.</span>',
+      list: html,
+      onList: function (ev) {
+        var del = ev.target.closest('[data-del]');
+        if (del) { openRemoveCharacter(del.dataset.del); return; }
+        if (ev.target.closest('[data-add]')) { openNewCharacter(); return; }
+        var row = ev.target.closest('.crow[data-id]');
+        if (!row) return;
+        switchCharacter(row.dataset.id);
+      }
+    });
+  }
+
+  function switchCharacter(id) {
+    if (!state.characters[id]) return;
+    state.current = id;
+    save();
+    sheet.closeAll();
+    show(current);
+  }
+
+  function openNewCharacter() {
+    sheet.open({
+      id: 'newcharacter',
+      title: 'New character',
+      metaClass: 'sheet-meta one',
+      meta: '<input class="sheet-search" id="newCharName" type="text" placeholder="Name of the character" aria-label="Name of the character">',
+      actions: [{
+        label: 'Create',
+        onClick: function (root) {
+          var field = root.querySelector('#newCharName');
+          var name = (field && field.value ? field.value : '').trim() || 'New character';
+          var id = 'c' + Date.now();
+          var rec = seedCharacter({}, true);
+          rec.char.name = name;
+          state.characters[id] = rec;
+          state.current = id;
+          save();
+          sheet.closeAll();
+          show(homeId());
+        }
+      }]
+    });
+  }
+
+  function openRemoveCharacter(id) {
+    var c = characterList().filter(function (x) { return x.id === id; })[0];
+    if (!c) return;
+    sheet.open({
+      id: 'remove:' + id,
+      title: 'Remove ' + c.name + '?',
+      metaClass: 'sheet-meta one',
+      meta: '<span>The character and everything on it goes away.</span>',
+      actions: [
+        { label: 'Keep', onClick: function () { sheet.close(); } },
+        { label: 'Remove', kind: 'danger', onClick: function () { removeCharacter(id); } }
+      ]
+    });
+  }
+
+  function removeCharacter(id) {
+    var ids = Object.keys(state.characters);
+    if (ids.length <= 1) return;
+    delete state.characters[id];
+    if (state.current === id) {
+      state.current = ids.filter(function (x) { return x !== id; })[0];
+    }
+    save();
+    sheet.closeAll();
+    show(current);
+    openCharacters();
   }
 
   /* ---- the elements of the shell ---- */
@@ -16557,9 +16765,14 @@ input[type=range]::-moz-range-thumb{
     }).sort(function (a, b) { return a.order - b.order; });
   }
 
-  /* The label of a tab, which can be shorter than the name of the page. */
+  /* The label of a tab, which can be shorter than the name of the page, and
+     the name of the page itself, which the head of the app carries. */
   function label(p) {
     if (p.tab) return p.tab;
+    return titleOf(p);
+  }
+
+  function titleOf(p) {
     return typeof p.title === 'function' ? p.title(api) : p.title;
   }
 
@@ -16615,7 +16828,7 @@ input[type=range]::-moz-range-thumb{
     if (p.head) p.head(el.head, api);
 
     renderTabs();
-    el.pageTitle.textContent = label(p);
+    el.pageTitle.textContent = titleOf(p);
     if (p.render) p.render(api);
   }
 
@@ -16636,7 +16849,11 @@ input[type=range]::-moz-range-thumb{
     sheet: sheet,
     core: core,
     pages: PAGES,
-    defaultPages: DEFAULT_PAGES
+    defaultPages: DEFAULT_PAGES,
+    /* the character being played */
+    character: function () { return state.characters[state.current] || {}; },
+    characters: function () { return state.characters; },
+    openCharacters: openCharacters
   };
 
   /* ---- the wiring of the shell ---- */
@@ -16669,12 +16886,11 @@ input[type=range]::-moz-range-thumb{
   /* ---- the boot ---- */
 
   function boot() {
-    /* every page seeds its own slice */
-    PAGES.forEach(function (p) {
-      if (!p.seed) return;
-      var key = p.slice || p.id;
-      state[key] = p.seed(state[key] || {});
+    /* every page seeds the slice it owns, for every character */
+    Object.keys(state.characters).forEach(function (id) {
+      seedCharacter(state.characters[id], false);
     });
+    save();
     var home = PAGES.filter(function (p) { return p.home; })[0];
     show(home ? home.id : (enabled()[0] || PAGES[0]).id);
   }
@@ -16759,7 +16975,7 @@ input[type=range]::-moz-range-thumb{
 
   /* ---- the state ---- */
 
-  function seed(saved) {
+  function seed(saved, fresh) {
     var c = {
       name: '',
       level: CHAR_DEFAULTS.level,
@@ -16792,6 +17008,22 @@ input[type=range]::-moz-range-thumb{
       c.saves[a.key] = CHAR_DEFAULTS.saves[a.key];
     });
     SKILLS.forEach(function (s) { c.skills[s.key] = 0; });
+    /* A character that is new starts from nothing: no name, no features,
+       no dice, and the scores at ten. */
+    if (fresh) {
+      c.name = '';
+      c.level = 1;
+      ABILITIES.forEach(function (a) {
+        c.abilities[a.key] = 10;
+        c.saves[a.key] = 0;
+      });
+      c.features = [];
+      c.dice = [];
+      c.init = 0;
+      c.ac = null;
+      c.hp = { current: 0, max: 0 };
+      c.history = [];
+    }
     if (saved && typeof saved === 'object') {
       if (typeof saved.name === 'string') c.name = saved.name;
       if (saved.level) c.level = Math.max(1, Math.min(20, Number(saved.level) || CHAR_DEFAULTS.level));
@@ -16882,7 +17114,13 @@ input[type=range]::-moz-range-thumb{
 
   function renderChar() {
     E.charBody.classList.toggle('editing', editingChar);
-    E.charNameWrap.hidden = !editingChar;
+    E.charName.hidden = !editingChar;
+    E.charSwitch.hidden = editingChar;
+    if (!editingChar) {
+      E.charSwitch.innerHTML = '<span>' + C.esc(CH.name || 'Unnamed character') + '</span>' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+        '<path d="M6 9.5l6 6 6-6"/></svg>';
+    }
 
     if (document.activeElement !== E.charName) E.charName.value = CH.name;
     if (document.activeElement !== E.charAc) {
@@ -17007,7 +17245,7 @@ input[type=range]::-moz-range-thumb{
   /* ---- the rests ---- */
 
   function pushSnapshot() {
-    CH.history.push(SR.snapshot(CH, api.state.spells));
+    CH.history.push(SR.snapshot(CH, api.character().spells));
     if (CH.history.length > 60) CH.history.shift();
   }
 
@@ -17023,7 +17261,7 @@ input[type=range]::-moz-range-thumb{
     CH.hp.max = result.hpmax;
     if (result.dice) CH.dice = result.dice;
     CH.features = result.features;
-    var S = api.state.spells;
+    var S = api.character().spells;
     S.left = result.left;
     S.warlockLeft = result.warlockLeft;
     S.sp = result.sp;
@@ -17040,8 +17278,8 @@ input[type=range]::-moz-range-thumb{
   }
 
   function doRest(kind) {
-    var before = SR.snapshot(CH, api.state.spells);
-    var after = kind === 'long' ? SR.longRest(CH, api.state.spells) : SR.shortRest(CH, api.state.spells);
+    var before = SR.snapshot(CH, api.character().spells);
+    var after = kind === 'long' ? SR.longRest(CH, api.character().spells) : SR.shortRest(CH, api.character().spells);
     CH.history.push(before);
     if (CH.history.length > 60) CH.history.shift();
     applyRest(after);
@@ -17081,7 +17319,10 @@ input[type=range]::-moz-range-thumb{
 
   Volley.page({
     id: 'character',
-    title: function (a) { return a.state.char.name || 'Character'; },
+    title: function (a) {
+      var c = a.character().char || {};
+      return c.name || 'Character';
+    },
     tab: 'Character',
     home: true,
     order: 0,
@@ -17089,9 +17330,10 @@ input[type=range]::-moz-range-thumb{
     blurb: 'The sheet of the character. It is always there.',
     html: [
       '<div class="charbody" id="charBody">',
-      '  <div class="csname" id="charNameWrap" hidden>',
+      '  <div class="csname" id="charNameWrap">',
       '    <span class="ck">NAME</span>',
       '    <input class="cinput" id="charName" type="text" placeholder="your character" aria-label="Character name">',
+      '    <button class="cname-btn" id="charSwitch" type="button" aria-label="The characters"></button>',
       '  </div>',
       '  <div class="ctop">',
       '    <label class="ctile" for="charAc">',
@@ -17142,11 +17384,12 @@ input[type=range]::-moz-range-thumb{
 
     mount: function (root, a) {
       api = a;
-      CH = a.state.char;
+      CH = a.character().char;
       E = {
         charBody: root.querySelector('#charBody'),
         charNameWrap: root.querySelector('#charNameWrap'),
         charName: root.querySelector('#charName'),
+        charSwitch: root.querySelector('#charSwitch'),
         charAc: root.querySelector('#charAc'),
         charInit: root.querySelector('#charInit'),
         charLevel: root.querySelector('#charLevel'),
@@ -17170,6 +17413,9 @@ input[type=range]::-moz-range-thumb{
         CH.name = E.charName.value;
         commitChar();
       });
+
+      /* The name opens the list of the characters. */
+      E.charSwitch.addEventListener('click', function () { api.openCharacters(); });
 
       E.charAc.addEventListener('input', function () {
         var v = E.charAc.value.trim();
@@ -17203,7 +17449,7 @@ input[type=range]::-moz-range-thumb{
       var hpBefore = null;
 
       E.charHpNow.addEventListener('focus', function () {
-        hpBefore = SR.snapshot(CH, api.state.spells);
+        hpBefore = SR.snapshot(CH, api.character().spells);
       });
 
       E.charHpNow.addEventListener('input', function () {
@@ -17291,7 +17537,7 @@ input[type=range]::-moz-range-thumb{
     /* The wrench edits the proficiencies. */
     head: function (root, a) {
       api = a;
-      CH = a.state.char;
+      CH = a.character().char;
       var b = C.wrenchButton('Edit the proficiencies', function () {
         editingChar = !editingChar;
         api.save();
@@ -17303,7 +17549,7 @@ input[type=range]::-moz-range-thumb{
 
     render: function (a) {
       api = a;
-      CH = a.state.char;
+      CH = a.character().char;
       if (E.wrench) E.wrench.setAttribute('aria-pressed', editingChar ? 'true' : 'false');
       renderChar();
     }
@@ -17349,7 +17595,7 @@ input[type=range]::-moz-range-thumb{
      it: the attack bonus and the modifier the damage carries. */
   function casting() {
     var st = Object.assign({}, S);
-    var ch = api.state.char;
+    var ch = api.character().char;
     if (ch && ch.abilities) {
       st.attackMod = C.SR.spellAttack(ch);
       st.flatMod = C.SR.abilityMod(ch.abilities.cha);
@@ -17553,7 +17799,7 @@ input[type=range]::-moz-range-thumb{
       '</button>'
     ].join('\n'),
 
-    seed: function (saved) {
+    seed: function (saved, fresh) {
       var s = {
         power: 'eb', advantage: false, hex: false, curse: false,
         elem: false, elemPlus: false, quicken: false, ac: null
@@ -17573,7 +17819,7 @@ input[type=range]::-moz-range-thumb{
 
     mount: function (root, a) {
       api = a;
-      S = a.state.volley;
+      S = a.character().volley;
       E = {
         power: root.querySelector('#power'),
         stops: root.querySelector('#stops'),
@@ -17633,7 +17879,7 @@ input[type=range]::-moz-range-thumb{
        of the spell. */
     head: function (root, a) {
       api = a;
-      S = a.state.volley;
+      S = a.character().volley;
       var wrap = document.createElement('label');
       wrap.className = 'ac';
       wrap.id = 'acField';
@@ -17648,7 +17894,7 @@ input[type=range]::-moz-range-thumb{
 
     render: function (a) {
       api = a;
-      S = a.state.volley;
+      S = a.character().volley;
       var st = casting();
       ATK = R.attackMod(st);
       FLAT = R.flatMod(st, R.powerOf(S.power));
@@ -17727,7 +17973,7 @@ input[type=range]::-moz-range-thumb{
 
   /* ---- the state ---- */
 
-  function seed(saved) {
+  function seed(saved, fresh) {
     var s = {};
     Object.keys(SPELL_DEFAULTS).forEach(function (k) { s[k] = SPELL_DEFAULTS[k]; });
     if (saved && typeof saved === 'object') {
@@ -17740,11 +17986,16 @@ input[type=range]::-moz-range-thumb{
         Object.keys(saved.classes).forEach(function (k) { s.classes[C.canonSource(k)] = !!saved.classes[k]; });
       }
       if (saved.levelFilter !== undefined) s.levelFilter = !!saved.levelFilter;
+      /* A save DC the player moved in an earlier version stays where it was
+         put, and from now on it follows the character. */
+      if (saved.dc !== undefined && Number(saved.dc) !== 17) s.dcTouched = true;
       if (saved.max) { s.max = {}; Object.keys(SPELL_DEFAULTS.max).forEach(function (k) { s.max[k] = Number(saved.max[k]) || 0; }); }
       if (saved.left) { s.left = {}; Object.keys(SPELL_DEFAULTS.left).forEach(function (k) { s.left[k] = Number(saved.left[k]) || 0; }); }
     }
     var lists = {};
     LEVELS.forEach(function (lv) {
+      /* A character that is new knows no spell and holds no slot. */
+      if (fresh) { lists[lv] = []; return; }
       var seed = SPELL_SEED.filter(function (n) {
         var sp = C.bookByName[n];
         return sp && sp.level === lv;
@@ -17753,6 +18004,18 @@ input[type=range]::-moz-range-thumb{
       lists[lv] = (own && own.length) ? own.filter(function (n) { return C.bookByName[n]; }) : seed;
     });
     s.lists = lists;
+    if (fresh) {
+      s.sp = 0;
+      s.spMax = 0;
+      s.max = {};
+      s.left = {};
+      s.warlockMax = 0;
+      s.warlockLeft = 0;
+      s.sorcererLevel = 1;
+      s.classes = {};
+      s.levelFilter = true;
+      s.dcTouched = false;
+    }
     return s;
   }
 
@@ -17949,7 +18212,7 @@ input[type=range]::-moz-range-thumb{
   /* The save DC is the character's, until the player moves it here. */
   function saveDC() {
     if (S.dcTouched) return S.dc;
-    var ch = api.state.char;
+    var ch = api.character().char;
     if (ch && ch.abilities) return C.SR.spellDC(ch);
     return S.dc;
   }
@@ -18181,7 +18444,7 @@ input[type=range]::-moz-range-thumb{
 
     mount: function (root, a) {
       api = a;
-      S = a.state.spells;
+      S = a.character().spells;
       E = {
         dcStat: root.querySelector('#dcStat'),
         dcValue: root.querySelector('#dcValue'),
@@ -18367,7 +18630,7 @@ input[type=range]::-moz-range-thumb{
     /* The wrench edits the maximum of the slots. */
     head: function (root, a) {
       api = a;
-      S = a.state.spells;
+      S = a.character().spells;
       var b = C.wrenchButton('Edit the slot maximums', function () {
         editing = !editing;
         api.save();
@@ -18379,7 +18642,7 @@ input[type=range]::-moz-range-thumb{
 
     render: function (a) {
       api = a;
-      S = a.state.spells;
+      S = a.character().spells;
       if (E.wrench) E.wrench.setAttribute('aria-pressed', editing ? 'true' : 'false');
       renderSpells();
     }
@@ -18421,7 +18684,7 @@ input[type=range]::-moz-range-thumb{
 
   function commitChar() { api.save(); api.refresh(); }
 
-  function features() { return api.state.char.features; }
+  function features() { return api.character().char.features; }
 
   /* The feature waiting to be removed, and the question under it. */
   function featureByKey(key) {
@@ -18432,7 +18695,7 @@ input[type=range]::-moz-range-thumb{
 
   function featureCount(f) {
     if (f.bind === 'warlock') {
-      var S = api.state.spells;
+      var S = api.character().spells;
       return {
         left: Number(S.warlockLeft) || 0,
         max: Number(S.warlockMax) || 0
@@ -18610,7 +18873,7 @@ input[type=range]::-moz-range-thumb{
      feature costs a sorcery point rather than a use. ---- */
 
   function spendFeature(f) {
-    var S = api.state.spells;
+    var S = api.character().spells;
     if (f.cost === 'sp') {
       if (S.sp > 0) {
         S.sp -= 1;
@@ -18638,7 +18901,7 @@ input[type=range]::-moz-range-thumb{
     var byKey = {};
     features().forEach(function (f) { byKey[f.key] = f; });
     var others = features().filter(function (f) { return keys.indexOf(f.key) < 0; });
-    api.state.char.features = keys.map(function (k) { return byKey[k]; }).concat(others);
+    api.character().char.features = keys.map(function (k) { return byKey[k]; }).concat(others);
     api.save();
     renderFeatureCards();
   }
@@ -18718,7 +18981,7 @@ input[type=range]::-moz-range-thumb{
           return;
         }
         if (role === 'yes') {
-          api.state.char.features = features().filter(function (x) { return x.key !== f.key; });
+          api.character().char.features = features().filter(function (x) { return x.key !== f.key; });
           deleting = null;
           buildFeatureCards();
           commitChar();

@@ -25,7 +25,7 @@
 
   function commitChar() { api.save(); api.refresh(); }
 
-  function features() { return api.state.char.features; }
+  function features() { return api.character().char.features; }
 
   /* The feature waiting to be removed, and the question under it. */
   function featureByKey(key) {
@@ -36,7 +36,7 @@
 
   function featureCount(f) {
     if (f.bind === 'warlock') {
-      var S = api.state.spells;
+      var S = api.character().spells;
       return {
         left: Number(S.warlockLeft) || 0,
         max: Number(S.warlockMax) || 0
@@ -214,7 +214,7 @@
      feature costs a sorcery point rather than a use. ---- */
 
   function spendFeature(f) {
-    var S = api.state.spells;
+    var S = api.character().spells;
     if (f.cost === 'sp') {
       if (S.sp > 0) {
         S.sp -= 1;
@@ -242,7 +242,7 @@
     var byKey = {};
     features().forEach(function (f) { byKey[f.key] = f; });
     var others = features().filter(function (f) { return keys.indexOf(f.key) < 0; });
-    api.state.char.features = keys.map(function (k) { return byKey[k]; }).concat(others);
+    api.character().char.features = keys.map(function (k) { return byKey[k]; }).concat(others);
     api.save();
     renderFeatureCards();
   }
@@ -322,7 +322,7 @@
           return;
         }
         if (role === 'yes') {
-          api.state.char.features = features().filter(function (x) { return x.key !== f.key; });
+          api.character().char.features = features().filter(function (x) { return x.key !== f.key; });
           deleting = null;
           buildFeatureCards();
           commitChar();

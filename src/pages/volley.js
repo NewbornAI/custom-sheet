@@ -35,7 +35,7 @@
      it: the attack bonus and the modifier the damage carries. */
   function casting() {
     var st = Object.assign({}, S);
-    var ch = api.state.char;
+    var ch = api.character().char;
     if (ch && ch.abilities) {
       st.attackMod = C.SR.spellAttack(ch);
       st.flatMod = C.SR.abilityMod(ch.abilities.cha);
@@ -239,7 +239,7 @@
       '</button>'
     ].join('\n'),
 
-    seed: function (saved) {
+    seed: function (saved, fresh) {
       var s = {
         power: 'eb', advantage: false, hex: false, curse: false,
         elem: false, elemPlus: false, quicken: false, ac: null
@@ -259,7 +259,7 @@
 
     mount: function (root, a) {
       api = a;
-      S = a.state.volley;
+      S = a.character().volley;
       E = {
         power: root.querySelector('#power'),
         stops: root.querySelector('#stops'),
@@ -319,7 +319,7 @@
        of the spell. */
     head: function (root, a) {
       api = a;
-      S = a.state.volley;
+      S = a.character().volley;
       var wrap = document.createElement('label');
       wrap.className = 'ac';
       wrap.id = 'acField';
@@ -334,7 +334,7 @@
 
     render: function (a) {
       api = a;
-      S = a.state.volley;
+      S = a.character().volley;
       var st = casting();
       ATK = R.attackMod(st);
       FLAT = R.flatMod(st, R.powerOf(S.power));
