@@ -827,6 +827,20 @@ input[type=range]::-moz-range-thumb{
 .charbody.editing .frow.hidden{display:flex}
 .charbody.editing .frow.hidden .fname,.charbody.editing .frow.hidden .ftag,.charbody.editing .frow.hidden .fuse,.charbody.editing .frow.hidden .fof,.charbody.editing .frow.hidden .fmax{opacity:.4}
 
+/* A card is held and dragged, so a press on one must not start a text
+   selection or the phone's own long press menu. */
+.card,.fcard,.crow,.srow,.lv,.die,.chip,.clsum{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.clsum{font-size:10.5px;color:var(--muted);margin:-3px 0 1px;letter-spacing:.01em}
+.clsum[hidden]{display:none}
+.clrow{display:flex;align-items:center;gap:6px}
+.clrow .t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.clname{font:inherit;font-size:12px;color:var(--ink);background:none;border:none;padding:0;text-align:left;cursor:pointer}
+.clname:active{color:var(--arcane)}
+.clsub{font-size:10px;color:var(--muted);background:none;border:none;padding:0;text-align:left;cursor:pointer;align-self:flex-start}
+.clsub:active{color:var(--arcane)}
+.clrow .cdel{background:none;border:none;color:var(--muted);font:inherit;font-size:16px;line-height:1;padding:0 3px;cursor:pointer}
+.clrow .cdel:active{color:var(--gold)}
+.clvl{min-width:16px;text-align:center;font-variant-numeric:tabular-nums}
 .charstyle{display:none}
 .charbody.editing .charstyle{display:block}
 .srow .sico{flex:0 0 auto;display:flex;align-items:center;margin-right:8px;color:var(--arcane)}
@@ -16210,7 +16224,7 @@ input[type=range]::-moz-range-thumb{
 <script id="character-data" type="application/json">{
   "edition": "Mandal's second character, the bard, ready to add from the switcher",
   "source": "Mandal's sheet of 2026-10-22",
-  "note": "The six scores are the sheet. The initiative follows the dexterity, so the record carries none; the hit points, the armour class and the skills wait to be typed. The two adept feats always have their ten spells prepared, so those travel with the character, each named by the feat that grants it. A record can also carry a theme and an icon.",
+  "note": "The six scores are the sheet, and the class is the bard 11 of the college of creation, which gives the level and the spell slots. The initiative follows the dexterity, so the record carries none; the hit points, the armour class and the skills wait to be typed. The two adept feats always have their ten spells prepared, so those travel with the character, each named by the feat that grants it. A record can also carry a theme and an icon.",
   "presets": [
     {
       "id": "bardCreation",
@@ -16305,6 +16319,13 @@ input[type=range]::-moz-range-thumb{
               "type": 8,
               "spent": false
             }
+          ],
+          "classes": [
+            {
+              "name": "Bard",
+              "level": 11,
+              "subclass": "College of Creation"
+            }
           ]
         },
         "spells": {
@@ -16386,6 +16407,927 @@ input[type=range]::-moz-range-thumb{
           "pick": "Bard"
         }
       }
+    }
+  ]
+}</script>
+
+<script id="class-data" type="application/json">{
+  "edition": "The 2024 Player's Handbook classes, with every subclass that is not a reprint",
+  "source": "https://5e.tools/classes.html",
+  "fetched": "2026-10-22",
+  "classes": [
+    {
+      "name": "Barbarian",
+      "source": "XPHB",
+      "ability": "",
+      "caster": "",
+      "hd": 12,
+      "saves": [
+        "str",
+        "con"
+      ],
+      "subclassTitle": "Barbarian Subclass",
+      "subclasses": [
+        {
+          "name": "Path of the Ancestral Guardian",
+          "short": "Ancestral Guardian",
+          "source": "XGE"
+        },
+        {
+          "name": "Path of the Battlerager",
+          "short": "Battlerager",
+          "source": "SCAG"
+        },
+        {
+          "name": "Path of the Beast",
+          "short": "Beast",
+          "source": "TCE"
+        },
+        {
+          "name": "Path of the Berserker",
+          "short": "Berserker",
+          "source": "XPHB"
+        },
+        {
+          "name": "Path of the Giant",
+          "short": "Giant",
+          "source": "BGG"
+        },
+        {
+          "name": "Path of the Storm Herald",
+          "short": "Storm Herald",
+          "source": "XGE"
+        },
+        {
+          "name": "Path of the Totem Warrior",
+          "short": "Totem Warrior",
+          "source": "PHB"
+        },
+        {
+          "name": "Path of the Wild Heart",
+          "short": "Wild Heart",
+          "source": "XPHB"
+        },
+        {
+          "name": "Path of the World Tree",
+          "short": "World Tree",
+          "source": "XPHB"
+        },
+        {
+          "name": "Path of the Zealot",
+          "short": "Zealot",
+          "source": "XPHB"
+        },
+        {
+          "name": "Path of Wild Magic",
+          "short": "Wild Magic",
+          "source": "TCE"
+        }
+      ]
+    },
+    {
+      "name": "Bard",
+      "source": "XPHB",
+      "ability": "cha",
+      "caster": "full",
+      "hd": 8,
+      "saves": [
+        "dex",
+        "cha"
+      ],
+      "subclassTitle": "Bard Subclass",
+      "subclasses": [
+        {
+          "name": "College of Creation",
+          "short": "Creation",
+          "source": "TCE"
+        },
+        {
+          "name": "College of Dance",
+          "short": "Dance",
+          "source": "XPHB"
+        },
+        {
+          "name": "College of Eloquence",
+          "short": "Eloquence",
+          "source": "TCE"
+        },
+        {
+          "name": "College of Glamour",
+          "short": "Glamour",
+          "source": "XPHB"
+        },
+        {
+          "name": "College of Lore",
+          "short": "Lore",
+          "source": "XPHB"
+        },
+        {
+          "name": "College of Spirits",
+          "short": "Spirits",
+          "source": "RHW"
+        },
+        {
+          "name": "College of Swords",
+          "short": "Swords",
+          "source": "XGE"
+        },
+        {
+          "name": "College of the Moon",
+          "short": "Moon",
+          "source": "FRHoF"
+        },
+        {
+          "name": "College of Valor",
+          "short": "Valor",
+          "source": "XPHB"
+        },
+        {
+          "name": "College of Whispers",
+          "short": "Whispers",
+          "source": "XGE"
+        }
+      ]
+    },
+    {
+      "name": "Cleric",
+      "source": "XPHB",
+      "ability": "wis",
+      "caster": "full",
+      "hd": 8,
+      "saves": [
+        "wis",
+        "cha"
+      ],
+      "subclassTitle": "Cleric Subclass",
+      "subclasses": [
+        {
+          "name": "Ambition Domain (PSA)",
+          "short": "Ambition (PSA)",
+          "source": "PSA"
+        },
+        {
+          "name": "Arcana Domain",
+          "short": "Arcana",
+          "source": "AU"
+        },
+        {
+          "name": "Death Domain",
+          "short": "Death",
+          "source": "DMG"
+        },
+        {
+          "name": "Forge Domain",
+          "short": "Forge",
+          "source": "XGE"
+        },
+        {
+          "name": "Grave Domain",
+          "short": "Grave",
+          "source": "RHW"
+        },
+        {
+          "name": "Knowledge Domain",
+          "short": "Knowledge",
+          "source": "FRHoF"
+        },
+        {
+          "name": "Knowledge Domain (PSA)",
+          "short": "Knowledge (PSA)",
+          "source": "PSA"
+        },
+        {
+          "name": "Life Domain",
+          "short": "Life",
+          "source": "XPHB"
+        },
+        {
+          "name": "Light Domain",
+          "short": "Light",
+          "source": "XPHB"
+        },
+        {
+          "name": "Nature Domain",
+          "short": "Nature",
+          "source": "PHB"
+        },
+        {
+          "name": "Order Domain",
+          "short": "Order",
+          "source": "TCE"
+        },
+        {
+          "name": "Peace Domain",
+          "short": "Peace",
+          "source": "TCE"
+        },
+        {
+          "name": "Solidarity Domain (PSA)",
+          "short": "Solidarity (PSA)",
+          "source": "PSA"
+        },
+        {
+          "name": "Strength Domain (PSA)",
+          "short": "Strength (PSA)",
+          "source": "PSA"
+        },
+        {
+          "name": "Tempest Domain",
+          "short": "Tempest",
+          "source": "PHB"
+        },
+        {
+          "name": "Trickery Domain",
+          "short": "Trickery",
+          "source": "XPHB"
+        },
+        {
+          "name": "Twilight Domain",
+          "short": "Twilight",
+          "source": "TCE"
+        },
+        {
+          "name": "War Domain",
+          "short": "War",
+          "source": "XPHB"
+        },
+        {
+          "name": "Zeal Domain (PSA)",
+          "short": "Zeal (PSA)",
+          "source": "PSA"
+        }
+      ]
+    },
+    {
+      "name": "Druid",
+      "source": "XPHB",
+      "ability": "wis",
+      "caster": "full",
+      "hd": 8,
+      "saves": [
+        "int",
+        "wis"
+      ],
+      "subclassTitle": "Druid Subclass",
+      "subclasses": [
+        {
+          "name": "Circle of Dreams",
+          "short": "Dreams",
+          "source": "XGE"
+        },
+        {
+          "name": "Circle of Spores",
+          "short": "Spores",
+          "source": "TCE"
+        },
+        {
+          "name": "Circle of Stars",
+          "short": "Stars",
+          "source": "TCE"
+        },
+        {
+          "name": "Circle of the Land",
+          "short": "Land",
+          "source": "XPHB"
+        },
+        {
+          "name": "Circle of the Moon",
+          "short": "Moon",
+          "source": "XPHB"
+        },
+        {
+          "name": "Circle of the Sea",
+          "short": "Sea",
+          "source": "XPHB"
+        },
+        {
+          "name": "Circle of the Shepherd",
+          "short": "Shepherd",
+          "source": "XGE"
+        },
+        {
+          "name": "Circle of the Stars",
+          "short": "Stars",
+          "source": "XPHB"
+        },
+        {
+          "name": "Circle of Wildfire",
+          "short": "Wildfire",
+          "source": "TCE"
+        }
+      ]
+    },
+    {
+      "name": "Fighter",
+      "source": "XPHB",
+      "ability": "",
+      "caster": "",
+      "hd": 10,
+      "saves": [
+        "str",
+        "con"
+      ],
+      "subclassTitle": "Fighter Subclass",
+      "subclasses": [
+        {
+          "name": "Arcane Archer",
+          "short": "Arcane Archer",
+          "source": "AU"
+        },
+        {
+          "name": "Banneret",
+          "short": "Banneret",
+          "source": "FRHoF"
+        },
+        {
+          "name": "Battle Master",
+          "short": "Battle Master",
+          "source": "XPHB"
+        },
+        {
+          "name": "Cavalier",
+          "short": "Cavalier",
+          "source": "XGE"
+        },
+        {
+          "name": "Champion",
+          "short": "Champion",
+          "source": "XPHB"
+        },
+        {
+          "name": "Echo Knight",
+          "short": "Echo Knight",
+          "source": "EGW"
+        },
+        {
+          "name": "Eldritch Knight",
+          "short": "Eldritch Knight",
+          "source": "XPHB"
+        },
+        {
+          "name": "Psi Warrior",
+          "short": "Psi Warrior",
+          "source": "XPHB"
+        },
+        {
+          "name": "Rune Knight",
+          "short": "Rune Knight",
+          "source": "TCE"
+        },
+        {
+          "name": "Samurai",
+          "short": "Samurai",
+          "source": "XGE"
+        }
+      ]
+    },
+    {
+      "name": "Monk",
+      "source": "XPHB",
+      "ability": "",
+      "caster": "",
+      "hd": 8,
+      "saves": [
+        "str",
+        "dex"
+      ],
+      "subclassTitle": "Monk Subclass",
+      "subclasses": [
+        {
+          "name": "Warrior of Mercy",
+          "short": "Mercy",
+          "source": "XPHB"
+        },
+        {
+          "name": "Warrior of Shadow",
+          "short": "Shadow",
+          "source": "XPHB"
+        },
+        {
+          "name": "Warrior of the Elements",
+          "short": "Elements",
+          "source": "XPHB"
+        },
+        {
+          "name": "Warrior of the Mystic Arts",
+          "short": "Mystic Arts",
+          "source": "AU"
+        },
+        {
+          "name": "Warrior of the Open Hand",
+          "short": "Open Hand",
+          "source": "XPHB"
+        },
+        {
+          "name": "Way of Mercy",
+          "short": "Mercy",
+          "source": "TCE"
+        },
+        {
+          "name": "Way of Shadow",
+          "short": "Shadow",
+          "source": "PHB"
+        },
+        {
+          "name": "Way of the Ascendant Dragon",
+          "short": "Ascendant Dragon",
+          "source": "FTD"
+        },
+        {
+          "name": "Way of the Astral Self",
+          "short": "Astral Self",
+          "source": "TCE"
+        },
+        {
+          "name": "Way of the Drunken Master",
+          "short": "Drunken Master",
+          "source": "XGE"
+        },
+        {
+          "name": "Way of the Four Elements",
+          "short": "Four Elements",
+          "source": "PHB"
+        },
+        {
+          "name": "Way of the Kensei",
+          "short": "Kensei",
+          "source": "XGE"
+        },
+        {
+          "name": "Way of the Long Death",
+          "short": "Long Death",
+          "source": "SCAG"
+        },
+        {
+          "name": "Way of the Open Hand",
+          "short": "Open Hand",
+          "source": "PHB"
+        },
+        {
+          "name": "Way of the Sun Soul",
+          "short": "Sun Soul",
+          "source": "XGE"
+        }
+      ]
+    },
+    {
+      "name": "Paladin",
+      "source": "XPHB",
+      "ability": "cha",
+      "caster": "artificer",
+      "hd": 10,
+      "saves": [
+        "wis",
+        "cha"
+      ],
+      "subclassTitle": "Paladin Subclass",
+      "subclasses": [
+        {
+          "name": "Oath of Conquest",
+          "short": "Conquest",
+          "source": "XGE"
+        },
+        {
+          "name": "Oath of Devotion",
+          "short": "Devotion",
+          "source": "XPHB"
+        },
+        {
+          "name": "Oath of Glory",
+          "short": "Glory",
+          "source": "XPHB"
+        },
+        {
+          "name": "Oath of Redemption",
+          "short": "Redemption",
+          "source": "XGE"
+        },
+        {
+          "name": "Oath of the Ancients",
+          "short": "Ancients",
+          "source": "XPHB"
+        },
+        {
+          "name": "Oath of the Crown",
+          "short": "Crown",
+          "source": "SCAG"
+        },
+        {
+          "name": "Oath of the Noble Genies",
+          "short": "Noble Genies",
+          "source": "FRHoF"
+        },
+        {
+          "name": "Oath of the Watchers",
+          "short": "Watchers",
+          "source": "TCE"
+        },
+        {
+          "name": "Oath of Vengeance",
+          "short": "Vengeance",
+          "source": "XPHB"
+        },
+        {
+          "name": "Oathbreaker",
+          "short": "Oathbreaker",
+          "source": "DMG"
+        }
+      ]
+    },
+    {
+      "name": "Ranger",
+      "source": "XPHB",
+      "ability": "wis",
+      "caster": "artificer",
+      "hd": 10,
+      "saves": [
+        "str",
+        "dex"
+      ],
+      "subclassTitle": "Ranger Subclass",
+      "subclasses": [
+        {
+          "name": "Beast Master",
+          "short": "Beast Master",
+          "source": "XPHB"
+        },
+        {
+          "name": "Drakewarden",
+          "short": "Drakewarden",
+          "source": "FTD"
+        },
+        {
+          "name": "Fey Wanderer",
+          "short": "Fey Wanderer",
+          "source": "XPHB"
+        },
+        {
+          "name": "Gloom Stalker",
+          "short": "Gloom Stalker",
+          "source": "XPHB"
+        },
+        {
+          "name": "Hollow Warden",
+          "short": "Hollow Warden",
+          "source": "RHW"
+        },
+        {
+          "name": "Horizon Walker",
+          "short": "Horizon Walker",
+          "source": "XGE"
+        },
+        {
+          "name": "Hunter",
+          "short": "Hunter",
+          "source": "XPHB"
+        },
+        {
+          "name": "Monster Slayer",
+          "short": "Monster Slayer",
+          "source": "XGE"
+        },
+        {
+          "name": "Swarmkeeper",
+          "short": "Swarmkeeper",
+          "source": "TCE"
+        },
+        {
+          "name": "Winter Walker",
+          "short": "Winter Walker",
+          "source": "FRHoF"
+        }
+      ]
+    },
+    {
+      "name": "Rogue",
+      "source": "XPHB",
+      "ability": "",
+      "caster": "",
+      "hd": 8,
+      "saves": [
+        "dex",
+        "int"
+      ],
+      "subclassTitle": "Rogue Subclass",
+      "subclasses": [
+        {
+          "name": "Arcane Trickster",
+          "short": "Arcane Trickster",
+          "source": "XPHB"
+        },
+        {
+          "name": "Assassin",
+          "short": "Assassin",
+          "source": "XPHB"
+        },
+        {
+          "name": "Inquisitive",
+          "short": "Inquisitive",
+          "source": "XGE"
+        },
+        {
+          "name": "Mastermind",
+          "short": "Mastermind",
+          "source": "XGE"
+        },
+        {
+          "name": "Phantom",
+          "short": "Phantom",
+          "source": "RHW"
+        },
+        {
+          "name": "Scion of the Three",
+          "short": "Scion of the Three",
+          "source": "FRHoF"
+        },
+        {
+          "name": "Scout",
+          "short": "Scout",
+          "source": "XGE"
+        },
+        {
+          "name": "Soulknife",
+          "short": "Soulknife",
+          "source": "XPHB"
+        },
+        {
+          "name": "Swashbuckler",
+          "short": "Swashbuckler",
+          "source": "XGE"
+        },
+        {
+          "name": "Thief",
+          "short": "Thief",
+          "source": "XPHB"
+        }
+      ]
+    },
+    {
+      "name": "Sorcerer",
+      "source": "XPHB",
+      "ability": "cha",
+      "caster": "full",
+      "hd": 6,
+      "saves": [
+        "con",
+        "cha"
+      ],
+      "subclassTitle": "Sorcerer Subclass",
+      "subclasses": [
+        {
+          "name": "Aberrant Mind",
+          "short": "Aberrant Mind",
+          "source": "TCE"
+        },
+        {
+          "name": "Aberrant Sorcery",
+          "short": "Aberrant",
+          "source": "XPHB"
+        },
+        {
+          "name": "Clockwork Sorcery",
+          "short": "Clockwork",
+          "source": "XPHB"
+        },
+        {
+          "name": "Clockwork Soul",
+          "short": "Clockwork Soul",
+          "source": "TCE"
+        },
+        {
+          "name": "Divine Soul",
+          "short": "Divine Soul",
+          "source": "XGE"
+        },
+        {
+          "name": "Draconic Bloodline",
+          "short": "Draconic",
+          "source": "PHB"
+        },
+        {
+          "name": "Draconic Sorcery",
+          "short": "Draconic",
+          "source": "XPHB"
+        },
+        {
+          "name": "Lunar Sorcery",
+          "short": "Lunar",
+          "source": "DSotDQ"
+        },
+        {
+          "name": "Pyromancer (PSK)",
+          "short": "Pyromancer (PSK)",
+          "source": "PSK"
+        },
+        {
+          "name": "Shadow Sorcery",
+          "short": "Shadow",
+          "source": "RHW"
+        },
+        {
+          "name": "Spellfire Sorcery",
+          "short": "Spellfire",
+          "source": "FRHoF"
+        },
+        {
+          "name": "Storm Sorcery",
+          "short": "Storm",
+          "source": "XGE"
+        },
+        {
+          "name": "Wild Magic",
+          "short": "Wild",
+          "source": "PHB"
+        },
+        {
+          "name": "Wild Magic Sorcery",
+          "short": "Wild Magic",
+          "source": "XPHB"
+        }
+      ]
+    },
+    {
+      "name": "Warlock",
+      "source": "XPHB",
+      "ability": "cha",
+      "caster": "pact",
+      "hd": 8,
+      "saves": [
+        "wis",
+        "cha"
+      ],
+      "subclassTitle": "Warlock Subclass",
+      "subclasses": [
+        {
+          "name": "Archfey Patron",
+          "short": "Archfey",
+          "source": "XPHB"
+        },
+        {
+          "name": "Celestial Patron",
+          "short": "Celestial",
+          "source": "XPHB"
+        },
+        {
+          "name": "Fiend Patron",
+          "short": "Fiend",
+          "source": "XPHB"
+        },
+        {
+          "name": "Great Old One Patron",
+          "short": "Great Old One",
+          "source": "XPHB"
+        },
+        {
+          "name": "The Archfey",
+          "short": "Archfey",
+          "source": "PHB"
+        },
+        {
+          "name": "The Celestial",
+          "short": "Celestial",
+          "source": "XGE"
+        },
+        {
+          "name": "The Fathomless",
+          "short": "Fathomless",
+          "source": "TCE"
+        },
+        {
+          "name": "The Fiend",
+          "short": "Fiend",
+          "source": "PHB"
+        },
+        {
+          "name": "The Genie",
+          "short": "Genie",
+          "source": "TCE"
+        },
+        {
+          "name": "The Great Old One",
+          "short": "Great Old One",
+          "source": "PHB"
+        },
+        {
+          "name": "The Hexblade",
+          "short": "Hexblade",
+          "source": "XGE"
+        },
+        {
+          "name": "The Undying",
+          "short": "Undying",
+          "source": "SCAG"
+        },
+        {
+          "name": "Undead Patron",
+          "short": "Undead",
+          "source": "RHW"
+        },
+        {
+          "name": "Vestige Patron",
+          "short": "Vestige",
+          "source": "AU"
+        }
+      ]
+    },
+    {
+      "name": "Wizard",
+      "source": "XPHB",
+      "ability": "int",
+      "caster": "full",
+      "hd": 6,
+      "saves": [
+        "int",
+        "wis"
+      ],
+      "subclassTitle": "Wizard Subclass",
+      "subclasses": [
+        {
+          "name": "Abjurer",
+          "short": "Abjurer",
+          "source": "XPHB"
+        },
+        {
+          "name": "Bladesinger",
+          "short": "Bladesinger",
+          "source": "FRHoF"
+        },
+        {
+          "name": "Chronurgy Magic",
+          "short": "Chronurgy",
+          "source": "EGW"
+        },
+        {
+          "name": "Conjurer",
+          "short": "Conjurer",
+          "source": "AU"
+        },
+        {
+          "name": "Diviner",
+          "short": "Diviner",
+          "source": "XPHB"
+        },
+        {
+          "name": "Enchanter",
+          "short": "Enchanter",
+          "source": "AU"
+        },
+        {
+          "name": "Evoker",
+          "short": "Evoker",
+          "source": "XPHB"
+        },
+        {
+          "name": "Graviturgy Magic",
+          "short": "Graviturgy",
+          "source": "EGW"
+        },
+        {
+          "name": "Illusionist",
+          "short": "Illusionist",
+          "source": "XPHB"
+        },
+        {
+          "name": "Necromancer",
+          "short": "Necromancer",
+          "source": "AU"
+        },
+        {
+          "name": "Order of Scribes",
+          "short": "Scribes",
+          "source": "TCE"
+        },
+        {
+          "name": "School of Abjuration",
+          "short": "Abjuration",
+          "source": "PHB"
+        },
+        {
+          "name": "School of Divination",
+          "short": "Divination",
+          "source": "PHB"
+        },
+        {
+          "name": "School of Evocation",
+          "short": "Evocation",
+          "source": "PHB"
+        },
+        {
+          "name": "School of Illusion",
+          "short": "Illusion",
+          "source": "PHB"
+        },
+        {
+          "name": "Transmuter",
+          "short": "Transmuter",
+          "source": "AU"
+        },
+        {
+          "name": "War Magic",
+          "short": "War",
+          "source": "XGE"
+        }
+      ]
     }
   ]
 }</script>
@@ -16622,15 +17564,16 @@ input[type=range]::-moz-range-thumb{
   /* Turns one spell slot into sorcery points: one point for each level of the slot.
      The warlock slots go first, they are the scarcer ones.
      Returns the new counts, or null when the slot cannot be turned. */
-  function convertSlot(spell, lv) {
+  function convertSlot(spell, lv, warlockLevel) {
     spell = spell || {};
     lv = Number(lv);
+    var pact = Number(warlockLevel) || WARLOCK_LEVEL;
     var sp = Number(spell.sp) || 0;
     var spMax = Number(spell.spMax) || 0;
     var left = (spell.left || {})[lv] || 0;
     var warlockLeft = Number(spell.warlockLeft) || 0;
     if (!(lv >= 1) || sp >= spMax) return null;
-    var useWarlock = lv === WARLOCK_LEVEL && warlockLeft > 0;
+    var useWarlock = lv === pact && warlockLeft > 0;
     if (!useWarlock && left <= 0) return null;
     return {
       left: useWarlock ? left : left - 1,
@@ -16754,13 +17697,86 @@ input[type=range]::-moz-range-thumb{
     return abilityMod(c && c.abilities ? c.abilities.dex : 10);
   }
 
-  /* The spell attack and the save DC both lean on charisma and the proficiency. */
-  function spellAttack(c) {
-    return abilityMod(c.abilities.cha) + profBonus(c.level);
+  /* ---- the classes of a character ---- */
+
+  /* The spell slots of a caster level, the multiclass table of the rules. A
+     full caster counts its level, a half caster half of it, a third caster a
+     third, and the warlock nothing, because its pact slots are its own. */
+  var MULTICLASS_SLOTS = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [2, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 0, 0, 0, 0, 0, 0, 0, 0],
+    [4, 2, 0, 0, 0, 0, 0, 0, 0],
+    [4, 3, 0, 0, 0, 0, 0, 0, 0],
+    [4, 3, 2, 0, 0, 0, 0, 0, 0],
+    [4, 3, 3, 0, 0, 0, 0, 0, 0],
+    [4, 3, 3, 1, 0, 0, 0, 0, 0],
+    [4, 3, 3, 2, 0, 0, 0, 0, 0],
+    [4, 3, 3, 3, 1, 0, 0, 0, 0],
+    [4, 3, 3, 3, 2, 0, 0, 0, 0],
+    [4, 3, 3, 3, 2, 1, 0, 0, 0],
+    [4, 3, 3, 3, 2, 1, 0, 0, 0],
+    [4, 3, 3, 3, 2, 1, 1, 0, 0],
+    [4, 3, 3, 3, 2, 1, 1, 0, 0],
+    [4, 3, 3, 3, 2, 1, 1, 1, 0],
+    [4, 3, 3, 3, 2, 1, 1, 1, 0],
+    [4, 3, 3, 3, 2, 1, 1, 1, 1],
+    [4, 3, 3, 3, 3, 1, 1, 1, 1],
+    [4, 3, 3, 3, 3, 2, 1, 1, 1],
+    [4, 3, 3, 3, 3, 2, 2, 1, 1]
+  ];
+
+  /* The pact magic of the warlock: how many slots it holds, and of which
+     level, for each warlock level. */
+  var PACT_SLOTS = [
+    [0, 1],
+    [1, 1], [2, 1], [2, 2], [2, 2], [2, 3], [2, 3], [2, 4], [2, 4], [2, 5], [2, 5],
+    [3, 5], [3, 5], [3, 5], [3, 5], [3, 5], [3, 5], [4, 5], [4, 5], [4, 5], [4, 5]
+  ];
+
+  /* The levels of the classes of a character, added up. */
+  function classLevels(classes) {
+    var n = 0;
+    (classes || []).forEach(function (k) { n += Math.max(0, Number(k.level) || 0); });
+    return n;
   }
 
-  function spellDC(c) {
-    return 8 + profBonus(c.level) + abilityMod(c.abilities.cha);
+  /* The level the multiclass slot table reads. */
+  function casterLevel(classes) {
+    var n = 0;
+    (classes || []).forEach(function (k) {
+      var lv = Math.max(0, Number(k.level) || 0);
+      var weight = k.caster === 'full' ? 1 : ((k.caster === 'half' || k.caster === 'artificer') ? 0.5 : (k.caster === 'third' ? 1 / 3 : 0));
+      n += lv * weight;
+    });
+    return Math.floor(n);
+  }
+
+  function slotsFor(level) {
+    var row = MULTICLASS_SLOTS[Math.max(0, Math.min(20, Number(level) || 0))] || MULTICLASS_SLOTS[0];
+    var out = {}, i;
+    for (i = 1; i <= 9; i++) out[i] = row[i - 1] || 0;
+    return out;
+  }
+
+  function pactFor(level) {
+    var row = PACT_SLOTS[Math.max(0, Math.min(20, Number(level) || 0))] || PACT_SLOTS[0];
+    return { max: row[0], level: row[1] };
+  }
+
+  function warlockLevel(classes) {
+    var found = (classes || []).filter(function (k) { return k.name === 'Warlock'; })[0];
+    return found ? Math.max(0, Number(found.level) || 0) : 0;
+  }
+
+  /* The spell attack and the save DC lean on the ability a class casts
+     with, charisma when the character has no class to say otherwise. */
+  function spellAttack(c, ability) {
+    return abilityMod(c.abilities[ability || 'cha']) + profBonus(c.level);
+  }
+
+  function spellDC(c, ability) {
+    return 8 + profBonus(c.level) + abilityMod(c.abilities[ability || 'cha']);
   }
 
   /* Hit points move inside the range the character has. */
@@ -16900,6 +17916,11 @@ input[type=range]::-moz-range-thumb{
     profBonus: profBonus,
     sign: sign,
     initMod: initMod,
+    classLevels: classLevels,
+    casterLevel: casterLevel,
+    slotsFor: slotsFor,
+    pactFor: pactFor,
+    warlockLevel: warlockLevel,
     saveMod: saveMod,
     skillMod: skillMod,
     nextProf: nextProf,
@@ -16956,6 +17977,7 @@ input[type=range]::-moz-range-thumb{
   var BOOK = readJson('spell-data');
   var FEATUREDATA = readJson('feature-data');
   var PRESETS = readJson('character-data').presets || [];
+  var CLASSDATA = readJson('class-data').classes || [];
 
   /* ---- the style of a character ---- */
 
@@ -17101,6 +18123,42 @@ input[type=range]::-moz-range-thumb{
     return '<span class="src' + (cls ? ' ' + cls : '') + '">' + esc(name) + '</span>';
   }
 
+  /* A class of the book, by name. */
+  function classInfo(name) {
+    for (var i = 0; i < CLASSDATA.length; i++) if (CLASSDATA[i].name === name) return CLASSDATA[i];
+    return null;
+  }
+
+  /* The classes of a character, with what the rules need of each one. */
+  function classRows(ch) {
+    return ((ch && ch.classes) || []).map(function (k) {
+      var info = classInfo(k.name) || {};
+      return {
+        name: k.name,
+        level: Math.max(0, Number(k.level) || 0),
+        subclass: k.subclass || '',
+        ability: info.ability || '',
+        caster: info.caster || ''
+      };
+    });
+  }
+
+  /* The class that carries the most levels, whose ability the app reads for
+     the character as a whole. */
+  function primaryClass(ch) {
+    var best = null;
+    classRows(ch).forEach(function (r) {
+      if (!r.ability) return;
+      if (!best || r.level > best.level) best = r;
+    });
+    return best;
+  }
+
+  function primaryAbility(ch) {
+    var p = primaryClass(ch);
+    return p ? p.ability : 'cha';
+  }
+
   /* The wrench a page puts in the head of the app. */
   function wrenchButton(label, onClick) {
     var b = document.createElement('button');
@@ -17155,6 +18213,11 @@ input[type=range]::-moz-range-thumb{
     bumpSp: bumpSp,
     themes: THEMES,
     icons: ICONS,
+    classData: CLASSDATA,
+    classInfo: classInfo,
+    classRows: classRows,
+    primaryClass: primaryClass,
+    primaryAbility: primaryAbility,
     themeOf: themeOf,
     iconOf: iconOf
   };
@@ -17225,7 +18288,7 @@ input[type=range]::-moz-range-thumb{
     PAGES.forEach(function (p) {
       if (!p.seed) return;
       var key = p.slice || p.id;
-      rec[key] = p.seed(rec[key] || {}, !!fresh);
+      rec[key] = p.seed(rec[key] || {}, !!fresh, rec);
     });
     return rec;
   }
@@ -17735,6 +18798,12 @@ input[type=range]::-moz-range-thumb{
   var CHAR_DEFAULTS = {
     name: '',
     level: 11,
+    /* The split of the app's own character, a sorcerer 8 with a warlock 3.
+       The level of a character is the sum of its classes. */
+    classes: [
+      { name: 'Sorcerer', level: 8, subclass: 'Wild Magic Sorcery' },
+      { name: 'Warlock', level: 3, subclass: 'The Hexblade' }
+    ],
     abilities: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 20 },
     saves: { str: 0, dex: 0, con: 1, int: 0, wis: 0, cha: 1 },
     skills: {},
@@ -17790,6 +18859,9 @@ input[type=range]::-moz-range-thumb{
     var c = {
       name: '',
       level: CHAR_DEFAULTS.level,
+      classes: CHAR_DEFAULTS.classes.map(function (k) {
+        return { name: k.name, level: k.level, subclass: k.subclass || '' };
+      }),
       abilities: {},
       saves: {},
       skills: {},
@@ -17812,6 +18884,7 @@ input[type=range]::-moz-range-thumb{
     if (fresh) {
       c.name = '';
       c.level = 1;
+      c.classes = [];
       ABILITIES.forEach(function (a) {
         c.abilities[a.key] = 10;
         c.saves[a.key] = 0;
@@ -17825,6 +18898,15 @@ input[type=range]::-moz-range-thumb{
     if (saved && typeof saved === 'object') {
       if (typeof saved.name === 'string') c.name = saved.name;
       if (saved.level) c.level = Math.max(1, Math.min(20, Number(saved.level) || CHAR_DEFAULTS.level));
+      if (Array.isArray(saved.classes)) {
+        c.classes = saved.classes.filter(function (k) { return k && k.name; }).map(function (k) {
+          return {
+            name: String(k.name),
+            level: Math.max(0, Math.min(20, Number(k.level) || 0)),
+            subclass: k.subclass ? String(k.subclass) : ''
+          };
+        });
+      }
       /* The initiative follows the dexterity until the player sets one. */
       if (saved.initTouched) {
         c.init = Number(saved.init) || 0;
@@ -17874,6 +18956,8 @@ input[type=range]::-moz-range-thumb{
         c.history = saved.history.filter(function (h) { return h && typeof h === 'object'; }).slice(-60);
       }
     }
+    /* The level of a character is the sum of its classes, when it has any. */
+    if (c.classes.length) c.level = Math.max(1, Math.min(20, SR.classLevels(c.classes)));
     return c;
   }
 
@@ -17970,14 +19054,115 @@ input[type=range]::-moz-range-thumb{
       row.title = s.name + ', ' + SR.profLabel(v);
     });
 
+    /* The ability the character casts with is the one of the class that
+       carries the most levels. */
+    var ability = C.primaryAbility(CH);
     E.charDerived.innerHTML =
       '<span>proficiency <b>' + SR.sign(SR.profBonus(CH.level)) + '</b></span>' +
-      '<span>spell attack <b>' + SR.sign(SR.spellAttack(CH)) + '</b></span>' +
-      '<span>save DC <b>' + SR.spellDC(CH) + '</b></span>' +
+      '<span>spell attack <b>' + SR.sign(SR.spellAttack(CH, ability)) + '</b></span>' +
+      '<span>save DC <b>' + SR.spellDC(CH, ability) + '</b></span>' +
       '<span>passive perception <b>' + (10 + SR.skillMod(CH, 'perception')) + '</b></span>';
 
+    var rows = C.classRows(CH);
+    E.charLevel.disabled = rows.length > 0;
+    if (rows.length && document.activeElement !== E.charLevel) E.charLevel.value = String(SR.classLevels(rows));
+    E.charClassSum.hidden = !rows.length;
+    E.charClassSum.textContent = rows.map(function (r) {
+      return r.name + ' ' + r.level + (r.subclass ? ', ' + r.subclass : '');
+    }).join(' · ');
+
     renderDice();
-    if (editingChar) buildStyle();
+    if (editingChar) {
+      buildClasses();
+      buildStyle();
+    }
+  }
+
+  /* ---- the classes ---- */
+
+  function classes() {
+    var ch = api.character().char;
+    if (!Array.isArray(ch.classes)) ch.classes = [];
+    return ch.classes;
+  }
+
+  /* The level of the character is the sum of its classes. */
+  function syncLevel() {
+    var ch = api.character().char;
+    ch.level = Math.max(1, Math.min(20, SR.classLevels(ch.classes || [])));
+  }
+
+  function openClassPicker(index, onPick) {
+    var list = C.classData.map(function (c) {
+      var what = c.caster === 'full' ? 'full caster' : (c.caster === 'pact' ? 'pact magic' : ((c.caster === 'half' || c.caster === 'artificer') ? 'half caster' : 'no spellcasting'));
+      return '<div class="crow" data-c="' + C.esc(c.name) + '"><span class="cn">' + C.esc(c.name) + '</span>' +
+        '<span class="cl">' + C.esc(what + (c.ability ? ', ' + c.ability.toUpperCase() : '')) + '</span></div>';
+    }).join('');
+    api.sheet.open({
+      id: 'pickclass',
+      title: index >= 0 ? 'The class' : 'A class to add',
+      metaClass: 'sheet-meta one',
+      meta: '<span>Tap a class.</span>',
+      list: list,
+      onList: function (ev) {
+        var row = ev.target.closest('[data-c]');
+        if (!row) return;
+        onPick(row.dataset.c);
+        api.sheet.close();
+      }
+    });
+  }
+
+  function openSubclassPicker(index) {
+    var row = classes()[index];
+    if (!row) return;
+    var info = C.classInfo(row.name);
+    var list = ((info && info.subclasses) || []).map(function (s) {
+      return '<div class="crow" data-s="' + C.esc(s.name) + '"><span class="cn">' + C.esc(s.name) + '</span>' +
+        '<span class="cl">' + C.esc(s.source) + '</span></div>';
+    }).join('') + '<div class="crow" data-s=""><span class="cn">No subclass</span></div>';
+    api.sheet.open({
+      id: 'picksub',
+      title: info ? info.name : 'The subclass',
+      metaClass: 'sheet-meta one',
+      meta: '<span>' + C.esc((info && info.subclassTitle) || 'Tap the subclass.') + '</span>',
+      list: list,
+      onList: function (ev) {
+        var picked = ev.target.closest('[data-s]');
+        if (!picked) return;
+        classes()[index].subclass = picked.dataset.s;
+        api.sheet.close();
+        commitChar();
+      }
+    });
+  }
+
+  function buildClasses() {
+    if (!E.charClasses) return;
+    var list = classes();
+    E.charClasses.innerHTML = '';
+    if (!list.length) {
+      var none = document.createElement('p');
+      none.className = 'note';
+      none.textContent = 'No class yet. The plus adds one.';
+      E.charClasses.appendChild(none);
+    }
+    list.forEach(function (k, ix) {
+      var info = C.classInfo(k.name) || {};
+      var what = info.caster === 'full' ? 'full caster' : (info.caster === 'pact' ? 'pact magic' : ((info.caster === 'half' || info.caster === 'artificer') ? 'half caster' : 'no spellcasting'));
+      var row = document.createElement('div');
+      row.className = 'srow clrow';
+      row.dataset.ix = String(ix);
+      row.innerHTML =
+        '<span class="t"><button class="clname" type="button" data-pick="name">' + C.esc(k.name || 'A class') + '</button>' +
+        '<button class="clsub" type="button" data-pick="sub">' + C.esc(k.subclass || 'no subclass') + '</button></span>' +
+        '<span class="d">' + C.esc(what + (info.ability ? ', ' + info.ability.toUpperCase() : '')) + '</span>' +
+        '<button class="mini" type="button" data-lv="-">&minus;</button>' +
+        '<span class="clvl">' + k.level + '</span>' +
+        '<button class="mini" type="button" data-lv="+">+</button>' +
+        '<button class="cdel" type="button" data-del="1">&times;</button>';
+      E.charClasses.appendChild(row);
+    });
   }
 
   /* ---- the style of the character ---- */
@@ -18179,6 +19364,7 @@ input[type=range]::-moz-range-thumb{
       '    <input class="cinput" id="charName" type="text" placeholder="your character" aria-label="Character name">',
       '    <button class="cname-btn" id="charSwitch" type="button" aria-label="The characters"></button>',
       '  </div>',
+      '  <div class="clsum" id="charClassSum"></div>',
       '  <div class="ctop">',
       '    <label class="ctile" for="charAc">',
       '      <span class="ck">AC</span>',
@@ -18215,6 +19401,8 @@ input[type=range]::-moz-range-thumb{
       '  <div class="cshead"><span>Skills</span><span class="rule"></span></div>',
       '  <div class="sgrid" id="charSkills"></div>',
       '  <div class="charstyle" id="charStyle">',
+      '    <div class="cshead"><span>Classes</span><span class="rule"></span><button class="mini" id="addClass" type="button" aria-label="Add a class">+</button></div>',
+      '    <div class="fcards" id="charClasses"></div>',
       '    <div class="cshead"><span>Style</span><span class="rule"></span></div>',
       '    <div class="fcards" id="charThemes"></div>',
       '    <div class="fcards" id="charIcons"></div>',
@@ -18251,6 +19439,9 @@ input[type=range]::-moz-range-thumb{
         charAbilities: root.querySelector('#charAbilities'),
         charDerived: root.querySelector('#charDerived'),
         charSkills: root.querySelector('#charSkills'),
+        charClassSum: root.querySelector('#charClassSum'),
+        charClasses: root.querySelector('#charClasses'),
+        addClass: root.querySelector('#addClass'),
         charThemes: root.querySelector('#charThemes'),
         charIcons: root.querySelector('#charIcons'),
         charNote: root.querySelector('#charNote'),
@@ -18267,6 +19458,48 @@ input[type=range]::-moz-range-thumb{
 
       /* The name opens the list of the characters. */
       E.charSwitch.addEventListener('click', function () { api.openCharacters(); });
+
+      /* The classes are set in the section the wrench opens. */
+      E.charClasses.addEventListener('click', function (ev) {
+        var row = ev.target.closest('.clrow');
+        if (!row) return;
+        var ix = Number(row.dataset.ix);
+        var pick = ev.target.closest('[data-pick]');
+        if (pick) {
+          if (pick.dataset.pick === 'name') {
+            openClassPicker(ix, function (name) {
+              classes()[ix].name = name;
+              classes()[ix].subclass = '';
+              syncLevel();
+              commitChar();
+            });
+          } else {
+            openSubclassPicker(ix);
+          }
+          return;
+        }
+        if (ev.target.closest('[data-del]')) {
+          classes().splice(ix, 1);
+          syncLevel();
+          commitChar();
+          return;
+        }
+        var step = ev.target.closest('[data-lv]');
+        if (step) {
+          var k = classes()[ix];
+          k.level = Math.max(0, Math.min(20, k.level + (step.dataset.lv === '+' ? 1 : -1)));
+          syncLevel();
+          commitChar();
+        }
+      });
+
+      E.addClass.addEventListener('click', function () {
+        openClassPicker(-1, function (name) {
+          classes().push({ name: name, level: 1, subclass: '' });
+          syncLevel();
+          commitChar();
+        });
+      });
 
       E.charAc.addEventListener('input', function () {
         var v = E.charAc.value.trim();
@@ -18788,6 +20021,7 @@ input[type=range]::-moz-range-thumb{
 
   var C = Volley.core;
   var R = C.R;
+  var SR = C.SR;
   var LEVELS = C.LEVELS;
   var WARLOCK_LEVEL = C.WARLOCK_LEVEL;
 
@@ -18810,6 +20044,8 @@ input[type=range]::-moz-range-thumb{
     left: { 1: 4, 2: 3, 3: 3, 4: 2, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
     warlockMax: 2,
     warlockLeft: 2,
+    warlockLevel: 2,
+    slotsTouched: false,
     selected: 1,
     lists: {},
     /* The source of each spell is the character's own: the class or the
@@ -18829,7 +20065,7 @@ input[type=range]::-moz-range-thumb{
 
   /* ---- the state ---- */
 
-  function seed(saved, fresh) {
+  function seed(saved, fresh, rec) {
     var s = {};
     Object.keys(SPELL_DEFAULTS).forEach(function (k) { s[k] = SPELL_DEFAULTS[k]; });
     /* A character that is new holds nothing: no point, no slot, no spell.
@@ -18879,6 +20115,30 @@ input[type=range]::-moz-range-thumb{
       });
     });
     s.lists = lists;
+    /* The slots of a character that holds classes come from the multiclass
+       table, and its pact slots from the warlock level. The wrench can set
+       them by hand, and they then stay where they are put. */
+    if (!s.slotsTouched && rec && rec.char && Array.isArray(rec.char.classes) && rec.char.classes.length) {
+      var rows = C.classRows(rec.char);
+      var slots = SR.slotsFor(SR.casterLevel(rows));
+      var pact = SR.pactFor(SR.warlockLevel(rows));
+      var max = {}, left = {};
+      LEVELS.forEach(function (lv) {
+        if (!lv) return;
+        var want = slots[lv] || 0;
+        var before = Number(s.max[lv]) || 0;
+        max[lv] = want;
+        left[lv] = Math.max(0, Math.min(want, (Number(s.left[lv]) || 0) + (want - before)));
+      });
+      s.max = max;
+      s.left = left;
+      var wl = Number(s.warlockLeft) || 0;
+      var wb = Number(s.warlockMax) || 0;
+      s.warlockLevel = pact.level;
+      s.warlockMax = pact.max;
+      s.warlockLeft = Math.max(0, Math.min(pact.max, wl + (pact.max - wb)));
+    }
+
     /* A record that names its own sources keeps exactly those. One saved
        before a character could name them takes the ones of the book, which
        are the ones of the sheet the book was built from, and a character
@@ -18931,7 +20191,7 @@ input[type=range]::-moz-range-thumb{
     /* How many slots each level holds, so the columns can share the width
        and every slot can be the same size in the whole strip. */
     var counts = LEVELS.map(function (lv) {
-      return (S.max[lv] || 0) + (lv === WARLOCK_LEVEL ? (S.warlockMax || 0) : 0);
+      return (S.max[lv] || 0) + (lv === S.warlockLevel ? (S.warlockMax || 0) : 0);
     });
     var busiest = Math.max.apply(null, counts) || 1;
     var pipH = Math.max(9, Math.min(16, Math.floor((120 - (busiest - 1) * 2) / busiest)));
@@ -18955,7 +20215,7 @@ input[type=range]::-moz-range-thumb{
         bolt.dataset.bolt = String(lv);
         bolt.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
           '<path d="M13.6 2L4.2 13.4h5.4L9.6 22 19.4 10.2H14L13.6 2z"/></svg>';
-        var hasSlot = S.left[lv] > 0 || (lv === WARLOCK_LEVEL && S.warlockLeft > 0);
+        var hasSlot = S.left[lv] > 0 || (lv === S.warlockLevel && S.warlockLeft > 0);
         var why = S.sp >= S.spMax
           ? 'Your sorcery points are full'
           : (!hasSlot ? 'No level ' + lv + ' slot left' : '');
@@ -18980,7 +20240,7 @@ input[type=range]::-moz-range-thumb{
       var pips = document.createElement('span');
       pips.className = 'pips';
       for (var i = 1; i <= max; i++) pips.appendChild(pipButton(i <= left, lv, i, false));
-      if (lv === WARLOCK_LEVEL && S.warlockMax) {
+      if (lv === S.warlockLevel && S.warlockMax) {
         var wlGroup = document.createElement('span');
         wlGroup.className = 'wlgroup';
         for (var w = 1; w <= S.warlockMax; w++) wlGroup.appendChild(pipButton(w <= S.warlockLeft, lv, w, true));
@@ -19005,7 +20265,7 @@ input[type=range]::-moz-range-thumb{
         edit.appendChild(editButton('-', lv, false));
         edit.appendChild(editButton('+', lv, false));
       }
-      if (lv === WARLOCK_LEVEL && S.warlockMax) {
+      if (lv === S.warlockLevel && S.warlockMax) {
         var wl = document.createElement('span');
         wl.className = 'plus';
         wl.textContent = 'W';
@@ -19096,11 +20356,41 @@ input[type=range]::-moz-range-thumb{
   function saveDC() {
     if (S.dcTouched) return S.dc;
     var ch = api.character().char;
-    if (ch && ch.abilities) return C.SR.spellDC(ch);
+    if (ch && ch.abilities) return C.SR.spellDC(ch, C.primaryAbility(ch));
     return S.dc;
   }
 
+  /* The slots follow the classes until the wrench sets them by hand, so a
+     class that gains a level moves them at once. */
+  function syncSlots() {
+    if (S.slotsTouched) return;
+    var ch = api.character().char;
+    if (!ch || !Array.isArray(ch.classes) || !ch.classes.length) return;
+    var rows = C.classRows(ch);
+    var want = SR.slotsFor(SR.casterLevel(rows));
+    var pact = SR.pactFor(SR.warlockLevel(rows));
+    var changed = false;
+    LEVELS.forEach(function (lv) {
+      if (!lv) return;
+      var wantMax = want[lv] || 0;
+      var before = Number(S.max[lv]) || 0;
+      if (before !== wantMax) {
+        S.left[lv] = Math.max(0, Math.min(wantMax, (Number(S.left[lv]) || 0) + (wantMax - before)));
+        S.max[lv] = wantMax;
+        changed = true;
+      }
+    });
+    if (Number(S.warlockMax) !== pact.max || Number(S.warlockLevel) !== pact.level) {
+      S.warlockLeft = Math.max(0, Math.min(pact.max, (Number(S.warlockLeft) || 0) + (pact.max - (Number(S.warlockMax) || 0))));
+      S.warlockMax = pact.max;
+      S.warlockLevel = pact.level;
+      changed = true;
+    }
+    if (changed) api.save();
+  }
+
   function renderSpells() {
+    syncSlots();
     E.dcValue.textContent = saveDC();
     E.spValue.textContent = S.sp + '/' + S.spMax;
     /* A character with no sorcery point and no pact slot has no use for
@@ -19455,7 +20745,7 @@ input[type=range]::-moz-range-thumb{
         var bolt = ev.target.closest('.bolt');
         if (bolt) {
           var blv = Number(bolt.dataset.bolt);
-          var moved = R.convertSlot({ sp: S.sp, spMax: S.spMax, left: S.left, warlockLeft: S.warlockLeft }, blv);
+          var moved = R.convertSlot({ sp: S.sp, spMax: S.spMax, left: S.left, warlockLeft: S.warlockLeft }, blv, S.warlockLevel);
           if (moved) {
             S.left[blv] = moved.left;
             S.warlockLeft = moved.warlockLeft;
@@ -19490,11 +20780,13 @@ input[type=range]::-moz-range-thumb{
           var d = eb.dataset.edit === 'add' ? 1 : -1;
           if (eb.dataset.wl) {
             var wBefore = S.warlockMax;
+            S.slotsTouched = true;
             S.warlockMax = Math.max(0, Math.min(9, wBefore + d));
             if (S.warlockMax > wBefore) S.warlockLeft = Math.min(S.warlockMax, S.warlockLeft + (S.warlockMax - wBefore));
             else S.warlockLeft = Math.min(S.warlockLeft, S.warlockMax);
           } else {
             var before = S.max[l] || 0;
+            S.slotsTouched = true;
             S.max[l] = Math.max(0, Math.min(9, before + d));
             if (S.max[l] > before) S.left[l] = Math.min(S.max[l], (S.left[l] || 0) + (S.max[l] - before));
             else S.left[l] = Math.min(S.left[l], S.max[l]);

@@ -827,6 +827,20 @@ input[type=range]::-moz-range-thumb{
 .charbody.editing .frow.hidden{display:flex}
 .charbody.editing .frow.hidden .fname,.charbody.editing .frow.hidden .ftag,.charbody.editing .frow.hidden .fuse,.charbody.editing .frow.hidden .fof,.charbody.editing .frow.hidden .fmax{opacity:.4}
 
+/* A card is held and dragged, so a press on one must not start a text
+   selection or the phone's own long press menu. */
+.card,.fcard,.crow,.srow,.lv,.die,.chip,.clsum{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.clsum{font-size:10.5px;color:var(--muted);margin:-3px 0 1px;letter-spacing:.01em}
+.clsum[hidden]{display:none}
+.clrow{display:flex;align-items:center;gap:6px}
+.clrow .t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+.clname{font:inherit;font-size:12px;color:var(--ink);background:none;border:none;padding:0;text-align:left;cursor:pointer}
+.clname:active{color:var(--arcane)}
+.clsub{font-size:10px;color:var(--muted);background:none;border:none;padding:0;text-align:left;cursor:pointer;align-self:flex-start}
+.clsub:active{color:var(--arcane)}
+.clrow .cdel{background:none;border:none;color:var(--muted);font:inherit;font-size:16px;line-height:1;padding:0 3px;cursor:pointer}
+.clrow .cdel:active{color:var(--gold)}
+.clvl{min-width:16px;text-align:center;font-variant-numeric:tabular-nums}
 .charstyle{display:none}
 .charbody.editing .charstyle{display:block}
 .srow .sico{flex:0 0 auto;display:flex;align-items:center;margin-right:8px;color:var(--arcane)}
@@ -1183,6 +1197,8 @@ input[type=range]::-moz-range-thumb{
 
 <script id="character-data" type="application/json">{"presets":[]}</script>
 
+<script id="class-data" type="application/json">{"classes":[]}</script>
+
 <script id="rules">
 /* Pure rules engine. No DOM, no globals beyond this one. */
 (function (root) {
@@ -1415,15 +1431,16 @@ input[type=range]::-moz-range-thumb{
   /* Turns one spell slot into sorcery points: one point for each level of the slot.
      The warlock slots go first, they are the scarcer ones.
      Returns the new counts, or null when the slot cannot be turned. */
-  function convertSlot(spell, lv) {
+  function convertSlot(spell, lv, warlockLevel) {
     spell = spell || {};
     lv = Number(lv);
+    var pact = Number(warlockLevel) || WARLOCK_LEVEL;
     var sp = Number(spell.sp) || 0;
     var spMax = Number(spell.spMax) || 0;
     var left = (spell.left || {})[lv] || 0;
     var warlockLeft = Number(spell.warlockLeft) || 0;
     if (!(lv >= 1) || sp >= spMax) return null;
-    var useWarlock = lv === WARLOCK_LEVEL && warlockLeft > 0;
+    var useWarlock = lv === pact && warlockLeft > 0;
     if (!useWarlock && left <= 0) return null;
     return {
       left: useWarlock ? left : left - 1,
@@ -1547,13 +1564,86 @@ input[type=range]::-moz-range-thumb{
     return abilityMod(c && c.abilities ? c.abilities.dex : 10);
   }
 
-  /* The spell attack and the save DC both lean on charisma and the proficiency. */
-  function spellAttack(c) {
-    return abilityMod(c.abilities.cha) + profBonus(c.level);
+  /* ---- the classes of a character ---- */
+
+  /* The spell slots of a caster level, the multiclass table of the rules. A
+     full caster counts its level, a half caster half of it, a third caster a
+     third, and the warlock nothing, because its pact slots are its own. */
+  var MULTICLASS_SLOTS = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [2, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 0, 0, 0, 0, 0, 0, 0, 0],
+    [4, 2, 0, 0, 0, 0, 0, 0, 0],
+    [4, 3, 0, 0, 0, 0, 0, 0, 0],
+    [4, 3, 2, 0, 0, 0, 0, 0, 0],
+    [4, 3, 3, 0, 0, 0, 0, 0, 0],
+    [4, 3, 3, 1, 0, 0, 0, 0, 0],
+    [4, 3, 3, 2, 0, 0, 0, 0, 0],
+    [4, 3, 3, 3, 1, 0, 0, 0, 0],
+    [4, 3, 3, 3, 2, 0, 0, 0, 0],
+    [4, 3, 3, 3, 2, 1, 0, 0, 0],
+    [4, 3, 3, 3, 2, 1, 0, 0, 0],
+    [4, 3, 3, 3, 2, 1, 1, 0, 0],
+    [4, 3, 3, 3, 2, 1, 1, 0, 0],
+    [4, 3, 3, 3, 2, 1, 1, 1, 0],
+    [4, 3, 3, 3, 2, 1, 1, 1, 0],
+    [4, 3, 3, 3, 2, 1, 1, 1, 1],
+    [4, 3, 3, 3, 3, 1, 1, 1, 1],
+    [4, 3, 3, 3, 3, 2, 1, 1, 1],
+    [4, 3, 3, 3, 3, 2, 2, 1, 1]
+  ];
+
+  /* The pact magic of the warlock: how many slots it holds, and of which
+     level, for each warlock level. */
+  var PACT_SLOTS = [
+    [0, 1],
+    [1, 1], [2, 1], [2, 2], [2, 2], [2, 3], [2, 3], [2, 4], [2, 4], [2, 5], [2, 5],
+    [3, 5], [3, 5], [3, 5], [3, 5], [3, 5], [3, 5], [4, 5], [4, 5], [4, 5], [4, 5]
+  ];
+
+  /* The levels of the classes of a character, added up. */
+  function classLevels(classes) {
+    var n = 0;
+    (classes || []).forEach(function (k) { n += Math.max(0, Number(k.level) || 0); });
+    return n;
   }
 
-  function spellDC(c) {
-    return 8 + profBonus(c.level) + abilityMod(c.abilities.cha);
+  /* The level the multiclass slot table reads. */
+  function casterLevel(classes) {
+    var n = 0;
+    (classes || []).forEach(function (k) {
+      var lv = Math.max(0, Number(k.level) || 0);
+      var weight = k.caster === 'full' ? 1 : ((k.caster === 'half' || k.caster === 'artificer') ? 0.5 : (k.caster === 'third' ? 1 / 3 : 0));
+      n += lv * weight;
+    });
+    return Math.floor(n);
+  }
+
+  function slotsFor(level) {
+    var row = MULTICLASS_SLOTS[Math.max(0, Math.min(20, Number(level) || 0))] || MULTICLASS_SLOTS[0];
+    var out = {}, i;
+    for (i = 1; i <= 9; i++) out[i] = row[i - 1] || 0;
+    return out;
+  }
+
+  function pactFor(level) {
+    var row = PACT_SLOTS[Math.max(0, Math.min(20, Number(level) || 0))] || PACT_SLOTS[0];
+    return { max: row[0], level: row[1] };
+  }
+
+  function warlockLevel(classes) {
+    var found = (classes || []).filter(function (k) { return k.name === 'Warlock'; })[0];
+    return found ? Math.max(0, Number(found.level) || 0) : 0;
+  }
+
+  /* The spell attack and the save DC lean on the ability a class casts
+     with, charisma when the character has no class to say otherwise. */
+  function spellAttack(c, ability) {
+    return abilityMod(c.abilities[ability || 'cha']) + profBonus(c.level);
+  }
+
+  function spellDC(c, ability) {
+    return 8 + profBonus(c.level) + abilityMod(c.abilities[ability || 'cha']);
   }
 
   /* Hit points move inside the range the character has. */
@@ -1693,6 +1783,11 @@ input[type=range]::-moz-range-thumb{
     profBonus: profBonus,
     sign: sign,
     initMod: initMod,
+    classLevels: classLevels,
+    casterLevel: casterLevel,
+    slotsFor: slotsFor,
+    pactFor: pactFor,
+    warlockLevel: warlockLevel,
     saveMod: saveMod,
     skillMod: skillMod,
     nextProf: nextProf,

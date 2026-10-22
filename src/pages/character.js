@@ -58,6 +58,12 @@
   var CHAR_DEFAULTS = {
     name: '',
     level: 11,
+    /* The split of the app's own character, a sorcerer 8 with a warlock 3.
+       The level of a character is the sum of its classes. */
+    classes: [
+      { name: 'Sorcerer', level: 8, subclass: 'Wild Magic Sorcery' },
+      { name: 'Warlock', level: 3, subclass: 'The Hexblade' }
+    ],
     abilities: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 20 },
     saves: { str: 0, dex: 0, con: 1, int: 0, wis: 0, cha: 1 },
     skills: {},
@@ -113,6 +119,9 @@
     var c = {
       name: '',
       level: CHAR_DEFAULTS.level,
+      classes: CHAR_DEFAULTS.classes.map(function (k) {
+        return { name: k.name, level: k.level, subclass: k.subclass || '' };
+      }),
       abilities: {},
       saves: {},
       skills: {},
@@ -135,6 +144,7 @@
     if (fresh) {
       c.name = '';
       c.level = 1;
+      c.classes = [];
       ABILITIES.forEach(function (a) {
         c.abilities[a.key] = 10;
         c.saves[a.key] = 0;
@@ -148,6 +158,15 @@
     if (saved && typeof saved === 'object') {
       if (typeof saved.name === 'string') c.name = saved.name;
       if (saved.level) c.level = Math.max(1, Math.min(20, Number(saved.level) || CHAR_DEFAULTS.level));
+      if (Array.isArray(saved.classes)) {
+        c.classes = saved.classes.filter(function (k) { return k && k.name; }).map(function (k) {
+          return {
+            name: String(k.name),
+            level: Math.max(0, Math.min(20, Number(k.level) || 0)),
+            subclass: k.subclass ? String(k.subclass) : ''
+          };
+        });
+      }
       /* The initiative follows the dexterity until the player sets one. */
       if (saved.initTouched) {
         c.init = Number(saved.init) || 0;
@@ -197,6 +216,8 @@
         c.history = saved.history.filter(function (h) { return h && typeof h === 'object'; }).slice(-60);
       }
     }
+    /* The level of a character is the sum of its classes, when it has any. */
+    if (c.classes.length) c.level = Math.max(1, Math.min(20, SR.classLevels(c.classes)));
     return c;
   }
 
@@ -293,14 +314,115 @@
       row.title = s.name + ', ' + SR.profLabel(v);
     });
 
+    /* The ability the character casts with is the one of the class that
+       carries the most levels. */
+    var ability = C.primaryAbility(CH);
     E.charDerived.innerHTML =
       '<span>proficiency <b>' + SR.sign(SR.profBonus(CH.level)) + '</b></span>' +
-      '<span>spell attack <b>' + SR.sign(SR.spellAttack(CH)) + '</b></span>' +
-      '<span>save DC <b>' + SR.spellDC(CH) + '</b></span>' +
+      '<span>spell attack <b>' + SR.sign(SR.spellAttack(CH, ability)) + '</b></span>' +
+      '<span>save DC <b>' + SR.spellDC(CH, ability) + '</b></span>' +
       '<span>passive perception <b>' + (10 + SR.skillMod(CH, 'perception')) + '</b></span>';
 
+    var rows = C.classRows(CH);
+    E.charLevel.disabled = rows.length > 0;
+    if (rows.length && document.activeElement !== E.charLevel) E.charLevel.value = String(SR.classLevels(rows));
+    E.charClassSum.hidden = !rows.length;
+    E.charClassSum.textContent = rows.map(function (r) {
+      return r.name + ' ' + r.level + (r.subclass ? ', ' + r.subclass : '');
+    }).join(' · ');
+
     renderDice();
-    if (editingChar) buildStyle();
+    if (editingChar) {
+      buildClasses();
+      buildStyle();
+    }
+  }
+
+  /* ---- the classes ---- */
+
+  function classes() {
+    var ch = api.character().char;
+    if (!Array.isArray(ch.classes)) ch.classes = [];
+    return ch.classes;
+  }
+
+  /* The level of the character is the sum of its classes. */
+  function syncLevel() {
+    var ch = api.character().char;
+    ch.level = Math.max(1, Math.min(20, SR.classLevels(ch.classes || [])));
+  }
+
+  function openClassPicker(index, onPick) {
+    var list = C.classData.map(function (c) {
+      var what = c.caster === 'full' ? 'full caster' : (c.caster === 'pact' ? 'pact magic' : ((c.caster === 'half' || c.caster === 'artificer') ? 'half caster' : 'no spellcasting'));
+      return '<div class="crow" data-c="' + C.esc(c.name) + '"><span class="cn">' + C.esc(c.name) + '</span>' +
+        '<span class="cl">' + C.esc(what + (c.ability ? ', ' + c.ability.toUpperCase() : '')) + '</span></div>';
+    }).join('');
+    api.sheet.open({
+      id: 'pickclass',
+      title: index >= 0 ? 'The class' : 'A class to add',
+      metaClass: 'sheet-meta one',
+      meta: '<span>Tap a class.</span>',
+      list: list,
+      onList: function (ev) {
+        var row = ev.target.closest('[data-c]');
+        if (!row) return;
+        onPick(row.dataset.c);
+        api.sheet.close();
+      }
+    });
+  }
+
+  function openSubclassPicker(index) {
+    var row = classes()[index];
+    if (!row) return;
+    var info = C.classInfo(row.name);
+    var list = ((info && info.subclasses) || []).map(function (s) {
+      return '<div class="crow" data-s="' + C.esc(s.name) + '"><span class="cn">' + C.esc(s.name) + '</span>' +
+        '<span class="cl">' + C.esc(s.source) + '</span></div>';
+    }).join('') + '<div class="crow" data-s=""><span class="cn">No subclass</span></div>';
+    api.sheet.open({
+      id: 'picksub',
+      title: info ? info.name : 'The subclass',
+      metaClass: 'sheet-meta one',
+      meta: '<span>' + C.esc((info && info.subclassTitle) || 'Tap the subclass.') + '</span>',
+      list: list,
+      onList: function (ev) {
+        var picked = ev.target.closest('[data-s]');
+        if (!picked) return;
+        classes()[index].subclass = picked.dataset.s;
+        api.sheet.close();
+        commitChar();
+      }
+    });
+  }
+
+  function buildClasses() {
+    if (!E.charClasses) return;
+    var list = classes();
+    E.charClasses.innerHTML = '';
+    if (!list.length) {
+      var none = document.createElement('p');
+      none.className = 'note';
+      none.textContent = 'No class yet. The plus adds one.';
+      E.charClasses.appendChild(none);
+    }
+    list.forEach(function (k, ix) {
+      var info = C.classInfo(k.name) || {};
+      var what = info.caster === 'full' ? 'full caster' : (info.caster === 'pact' ? 'pact magic' : ((info.caster === 'half' || info.caster === 'artificer') ? 'half caster' : 'no spellcasting'));
+      var row = document.createElement('div');
+      row.className = 'srow clrow';
+      row.dataset.ix = String(ix);
+      row.innerHTML =
+        '<span class="t"><button class="clname" type="button" data-pick="name">' + C.esc(k.name || 'A class') + '</button>' +
+        '<button class="clsub" type="button" data-pick="sub">' + C.esc(k.subclass || 'no subclass') + '</button></span>' +
+        '<span class="d">' + C.esc(what + (info.ability ? ', ' + info.ability.toUpperCase() : '')) + '</span>' +
+        '<button class="mini" type="button" data-lv="-">&minus;</button>' +
+        '<span class="clvl">' + k.level + '</span>' +
+        '<button class="mini" type="button" data-lv="+">+</button>' +
+        '<button class="cdel" type="button" data-del="1">&times;</button>';
+      E.charClasses.appendChild(row);
+    });
   }
 
   /* ---- the style of the character ---- */
@@ -502,6 +624,7 @@
       '    <input class="cinput" id="charName" type="text" placeholder="your character" aria-label="Character name">',
       '    <button class="cname-btn" id="charSwitch" type="button" aria-label="The characters"></button>',
       '  </div>',
+      '  <div class="clsum" id="charClassSum"></div>',
       '  <div class="ctop">',
       '    <label class="ctile" for="charAc">',
       '      <span class="ck">AC</span>',
@@ -538,6 +661,8 @@
       '  <div class="cshead"><span>Skills</span><span class="rule"></span></div>',
       '  <div class="sgrid" id="charSkills"></div>',
       '  <div class="charstyle" id="charStyle">',
+      '    <div class="cshead"><span>Classes</span><span class="rule"></span><button class="mini" id="addClass" type="button" aria-label="Add a class">+</button></div>',
+      '    <div class="fcards" id="charClasses"></div>',
       '    <div class="cshead"><span>Style</span><span class="rule"></span></div>',
       '    <div class="fcards" id="charThemes"></div>',
       '    <div class="fcards" id="charIcons"></div>',
@@ -574,6 +699,9 @@
         charAbilities: root.querySelector('#charAbilities'),
         charDerived: root.querySelector('#charDerived'),
         charSkills: root.querySelector('#charSkills'),
+        charClassSum: root.querySelector('#charClassSum'),
+        charClasses: root.querySelector('#charClasses'),
+        addClass: root.querySelector('#addClass'),
         charThemes: root.querySelector('#charThemes'),
         charIcons: root.querySelector('#charIcons'),
         charNote: root.querySelector('#charNote'),
@@ -590,6 +718,48 @@
 
       /* The name opens the list of the characters. */
       E.charSwitch.addEventListener('click', function () { api.openCharacters(); });
+
+      /* The classes are set in the section the wrench opens. */
+      E.charClasses.addEventListener('click', function (ev) {
+        var row = ev.target.closest('.clrow');
+        if (!row) return;
+        var ix = Number(row.dataset.ix);
+        var pick = ev.target.closest('[data-pick]');
+        if (pick) {
+          if (pick.dataset.pick === 'name') {
+            openClassPicker(ix, function (name) {
+              classes()[ix].name = name;
+              classes()[ix].subclass = '';
+              syncLevel();
+              commitChar();
+            });
+          } else {
+            openSubclassPicker(ix);
+          }
+          return;
+        }
+        if (ev.target.closest('[data-del]')) {
+          classes().splice(ix, 1);
+          syncLevel();
+          commitChar();
+          return;
+        }
+        var step = ev.target.closest('[data-lv]');
+        if (step) {
+          var k = classes()[ix];
+          k.level = Math.max(0, Math.min(20, k.level + (step.dataset.lv === '+' ? 1 : -1)));
+          syncLevel();
+          commitChar();
+        }
+      });
+
+      E.addClass.addEventListener('click', function () {
+        openClassPicker(-1, function (name) {
+          classes().push({ name: name, level: 1, subclass: '' });
+          syncLevel();
+          commitChar();
+        });
+      });
 
       E.charAc.addEventListener('input', function () {
         var v = E.charAc.value.trim();

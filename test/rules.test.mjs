@@ -462,6 +462,34 @@ console.log('the features');
   check('the wild surge is the 2024 one', data.features.find((f) => f.key === 'wildSurge').blocks[0].text.indexOf('1d20') >= 0, true);
 }
 
+console.log('the classes and the multiclass rules');
+{
+  const data = JSON.parse(readFileSync(resolve(root, 'data', 'classes.json'), 'utf8')).classes;
+  const byName = (n) => data.filter((c) => c.name === n)[0];
+  check('twelve classes', data.length, 12);
+  check('every class gives its hit die', data.every((c) => c.hd >= 6 && c.hd <= 12), true);
+  check('the classes that cast name their ability', data.filter((c) => !!c.ability).map((c) => c.name).join(','), 'Bard,Cleric,Druid,Paladin,Ranger,Sorcerer,Warlock,Wizard');
+  check('the bard is a full caster', byName('Bard').caster, 'full');
+  check('the warlock is pact magic', byName('Warlock').caster, 'pact');
+  check('the paladin of 2024 counts as half', C.casterLevel([{ level: 5, caster: byName('Paladin').caster }]), 2);
+  check('the bard has the creation and the lore', ['College of Creation', 'College of Lore'].every((n) => byName('Bard').subclasses.some((s) => s.name === n)), true);
+  check('and the lore is printed once, the 2024 way', byName('Bard').subclasses.filter((s) => s.name === 'College of Lore')[0].source, 'XPHB');
+
+  check('a full caster counts its level', C.casterLevel([{ level: 8, caster: 'full' }, { level: 3, caster: 'pact' }]), 8);
+  check('a half caster counts half', C.casterLevel([{ level: 5, caster: 'full' }, { level: 4, caster: 'half' }]), 7);
+  check('the pact magic adds nothing', C.casterLevel([{ level: 3, caster: 'pact' }]), 0);
+  check('the slots of a caster of eight', [C.slotsFor(8)[1], C.slotsFor(8)[2], C.slotsFor(8)[3], C.slotsFor(8)[4], C.slotsFor(8)[5]].join(''), '43320');
+  check('the slots of a caster of eleven', [C.slotsFor(11)[5], C.slotsFor(11)[6], C.slotsFor(11)[7]].join(''), '210');
+  check('a caster of twenty', C.slotsFor(20)[9], 1);
+  check('the pact slots of a warlock three', JSON.stringify(C.pactFor(3)), '{"max":2,"level":2}');
+  check('and of a warlock eleven', JSON.stringify(C.pactFor(11)), '{"max":3,"level":5}');
+  check('the warlock level of a character', C.warlockLevel([{ name: 'Sorcerer', level: 8 }, { name: 'Warlock', level: 3 }]), 3);
+  check('no warlock, no pact slot', C.pactFor(C.warlockLevel([{ name: 'Bard', level: 11 }])).max, 0);
+  check('the spell attack of a charisma caster', C.spellAttack({ abilities: { cha: 20, int: 18 }, level: 11 }), 9);
+  check('and of a wizard', C.spellAttack({ abilities: { cha: 20, int: 18 }, level: 11 }, 'int'), 8);
+  check('the DC of a wizard of eleven', C.spellDC({ abilities: { int: 18 }, level: 11 }, 'int'), 16);
+}
+
 console.log('initiative');
 {
   check('it follows the dexterity', C.initMod({ abilities: { dex: 14 } }), 2);
@@ -487,6 +515,7 @@ console.log('seeding a character from the data');
   check('the twelve it brings are its own', features.features.filter((f) => f.preset === 'bard').length, 12);
   check('the eighteen of the app wait for a new character', features.features.filter((f) => !f.preset).length, 18);
   check('the level of the sheet', bard.rec.char.level, 11);
+  check('the class of the sheet', JSON.stringify(bard.rec.char.classes), '[{"name":"Bard","level":11,"subclass":"College of Creation"}]');
   check('the name of the sheet', bard.name + '/' + bard.rec.char.name, 'Yngwie/Yngwie');
   check('the six scores of the sheet', ['str', 'dex', 'con', 'int', 'wis', 'cha'].map((k) => bard.rec.char.abilities[k]).join('/'), '8/14/14/10/12/19');
   check('it comes with its own colours and icon', bard.rec.theme + '/' + bard.rec.icon, 'blueRed/guitar');
@@ -532,6 +561,7 @@ console.log('seeding a character from the data');
   check('and they are its own', char.features.map((f) => f.key).indexOf('musician') >= 0, true);
   check('a feature keeps its uses', char.features.filter((f) => f.key === 'bardicInspiration')[0].max, 5);
   check('the level survives the seeding', char.level, 11);
+  check('the class survives it too', char.classes.length + ' ' + char.classes[0].name, '1 Bard');
   check('charisma 19 and level 11 give a spell attack of +8', C.spellAttack(char), 8);
   check('and a save DC of 16', C.spellDC(char), 16);
   check('and an initiative of +2', C.initMod(char), 2);

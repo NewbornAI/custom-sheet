@@ -4,6 +4,7 @@
 
   var C = Volley.core;
   var R = C.R;
+  var SR = C.SR;
   var LEVELS = C.LEVELS;
   var WARLOCK_LEVEL = C.WARLOCK_LEVEL;
 
@@ -26,6 +27,8 @@
     left: { 1: 4, 2: 3, 3: 3, 4: 2, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
     warlockMax: 2,
     warlockLeft: 2,
+    warlockLevel: 2,
+    slotsTouched: false,
     selected: 1,
     lists: {},
     /* The source of each spell is the character's own: the class or the
@@ -45,7 +48,7 @@
 
   /* ---- the state ---- */
 
-  function seed(saved, fresh) {
+  function seed(saved, fresh, rec) {
     var s = {};
     Object.keys(SPELL_DEFAULTS).forEach(function (k) { s[k] = SPELL_DEFAULTS[k]; });
     /* A character that is new holds nothing: no point, no slot, no spell.
@@ -95,6 +98,30 @@
       });
     });
     s.lists = lists;
+    /* The slots of a character that holds classes come from the multiclass
+       table, and its pact slots from the warlock level. The wrench can set
+       them by hand, and they then stay where they are put. */
+    if (!s.slotsTouched && rec && rec.char && Array.isArray(rec.char.classes) && rec.char.classes.length) {
+      var rows = C.classRows(rec.char);
+      var slots = SR.slotsFor(SR.casterLevel(rows));
+      var pact = SR.pactFor(SR.warlockLevel(rows));
+      var max = {}, left = {};
+      LEVELS.forEach(function (lv) {
+        if (!lv) return;
+        var want = slots[lv] || 0;
+        var before = Number(s.max[lv]) || 0;
+        max[lv] = want;
+        left[lv] = Math.max(0, Math.min(want, (Number(s.left[lv]) || 0) + (want - before)));
+      });
+      s.max = max;
+      s.left = left;
+      var wl = Number(s.warlockLeft) || 0;
+      var wb = Number(s.warlockMax) || 0;
+      s.warlockLevel = pact.level;
+      s.warlockMax = pact.max;
+      s.warlockLeft = Math.max(0, Math.min(pact.max, wl + (pact.max - wb)));
+    }
+
     /* A record that names its own sources keeps exactly those. One saved
        before a character could name them takes the ones of the book, which
        are the ones of the sheet the book was built from, and a character
@@ -147,7 +174,7 @@
     /* How many slots each level holds, so the columns can share the width
        and every slot can be the same size in the whole strip. */
     var counts = LEVELS.map(function (lv) {
-      return (S.max[lv] || 0) + (lv === WARLOCK_LEVEL ? (S.warlockMax || 0) : 0);
+      return (S.max[lv] || 0) + (lv === S.warlockLevel ? (S.warlockMax || 0) : 0);
     });
     var busiest = Math.max.apply(null, counts) || 1;
     var pipH = Math.max(9, Math.min(16, Math.floor((120 - (busiest - 1) * 2) / busiest)));
@@ -171,7 +198,7 @@
         bolt.dataset.bolt = String(lv);
         bolt.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
           '<path d="M13.6 2L4.2 13.4h5.4L9.6 22 19.4 10.2H14L13.6 2z"/></svg>';
-        var hasSlot = S.left[lv] > 0 || (lv === WARLOCK_LEVEL && S.warlockLeft > 0);
+        var hasSlot = S.left[lv] > 0 || (lv === S.warlockLevel && S.warlockLeft > 0);
         var why = S.sp >= S.spMax
           ? 'Your sorcery points are full'
           : (!hasSlot ? 'No level ' + lv + ' slot left' : '');
@@ -196,7 +223,7 @@
       var pips = document.createElement('span');
       pips.className = 'pips';
       for (var i = 1; i <= max; i++) pips.appendChild(pipButton(i <= left, lv, i, false));
-      if (lv === WARLOCK_LEVEL && S.warlockMax) {
+      if (lv === S.warlockLevel && S.warlockMax) {
         var wlGroup = document.createElement('span');
         wlGroup.className = 'wlgroup';
         for (var w = 1; w <= S.warlockMax; w++) wlGroup.appendChild(pipButton(w <= S.warlockLeft, lv, w, true));
@@ -221,7 +248,7 @@
         edit.appendChild(editButton('-', lv, false));
         edit.appendChild(editButton('+', lv, false));
       }
-      if (lv === WARLOCK_LEVEL && S.warlockMax) {
+      if (lv === S.warlockLevel && S.warlockMax) {
         var wl = document.createElement('span');
         wl.className = 'plus';
         wl.textContent = 'W';
@@ -312,11 +339,41 @@
   function saveDC() {
     if (S.dcTouched) return S.dc;
     var ch = api.character().char;
-    if (ch && ch.abilities) return C.SR.spellDC(ch);
+    if (ch && ch.abilities) return C.SR.spellDC(ch, C.primaryAbility(ch));
     return S.dc;
   }
 
+  /* The slots follow the classes until the wrench sets them by hand, so a
+     class that gains a level moves them at once. */
+  function syncSlots() {
+    if (S.slotsTouched) return;
+    var ch = api.character().char;
+    if (!ch || !Array.isArray(ch.classes) || !ch.classes.length) return;
+    var rows = C.classRows(ch);
+    var want = SR.slotsFor(SR.casterLevel(rows));
+    var pact = SR.pactFor(SR.warlockLevel(rows));
+    var changed = false;
+    LEVELS.forEach(function (lv) {
+      if (!lv) return;
+      var wantMax = want[lv] || 0;
+      var before = Number(S.max[lv]) || 0;
+      if (before !== wantMax) {
+        S.left[lv] = Math.max(0, Math.min(wantMax, (Number(S.left[lv]) || 0) + (wantMax - before)));
+        S.max[lv] = wantMax;
+        changed = true;
+      }
+    });
+    if (Number(S.warlockMax) !== pact.max || Number(S.warlockLevel) !== pact.level) {
+      S.warlockLeft = Math.max(0, Math.min(pact.max, (Number(S.warlockLeft) || 0) + (pact.max - (Number(S.warlockMax) || 0))));
+      S.warlockMax = pact.max;
+      S.warlockLevel = pact.level;
+      changed = true;
+    }
+    if (changed) api.save();
+  }
+
   function renderSpells() {
+    syncSlots();
     E.dcValue.textContent = saveDC();
     E.spValue.textContent = S.sp + '/' + S.spMax;
     /* A character with no sorcery point and no pact slot has no use for
@@ -671,7 +728,7 @@
         var bolt = ev.target.closest('.bolt');
         if (bolt) {
           var blv = Number(bolt.dataset.bolt);
-          var moved = R.convertSlot({ sp: S.sp, spMax: S.spMax, left: S.left, warlockLeft: S.warlockLeft }, blv);
+          var moved = R.convertSlot({ sp: S.sp, spMax: S.spMax, left: S.left, warlockLeft: S.warlockLeft }, blv, S.warlockLevel);
           if (moved) {
             S.left[blv] = moved.left;
             S.warlockLeft = moved.warlockLeft;
@@ -706,11 +763,13 @@
           var d = eb.dataset.edit === 'add' ? 1 : -1;
           if (eb.dataset.wl) {
             var wBefore = S.warlockMax;
+            S.slotsTouched = true;
             S.warlockMax = Math.max(0, Math.min(9, wBefore + d));
             if (S.warlockMax > wBefore) S.warlockLeft = Math.min(S.warlockMax, S.warlockLeft + (S.warlockMax - wBefore));
             else S.warlockLeft = Math.min(S.warlockLeft, S.warlockMax);
           } else {
             var before = S.max[l] || 0;
+            S.slotsTouched = true;
             S.max[l] = Math.max(0, Math.min(9, before + d));
             if (S.max[l] > before) S.left[l] = Math.min(S.max[l], (S.left[l] || 0) + (S.max[l] - before));
             else S.left[l] = Math.min(S.left[l], S.max[l]);

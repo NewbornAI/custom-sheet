@@ -1,0 +1,920 @@
+{
+  "edition": "The 2024 Player's Handbook classes, with every subclass that is not a reprint",
+  "source": "https://5e.tools/classes.html",
+  "fetched": "2026-10-22",
+  "classes": [
+    {
+      "name": "Barbarian",
+      "source": "XPHB",
+      "ability": "",
+      "caster": "",
+      "hd": 12,
+      "saves": [
+        "str",
+        "con"
+      ],
+      "subclassTitle": "Barbarian Subclass",
+      "subclasses": [
+        {
+          "name": "Path of the Ancestral Guardian",
+          "short": "Ancestral Guardian",
+          "source": "XGE"
+        },
+        {
+          "name": "Path of the Battlerager",
+          "short": "Battlerager",
+          "source": "SCAG"
+        },
+        {
+          "name": "Path of the Beast",
+          "short": "Beast",
+          "source": "TCE"
+        },
+        {
+          "name": "Path of the Berserker",
+          "short": "Berserker",
+          "source": "XPHB"
+        },
+        {
+          "name": "Path of the Giant",
+          "short": "Giant",
+          "source": "BGG"
+        },
+        {
+          "name": "Path of the Storm Herald",
+          "short": "Storm Herald",
+          "source": "XGE"
+        },
+        {
+          "name": "Path of the Totem Warrior",
+          "short": "Totem Warrior",
+          "source": "PHB"
+        },
+        {
+          "name": "Path of the Wild Heart",
+          "short": "Wild Heart",
+          "source": "XPHB"
+        },
+        {
+          "name": "Path of the World Tree",
+          "short": "World Tree",
+          "source": "XPHB"
+        },
+        {
+          "name": "Path of the Zealot",
+          "short": "Zealot",
+          "source": "XPHB"
+        },
+        {
+          "name": "Path of Wild Magic",
+          "short": "Wild Magic",
+          "source": "TCE"
+        }
+      ]
+    },
+    {
+      "name": "Bard",
+      "source": "XPHB",
+      "ability": "cha",
+      "caster": "full",
+      "hd": 8,
+      "saves": [
+        "dex",
+        "cha"
+      ],
+      "subclassTitle": "Bard Subclass",
+      "subclasses": [
+        {
+          "name": "College of Creation",
+          "short": "Creation",
+          "source": "TCE"
+        },
+        {
+          "name": "College of Dance",
+          "short": "Dance",
+          "source": "XPHB"
+        },
+        {
+          "name": "College of Eloquence",
+          "short": "Eloquence",
+          "source": "TCE"
+        },
+        {
+          "name": "College of Glamour",
+          "short": "Glamour",
+          "source": "XPHB"
+        },
+        {
+          "name": "College of Lore",
+          "short": "Lore",
+          "source": "XPHB"
+        },
+        {
+          "name": "College of Spirits",
+          "short": "Spirits",
+          "source": "RHW"
+        },
+        {
+          "name": "College of Swords",
+          "short": "Swords",
+          "source": "XGE"
+        },
+        {
+          "name": "College of the Moon",
+          "short": "Moon",
+          "source": "FRHoF"
+        },
+        {
+          "name": "College of Valor",
+          "short": "Valor",
+          "source": "XPHB"
+        },
+        {
+          "name": "College of Whispers",
+          "short": "Whispers",
+          "source": "XGE"
+        }
+      ]
+    },
+    {
+      "name": "Cleric",
+      "source": "XPHB",
+      "ability": "wis",
+      "caster": "full",
+      "hd": 8,
+      "saves": [
+        "wis",
+        "cha"
+      ],
+      "subclassTitle": "Cleric Subclass",
+      "subclasses": [
+        {
+          "name": "Ambition Domain (PSA)",
+          "short": "Ambition (PSA)",
+          "source": "PSA"
+        },
+        {
+          "name": "Arcana Domain",
+          "short": "Arcana",
+          "source": "AU"
+        },
+        {
+          "name": "Death Domain",
+          "short": "Death",
+          "source": "DMG"
+        },
+        {
+          "name": "Forge Domain",
+          "short": "Forge",
+          "source": "XGE"
+        },
+        {
+          "name": "Grave Domain",
+          "short": "Grave",
+          "source": "RHW"
+        },
+        {
+          "name": "Knowledge Domain",
+          "short": "Knowledge",
+          "source": "FRHoF"
+        },
+        {
+          "name": "Knowledge Domain (PSA)",
+          "short": "Knowledge (PSA)",
+          "source": "PSA"
+        },
+        {
+          "name": "Life Domain",
+          "short": "Life",
+          "source": "XPHB"
+        },
+        {
+          "name": "Light Domain",
+          "short": "Light",
+          "source": "XPHB"
+        },
+        {
+          "name": "Nature Domain",
+          "short": "Nature",
+          "source": "PHB"
+        },
+        {
+          "name": "Order Domain",
+          "short": "Order",
+          "source": "TCE"
+        },
+        {
+          "name": "Peace Domain",
+          "short": "Peace",
+          "source": "TCE"
+        },
+        {
+          "name": "Solidarity Domain (PSA)",
+          "short": "Solidarity (PSA)",
+          "source": "PSA"
+        },
+        {
+          "name": "Strength Domain (PSA)",
+          "short": "Strength (PSA)",
+          "source": "PSA"
+        },
+        {
+          "name": "Tempest Domain",
+          "short": "Tempest",
+          "source": "PHB"
+        },
+        {
+          "name": "Trickery Domain",
+          "short": "Trickery",
+          "source": "XPHB"
+        },
+        {
+          "name": "Twilight Domain",
+          "short": "Twilight",
+          "source": "TCE"
+        },
+        {
+          "name": "War Domain",
+          "short": "War",
+          "source": "XPHB"
+        },
+        {
+          "name": "Zeal Domain (PSA)",
+          "short": "Zeal (PSA)",
+          "source": "PSA"
+        }
+      ]
+    },
+    {
+      "name": "Druid",
+      "source": "XPHB",
+      "ability": "wis",
+      "caster": "full",
+      "hd": 8,
+      "saves": [
+        "int",
+        "wis"
+      ],
+      "subclassTitle": "Druid Subclass",
+      "subclasses": [
+        {
+          "name": "Circle of Dreams",
+          "short": "Dreams",
+          "source": "XGE"
+        },
+        {
+          "name": "Circle of Spores",
+          "short": "Spores",
+          "source": "TCE"
+        },
+        {
+          "name": "Circle of Stars",
+          "short": "Stars",
+          "source": "TCE"
+        },
+        {
+          "name": "Circle of the Land",
+          "short": "Land",
+          "source": "XPHB"
+        },
+        {
+          "name": "Circle of the Moon",
+          "short": "Moon",
+          "source": "XPHB"
+        },
+        {
+          "name": "Circle of the Sea",
+          "short": "Sea",
+          "source": "XPHB"
+        },
+        {
+          "name": "Circle of the Shepherd",
+          "short": "Shepherd",
+          "source": "XGE"
+        },
+        {
+          "name": "Circle of the Stars",
+          "short": "Stars",
+          "source": "XPHB"
+        },
+        {
+          "name": "Circle of Wildfire",
+          "short": "Wildfire",
+          "source": "TCE"
+        }
+      ]
+    },
+    {
+      "name": "Fighter",
+      "source": "XPHB",
+      "ability": "",
+      "caster": "",
+      "hd": 10,
+      "saves": [
+        "str",
+        "con"
+      ],
+      "subclassTitle": "Fighter Subclass",
+      "subclasses": [
+        {
+          "name": "Arcane Archer",
+          "short": "Arcane Archer",
+          "source": "AU"
+        },
+        {
+          "name": "Banneret",
+          "short": "Banneret",
+          "source": "FRHoF"
+        },
+        {
+          "name": "Battle Master",
+          "short": "Battle Master",
+          "source": "XPHB"
+        },
+        {
+          "name": "Cavalier",
+          "short": "Cavalier",
+          "source": "XGE"
+        },
+        {
+          "name": "Champion",
+          "short": "Champion",
+          "source": "XPHB"
+        },
+        {
+          "name": "Echo Knight",
+          "short": "Echo Knight",
+          "source": "EGW"
+        },
+        {
+          "name": "Eldritch Knight",
+          "short": "Eldritch Knight",
+          "source": "XPHB"
+        },
+        {
+          "name": "Psi Warrior",
+          "short": "Psi Warrior",
+          "source": "XPHB"
+        },
+        {
+          "name": "Rune Knight",
+          "short": "Rune Knight",
+          "source": "TCE"
+        },
+        {
+          "name": "Samurai",
+          "short": "Samurai",
+          "source": "XGE"
+        }
+      ]
+    },
+    {
+      "name": "Monk",
+      "source": "XPHB",
+      "ability": "",
+      "caster": "",
+      "hd": 8,
+      "saves": [
+        "str",
+        "dex"
+      ],
+      "subclassTitle": "Monk Subclass",
+      "subclasses": [
+        {
+          "name": "Warrior of Mercy",
+          "short": "Mercy",
+          "source": "XPHB"
+        },
+        {
+          "name": "Warrior of Shadow",
+          "short": "Shadow",
+          "source": "XPHB"
+        },
+        {
+          "name": "Warrior of the Elements",
+          "short": "Elements",
+          "source": "XPHB"
+        },
+        {
+          "name": "Warrior of the Mystic Arts",
+          "short": "Mystic Arts",
+          "source": "AU"
+        },
+        {
+          "name": "Warrior of the Open Hand",
+          "short": "Open Hand",
+          "source": "XPHB"
+        },
+        {
+          "name": "Way of Mercy",
+          "short": "Mercy",
+          "source": "TCE"
+        },
+        {
+          "name": "Way of Shadow",
+          "short": "Shadow",
+          "source": "PHB"
+        },
+        {
+          "name": "Way of the Ascendant Dragon",
+          "short": "Ascendant Dragon",
+          "source": "FTD"
+        },
+        {
+          "name": "Way of the Astral Self",
+          "short": "Astral Self",
+          "source": "TCE"
+        },
+        {
+          "name": "Way of the Drunken Master",
+          "short": "Drunken Master",
+          "source": "XGE"
+        },
+        {
+          "name": "Way of the Four Elements",
+          "short": "Four Elements",
+          "source": "PHB"
+        },
+        {
+          "name": "Way of the Kensei",
+          "short": "Kensei",
+          "source": "XGE"
+        },
+        {
+          "name": "Way of the Long Death",
+          "short": "Long Death",
+          "source": "SCAG"
+        },
+        {
+          "name": "Way of the Open Hand",
+          "short": "Open Hand",
+          "source": "PHB"
+        },
+        {
+          "name": "Way of the Sun Soul",
+          "short": "Sun Soul",
+          "source": "XGE"
+        }
+      ]
+    },
+    {
+      "name": "Paladin",
+      "source": "XPHB",
+      "ability": "cha",
+      "caster": "artificer",
+      "hd": 10,
+      "saves": [
+        "wis",
+        "cha"
+      ],
+      "subclassTitle": "Paladin Subclass",
+      "subclasses": [
+        {
+          "name": "Oath of Conquest",
+          "short": "Conquest",
+          "source": "XGE"
+        },
+        {
+          "name": "Oath of Devotion",
+          "short": "Devotion",
+          "source": "XPHB"
+        },
+        {
+          "name": "Oath of Glory",
+          "short": "Glory",
+          "source": "XPHB"
+        },
+        {
+          "name": "Oath of Redemption",
+          "short": "Redemption",
+          "source": "XGE"
+        },
+        {
+          "name": "Oath of the Ancients",
+          "short": "Ancients",
+          "source": "XPHB"
+        },
+        {
+          "name": "Oath of the Crown",
+          "short": "Crown",
+          "source": "SCAG"
+        },
+        {
+          "name": "Oath of the Noble Genies",
+          "short": "Noble Genies",
+          "source": "FRHoF"
+        },
+        {
+          "name": "Oath of the Watchers",
+          "short": "Watchers",
+          "source": "TCE"
+        },
+        {
+          "name": "Oath of Vengeance",
+          "short": "Vengeance",
+          "source": "XPHB"
+        },
+        {
+          "name": "Oathbreaker",
+          "short": "Oathbreaker",
+          "source": "DMG"
+        }
+      ]
+    },
+    {
+      "name": "Ranger",
+      "source": "XPHB",
+      "ability": "wis",
+      "caster": "artificer",
+      "hd": 10,
+      "saves": [
+        "str",
+        "dex"
+      ],
+      "subclassTitle": "Ranger Subclass",
+      "subclasses": [
+        {
+          "name": "Beast Master",
+          "short": "Beast Master",
+          "source": "XPHB"
+        },
+        {
+          "name": "Drakewarden",
+          "short": "Drakewarden",
+          "source": "FTD"
+        },
+        {
+          "name": "Fey Wanderer",
+          "short": "Fey Wanderer",
+          "source": "XPHB"
+        },
+        {
+          "name": "Gloom Stalker",
+          "short": "Gloom Stalker",
+          "source": "XPHB"
+        },
+        {
+          "name": "Hollow Warden",
+          "short": "Hollow Warden",
+          "source": "RHW"
+        },
+        {
+          "name": "Horizon Walker",
+          "short": "Horizon Walker",
+          "source": "XGE"
+        },
+        {
+          "name": "Hunter",
+          "short": "Hunter",
+          "source": "XPHB"
+        },
+        {
+          "name": "Monster Slayer",
+          "short": "Monster Slayer",
+          "source": "XGE"
+        },
+        {
+          "name": "Swarmkeeper",
+          "short": "Swarmkeeper",
+          "source": "TCE"
+        },
+        {
+          "name": "Winter Walker",
+          "short": "Winter Walker",
+          "source": "FRHoF"
+        }
+      ]
+    },
+    {
+      "name": "Rogue",
+      "source": "XPHB",
+      "ability": "",
+      "caster": "",
+      "hd": 8,
+      "saves": [
+        "dex",
+        "int"
+      ],
+      "subclassTitle": "Rogue Subclass",
+      "subclasses": [
+        {
+          "name": "Arcane Trickster",
+          "short": "Arcane Trickster",
+          "source": "XPHB"
+        },
+        {
+          "name": "Assassin",
+          "short": "Assassin",
+          "source": "XPHB"
+        },
+        {
+          "name": "Inquisitive",
+          "short": "Inquisitive",
+          "source": "XGE"
+        },
+        {
+          "name": "Mastermind",
+          "short": "Mastermind",
+          "source": "XGE"
+        },
+        {
+          "name": "Phantom",
+          "short": "Phantom",
+          "source": "RHW"
+        },
+        {
+          "name": "Scion of the Three",
+          "short": "Scion of the Three",
+          "source": "FRHoF"
+        },
+        {
+          "name": "Scout",
+          "short": "Scout",
+          "source": "XGE"
+        },
+        {
+          "name": "Soulknife",
+          "short": "Soulknife",
+          "source": "XPHB"
+        },
+        {
+          "name": "Swashbuckler",
+          "short": "Swashbuckler",
+          "source": "XGE"
+        },
+        {
+          "name": "Thief",
+          "short": "Thief",
+          "source": "XPHB"
+        }
+      ]
+    },
+    {
+      "name": "Sorcerer",
+      "source": "XPHB",
+      "ability": "cha",
+      "caster": "full",
+      "hd": 6,
+      "saves": [
+        "con",
+        "cha"
+      ],
+      "subclassTitle": "Sorcerer Subclass",
+      "subclasses": [
+        {
+          "name": "Aberrant Mind",
+          "short": "Aberrant Mind",
+          "source": "TCE"
+        },
+        {
+          "name": "Aberrant Sorcery",
+          "short": "Aberrant",
+          "source": "XPHB"
+        },
+        {
+          "name": "Clockwork Sorcery",
+          "short": "Clockwork",
+          "source": "XPHB"
+        },
+        {
+          "name": "Clockwork Soul",
+          "short": "Clockwork Soul",
+          "source": "TCE"
+        },
+        {
+          "name": "Divine Soul",
+          "short": "Divine Soul",
+          "source": "XGE"
+        },
+        {
+          "name": "Draconic Bloodline",
+          "short": "Draconic",
+          "source": "PHB"
+        },
+        {
+          "name": "Draconic Sorcery",
+          "short": "Draconic",
+          "source": "XPHB"
+        },
+        {
+          "name": "Lunar Sorcery",
+          "short": "Lunar",
+          "source": "DSotDQ"
+        },
+        {
+          "name": "Pyromancer (PSK)",
+          "short": "Pyromancer (PSK)",
+          "source": "PSK"
+        },
+        {
+          "name": "Shadow Sorcery",
+          "short": "Shadow",
+          "source": "RHW"
+        },
+        {
+          "name": "Spellfire Sorcery",
+          "short": "Spellfire",
+          "source": "FRHoF"
+        },
+        {
+          "name": "Storm Sorcery",
+          "short": "Storm",
+          "source": "XGE"
+        },
+        {
+          "name": "Wild Magic",
+          "short": "Wild",
+          "source": "PHB"
+        },
+        {
+          "name": "Wild Magic Sorcery",
+          "short": "Wild Magic",
+          "source": "XPHB"
+        }
+      ]
+    },
+    {
+      "name": "Warlock",
+      "source": "XPHB",
+      "ability": "cha",
+      "caster": "pact",
+      "hd": 8,
+      "saves": [
+        "wis",
+        "cha"
+      ],
+      "subclassTitle": "Warlock Subclass",
+      "subclasses": [
+        {
+          "name": "Archfey Patron",
+          "short": "Archfey",
+          "source": "XPHB"
+        },
+        {
+          "name": "Celestial Patron",
+          "short": "Celestial",
+          "source": "XPHB"
+        },
+        {
+          "name": "Fiend Patron",
+          "short": "Fiend",
+          "source": "XPHB"
+        },
+        {
+          "name": "Great Old One Patron",
+          "short": "Great Old One",
+          "source": "XPHB"
+        },
+        {
+          "name": "The Archfey",
+          "short": "Archfey",
+          "source": "PHB"
+        },
+        {
+          "name": "The Celestial",
+          "short": "Celestial",
+          "source": "XGE"
+        },
+        {
+          "name": "The Fathomless",
+          "short": "Fathomless",
+          "source": "TCE"
+        },
+        {
+          "name": "The Fiend",
+          "short": "Fiend",
+          "source": "PHB"
+        },
+        {
+          "name": "The Genie",
+          "short": "Genie",
+          "source": "TCE"
+        },
+        {
+          "name": "The Great Old One",
+          "short": "Great Old One",
+          "source": "PHB"
+        },
+        {
+          "name": "The Hexblade",
+          "short": "Hexblade",
+          "source": "XGE"
+        },
+        {
+          "name": "The Undying",
+          "short": "Undying",
+          "source": "SCAG"
+        },
+        {
+          "name": "Undead Patron",
+          "short": "Undead",
+          "source": "RHW"
+        },
+        {
+          "name": "Vestige Patron",
+          "short": "Vestige",
+          "source": "AU"
+        }
+      ]
+    },
+    {
+      "name": "Wizard",
+      "source": "XPHB",
+      "ability": "int",
+      "caster": "full",
+      "hd": 6,
+      "saves": [
+        "int",
+        "wis"
+      ],
+      "subclassTitle": "Wizard Subclass",
+      "subclasses": [
+        {
+          "name": "Abjurer",
+          "short": "Abjurer",
+          "source": "XPHB"
+        },
+        {
+          "name": "Bladesinger",
+          "short": "Bladesinger",
+          "source": "FRHoF"
+        },
+        {
+          "name": "Chronurgy Magic",
+          "short": "Chronurgy",
+          "source": "EGW"
+        },
+        {
+          "name": "Conjurer",
+          "short": "Conjurer",
+          "source": "AU"
+        },
+        {
+          "name": "Diviner",
+          "short": "Diviner",
+          "source": "XPHB"
+        },
+        {
+          "name": "Enchanter",
+          "short": "Enchanter",
+          "source": "AU"
+        },
+        {
+          "name": "Evoker",
+          "short": "Evoker",
+          "source": "XPHB"
+        },
+        {
+          "name": "Graviturgy Magic",
+          "short": "Graviturgy",
+          "source": "EGW"
+        },
+        {
+          "name": "Illusionist",
+          "short": "Illusionist",
+          "source": "XPHB"
+        },
+        {
+          "name": "Necromancer",
+          "short": "Necromancer",
+          "source": "AU"
+        },
+        {
+          "name": "Order of Scribes",
+          "short": "Scribes",
+          "source": "TCE"
+        },
+        {
+          "name": "School of Abjuration",
+          "short": "Abjuration",
+          "source": "PHB"
+        },
+        {
+          "name": "School of Divination",
+          "short": "Divination",
+          "source": "PHB"
+        },
+        {
+          "name": "School of Evocation",
+          "short": "Evocation",
+          "source": "PHB"
+        },
+        {
+          "name": "School of Illusion",
+          "short": "Illusion",
+          "source": "PHB"
+        },
+        {
+          "name": "Transmuter",
+          "short": "Transmuter",
+          "source": "AU"
+        },
+        {
+          "name": "War Magic",
+          "short": "War",
+          "source": "XGE"
+        }
+      ]
+    }
+  ]
+}

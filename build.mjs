@@ -33,6 +33,11 @@ const characters = readFileSync(resolve(root, 'data', 'characters.json'), 'utf8'
 const characterTag = /(<script id="character-data" type="application\/json">)[\s\S]*?(<\/script>)/;
 if (!characterTag.test(html)) throw new Error('character data tag not found in src/index.html');
 built = built.replace(characterTag, (m, open, close) => open + characters + close);
+
+const classData = readFileSync(resolve(root, 'data', 'classes.json'), 'utf8').trim();
+const classTag = /(<script id="class-data" type="application\/json">)[\s\S]*?(<\/script>)/;
+if (!classTag.test(html)) throw new Error('class data tag not found in src/index.html');
+built = built.replace(classTag, (m, open, close) => open + classData + close);
 /* The pages and the shell are separate files, and the built page holds
    them inside, so the phone needs one file and nothing else. */
 const scripts = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)];

@@ -546,6 +546,53 @@ writeFileSync(
 );
 console.log('wrote ' + featureList.length + ' features');
 
+/* ---------- the classes ---------- */
+
+/* The twelve classes of the 2024 handbook, each with how it casts, the die
+   it rolls for hit points, the saves it grants, and every subclass that is
+   not a reprint of one of them. The multiclass rules and the ready-made
+   characters read this file. */
+const CLASS_NAMES = ['Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard'];
+const CASTER = { 'full': 'full', '1/2': 'half', '1/3': 'third', 'pact': 'pact', 'artificer': 'artificer' };
+const classes = [];
+for (const name of CLASS_NAMES) {
+  const file = 'class-' + name.toLowerCase() + '.json';
+  const data = JSON.parse(readFileSync(download(BASE + 'class/class-' + name.toLowerCase() + '.json', file), 'utf8'));
+  const list = data.class || [];
+  const cls = list.find((c) => c.source === 'XPHB') || list.find((c) => !c.reprintedAs) || list[0];
+  if (!cls) { console.log('class not found: ' + name); continue; }
+  /* A subclass can be printed twice, once carrying the marker of its
+     reprint and once not, so the 2024 printing wins and the name decides
+     the rest. */
+  const subs = (data.subclass || [])
+    .filter((s) => s.className === name && !s.reprintedAs)
+    .sort((a, b) => (b.source === 'XPHB' ? 1 : 0) - (a.source === 'XPHB' ? 1 : 0))
+    .filter((s, i, all) => all.findIndex((x) => x.name === s.name) === i)
+    .map((s) => ({ name: s.name, short: s.shortName || s.name, source: s.source }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  classes.push({
+    name: name,
+    source: cls.source,
+    ability: cls.spellcastingAbility || '',
+    caster: CASTER[cls.casterProgression] || '',
+    hd: cls.hd ? cls.hd.faces : 8,
+    saves: cls.proficiency || [],
+    subclassTitle: cls.subclassTitle || '',
+    subclasses: subs
+  });
+}
+writeFileSync(
+  resolve(root, 'data', 'classes.json'),
+  JSON.stringify({
+    edition: "The 2024 Player's Handbook classes, with every subclass that is not a reprint",
+    source: 'https://5e.tools/classes.html',
+    fetched: new Date().toISOString().slice(0, 10),
+    classes: classes
+  }, null, 2) + '\n',
+  'utf8'
+);
+console.log('wrote ' + classes.length + ' classes and ' + classes.reduce((n, c) => n + c.subclasses.length, 0) + ' subclasses');
+
 const byLevel = {};
 for (const s of seed) (byLevel[s.level] = byLevel[s.level] || []).push(s.name + ' (' + s.source + ')');
 for (const lv of Object.keys(byLevel).sort((a, b) => a - b)) console.log('level ' + lv + ': ' + byLevel[lv].join(', '));

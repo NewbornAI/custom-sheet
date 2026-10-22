@@ -36,6 +36,7 @@
   var BOOK = readJson('spell-data');
   var FEATUREDATA = readJson('feature-data');
   var PRESETS = readJson('character-data').presets || [];
+  var CLASSDATA = readJson('class-data').classes || [];
 
   /* ---- the style of a character ---- */
 
@@ -181,6 +182,42 @@
     return '<span class="src' + (cls ? ' ' + cls : '') + '">' + esc(name) + '</span>';
   }
 
+  /* A class of the book, by name. */
+  function classInfo(name) {
+    for (var i = 0; i < CLASSDATA.length; i++) if (CLASSDATA[i].name === name) return CLASSDATA[i];
+    return null;
+  }
+
+  /* The classes of a character, with what the rules need of each one. */
+  function classRows(ch) {
+    return ((ch && ch.classes) || []).map(function (k) {
+      var info = classInfo(k.name) || {};
+      return {
+        name: k.name,
+        level: Math.max(0, Number(k.level) || 0),
+        subclass: k.subclass || '',
+        ability: info.ability || '',
+        caster: info.caster || ''
+      };
+    });
+  }
+
+  /* The class that carries the most levels, whose ability the app reads for
+     the character as a whole. */
+  function primaryClass(ch) {
+    var best = null;
+    classRows(ch).forEach(function (r) {
+      if (!r.ability) return;
+      if (!best || r.level > best.level) best = r;
+    });
+    return best;
+  }
+
+  function primaryAbility(ch) {
+    var p = primaryClass(ch);
+    return p ? p.ability : 'cha';
+  }
+
   /* The wrench a page puts in the head of the app. */
   function wrenchButton(label, onClick) {
     var b = document.createElement('button');
@@ -235,6 +272,11 @@
     bumpSp: bumpSp,
     themes: THEMES,
     icons: ICONS,
+    classData: CLASSDATA,
+    classInfo: classInfo,
+    classRows: classRows,
+    primaryClass: primaryClass,
+    primaryAbility: primaryAbility,
     themeOf: themeOf,
     iconOf: iconOf
   };
@@ -305,7 +347,7 @@
     PAGES.forEach(function (p) {
       if (!p.seed) return;
       var key = p.slice || p.id;
-      rec[key] = p.seed(rec[key] || {}, !!fresh);
+      rec[key] = p.seed(rec[key] || {}, !!fresh, rec);
     });
     return rec;
   }

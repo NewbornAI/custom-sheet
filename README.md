@@ -21,6 +21,8 @@ A character is added ready-made or from nothing. The ready-made ones live in `da
 
 **A character wears its own colours and its own icon.** Everything the app paints comes from a few CSS variables, so a theme is one block of them and nothing else. The icon is a small registry in the shell, the rune the app came with and an electric guitar. The record of the character names both, the head of the app paints the one it names, and the edit mode of the character page grows a Style section to change them. Yngwie plays blue and red with a guitar, the warlock keeps the violet and the rune.
 
+**A character can hold several classes.** The record keeps a list of classes, each with a level and a subclass, and the level is their sum. The edit mode of the character page carries the editor, a picker of the twelve classes, a picker of the subclasses, a stepper and a cross. The spell slots come from the multiclass table of the rules, and the pact slots from the warlock level, so a sorcerer 8 with a warlock 3 reads the slots of a caster of eight and two pact slots at level two. The save DC is one for the character, read from the class that carries the most levels.
+
 **The initiative follows the dexterity** until you type one of your own, which then stays.
 
 The gear at the head of the app opens the settings page, which lists the pages of the character being played. A page that is off keeps its numbers, and turning it back on brings them back. The character page is the home, so it is always on.
