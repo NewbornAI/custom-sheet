@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -28,6 +28,17 @@ const features = readFileSync(resolve(root, 'data', 'features.json'), 'utf8').tr
 const featureTag = /(<script id="feature-data" type="application\/json">)[\s\S]*?(<\/script>)/;
 if (!featureTag.test(html)) throw new Error('feature data tag not found in src/index.html');
 built = built.replace(featureTag, (m, open, close) => open + features + close);
+/* The pages and the shell are separate files, and the built page holds
+   them inside, so the phone needs one file and nothing else. */
+const scripts = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)];
+for (const m of scripts) {
+  const file = resolve(src, m[1]);
+  if (!existsSync(file)) throw new Error('the script ' + m[1] + ' is missing');
+  const code = readFileSync(file, 'utf8');
+  built = built.replace(m[0], () => '<script>\n' + code + '\n</script>');
+}
+if (/<script src=/.test(built)) throw new Error('a script was not inlined');
+
 mkdirSync(out, { recursive: true });
 writeFileSync(resolve(out, 'index.html'), built, 'utf8');
 

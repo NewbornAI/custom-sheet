@@ -136,6 +136,19 @@ console.log('the flat bonus');
   check('a critical doubles the dice, not the flat', crit.byType.force, 75);
 }
 
+console.log('the numbers of the caster');
+{
+  check('the spell keeps its own attack', R.attackMod({ power: 'eb' }), 9);
+  check('the character can give the attack', R.attackMod({ power: 'eb', attackMod: 7 }), 7);
+  const v = R.rollVolley({ power: 'eb', attackMod: 7 }, minRoll);
+  check('the attack uses it', v.beams[0].total, 8);
+  check('the spell keeps its own flat', R.flatMod({ power: 'eb' }, R.powerOf('eb')), 5);
+  check('the character can give the flat', R.flatMod({ power: 'eb', flatMod: 3 }, R.powerOf('eb')), 3);
+  const f = R.rollVolley({ power: 'eb', flatMod: 3 }, minRoll);
+  check('the damage carries it', f.beams[0].damage, 4);
+  check('a scorching ray has no flat', R.flatMod({ power: 'sr2', flatMod: 3 }, R.powerOf('sr2')), 0);
+}
+
 console.log('quicken');
 {
   check('off by default', R.quickened({ power: 'eb' }), false);

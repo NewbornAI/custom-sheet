@@ -210,9 +210,64 @@ input[type=range]::-moz-range-thumb{
 .tabs{
   flex:0 0 auto;
   display:flex;
-  gap:16px;
+  align-items:center;
+  gap:10px;
   border-bottom:1px solid var(--edge);
 }
+.tablist{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  gap:16px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.tablist::-webkit-scrollbar{height:0}
+.gear{
+  flex:0 0 auto;
+  width:26px;
+  height:26px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  border:1px solid var(--edge);
+  border-radius:7px;
+  background:rgba(255,255,255,.03);
+  color:var(--muted);
+  cursor:pointer;
+}
+.gear svg{width:15px;height:15px}
+.gear[aria-pressed="true"]{border-color:rgba(155,123,255,.6);color:var(--arcane);background:rgba(155,123,255,.12)}
+.headslot{flex:0 0 auto;display:flex;align-items:center;gap:6px}
+
+/* ---- the settings ---- */
+
+.srow{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 9px;
+  border:1px solid var(--edge);
+  border-radius:8px;
+  background:rgba(255,255,255,.03);
+}
+.srow .t{flex:0 0 auto;font-size:12.5px;color:var(--ink)}
+.srow .d{flex:1 1 auto;min-width:0;font-size:10.5px;color:var(--muted);line-height:1.35}
+.stog{
+  flex:0 0 auto;
+  border:1px solid var(--edge);
+  border-radius:999px;
+  background:rgba(255,255,255,.03);
+  color:var(--muted);
+  font-family:var(--sans);
+  font-size:10.5px;
+  padding:5px 11px;
+  min-height:28px;
+  cursor:pointer;
+}
+.stog.on{border-color:rgba(122,216,111,.5);background:rgba(122,216,111,.12);color:#8fe084}
+.stog:disabled{opacity:.45;cursor:default}
 .tab{
   border:0;
   border-bottom:2px solid transparent;
@@ -1011,151 +1066,21 @@ input[type=range]::-moz-range-thumb{
       <path d="M12 6.4L17.6 12 12 17.6 6.4 12z" fill="none" stroke="currentColor" stroke-width="1.2"/>
       <circle cx="12" cy="12" r="1.7" fill="currentColor"/>
     </svg>
-    <h1 class="title" id="spellName">Eldritch blast</h1>
-    <label class="ac" id="acField"><span>AC</span><input id="ac" type="number" inputmode="numeric" min="1" max="40" step="1" placeholder="—" aria-label="Target armor class"></label>
-    <button class="wrench" id="wrench" type="button" aria-pressed="false" aria-label="Edit slot maximums" hidden>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+    <h1 class="title" id="pageTitle">Character</h1>
+    <div class="headslot" id="headSlot"></div>
+    <button class="gear" id="gear" type="button" aria-pressed="false" aria-label="The pages of the app">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false">
+        <path d="M3 7h7.7M15.3 7h5.7M3 12h3.7M11.3 12h9.7M3 17h11.7M19.3 17h1.7"/>
+        <circle cx="13" cy="7" r="2.3"/><circle cx="9" cy="12" r="2.3"/><circle cx="17" cy="17" r="2.3"/>
       </svg>
     </button>
   </header>
 
-  <nav class="tabs" role="tablist" aria-label="Views">
-    <button class="tab" id="tab-volley" type="button" role="tab" aria-selected="true">Volley</button>
-    <button class="tab" id="tab-spells" type="button" role="tab" aria-selected="false">Spells</button>
-    <button class="tab" id="tab-char" type="button" role="tab" aria-selected="false">Character</button>
-    <button class="tab" id="tab-features" type="button" role="tab" aria-selected="false">Features</button>
+  <nav class="tabs" role="tablist" aria-label="Pages">
+    <div class="tablist" id="tabList"></div>
   </nav>
 
-  <div class="views">
-  <section class="view on" id="view-volley">
-
-  <div class="slider">
-    <input id="power" type="range" min="0" max="4" step="1" value="0" aria-label="Spell power">
-    <div class="stops" id="stops"></div>
-  </div>
-
-  <div class="chips" id="chips"></div>
-
-  <div class="summary" id="summary"></div>
-
-  <div class="board" id="board">
-    <div class="grid" id="grid"></div>
-  </div>
-
-  <div class="tally" id="tally"></div>
-
-  </section>
-
-  <section class="view" id="view-spells">
-    <div class="sbar">
-      <div class="stat" id="dcStat">
-        <span class="k">DC</span>
-        <span class="v" id="dcValue">17</span>
-        <button class="mini" type="button" data-act="dc-" aria-label="Lower the DC">&minus;</button>
-        <button class="mini" type="button" data-act="dc+" aria-label="Raise the DC">+</button>
-      </div>
-      <div class="stat live">
-        <span class="k">SP</span>
-        <span class="v" id="spValue">8/8</span>
-        <button class="mini" type="button" data-act="sp-" aria-label="Spend a sorcery point">&minus;</button>
-        <button class="mini" type="button" data-act="sp+" aria-label="Regain a sorcery point">+</button>
-      </div>
-      <button class="tog" id="cunning" type="button" aria-pressed="false" title="Restores 1 warlock slot">Cunning</button>
-      <button class="tog" id="sorcRest" type="button" aria-pressed="false" title="Restores half your sorcerer level in sorcery points">Sorc rest</button>
-      <button class="tog wild" id="wildSurge" type="button" title="The wild magic surge">Wild</button>
-    </div>
-
-    <div class="sbody">
-      <div class="slotstrip" id="levels"></div>
-      <div class="listhead">
-        <span class="t" id="listTitle">Level 1 spells</span>
-        <button class="mini" id="addSpell" type="button" aria-label="Add a spell">+</button>
-      </div>
-      <div class="grimoire" id="spellList"></div>
-    </div>
-  </section>
-
-  <section class="view" id="view-features">
-    <div class="charbody" id="featureBody">
-      <div class="cshead"><span>Active</span><span class="rule"></span><button class="mini" id="addFeature" type="button" aria-label="Add a feature">+</button></div>
-      <div class="fcards" id="featureActive"></div>
-      <div class="cshead"><span>Passive</span><span class="rule"></span></div>
-      <div class="fcards" id="featurePassive"></div>
-    </div>
-  </section>
-
-  <section class="view" id="view-char">
-
-    <div class="charbody" id="charBody">
-
-      <div class="csname" id="charNameWrap" hidden>
-        <span class="ck">NAME</span>
-        <input class="cinput" id="charName" type="text" placeholder="your character" aria-label="Character name">
-      </div>
-
-      <div class="ctop">
-        <label class="ctile" for="charAc">
-          <span class="ck">AC</span>
-          <input class="cinput" id="charAc" type="number" inputmode="numeric" min="0" max="40" placeholder="--" aria-label="Armor class">
-        </label>
-        <label class="ctile" for="charInit">
-          <span class="ck">INIT</span>
-          <input class="cinput" id="charInit" type="number" inputmode="numeric" min="-9" max="20" placeholder="0" aria-label="Initiative modifier">
-        </label>
-        <label class="ctile" for="charLevel">
-          <span class="ck">LEVEL</span>
-          <input class="cinput" id="charLevel" type="number" inputmode="numeric" min="1" max="20" placeholder="1" aria-label="Character level">
-        </label>
-      </div>
-
-      <div class="hpstrip">
-        <span class="ck">HP</span>
-        <input class="cinput cur" id="charHpNow" type="number" inputmode="numeric" min="0" placeholder="--" aria-label="Current hit points">
-        <span class="of">/</span>
-        <input class="cinput max" id="charHpMax" type="number" inputmode="numeric" min="0" placeholder="--" aria-label="Maximum hit points">
-        <span class="tools">
-          <button class="mini" id="charHpDown" type="button" aria-label="Lose a hit point">&minus;</button>
-          <button class="mini" id="charHpUp" type="button" aria-label="Gain a hit point">+</button>
-          <button class="mini" id="charHpRewind" type="button" aria-label="Rewind the last change">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-              <path d="M3.5 12a8.5 8.5 0 1 0 2.8-6.3"/><path d="M3.5 4.4v5.2h5.2"/>
-            </svg>
-          </button>
-        </span>
-      </div>
-
-      <div class="dicebox" id="diceBox"></div>
-
-      <div class="cshead"><span>Abilities</span><span class="rule"></span></div>
-      <div class="abgrid" id="charAbilities"></div>
-      <div class="derived" id="charDerived"></div>
-
-      <div class="cshead"><span>Skills</span><span class="rule"></span></div>
-      <div class="sgrid" id="charSkills"></div>
-
-    </div>
-
-    <div class="charfoot">
-      <p class="note" id="charNote"></p>
-      <div class="rests">
-        <button class="rest" id="restShort" type="button">Short rest</button>
-        <button class="rest" id="restLong" type="button">Long rest</button>
-      </div>
-    </div>
-  </section>
-
-  </div>
-
-  <button class="cast" id="cast">
-    <span id="castLabel">Cast</span>
-    <svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width=".8"/>
-      <path d="M12 2.2V6M12 18v3.8M2.2 12H6M18 12h3.8" stroke="currentColor" stroke-width=".8"/>
-      <path d="M12 6.4L17.6 12 12 17.6 6.4 12z" fill="none" stroke="currentColor" stroke-width="1"/>
-    </svg>
-  </button>
-
+  <div class="views" id="views"></div>
 </div>
 
 <div class="spent" id="spentToast" role="status" aria-live="polite"></div>
@@ -15825,6 +15750,26 @@ input[type=range]::-moz-range-thumb{
     return total;
   }
 
+  /* The attack bonus and the flat bonus belong to the caster, so the
+     state can carry them. Without them the spell keeps its own. */
+  function attackMod(state) {
+    if (state && state.attackMod !== undefined && state.attackMod !== null) {
+      var m = Number(state.attackMod);
+      if (isFinite(m)) return m;
+    }
+    return ATTACK_MOD;
+  }
+
+  function flatMod(state, power) {
+    var p = power || POWERS[0];
+    if (!p.flat) return 0;
+    if (state && state.flatMod !== undefined && state.flatMod !== null) {
+      var m = Number(state.flatMod);
+      if (isFinite(m)) return m;
+    }
+    return p.flat;
+  }
+
   function powerOf(id) {
     for (var i = 0; i < POWERS.length; i++) if (POWERS[i].id === id) return POWERS[i];
     return POWERS[0];
@@ -15857,7 +15802,8 @@ input[type=range]::-moz-range-thumb{
 
     var power = powerOf(state.power);
     var critFloor = state.curse ? CURSE_CRIT : NATURAL_CRIT;
-    var flat = power.flat + (state.curse ? CURSE_BONUS : 0);
+    var flat = flatMod(state, power) + (state.curse ? CURSE_BONUS : 0);
+    var atk = attackMod(state);
     var hasAc = state.ac !== null && state.ac !== undefined && state.ac !== '';
     var quick = quickened(state);
     var beams = [], i;
@@ -15868,12 +15814,12 @@ input[type=range]::-moz-range-thumb{
     if (state.elem) sources = sources.concat(state.elemPlus ? EXTRAS.elemPlus.dice : EXTRAS.elem.dice);
 
     for (i = 0; i < power.attacks; i++) {
-      beams.push(rollBeam(rng, state, sources, flat, critFloor, hasAc, i, false));
+      beams.push(rollBeam(rng, state, sources, flat, atk, critFloor, hasAc, i, false));
     }
     /* the quickened cast is a second row of the same beams */
     if (quick) {
       for (i = 0; i < QUICKEN_ATTACKS; i++) {
-        beams.push(rollBeam(rng, state, sources, flat, critFloor, hasAc, power.attacks + i, true));
+        beams.push(rollBeam(rng, state, sources, flat, atk, critFloor, hasAc, power.attacks + i, true));
       }
     }
 
@@ -15887,10 +15833,10 @@ input[type=range]::-moz-range-thumb{
   }
 
   /* One beam: the attack roll, and the damage that follows it. */
-  function rollBeam(rng, state, sources, flat, critFloor, hasAc, index, quick) {
+  function rollBeam(rng, state, sources, flat, atk, critFloor, hasAc, index, quick) {
     var rolls = state.advantage ? dice(rng, ADVANTAGE_DICE, 20) : dice(rng, 1, 20);
     var kept = Math.max.apply(null, rolls);
-    var total = kept + ATTACK_MOD;
+    var total = kept + atk;
     var crit = kept >= critFloor;
     var mult = crit ? 2 : 1;
     var groups = [], j, k;
@@ -16013,6 +15959,8 @@ input[type=range]::-moz-range-thumb{
     WARLOCK_LEVEL: WARLOCK_LEVEL,
     powerOf: powerOf,
     primaryType: primaryType,
+    attackMod: attackMod,
+    flatMod: flatMod,
     quickened: quickened,
     beamCount: beamCount,
     rollVolley: rollVolley,
@@ -16272,122 +16220,90 @@ input[type=range]::-moz-range-thumb{
 </script>
 
 <script>
+/* The shell of the app: the pages that are on, the tabs that carry them,
+   the store they share, and the overlay any of them can open. */
 (function () {
   'use strict';
 
   var R = window.Rules;
-  var STORE = 'volley.state.v1';
-
-  var DEFAULTS = {
-    power: 'eb',
-    advantage: false,
-    hex: false,
-    curse: false,
-    elem: false,
-    elemPlus: false,
-    quicken: false,
-    ac: null
-  };
-
-  var CHIPS = [
-    { key: 'advantage', label: 'Adv',      rgb: '154,209,255' },
-    { key: 'hex',       label: 'Hex',      rgb: '122,216,111' },
-    { key: 'curse',     label: 'Curse',    rgb: '255,111,168' },
-    { key: 'elem',      label: 'Elem',     rgb: '255,212,71' },
-    { key: 'elemPlus',  label: '+3d8',     rgb: '255,176,59', needs: 'elem' },
-    { key: 'quicken',   label: 'Quicken',  rgb: '92,214,220', only: 'eb' }
-  ];
-
-  var volley = null;
-  var view = 'volley';
-  var SURGE = { rows: [] };
-  try { SURGE = JSON.parse(document.getElementById('surge-data').textContent); } catch (e) {}
-  var SPELLBOOK = { spells: [] };
-  try { SPELLBOOK = JSON.parse(document.getElementById('spell-data').textContent); } catch (e) {}
-  var SPELL_BY_NAME = {};
-  (SPELLBOOK.spells || []).forEach(function (s) { SPELL_BY_NAME[s.name] = s; });
-
-  /* The features the character tracks, with their long text from 5e.tools.
-     The counters live in the state, the rest comes from the data. */
-  var FEATUREDATA = { features: [] };
-  try { FEATUREDATA = JSON.parse(document.getElementById('feature-data').textContent); } catch (e) {}
-  var FEATURE_BY_KEY = {};
-  (FEATUREDATA.features || []).forEach(function (f) { FEATURE_BY_KEY[f.key] = f; });
-
-  var FEATURE_SEED = (FEATUREDATA.features || []).map(function (f) {
-    return {
-      key: f.key,
-      name: f.name,
-      source: f.source,
-      active: !!f.active,
-      max: f.uses || 0,
-      left: f.uses || 0,
-      recovery: f.recovery || 'passive',
-      cost: f.cost || '',
-      short: null,
-      hidden: !!f.hidden
-    };
-  });
-
-  /* the warlock slots sit on the second level row */
-  var WARLOCK_LEVEL = R.WARLOCK_LEVEL;
-  var LEVELS = R.LEVELS;
-
-  /* the character sheet rules, in their own block */
   var SR = window.SheetRules;
-  var ABILITIES = SR.ABILITIES;
-  var SKILLS = SR.SKILLS;
+  var STORE = 'volley.state.v2';
+  var OLD_STORE = 'volley.state.v1';
 
-  var SPELL_DEFAULTS = {
-    dc: 17,
-    sp: 8,
-    spMax: 8,
-    cunning: false,
-    sorcRest: false,
-    sorcererLevel: 8,
-    max: { 1: 4, 2: 3, 3: 3, 4: 2, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
-    left: { 1: 4, 2: 3, 3: 3, 4: 2, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
-    warlockMax: 2,
-    warlockLeft: 2,
-    selected: 1,
-    lists: {},
-    classes: {},
-    levelFilter: true,
-    surge: null
-  };
+  /* ---- the registry ---- */
 
-  /* The character on the sheet. What can be derived is derived: charisma 20
-     with a proficiency of 4 gives the attack of +9 and the save DC of 17 that
-     the rest of the app already uses. The rest waits for the player. */
-  var CHAR_DEFAULTS = {
-    name: '',
-    level: 9,
-    abilities: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 20 },
-    saves: { str: 0, dex: 0, con: 1, int: 0, wis: 0, cha: 1 },
-    skills: {},
-    features: FEATURE_SEED.concat([
-      { key: 'warlockSlots', name: 'Warlock spell slots', source: 'Warlock', active: true, recovery: 'short', bind: 'warlock', max: 0, left: 0, short: null, hidden: true }
-    ]),
-    init: 0,
-    ac: null,
-    hp: { current: 0, max: 0 },
-    dice: [].concat(
-      [{ type: 10, spent: false }],
-      [{ type: 6, spent: false }, { type: 6, spent: false }, { type: 6, spent: false }, { type: 6, spent: false },
-       { type: 6, spent: false }, { type: 6, spent: false }, { type: 6, spent: false }, { type: 6, spent: false }]
-    ),
-    history: []
-  };
-  SKILLS.forEach(function (s) { CHAR_DEFAULTS.skills[s.key] = 0; });
+  var PAGES = [];
+  var MOUNTED = {};
+  var current = '';
 
-  var SPELL_SEED = (SPELLBOOK.seed || []).map(function (s) { return s.name; });
+  /* A page joins the app by describing itself. */
+  function page(spec) {
+    if (!spec || !spec.id) throw new Error('a page needs an id');
+    if (PAGES.some(function (p) { return p.id === spec.id; })) {
+      throw new Error('two pages want the id ' + spec.id);
+    }
+    spec.order = spec.order === undefined ? PAGES.length : spec.order;
+    PAGES.push(spec);
+  }
 
-  /* The classes of the book, and the short name each button carries. */
-  var CLASS_SHORT = {
-    'Sorcerer': 'Sor', 'Warlock': 'War', 'Wizard': 'Wiz', 'Bard': 'Bar',
-    'Cleric': 'Cle', 'Druid': 'Dru', 'Ranger': 'Ran', 'Paladin': 'Pal',
-    'Hexblade': 'Hex', 'Izzet engineer': 'Izz', 'Elf': 'Elf', 'elf': 'Elf'
-  };
+  /* ---- what the build brought with it ---- */
+
+  function readJson(id) {
+    try { return JSON.parse(document.getElementById(id).textContent); } catch (e) { return {}; }
+  }
+
+  var SURGE = readJson('surge-data');
+  var BOOK = readJson('spell-data');
+  var FEATUREDATA = readJson('feature-data');
+
+  var SPELL_BY_NAME = {};
+  (BOOK.spells || []).forEach(function (s) { SPELL_BY_NAME[s.name] = s; });
+
+  /* ---- the shared helpers ---- */
+
+  function esc(text) {
+    return String(text === undefined || text === null ? '' : text)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  /* The marked pieces of a spell text: the damage in red, the saving
+     throws in blue, and the conditions, which carry the reference. */
+  function markup(text) {
+    var out = esc(text);
+    out = out.replace(/\[\[d:([^\]]*)\]\]/g, '<span class="tdmg">$1</span>');
+    out = out.replace(/\[\[s:([^\]]*)\]\]/g, '<span class="tsav">$1</span>');
+    out = out.replace(/\[\[c:([^\]]*)\]\]/g, '<span class="tcond" data-cond="$1" title="https://5e.tools/conditionsdiseases.html">$1</span>');
+    return out;
+  }
+
+  /* One labelled field of a summary. */
+  function field(label, value, cls, wide) {
+    var text = value ? String(value) : '-';
+    return '<span class="f' + (wide ? ' wide' : '') + '"><span class="k">' + esc(label) + '</span>' +
+      '<span class="v' + (cls ? ' ' + cls : '') + '">' + esc(text) + '</span></span>';
+  }
+
+  /* The text of a spell or a feature, in blocks. */
+  function renderBlocks(blocks) {
+    var html = '';
+    (blocks || []).forEach(function (b) {
+      if (b.t === 'p') html += '<p>' + markup(b.text) + '</p>';
+      else if (b.t === 'h') html += '<h3>' + markup(b.text) + '</h3>';
+      else if (b.t === 'list') {
+        html += '<ul>' + b.items.map(function (i) { return '<li>' + markup(i) + '</li>'; }).join('') + '</ul>';
+      } else if (b.t === 'table') {
+        if (b.caption) html += '<div class="tcap">' + esc(b.caption) + '</div>';
+        html += '<table>';
+        if (b.head && b.head.length) {
+          html += '<thead><tr>' + b.head.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join('') + '</tr></thead>';
+        }
+        html += '<tbody>' + b.rows.map(function (r) {
+          return '<tr>' + r.map(function (c) { return '<td>' + markup(c) + '</td>'; }).join('') + '</tr>';
+        }).join('') + '</tbody></table>';
+      }
+    });
+    return html;
+  }
 
   /* The same class, written two ways on the sheet. */
   var SOURCE_CANON = {
@@ -16398,6 +16314,13 @@ input[type=range]::-moz-range-thumb{
     var name = String(source || '').trim();
     return SOURCE_CANON[name.toLowerCase()] || name;
   }
+
+  /* The class of the book, and the short name its button carries. */
+  var CLASS_SHORT = {
+    'Sorcerer': 'Sor', 'Warlock': 'War', 'Wizard': 'Wiz', 'Bard': 'Bar',
+    'Cleric': 'Cle', 'Druid': 'Dru', 'Ranger': 'Ran', 'Paladin': 'Pal',
+    'Hexblade': 'Hex', 'Izzet engineer': 'Izz', 'Elf': 'Elf', 'elf': 'Elf'
+  };
 
   function classShort(name) {
     return CLASS_SHORT[name] || String(name || '').slice(0, 3);
@@ -16420,42 +16343,195 @@ input[type=range]::-moz-range-thumb{
     return SOURCE_CLASS[String(source || '').trim().toLowerCase()] || '';
   }
 
-  /* One labelled field of the spell summary. */
-  function field(label, value, cls, wide) {
-    var text = value ? String(value) : '-';
-    return '<span class="f' + (wide ? ' wide' : '') + '"><span class="k">' + esc(label) + '</span>' +
-      '<span class="v' + (cls ? ' ' + cls : '') + '">' + esc(text) + '</span></span>';
+  function sourceTag(source) {
+    if (!source) return '';
+    var name = canonSource(source);
+    var cls = sourceClass(name);
+    return '<span class="src' + (cls ? ' ' + cls : '') + '">' + esc(name) + '</span>';
   }
+
+  /* The wrench a page puts in the head of the app. */
+  function wrenchButton(label, onClick) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'wrench';
+    b.setAttribute('aria-pressed', 'false');
+    b.setAttribute('aria-label', label);
+    b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>';
+    b.addEventListener('click', onClick);
+    return b;
+  }
+
+  /* The history of the character: a snapshot before every change a rest
+     can take back. */
+  function pushSnapshot(api) {
+    var ch = api.state.char;
+    ch.history.push(SR.snapshot(ch, api.state.spells));
+    if (ch.history.length > 60) ch.history.shift();
+  }
+
+  /* The sorcery points bump when they move. */
+  function bumpSp() {
+    var el = document.getElementById('spValue');
+    if (!el) return;
+    el.classList.remove('bump');
+    void el.offsetWidth;
+    el.classList.add('bump');
+  }
+
+  var core = {
+    R: R,
+    SR: SR,
+    LEVELS: R.LEVELS,
+    WARLOCK_LEVEL: R.WARLOCK_LEVEL,
+    ABILITIES: SR.ABILITIES,
+    SKILLS: SR.SKILLS,
+    surge: SURGE,
+    book: BOOK,
+    bookByName: SPELL_BY_NAME,
+    features: FEATUREDATA,
+    esc: esc,
+    markup: markup,
+    field: field,
+    renderBlocks: renderBlocks,
+    canonSource: canonSource,
+    classShort: classShort,
+    sourceClass: sourceClass,
+    sourceTag: sourceTag,
+    wrenchButton: wrenchButton,
+    pushSnapshot: pushSnapshot,
+    bumpSp: bumpSp
+  };
+
+  /* ---- the store ---- */
+
+  var DEFAULT_PAGES = ['volley', 'spells', 'features'];
 
   var state = load();
 
+  function load() {
+    var saved = {};
+    try { saved = JSON.parse(localStorage.getItem(STORE) || '{}') || {}; } catch (e) { saved = {}; }
+    if (!saved.volley && !saved.spells && !saved.char) saved = fromOld();
+    var out = { volley: {}, spells: {}, char: {}, ui: { pages: null } };
+    Object.keys(out).forEach(function (k) {
+      if (saved[k] !== undefined && saved[k] !== null) out[k] = saved[k];
+    });
+    if (!out.ui) out.ui = { pages: null };
+    if (out.ui.pages === undefined) out.ui.pages = null;
+    return out;
+  }
+
+  /* The state of the first version, moved into the slices. */
+  function fromOld() {
+    var old = {};
+    try { old = JSON.parse(localStorage.getItem(OLD_STORE) || '{}') || {}; } catch (e) { old = {}; }
+    if (!old || (!old.spell && !old.char && old.power === undefined)) return {};
+    var out = { volley: {}, spells: old.spell || {}, char: old.char || {}, ui: { pages: null } };
+    ['power', 'advantage', 'hex', 'curse', 'elem', 'elemPlus', 'quicken', 'ac'].forEach(function (k) {
+      if (old[k] !== undefined) out.volley[k] = old[k];
+    });
+    return out;
+  }
+
+  function save() {
+    try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {}
+  }
+
+  /* ---- the overlay ---- */
+
+  var sheet = (function () {
+    var stack = [];
+    var term = '';
+
+    function top() { return stack[stack.length - 1]; }
+
+    /* Opening the layer that is already on top replaces it, so a page can
+       paint itself again without stacking a copy. */
+    function open(layer) {
+      var t = top();
+      if (t && t.id === layer.id) {
+        /* the same layer again replaces the one on top */
+        stack[stack.length - 1] = layer;
+      } else {
+        stack.push(layer);
+        if (layer.search) term = '';
+      }
+      paint();
+    }
+
+    function close() {
+      var layer = stack.pop();
+      if (layer && layer.onClose) layer.onClose();
+      if (!stack.length) {
+        el.sheet.hidden = true;
+        el.sheetMeta.innerHTML = '';
+        el.sheetText.innerHTML = '';
+        el.sheetList.innerHTML = '';
+        return;
+      }
+      paint();
+    }
+
+    function paint() {
+      var layer = top();
+      if (!layer) { el.sheet.hidden = true; return; }
+      el.sheet.hidden = false;
+      el.sheetTitle.textContent = layer.title || '';
+      el.sheetMeta.className = layer.metaClass || 'sheet-meta';
+      el.sheetMeta.innerHTML = layer.meta || '';
+      el.sheetText.innerHTML = layer.text || '';
+      el.sheetList.innerHTML = typeof layer.list === 'string' ? layer.list : '';
+      el.sheetList.hidden = !layer.list;
+      el.sheetSearch.hidden = !layer.search;
+      if (layer.search) el.sheetSearch.value = term;
+      el.grimoireLevel.hidden = !layer.level;
+      if (layer.level) {
+        el.grimoireLevel.textContent = layer.levelLabel || '';
+        el.grimoireLevel.setAttribute('aria-pressed', layer.levelOn ? 'true' : 'false');
+      }
+      el.sheetActions.innerHTML = '';
+      (layer.actions || []).forEach(function (a) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        if (a.kind) b.className = a.kind;
+        b.textContent = a.label;
+        b.addEventListener('click', function () { a.onClick(el.sheet); });
+        el.sheetActions.appendChild(b);
+      });
+      if (layer.onPaint) layer.onPaint(el.sheet);
+    }
+
+    return {
+      open: open,
+      close: close,
+      top: top,
+      search: function () { return term; },
+      setSearch: function (v) { term = v; }
+    };
+  })();
+
+  /* ---- the toast ---- */
+
+  var toastTimer = null;
+
+  function toast(message) {
+    el.spentToast.textContent = message;
+    el.spentToast.classList.add('on');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.spentToast.classList.remove('on'); }, 3000);
+  }
+
+  /* ---- the elements of the shell ---- */
+
   var el = {
-    spellName: document.getElementById('spellName'),
-    power: document.getElementById('power'),
-    stops: document.getElementById('stops'),
-    chips: document.getElementById('chips'),
-    summary: document.getElementById('summary'),
-    board: document.getElementById('board'),
-    grid: document.getElementById('grid'),
-    tally: document.getElementById('tally'),
-    cast: document.getElementById('cast'),
-    castLabel: document.getElementById('castLabel'),
-    ac: document.getElementById('ac'),
-    acField: document.getElementById('acField'),
-    tabVolley: document.getElementById('tab-volley'),
-    viewVolley: document.getElementById('view-volley'),
-    tabSpells: document.getElementById('tab-spells'),
-    viewSpells: document.getElementById('view-spells'),
-    wrench: document.getElementById('wrench'),
-    dcValue: document.getElementById('dcValue'),
-    dcStat: document.getElementById('dcStat'),
-    spValue: document.getElementById('spValue'),
-    cunning: document.getElementById('cunning'),
-    sorcRest: document.getElementById('sorcRest'),
-    levels: document.getElementById('levels'),
-    listTitle: document.getElementById('listTitle'),
-    addSpell: document.getElementById('addSpell'),
-    spellList: document.getElementById('spellList'),
+    pageTitle: document.getElementById('pageTitle'),
+    head: document.getElementById('headSlot'),
+    tabs: document.getElementById('tabList'),
+    gear: document.getElementById('gear'),
+    views: document.getElementById('views'),
+    spentToast: document.getElementById('spentToast'),
     sheet: document.getElementById('sheet'),
     sheetTitle: document.getElementById('sheetTitle'),
     sheetMeta: document.getElementById('sheetMeta'),
@@ -16463,104 +16539,211 @@ input[type=range]::-moz-range-thumb{
     sheetList: document.getElementById('sheetList'),
     sheetActions: document.getElementById('sheetActions'),
     sheetSearch: document.getElementById('sheetSearch'),
+    sheetClose: document.getElementById('sheetClose'),
     grimoireLevel: document.getElementById('grimoireLevel'),
     condTip: document.getElementById('condTip'),
     condName: document.getElementById('condName'),
-    condClose: document.getElementById('condClose'),
-    sheetClose: document.getElementById('sheetClose'),
-    tabChar: document.getElementById('tab-char'),
-    viewChar: document.getElementById('view-char'),
-    charBody: document.getElementById('charBody'),
-    charNameWrap: document.getElementById('charNameWrap'),
-    charName: document.getElementById('charName'),
-    charAc: document.getElementById('charAc'),
-    charInit: document.getElementById('charInit'),
-    charLevel: document.getElementById('charLevel'),
-    charHpNow: document.getElementById('charHpNow'),
-    charHpMax: document.getElementById('charHpMax'),
-    charHpDown: document.getElementById('charHpDown'),
-    charHpUp: document.getElementById('charHpUp'),
-    charHpRewind: document.getElementById('charHpRewind'),
-    charAbilities: document.getElementById('charAbilities'),
-    charDerived: document.getElementById('charDerived'),
-    charSkills: document.getElementById('charSkills'),
-    addFeature: document.getElementById('addFeature'),
-    tabFeatures: document.getElementById('tab-features'),
-    viewFeatures: document.getElementById('view-features'),
-    featureBody: document.getElementById('featureBody'),
-    featureActive: document.getElementById('featureActive'),
-    featurePassive: document.getElementById('featurePassive'),
-    restShort: document.getElementById('restShort'),
-    restLong: document.getElementById('restLong'),
-    charNote: document.getElementById('charNote'),
-    diceBox: document.getElementById('diceBox'),
-    wildSurge: document.getElementById('wildSurge'),
-    spentToast: document.getElementById('spentToast')
+    condClose: document.getElementById('condClose')
   };
 
-  /* ---- state ---- */
+  /* ---- the tabs ---- */
 
-  function load() {
-    var saved = {};
-    try { saved = JSON.parse(localStorage.getItem(STORE) || '{}') || {}; } catch (e) { saved = {}; }
-    var merged = {};
-    Object.keys(DEFAULTS).forEach(function (k) { merged[k] = DEFAULTS[k]; });
-    merged.spell = seedSpells(saved.spell || {});
-    merged.char = seedChar(saved.char || {});
-    Object.keys(DEFAULTS).forEach(function (k) {
-      if (Object.prototype.hasOwnProperty.call(saved, k) && saved[k] !== null && saved[k] !== undefined) merged[k] = saved[k];
-    });
-    if (merged.ac === null || merged.ac === '' || isNaN(Number(merged.ac))) merged.ac = null;
-    else merged.ac = Number(merged.ac);
-    if (!R.powerOf || merged.power !== R.powerOf(merged.power).id) merged.power = DEFAULTS.power;
-    if (!merged.elem) merged.elemPlus = false;
-    if (merged.power !== 'eb') merged.quicken = false;
-    return merged;
+  function enabled() {
+    var on = state.ui.pages || DEFAULT_PAGES;
+    return PAGES.filter(function (p) {
+      if (p.hidden) return false;
+      if (p.home) return true;
+      return on.indexOf(p.id) >= 0;
+    }).sort(function (a, b) { return a.order - b.order; });
   }
 
-  function esc(text) {
-    return String(text === undefined || text === null ? '' : text)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  /* The label of a tab, which can be shorter than the name of the page. */
+  function label(p) {
+    if (p.tab) return p.tab;
+    return typeof p.title === 'function' ? p.title(api) : p.title;
   }
 
-  /* The marked pieces of a spell text: the damage in red, the saving
-     throws in blue, and the conditions, which carry the reference. */
-  function markup(text) {
-    var out = esc(text);
-    out = out.replace(/\[\[d:([^\]]*)\]\]/g, '<span class="tdmg">$1</span>');
-    out = out.replace(/\[\[s:([^\]]*)\]\]/g, '<span class="tsav">$1</span>');
-    out = out.replace(/\[\[c:([^\]]*)\]\]/g, '<span class="tcond" data-cond="$1" title="https://5e.tools/conditionsdiseases.html">$1</span>');
-    return out;
-  }
+  /* The tabs are only rebuilt when the pages or their names change. */
+  var tabsSig = '';
 
-  function seedSpells(saved) {
-    var s = {};
-    Object.keys(SPELL_DEFAULTS).forEach(function (k) { s[k] = SPELL_DEFAULTS[k]; });
-    if (saved && typeof saved === 'object') {
-      Object.keys(SPELL_DEFAULTS).forEach(function (k) {
-        if (saved[k] !== undefined && saved[k] !== null && typeof saved[k] === typeof SPELL_DEFAULTS[k]) s[k] = saved[k];
+  function renderTabs() {
+    var list = enabled();
+    var sig = list.map(function (p) { return p.id + ':' + label(p); }).join('|');
+    if (sig !== tabsSig) {
+      tabsSig = sig;
+      el.tabs.innerHTML = '';
+      list.forEach(function (p) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'tab';
+        b.textContent = label(p);
+        b.setAttribute('role', 'tab');
+        b.dataset.page = p.id;
+        b.setAttribute('aria-selected', p.id === current ? 'true' : 'false');
+        b.addEventListener('click', function () { show(p.id); });
+        el.tabs.appendChild(b);
       });
-      if (saved.classes) {
-        s.classes = {};
-        /* the class names were canonicalised, so an old key follows */
-        Object.keys(saved.classes).forEach(function (k) { s.classes[canonSource(k)] = !!saved.classes[k]; });
-      }
-      if (saved.levelFilter !== undefined) s.levelFilter = !!saved.levelFilter;
-      if (saved.max) { s.max = {}; Object.keys(SPELL_DEFAULTS.max).forEach(function (k) { s.max[k] = Number(saved.max[k]) || 0; }); }
-      if (saved.left) { s.left = {}; Object.keys(SPELL_DEFAULTS.left).forEach(function (k) { s.left[k] = Number(saved.left[k]) || 0; }); }
     }
-    var lists = {};
-    LEVELS.forEach(function (lv) {
-      var seed = SPELL_SEED.filter(function (n) {
-        var s = SPELL_BY_NAME[n];
-        return s && s.level === lv;
-      });
-      var own = (saved.lists && saved.lists[lv]) || null;
-      lists[lv] = (own && own.length) ? own.filter(function (n) { return SPELL_BY_NAME[n]; }) : seed;
+    Array.prototype.forEach.call(el.tabs.children, function (b) {
+      b.setAttribute('aria-selected', b.dataset.page === current ? 'true' : 'false');
     });
-    s.lists = lists;
-    return s;
+    el.gear.setAttribute('aria-pressed', current === 'settings' ? 'true' : 'false');
   }
+
+  /* A page is mounted the first time it is shown, and stays in the app
+     after that, so its state and its scroll place are kept. */
+  function show(id) {
+    var p = PAGES.filter(function (x) { return x.id === id; })[0];
+    if (!p) return;
+    current = id;
+
+    if (!MOUNTED[id]) {
+      var section = document.createElement('section');
+      section.className = 'view';
+      section.id = 'view-' + id;
+      if (p.html) section.innerHTML = p.html;
+      el.views.appendChild(section);
+      MOUNTED[id] = { spec: p, section: section };
+      if (p.mount) p.mount(section, api);
+    }
+
+    Object.keys(MOUNTED).forEach(function (k) {
+      MOUNTED[k].section.classList.toggle('on', k === id);
+    });
+
+    el.head.innerHTML = '';
+    if (p.head) p.head(el.head, api);
+
+    renderTabs();
+    el.pageTitle.textContent = label(p);
+    if (p.render) p.render(api);
+  }
+
+  function refresh() {
+    renderTabs();
+    var m = MOUNTED[current];
+    if (m && m.spec.render) m.spec.render(api);
+  }
+
+  /* ---- the interface the pages get ---- */
+
+  var api = {
+    state: state,
+    save: save,
+    refresh: refresh,
+    show: show,
+    toast: toast,
+    sheet: sheet,
+    core: core,
+    pages: PAGES,
+    defaultPages: DEFAULT_PAGES
+  };
+
+  /* ---- the wiring of the shell ---- */
+
+  el.gear.addEventListener('click', function () { show('settings'); });
+  el.sheetClose.addEventListener('click', function () { sheet.close(); });
+  el.sheet.addEventListener('click', function (ev) { if (ev.target === el.sheet) sheet.close(); });
+  el.sheetSearch.addEventListener('input', function () {
+    sheet.setSearch(el.sheetSearch.value);
+    var layer = sheet.top();
+    if (layer && layer.onSearch) layer.onSearch(el.sheetSearch.value);
+  });
+  el.grimoireLevel.addEventListener('click', function () {
+    var layer = sheet.top();
+    if (layer && layer.onLevel) layer.onLevel();
+  });
+  el.sheetList.addEventListener('click', function (ev) {
+    var layer = sheet.top();
+    if (layer && layer.onList) layer.onList(ev);
+  });
+  /* A condition opens the reference to it. */
+  el.sheetText.addEventListener('click', function (ev) {
+    var cond = ev.target.closest('.tcond');
+    if (!cond) return;
+    el.condName.textContent = cond.dataset.cond;
+    el.condTip.hidden = false;
+  });
+  el.condClose.addEventListener('click', function () { el.condTip.hidden = true; });
+
+  /* ---- the boot ---- */
+
+  function boot() {
+    /* every page seeds its own slice */
+    PAGES.forEach(function (p) {
+      if (!p.seed) return;
+      var key = p.slice || p.id;
+      state[key] = p.seed(state[key] || {});
+    });
+    var home = PAGES.filter(function (p) { return p.home; })[0];
+    show(home ? home.id : (enabled()[0] || PAGES[0]).id);
+  }
+
+  window.Volley = { page: page, core: core, show: show };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
+
+</script>
+<script>
+/* The character page: the abilities, the saving throws, the skills, the hit
+   points, the hit dice and the rests. It is the home of the app. */
+(function () {
+  'use strict';
+
+  var C = Volley.core;
+  var SR = C.SR;
+  var ABILITIES = C.ABILITIES;
+  var SKILLS = C.SKILLS;
+
+  var api = null;   /* the shell gives it at mount */
+  var E = {};       /* the elements of the page */
+  var CH = {};      /* the character */
+
+  var editingChar = false;
+  var noteTimer = null;
+
+  var FEATURE_SEED = (C.features.features || []).map(function (f) {
+    return {
+      key: f.key,
+      name: f.name,
+      source: f.source,
+      active: !!f.active,
+      max: f.uses || 0,
+      left: f.uses || 0,
+      recovery: f.recovery || 'passive',
+      cost: f.cost || '',
+      short: null,
+      hidden: !!f.hidden
+    };
+  });
+
+  var CHAR_DEFAULTS = {
+    name: '',
+    level: 9,
+    abilities: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 20 },
+    saves: { str: 0, dex: 0, con: 1, int: 0, wis: 0, cha: 1 },
+    skills: {},
+    features: FEATURE_SEED.concat([
+      { key: 'warlockSlots', name: 'Warlock spell slots', source: 'Warlock', active: true, recovery: 'short', bind: 'warlock', max: 0, left: 0, short: null, hidden: true }
+    ]),
+    init: 0,
+    ac: null,
+    hp: { current: 0, max: 0 },
+    dice: [].concat(
+      [{ type: 10, spent: false }],
+      [{ type: 6, spent: false }, { type: 6, spent: false }, { type: 6, spent: false }, { type: 6, spent: false },
+       { type: 6, spent: false }, { type: 6, spent: false }, { type: 6, spent: false }, { type: 6, spent: false }]
+    ),
+    history: []
+  };
+  SKILLS.forEach(function (s) { CHAR_DEFAULTS.skills[s.key] = 0; });
+
+  function commitChar() { api.save(); api.refresh(); }
 
   /* A proficiency is a number: 0 none, 1 proficient, 2 expertise. The state
      saved before the three states existed held a boolean, so it comes back
@@ -16574,8 +16757,9 @@ input[type=range]::-moz-range-thumb{
     return Math.floor(n);
   }
 
-  /* The character, with the saved values over the defaults. */
-  function seedChar(saved) {
+  /* ---- the state ---- */
+
+  function seed(saved) {
     var c = {
       name: '',
       level: CHAR_DEFAULTS.level,
@@ -16607,7 +16791,7 @@ input[type=range]::-moz-range-thumb{
       c.abilities[a.key] = CHAR_DEFAULTS.abilities[a.key];
       c.saves[a.key] = CHAR_DEFAULTS.saves[a.key];
     });
-    SKILLS.forEach(function (s) { c.skills[s.key] = false; });
+    SKILLS.forEach(function (s) { c.skills[s.key] = 0; });
     if (saved && typeof saved === 'object') {
       if (typeof saved.name === 'string') c.name = saved.name;
       if (saved.level) c.level = Math.max(1, Math.min(20, Number(saved.level) || CHAR_DEFAULTS.level));
@@ -16659,221 +16843,494 @@ input[type=range]::-moz-range-thumb{
     return c;
   }
 
-  function save() {
-    try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {}
-  }
+  /* ---- the sheet ---- */
 
-  function setState(patch) {
-    Object.keys(patch).forEach(function (k) { state[k] = patch[k]; });
-    if (!state.elem) state.elemPlus = false;
-    if (state.power !== 'eb') state.quicken = false;
-    volley = null;
-    save();
-    render();
-  }
+  function buildChar() {
+    ABILITIES.forEach(function (a) {
+      var col = document.createElement('div');
+      col.className = 'abcol';
 
-  /* ---- controls ---- */
+      var tile = document.createElement('div');
+      tile.className = 'ab';
+      tile.innerHTML = '<span class="an">' + a.name + '</span>' +
+        '<input class="cinput" type="number" inputmode="numeric" min="0" max="30" data-ab="' + a.key + '" aria-label="' + a.long + ' score">' +
+        '<span class="am" data-mod="' + a.key + '">+0</span>';
+      col.appendChild(tile);
 
-  el.power.addEventListener('input', function () {
-    var p = R.POWERS[Number(el.power.value)];
-    setState({ power: p.id });
-  });
+      /* The saving throw rides under the ability it comes from. */
+      var save = document.createElement('div');
+      save.className = 'prow';
+      save.dataset.kind = 'save';
+      save.dataset.key = a.key;
+      save.innerHTML = '<span class="dot"></span><span class="nm dim">save</span>' +
+        '<span class="vl">+0</span>';
+      col.appendChild(save);
 
-  el.ac.addEventListener('input', function () {
-    var v = el.ac.value.trim();
-    setState({ ac: v === '' ? null : Number(v) });
-  });
-
-  R.POWERS.forEach(function (p, i) {
-    var stop = document.createElement('button');
-    stop.type = 'button';
-    stop.className = 'stop';
-    stop.textContent = p.short;
-    stop.style.left = 'calc(13px + (100% - 26px) * ' + (i / (R.POWERS.length - 1)) + ')';
-    stop.addEventListener('click', function () {
-      el.power.value = String(i);
-      setState({ power: p.id });
+      E.charAbilities.appendChild(col);
     });
-    el.stops.appendChild(stop);
-  });
 
-  CHIPS.forEach(function (chip) {
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'chip';
-    b.dataset.key = chip.key;
-    b.textContent = chip.label;
-    b.style.setProperty('--crgb', chip.rgb);
-    b.addEventListener('click', function () {
-      var next = !state[chip.key];
-      var patch = {};
-      patch[chip.key] = next;
-      if (chip.key === 'elem' && !next) patch.elemPlus = false;
-      setState(patch);
+    SKILLS.forEach(function (s) {
+      var row = document.createElement('div');
+      row.className = 'prow';
+      row.dataset.kind = 'skill';
+      row.dataset.key = s.key;
+      row.innerHTML = '<span class="dot"></span><span class="nm">' + s.name + '</span>' +
+        '<span class="abk">' + s.ab.toUpperCase() + '</span><span class="vl">+0</span>';
+      E.charSkills.appendChild(row);
     });
-    el.chips.appendChild(b);
-  });
-
-  el.tabVolley.addEventListener('click', function () { setView('volley'); });
-  el.tabSpells.addEventListener('click', function () { setView('spells'); });
-  el.tabChar.addEventListener('click', function () { setView('char'); });
-  el.tabFeatures.addEventListener('click', function () { setView('features'); });
-
-  el.cast.addEventListener('click', function () {
-    volley = R.rollVolley(state);
-    renderBoard(true);
-    renderTally();
-    var anyCrit = volley.beams.some(function (b) { return b.crit; });
-    if (navigator.vibrate) navigator.vibrate(anyCrit ? [14, 45, 18] : 16);
-  });
-
-  /* ---- rendering ---- */
-
-  function elemLabel() {
-    if (!state.elem) return 'Elem';
-    return state.elemPlus ? 'Elem 3d8' : 'Elem 2d8';
   }
 
-  function setView(next) {
-    view = next;
-    el.viewVolley.classList.toggle('on', next === 'volley');
-    el.viewSpells.classList.toggle('on', next === 'spells');
-    el.viewChar.classList.toggle('on', next === 'char');
-    el.viewFeatures.classList.toggle('on', next === 'features');
-    el.tabVolley.setAttribute('aria-selected', next === 'volley' ? 'true' : 'false');
-    el.tabSpells.setAttribute('aria-selected', next === 'spells' ? 'true' : 'false');
-    el.tabChar.setAttribute('aria-selected', next === 'char' ? 'true' : 'false');
-    el.tabFeatures.setAttribute('aria-selected', next === 'features' ? 'true' : 'false');
-    el.acField.style.visibility = next === 'volley' ? 'visible' : 'hidden';
-    el.wrench.hidden = next !== 'spells' && next !== 'char' && next !== 'features';
-    el.cast.hidden = next === 'spells' || next === 'char' || next === 'features';
-    el.castLabel.textContent = 'Cast';
-    render();
-  }
+  function renderChar() {
+    E.charBody.classList.toggle('editing', editingChar);
+    E.charNameWrap.hidden = !editingChar;
 
-  function pad2(n) { return (n < 10 ? '0' : '') + n; }
-
-  /* The wild magic surge: a d100 on the table, and the row it lands on. */
-  function openSurge() {
-    var s = state.spell.surge;
-    sheetMode = 'surge';
-    sheetParent = '';
-    el.sheetTitle.textContent = 'Wild magic surge';
-    el.sheetMeta.className = 'sheet-meta';
-    el.sheetMeta.innerHTML = s
-      ? field('Range', pad2(s.from) + '-' + pad2(s.to)) + field('Roll', 'd100: ' + s.roll)
-      : field('Roll', 'd100');
-
-    var html = '<button class="surgelarge" type="button" id="surgeRoll" aria-label="Roll the wild magic surge">' +
-      '<span class="surged100">' + (s ? s.roll : '--') + '</span></button>';
-    if (s) {
-      html += '<p>' + markup(s.text) + '</p>';
-      if (s.dice && s.dice.length) {
-        html += '<p>' + s.dice.map(function (d) {
-          return esc(d.label) + ': ' + d.values.join(' + ') + ' = ' + d.total;
-        }).join('<br>') + '</p>';
-      }
-    } else {
-      html += '<p>Roll the surge to see what the wild magic does.</p>';
+    if (document.activeElement !== E.charName) E.charName.value = CH.name;
+    if (document.activeElement !== E.charAc) {
+      E.charAc.value = CH.ac === null ? '' : String(CH.ac);
     }
-    el.sheetText.innerHTML = html;
-    el.sheetActions.innerHTML = '<button id="rollSurge">Roll the surge</button>';
-    el.condTip.hidden = true;
-    el.grimoireLevel.hidden = true;
-    el.sheetSearch.hidden = true;
-    el.sheetList.innerHTML = '';
-    el.sheetList.hidden = true;
-    el.sheet.hidden = false;
+    if (document.activeElement !== E.charInit) E.charInit.value = String(CH.init);
+    if (document.activeElement !== E.charLevel) E.charLevel.value = String(CH.level);
+    if (document.activeElement !== E.charHpNow) {
+      E.charHpNow.value = CH.hp.current ? String(CH.hp.current) : '';
+    }
+    if (document.activeElement !== E.charHpMax) {
+      E.charHpMax.value = CH.hp.max ? String(CH.hp.max) : '';
+    }
+    E.charHpDown.disabled = !CH.hp.current;
+    E.charHpUp.disabled = CH.hp.max > 0 && CH.hp.current >= CH.hp.max;
+    E.charHpRewind.disabled = !CH.history.length;
+    E.charHpRewind.title = CH.history.length
+      ? 'Rewind the last change, ' + CH.history.length + ' to go back'
+      : 'Nothing to rewind';
 
-    el.sheetText.querySelector('#surgeRoll').addEventListener('click', rollSurge);
-    el.sheetActions.querySelector('#rollSurge').addEventListener('click', rollSurge);
+    ABILITIES.forEach(function (a) {
+      var input = E.charAbilities.querySelector('[data-ab="' + a.key + '"]');
+      if (input && document.activeElement !== input) input.value = String(CH.abilities[a.key]);
+      var mod = E.charAbilities.querySelector('[data-mod="' + a.key + '"]');
+      if (mod) mod.textContent = SR.sign(SR.abilityMod(CH.abilities[a.key]));
+    });
+
+    ABILITIES.forEach(function (a) {
+      var row = E.charAbilities.querySelector('[data-kind="save"][data-key="' + a.key + '"]');
+      if (!row) return;
+      var v = Number(CH.saves[a.key]) || 0;
+      row.classList.toggle('prof', v === 1);
+      row.classList.toggle('exp', v === 2);
+      row.querySelector('.vl').textContent = SR.sign(SR.saveMod(CH, a.key));
+      row.title = a.long + ' saving throw, ' + SR.profLabel(v);
+    });
+
+    SKILLS.forEach(function (s) {
+      var row = E.charSkills.querySelector('[data-key="' + s.key + '"]');
+      if (!row) return;
+      var v = Number(CH.skills[s.key]) || 0;
+      row.classList.toggle('prof', v === 1);
+      row.classList.toggle('exp', v === 2);
+      row.querySelector('.vl').textContent = SR.sign(SR.skillMod(CH, s.key));
+      row.title = s.name + ', ' + SR.profLabel(v);
+    });
+
+    E.charDerived.innerHTML =
+      '<span>proficiency <b>' + SR.sign(SR.profBonus(CH.level)) + '</b></span>' +
+      '<span>spell attack <b>' + SR.sign(SR.spellAttack(CH)) + '</b></span>' +
+      '<span>save DC <b>' + SR.spellDC(CH) + '</b></span>' +
+      '<span>passive perception <b>' + (10 + SR.skillMod(CH, 'perception')) + '</b></span>';
+
+    renderDice();
   }
 
-  function rollSurge() {
-    if (!SURGE.rows || !SURGE.rows.length) {
-      note('The surge table did not load.');
+  /* ---- the hit dice ---- */
+
+  function dieSvg(type) {
+    var pts = SR.DIE_SHAPES[type];
+    if (!pts) {
+      var built = [], i, a;
+      for (i = 0; i < type; i++) {
+        a = -Math.PI / 2 + i * 2 * Math.PI / type;
+        built.push((12 + 9.2 * Math.cos(a)).toFixed(2) + ',' + (12 + 9.2 * Math.sin(a)).toFixed(2));
+      }
+      pts = built.join(' ');
+    }
+    var label = SR.DIE_LABEL[type] || { y: 15.4, size: 9 };
+    return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<polygon points="' + pts + '" fill="none" stroke="currentColor" stroke-width="1.5"/>' +
+      '<text x="12" y="' + label.y + '" text-anchor="middle" font-size="' + label.size + '" fill="currentColor" ' +
+      'font-family="Cinzel, Georgia, serif">' + type + '</text></svg>';
+  }
+
+  function countDice(type) {
+    var n = 0;
+    (CH.dice || []).forEach(function (d) { if (d.type === type) n++; });
+    return n;
+  }
+
+  function renderDice() {
+    E.diceBox.innerHTML = '';
+
+    if (editingChar) {
+      var grid = document.createElement('div');
+      grid.className = 'diceedit';
+      [12, 10, 8, 6].forEach(function (t) {
+        var row = document.createElement('div');
+        row.className = 'drow';
+        row.innerHTML = '<span class="dico">' + dieSvg(t) + '</span>' +
+          '<span class="dty">d' + t + '</span>' +
+          '<button class="mini" type="button" data-type="' + t + '" data-sign="-">&minus;</button>' +
+          '<span class="dval">' + countDice(t) + '</span>' +
+          '<button class="mini" type="button" data-type="' + t + '" data-sign="+">+</button>';
+        grid.appendChild(row);
+      });
+      E.diceBox.appendChild(grid);
       return;
     }
-    var result = R.rollSurge(SURGE.rows);
-    state.spell.surge = { roll: result.roll, from: result.from, to: result.to, text: result.text, dice: result.dice };
-    save();
-    openSurge();
-    if (navigator.vibrate) navigator.vibrate(result.dice.length ? [14, 45, 14] : 16);
-  }
 
-  function render() {
-    var power = R.powerOf(state.power);
-
-    el.spellName.textContent = view === 'volley' ? power.name
-      : (view === 'spells' ? 'Spells'
-      : (view === 'features' ? 'Features' : (state.char.name || 'Character')));
-    el.power.value = String(R.POWERS.indexOf(power));
-    var span = Number(el.power.max) - Number(el.power.min);
-    el.power.style.setProperty('--fill', (span ? (Number(el.power.value) - Number(el.power.min)) / span * 100 : 0) + '%');
-
-    Array.prototype.forEach.call(el.stops.children, function (s, i) {
-      s.classList.toggle('on', R.POWERS[i].id === power.id);
-    });
-
-    Array.prototype.forEach.call(el.chips.children, function (b) {
-      var key = b.dataset.key;
-      var chip = CHIPS.filter(function (c) { return c.key === key; })[0];
-      b.setAttribute('aria-pressed', state[key] ? 'true' : 'false');
-      if (key === 'elem') b.textContent = elemLabel();
-      if (chip.only) b.hidden = state.power !== chip.only;
-      if (chip.needs) b.hidden = !state[chip.needs];
-    });
-
-    if (el.ac.value !== (state.ac === null ? '' : String(state.ac))) {
-      el.ac.value = state.ac === null ? '' : String(state.ac);
+    var dice = (CH.dice || []).map(function (d, ix) { return { d: d, ix: ix }; });
+    dice.sort(function (a, b) { return b.d.type - a.d.type; });
+    if (!dice.length) {
+      var none = document.createElement('span');
+      none.className = 'dnote';
+      none.textContent = 'No hit dice yet. The wrench sets them.';
+      E.diceBox.appendChild(none);
+      return;
     }
-
-    el.wrench.setAttribute('aria-pressed', (view === 'char' ? editingChar : (view === 'features' ? editingFeatures : editing)) ? 'true' : 'false');
-    el.wrench.setAttribute('aria-label', view === 'char' ? 'Edit the proficiencies'
-      : (view === 'features' ? 'Edit the features' : 'Edit the slot maximums'));
-
-    renderSummary();
-    renderBoard(false);
-    renderTally();
-    renderSpells();
-    renderChar();
-    renderFeatureCards();
+    dice.forEach(function (item) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'die' + (item.d.spent ? ' spent' : '');
+      b.innerHTML = dieSvg(item.d.type);
+      b.dataset.ix = String(item.ix);
+      b.setAttribute('aria-label', 'd' + item.d.type + (item.d.spent ? ', spent' : ', left'));
+      E.diceBox.appendChild(b);
+    });
   }
 
-  function renderBoard(animate) {
-    var power = R.powerOf(state.power);
-    var n = power.attacks;
-    var count = R.beamCount(state);
-    var quick = R.quickened(state);
-    el.grid.style.setProperty('--cols', n === 4 ? '2' : '3');
-    el.grid.classList.toggle('quick', quick);
-    el.grid.innerHTML = '';
+  /* ---- the rests ---- */
 
-    for (var i = 0; i < count; i++) {
-      /* the quickened cast starts a second row */
-      if (quick && i === n) {
-        var sep = document.createElement('div');
-        sep.className = 'rowsep';
-        sep.innerHTML = '<span>Quickened</span>';
-        el.grid.appendChild(sep);
-      }
-      var beam = volley ? volley.beams[i] : null;
-      var cell = document.createElement('article');
-      cell.className = 'cell' + (beam && beam.quick ? ' quick' : '');
-      var preview = beam ? beam.groups : previewGroups();
-      cell.style.setProperty('--beam', TYPE_RGB[preview[0] ? preview[0].type : 'force'] || '155,123,255');
-      if (!animate) cell.style.animation = 'none';
-      cell.style.setProperty('--i', String(i));
-      if (beam) {
-        if (beam.crit) cell.classList.add('crit');
-        if (beam.hit === false) cell.classList.add('miss');
-      } else {
-        cell.classList.add('ghost');
-      }
-      cell.innerHTML = cellHtml(beam);
-      el.grid.appendChild(cell);
+  function pushSnapshot() {
+    CH.history.push(SR.snapshot(CH, api.state.spells));
+    if (CH.history.length > 60) CH.history.shift();
+  }
+
+  function setHp(next) {
+    if (next === CH.hp.current) return;
+    pushSnapshot();
+    CH.hp.current = next;
+    commitChar();
+  }
+
+  function applyRest(result) {
+    CH.hp.current = result.hp;
+    CH.hp.max = result.hpmax;
+    if (result.dice) CH.dice = result.dice;
+    CH.features = result.features;
+    var S = api.state.spells;
+    S.left = result.left;
+    S.warlockLeft = result.warlockLeft;
+    S.sp = result.sp;
+    S.cunning = result.cunning;
+    S.sorcRest = result.sorcRest;
+  }
+
+  function slotsDiffer(a, b) {
+    var keys = {}, k;
+    for (k in (a || {})) keys[k] = 1;
+    for (k in (b || {})) keys[k] = 1;
+    for (k in keys) if ((a[k] || 0) !== (b[k] || 0)) return true;
+    return false;
+  }
+
+  function doRest(kind) {
+    var before = SR.snapshot(CH, api.state.spells);
+    var after = kind === 'long' ? SR.longRest(CH, api.state.spells) : SR.shortRest(CH, api.state.spells);
+    CH.history.push(before);
+    if (CH.history.length > 60) CH.history.shift();
+    applyRest(after);
+    commitChar();
+    note(restNote(kind, before, after));
+    if (navigator.vibrate) navigator.vibrate([14, 40, 14]);
+  }
+
+  /* What the rest actually gave back, so the note says it. */
+  function restNote(kind, before, after) {
+    var names = [];
+    (after.features || []).forEach(function (f, i) {
+      var b = (before.features || [])[i];
+      if (b && f.left > b.left) names.push(f.name);
+    });
+    if (after.warlockLeft > before.warlockLeft && names.indexOf('Warlock spell slots') < 0) {
+      names.push('Warlock spell slots');
     }
+    if (kind === 'long') {
+      var bits = [];
+      if (after.hp !== before.hp) bits.push('hit points');
+      if (slotsDiffer(after.left, before.left) || after.warlockLeft !== before.warlockLeft) bits.push('spell slots');
+      if (after.sp !== before.sp) bits.push('sorcery points');
+      if (names.length) bits.push(names.join(' and '));
+      return 'Long rest' + (bits.length ? ': ' + bits.join(', ') + ' back.' : ': nothing to give back.');
+    }
+    return 'Short rest' + (names.length ? ': ' + names.join(' and ') + ' back.' : ': nothing to give back yet.');
   }
+
+  function note(message) {
+    E.charNote.textContent = message;
+    if (noteTimer) clearTimeout(noteTimer);
+    noteTimer = setTimeout(function () { E.charNote.textContent = ''; }, 2600);
+  }
+
+  /* ---- the page ---- */
+
+  Volley.page({
+    id: 'character',
+    title: function (a) { return a.state.char.name || 'Character'; },
+    tab: 'Character',
+    home: true,
+    order: 0,
+    slice: 'char',
+    blurb: 'The sheet of the character. It is always there.',
+    html: [
+      '<div class="charbody" id="charBody">',
+      '  <div class="csname" id="charNameWrap" hidden>',
+      '    <span class="ck">NAME</span>',
+      '    <input class="cinput" id="charName" type="text" placeholder="your character" aria-label="Character name">',
+      '  </div>',
+      '  <div class="ctop">',
+      '    <label class="ctile" for="charAc">',
+      '      <span class="ck">AC</span>',
+      '      <input class="cinput" id="charAc" type="number" inputmode="numeric" min="0" max="40" placeholder="--" aria-label="Armor class">',
+      '    </label>',
+      '    <label class="ctile" for="charInit">',
+      '      <span class="ck">INIT</span>',
+      '      <input class="cinput" id="charInit" type="number" inputmode="numeric" min="-9" max="20" placeholder="0" aria-label="Initiative modifier">',
+      '    </label>',
+      '    <label class="ctile" for="charLevel">',
+      '      <span class="ck">LEVEL</span>',
+      '      <input class="cinput" id="charLevel" type="number" inputmode="numeric" min="1" max="20" placeholder="1" aria-label="Character level">',
+      '    </label>',
+      '  </div>',
+      '  <div class="hpstrip">',
+      '    <span class="ck">HP</span>',
+      '    <input class="cinput cur" id="charHpNow" type="number" inputmode="numeric" min="0" placeholder="--" aria-label="Current hit points">',
+      '    <span class="of">/</span>',
+      '    <input class="cinput max" id="charHpMax" type="number" inputmode="numeric" min="0" placeholder="--" aria-label="Maximum hit points">',
+      '    <span class="tools">',
+      '      <button class="mini" id="charHpDown" type="button" aria-label="Lose a hit point">&minus;</button>',
+      '      <button class="mini" id="charHpUp" type="button" aria-label="Gain a hit point">+</button>',
+      '      <button class="mini" id="charHpRewind" type="button" aria-label="Rewind the last change">',
+      '        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">',
+      '          <path d="M3.5 12a8.5 8.5 0 1 0 2.8-6.3"/><path d="M3.5 4.4v5.2h5.2"/>',
+      '        </svg>',
+      '      </button>',
+      '    </span>',
+      '  </div>',
+      '  <div class="dicebox" id="diceBox"></div>',
+      '  <div class="cshead"><span>Abilities</span><span class="rule"></span></div>',
+      '  <div class="abgrid" id="charAbilities"></div>',
+      '  <div class="derived" id="charDerived"></div>',
+      '  <div class="cshead"><span>Skills</span><span class="rule"></span></div>',
+      '  <div class="sgrid" id="charSkills"></div>',
+      '</div>',
+      '<div class="charfoot">',
+      '  <p class="note" id="charNote"></p>',
+      '  <div class="rests">',
+      '    <button class="rest" id="restShort" type="button">Short rest</button>',
+      '    <button class="rest" id="restLong" type="button">Long rest</button>',
+      '  </div>',
+      '</div>'
+    ].join('\n'),
+
+    seed: seed,
+
+    mount: function (root, a) {
+      api = a;
+      CH = a.state.char;
+      E = {
+        charBody: root.querySelector('#charBody'),
+        charNameWrap: root.querySelector('#charNameWrap'),
+        charName: root.querySelector('#charName'),
+        charAc: root.querySelector('#charAc'),
+        charInit: root.querySelector('#charInit'),
+        charLevel: root.querySelector('#charLevel'),
+        charHpNow: root.querySelector('#charHpNow'),
+        charHpMax: root.querySelector('#charHpMax'),
+        charHpDown: root.querySelector('#charHpDown'),
+        charHpUp: root.querySelector('#charHpUp'),
+        charHpRewind: root.querySelector('#charHpRewind'),
+        diceBox: root.querySelector('#diceBox'),
+        charAbilities: root.querySelector('#charAbilities'),
+        charDerived: root.querySelector('#charDerived'),
+        charSkills: root.querySelector('#charSkills'),
+        charNote: root.querySelector('#charNote'),
+        restShort: root.querySelector('#restShort'),
+        restLong: root.querySelector('#restLong')
+      };
+
+      buildChar();
+
+      E.charName.addEventListener('input', function () {
+        CH.name = E.charName.value;
+        commitChar();
+      });
+
+      E.charAc.addEventListener('input', function () {
+        var v = E.charAc.value.trim();
+        CH.ac = v === '' ? null : Number(v);
+        commitChar();
+      });
+
+      E.charInit.addEventListener('input', function () {
+        var v = E.charInit.value.trim();
+        CH.init = v === '' ? 0 : Number(v);
+        commitChar();
+      });
+
+      E.charLevel.addEventListener('input', function () {
+        var v = Number(E.charLevel.value);
+        CH.level = Math.max(1, Math.min(20, isFinite(v) && v ? v : 1));
+        commitChar();
+      });
+
+      E.charAbilities.addEventListener('input', function (ev) {
+        var input = ev.target.closest('[data-ab]');
+        if (!input) return;
+        var v = input.value.trim();
+        CH.abilities[input.dataset.ab] = v === '' ? 10 : Math.max(0, Math.min(30, Number(v) || 0));
+        commitChar();
+      });
+
+      /* The field follows the typing, and the value it had when the field
+         was opened goes to the history when the player is done with it, so
+         the rewind takes back a whole typed change and not one keystroke. */
+      var hpBefore = null;
+
+      E.charHpNow.addEventListener('focus', function () {
+        hpBefore = SR.snapshot(CH, api.state.spells);
+      });
+
+      E.charHpNow.addEventListener('input', function () {
+        var v = E.charHpNow.value.trim();
+        CH.hp.current = SR.hpApply(v === '' ? 0 : Number(v) || 0, CH.hp.max, 0);
+        commitChar();
+      });
+
+      E.charHpNow.addEventListener('change', function () {
+        if (hpBefore && hpBefore.hp !== CH.hp.current) {
+          CH.history.push(hpBefore);
+          if (CH.history.length > 60) CH.history.shift();
+        }
+        hpBefore = null;
+        commitChar();
+      });
+
+      E.charHpMax.addEventListener('input', function () {
+        var v = E.charHpMax.value.trim();
+        var max = v === '' ? 0 : Math.max(0, Number(v) || 0);
+        CH.hp.max = max;
+        if (max > 0 && CH.hp.current > max) CH.hp.current = max;
+        commitChar();
+      });
+
+      E.charHpUp.addEventListener('click', function () {
+        setHp(SR.hpApply(CH.hp.current, CH.hp.max, 1));
+      });
+
+      E.charHpDown.addEventListener('click', function () {
+        setHp(SR.hpApply(CH.hp.current, CH.hp.max, -1));
+      });
+
+      E.charHpRewind.addEventListener('click', function () {
+        var r = SR.rewind(CH.history);
+        if (!r.current) return;
+        CH.history = r.history;
+        applyRest(r.current);
+        commitChar();
+        note('Rewound to before the last change.');
+      });
+
+      E.diceBox.addEventListener('click', function (ev) {
+        var pick = ev.target.closest('[data-type][data-sign]');
+        if (pick) {
+          var type = Number(pick.dataset.type);
+          var add = pick.dataset.sign === '+';
+          var dice = CH.dice || (CH.dice = []);
+          if (add) {
+            dice.push({ type: type, spent: false });
+          } else {
+            for (var i = dice.length - 1; i >= 0; i--) {
+              if (dice[i].type === type) { dice.splice(i, 1); break; }
+            }
+          }
+          pushSnapshot();
+          commitChar();
+          return;
+        }
+        var die = ev.target.closest('.die');
+        if (!die) return;
+        var d = (CH.dice || [])[Number(die.dataset.ix)];
+        if (!d) return;
+        pushSnapshot();
+        d.spent = !d.spent;
+        commitChar();
+      });
+
+      /* The proficiencies only move in the edit mode, so a stray tap at the
+         table never changes a modifier. */
+      E.charBody.addEventListener('click', function (ev) {
+        if (!editingChar) return;
+        var row = ev.target.closest('.prow');
+        if (!row) return;
+        if (row.dataset.kind === 'save') CH.saves[row.dataset.key] = SR.nextProf(CH.saves[row.dataset.key]);
+        else if (row.dataset.kind === 'skill') CH.skills[row.dataset.key] = SR.nextProf(CH.skills[row.dataset.key]);
+        else return;
+        commitChar();
+      });
+
+      E.restShort.addEventListener('click', function () { doRest('short'); });
+      E.restLong.addEventListener('click', function () { doRest('long'); });
+    },
+
+    /* The wrench edits the proficiencies. */
+    head: function (root, a) {
+      api = a;
+      CH = a.state.char;
+      var b = C.wrenchButton('Edit the proficiencies', function () {
+        editingChar = !editingChar;
+        api.save();
+        api.refresh();
+      });
+      root.appendChild(b);
+      E.wrench = b;
+    },
+
+    render: function (a) {
+      api = a;
+      CH = a.state.char;
+      if (E.wrench) E.wrench.setAttribute('aria-pressed', editingChar ? 'true' : 'false');
+      renderChar();
+    }
+  });
+})();
+
+</script>
+<script>
+/* The volley page: the spell slider, the toggles, the beams and the tally. */
+(function () {
+  'use strict';
+
+  var C = Volley.core;
+  var R = C.R;
+
+  var api = null;   /* the shell gives it at mount */
+  var E = {};       /* the elements of the page */
+  var S = {};       /* the state of the page */
+
+  var CHIPS = [
+    { key: 'advantage', label: 'Adv',      rgb: '154,209,255' },
+    { key: 'hex',       label: 'Hex',      rgb: '122,216,111' },
+    { key: 'curse',     label: 'Curse',    rgb: '255,111,168' },
+    { key: 'elem',      label: 'Elem',     rgb: '255,212,71' },
+    { key: 'elemPlus',  label: '+3d8',     rgb: '255,176,59', needs: 'elem' },
+    { key: 'quicken',   label: 'Quicken',  rgb: '92,214,220', only: 'eb' }
+  ];
 
   var TYPE_RGB = {
     force: '110,155,255',
@@ -16882,40 +17339,45 @@ input[type=range]::-moz-range-thumb{
     necrotic: '122,216,111'
   };
 
-  function renderSummary() {
-    var power = R.powerOf(state.power);
-    var count = R.beamCount(state);
-    /* The flat bonus is damage of the spell's own type, the curse one too. */
-    var flat = power.flat + (state.curse ? 4 : 0);
-    var beams = count + ' beam' + (count === 1 ? '' : 's');
-    var attack = state.advantage
-      ? 'attack 3d20+' + R.ATTACK_MOD + ' keep best'
-      : 'attack d20+' + R.ATTACK_MOD;
-    var crit = state.curse ? 'crit on 19-20' : 'crit on 20';
-    var head = beams + (R.quickened(state) ? ' &middot; quickened' : '') +
-      ' &middot; ' + attack + ' &middot; ' + crit;
+  var volley = null;
+  var ATK = R.ATTACK_MOD;   /* the attack bonus of the caster */
+  var FLAT = 0;             /* the modifier that rides on the damage */
 
-    var bits = [];
-    power.dice.forEach(function (d, i) {
-      bits.push(d.n + 'd' + d.s + (i === 0 && flat ? '+' + flat : '') +
-        ' <em class="' + d.type + '">' + d.type + '</em>');
-    });
-    if (state.hex) bits.push('1d6 <em class="necrotic">necrotic</em>');
-    var light = 0;
-    if (state.elem) light = state.elemPlus ? 3 : 2;
-    if (light) bits.push(light + 'd8 <em class="lightning">lightning</em>');
+  function commit() { api.save(); api.refresh(); }
 
-    el.summary.innerHTML =
-      '<span>' + head + '</span>' +
-      '<span>damage ' + bits.join(' + ') + '</span>';
+  /* The state of the caster, with the numbers of the character sheet in
+     it: the attack bonus and the modifier the damage carries. */
+  function casting() {
+    var st = Object.assign({}, S);
+    var ch = api.state.char;
+    if (ch && ch.abilities) {
+      st.attackMod = C.SR.spellAttack(ch);
+      st.flatMod = C.SR.abilityMod(ch.abilities.cha);
+    }
+    return st;
   }
 
+  function setState(patch) {
+    Object.keys(patch).forEach(function (k) { S[k] = patch[k]; });
+    if (!S.elem) S.elemPlus = false;
+    if (S.power !== 'eb') S.quicken = false;
+    volley = null;
+    commit();
+  }
+
+  function elemLabel() {
+    if (!S.elem) return 'Elem';
+    return S.elemPlus ? 'Elem 3d8' : 'Elem 2d8';
+  }
+
+  /* ---- the board ---- */
+
   function previewGroups() {
-    var power = R.powerOf(state.power);
+    var power = R.powerOf(S.power);
     var groups = [];
     power.dice.forEach(function (d) { groups.push({ label: d.n + 'd' + d.s, type: d.type }); });
-    if (state.hex) groups.push({ label: '1d6', type: 'necrotic' });
-    if (state.elem) groups.push({ label: state.elemPlus ? '3d8' : '2d8', type: 'lightning' });
+    if (S.hex) groups.push({ label: '1d6', type: 'necrotic' });
+    if (S.elem) groups.push({ label: S.elemPlus ? '3d8' : '2d8', type: 'lightning' });
     return groups;
   }
 
@@ -16924,10 +17386,10 @@ input[type=range]::-moz-range-thumb{
       var groups = previewGroups();
       var types = [];
       groups.forEach(function (g) { if (types.indexOf(g.type) === -1) types.push(g.type); });
-      var power = R.powerOf(state.power);
-      var flat = power.flat + (state.curse ? 4 : 0);
+      var power = R.powerOf(S.power);
+      var flat = FLAT + (S.curse ? 4 : 0);
       var flatType = R.primaryType(power);
-      var out = '<div class="atk"><span class="at ghostnum">d20</span><span class="am">+' + R.ATTACK_MOD + '</span></div>';
+      var out = '<div class="atk"><span class="at ghostnum">d20</span><span class="am">+' + ATK + '</span></div>';
       out += '<div class="d20"><span class="ghostroll">--</span></div>';
       out += '<div class="beam"></div>';
       out += '<div class="dmg"><div class="dtop"><span class="dt ghostnum">--</span><span class="kinds">';
@@ -16944,7 +17406,7 @@ input[type=range]::-moz-range-thumb{
 
     var out = '<div class="atk">';
     out += '<span class="at">' + beam.total + '</span>';
-    out += '<span class="am">+' + R.ATTACK_MOD + '</span>';
+    out += '<span class="am">+' + ATK + '</span>';
     if (beam.crit) out += '<span class="badge crit">crit</span>';
     else if (beam.hit === true) out += '<span class="badge hit">hit</span>';
     else if (beam.hit === false) out += '<span class="badge miss">miss</span>';
@@ -16962,7 +17424,7 @@ input[type=range]::-moz-range-thumb{
       if (types.indexOf(beam.groups[i].type) === -1) types.push(beam.groups[i].type);
     }
     /* the flat bonus is damage of the spell's own type */
-    var flatType = R.primaryType(R.powerOf(state.power));
+    var flatType = R.primaryType(R.powerOf(S.power));
 
     out += '<div class="dmg"><div class="dtop"><span class="dt">' + beam.damage + '</span><span class="kinds">';
     types.forEach(function (t) { out += '<em class="' + t + '">' + t + '</em>'; });
@@ -16979,16 +17441,79 @@ input[type=range]::-moz-range-thumb{
     return out;
   }
 
+  function renderBoard(animate) {
+    var power = R.powerOf(S.power);
+    var n = power.attacks;
+    var count = R.beamCount(S);
+    var quick = R.quickened(S);
+    E.grid.style.setProperty('--cols', n === 4 ? '2' : '3');
+    E.grid.classList.toggle('quick', quick);
+    E.grid.innerHTML = '';
+
+    for (var i = 0; i < count; i++) {
+      /* the quickened cast starts a second row */
+      if (quick && i === n) {
+        var sep = document.createElement('div');
+        sep.className = 'rowsep';
+        sep.innerHTML = '<span>Quickened</span>';
+        E.grid.appendChild(sep);
+      }
+      var beam = volley ? volley.beams[i] : null;
+      var cell = document.createElement('article');
+      cell.className = 'cell' + (beam && beam.quick ? ' quick' : '');
+      var preview = beam ? beam.groups : previewGroups();
+      cell.style.setProperty('--beam', TYPE_RGB[preview[0] ? preview[0].type : 'force'] || '155,123,255');
+      if (!animate) cell.style.animation = 'none';
+      cell.style.setProperty('--i', String(i));
+      if (beam) {
+        if (beam.crit) cell.classList.add('crit');
+        if (beam.hit === false) cell.classList.add('miss');
+      } else {
+        cell.classList.add('ghost');
+      }
+      cell.innerHTML = cellHtml(beam);
+      E.grid.appendChild(cell);
+    }
+  }
+
+  function renderSummary() {
+    var power = R.powerOf(S.power);
+    var count = R.beamCount(S);
+    /* The flat bonus is damage of the spell's own type, the curse one too. */
+    var flat = FLAT + (S.curse ? 4 : 0);
+    var beams = count + ' beam' + (count === 1 ? '' : 's');
+    var attack = S.advantage
+      ? 'attack 3d20+' + ATK + ' keep best'
+      : 'attack d20+' + ATK;
+    var crit = S.curse ? 'crit on 19-20' : 'crit on 20';
+    var head = beams + (R.quickened(S) ? ' &middot; quickened' : '') +
+      ' &middot; ' + attack + ' &middot; ' + crit;
+
+    var bits = [];
+    power.dice.forEach(function (d, i) {
+      bits.push(d.n + 'd' + d.s + (i === 0 && flat ? '+' + flat : '') +
+        ' <em class="' + d.type + '">' + d.type + '</em>');
+    });
+    if (S.hex) bits.push('1d6 <em class="necrotic">necrotic</em>');
+    var light = 0;
+    if (S.elem) light = S.elemPlus ? 3 : 2;
+    if (light) bits.push(light + 'd8 <em class="lightning">lightning</em>');
+
+    E.summary.innerHTML =
+      '<span>' + head + '</span>' +
+      '<span>damage ' + bits.join(' + ') + '</span>';
+  }
+
   function renderTally() {
     if (!volley) {
-      el.tally.innerHTML = state.ac === null
+      E.tally.innerHTML = S.ac === null
         ? '<span style="color:#615c7d">No target AC set, so damage shows for every beam</span>'
         : '';
       return;
     }
-    var t = R.tally(volley, state.ac);
+    var t = R.tally(volley, S.ac);
     var out = '<span class="big">' + t.total + '</span><span>damage</span>';
-    if (state.ac !== null) {
+    if (S.ac !== null) {
       out += '<span>&middot; ' + t.hits + ' hit' + (t.hits === 1 ? '' : 's');
       if (t.crits) out += ' &middot; ' + t.crits + ' crit' + (t.crits === 1 ? '' : 's');
       out += '</span>';
@@ -16997,15 +17522,241 @@ input[type=range]::-moz-range-thumb{
     t.order.forEach(function (type) {
       out += '<em class="' + type + '">&middot; ' + t.byType[type] + ' ' + type + '</em>';
     });
-    el.tally.innerHTML = out;
+    E.tally.innerHTML = out;
   }
 
-  /* ---- spells ---- */
+  /* ---- the page ---- */
+
+  Volley.page({
+    id: 'volley',
+    title: 'Volley',
+    order: 1,
+    blurb: 'The spell slider, the toggles and the beams.',
+    html: [
+      '<div class="slider">',
+      '  <input id="power" type="range" min="0" max="4" step="1" value="0" aria-label="Spell power">',
+      '  <div class="stops" id="stops"></div>',
+      '</div>',
+      '<div class="chips" id="chips"></div>',
+      '<div class="summary" id="summary"></div>',
+      '<div class="board" id="board">',
+      '  <div class="grid" id="grid"></div>',
+      '</div>',
+      '<div class="tally" id="tally"></div>',
+      '<button class="cast" id="cast">',
+      '  <span id="castLabel">Cast</span>',
+      '  <svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">',
+      '    <circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width=".8"/>',
+      '    <path d="M12 2.2V6M12 18v3.8M2.2 12H6M18 12h3.8" stroke="currentColor" stroke-width=".8"/>',
+      '    <path d="M12 6.4L17.6 12 12 17.6 6.4 12z" fill="none" stroke="currentColor" stroke-width="1"/>',
+      '  </svg>',
+      '</button>'
+    ].join('\n'),
+
+    seed: function (saved) {
+      var s = {
+        power: 'eb', advantage: false, hex: false, curse: false,
+        elem: false, elemPlus: false, quicken: false, ac: null
+      };
+      if (saved && typeof saved === 'object') {
+        Object.keys(s).forEach(function (k) {
+          if (saved[k] !== undefined && saved[k] !== null) s[k] = saved[k];
+        });
+      }
+      if (!R.powerOf || s.power !== R.powerOf(s.power).id) s.power = 'eb';
+      if (!s.elem) s.elemPlus = false;
+      if (s.power !== 'eb') s.quicken = false;
+      if (s.ac === '' || s.ac === null || isNaN(Number(s.ac))) s.ac = null;
+      else s.ac = Number(s.ac);
+      return s;
+    },
+
+    mount: function (root, a) {
+      api = a;
+      S = a.state.volley;
+      E = {
+        power: root.querySelector('#power'),
+        stops: root.querySelector('#stops'),
+        chips: root.querySelector('#chips'),
+        summary: root.querySelector('#summary'),
+        grid: root.querySelector('#grid'),
+        tally: root.querySelector('#tally'),
+        cast: root.querySelector('#cast'),
+        ac: null
+      };
+
+      E.power.addEventListener('input', function () {
+        var p = R.POWERS[Number(E.power.value)];
+        setState({ power: p.id });
+      });
+
+      R.POWERS.forEach(function (p, i) {
+        var stop = document.createElement('button');
+        stop.type = 'button';
+        stop.className = 'stop';
+        stop.textContent = p.short;
+        stop.style.left = 'calc(13px + (100% - 26px) * ' + (i / (R.POWERS.length - 1)) + ')';
+        stop.addEventListener('click', function () {
+          E.power.value = String(i);
+          setState({ power: p.id });
+        });
+        E.stops.appendChild(stop);
+      });
+
+      CHIPS.forEach(function (chip) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'chip';
+        b.dataset.key = chip.key;
+        b.textContent = chip.label;
+        b.style.setProperty('--crgb', chip.rgb);
+        b.addEventListener('click', function () {
+          var next = !S[chip.key];
+          var patch = {};
+          patch[chip.key] = next;
+          if (chip.key === 'elem' && !next) patch.elemPlus = false;
+          setState(patch);
+        });
+        E.chips.appendChild(b);
+      });
+
+      E.cast.addEventListener('click', function () {
+        volley = R.rollVolley(casting());
+        renderBoard(true);
+        renderTally();
+        var anyCrit = volley.beams.some(function (b) { return b.crit; });
+        if (navigator.vibrate) navigator.vibrate(anyCrit ? [14, 45, 18] : 16);
+      });
+    },
+
+    /* The target armor class sits in the head of the app, next to the name
+       of the spell. */
+    head: function (root, a) {
+      api = a;
+      S = a.state.volley;
+      var wrap = document.createElement('label');
+      wrap.className = 'ac';
+      wrap.id = 'acField';
+      wrap.innerHTML = '<span>AC</span><input id="ac" type="number" inputmode="numeric" min="1" max="40" step="1" placeholder="—" aria-label="Target armor class">';
+      root.appendChild(wrap);
+      E.ac = wrap.querySelector('#ac');
+      E.ac.addEventListener('input', function () {
+        var v = E.ac.value.trim();
+        setState({ ac: v === '' ? null : Number(v) });
+      });
+    },
+
+    render: function (a) {
+      api = a;
+      S = a.state.volley;
+      var st = casting();
+      ATK = R.attackMod(st);
+      FLAT = R.flatMod(st, R.powerOf(S.power));
+      var power = R.powerOf(S.power);
+
+      E.power.value = String(R.POWERS.indexOf(power));
+      var span = Number(E.power.max) - Number(E.power.min);
+      E.power.style.setProperty('--fill', (span ? (Number(E.power.value) - Number(E.power.min)) / span * 100 : 0) + '%');
+
+      Array.prototype.forEach.call(E.stops.children, function (s, i) {
+        s.classList.toggle('on', R.POWERS[i].id === power.id);
+      });
+
+      Array.prototype.forEach.call(E.chips.children, function (b) {
+        var key = b.dataset.key;
+        var chip = CHIPS.filter(function (c) { return c.key === key; })[0];
+        b.setAttribute('aria-pressed', S[key] ? 'true' : 'false');
+        if (key === 'elem') b.textContent = elemLabel();
+        if (chip.only) b.hidden = S.power !== chip.only;
+        if (chip.needs) b.hidden = !S[chip.needs];
+      });
+
+      if (E.ac && E.ac.value !== (S.ac === null ? '' : String(S.ac))) {
+        E.ac.value = S.ac === null ? '' : String(S.ac);
+      }
+
+      renderSummary();
+      renderBoard(false);
+      renderTally();
+    }
+  });
+})();
+
+</script>
+<script>
+/* The spells page: the slots, the sorcery points and the list of spells. */
+(function () {
+  'use strict';
+
+  var C = Volley.core;
+  var R = C.R;
+  var LEVELS = C.LEVELS;
+  var WARLOCK_LEVEL = C.WARLOCK_LEVEL;
+
+  var api = null;   /* the shell gives it at mount */
+  var E = {};       /* the elements of the page */
+  var S = {};       /* the state of the page */
 
   var editing = false;
   var dragged = false;
 
-  function commit() { save(); render(); }
+  var SPELL_DEFAULTS = {
+    dc: 17,
+    dcTouched: false,
+    sp: 8,
+    spMax: 8,
+    cunning: false,
+    sorcRest: false,
+    sorcererLevel: 8,
+    max: { 1: 4, 2: 3, 3: 3, 4: 2, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
+    left: { 1: 4, 2: 3, 3: 3, 4: 2, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
+    warlockMax: 2,
+    warlockLeft: 2,
+    selected: 1,
+    lists: {},
+    classes: {},
+    levelFilter: true,
+    surge: null
+  };
+
+  var SPELL_SEED = (C.book.seed || []).map(function (s) { return s.name; });
+
+  function commit() { api.save(); api.refresh(); }
+
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
+  /* ---- the state ---- */
+
+  function seed(saved) {
+    var s = {};
+    Object.keys(SPELL_DEFAULTS).forEach(function (k) { s[k] = SPELL_DEFAULTS[k]; });
+    if (saved && typeof saved === 'object') {
+      Object.keys(SPELL_DEFAULTS).forEach(function (k) {
+        if (saved[k] !== undefined && saved[k] !== null && typeof saved[k] === typeof SPELL_DEFAULTS[k]) s[k] = saved[k];
+      });
+      if (saved.classes) {
+        s.classes = {};
+        /* the class names were canonicalised, so an old key follows */
+        Object.keys(saved.classes).forEach(function (k) { s.classes[C.canonSource(k)] = !!saved.classes[k]; });
+      }
+      if (saved.levelFilter !== undefined) s.levelFilter = !!saved.levelFilter;
+      if (saved.max) { s.max = {}; Object.keys(SPELL_DEFAULTS.max).forEach(function (k) { s.max[k] = Number(saved.max[k]) || 0; }); }
+      if (saved.left) { s.left = {}; Object.keys(SPELL_DEFAULTS.left).forEach(function (k) { s.left[k] = Number(saved.left[k]) || 0; }); }
+    }
+    var lists = {};
+    LEVELS.forEach(function (lv) {
+      var seed = SPELL_SEED.filter(function (n) {
+        var sp = C.bookByName[n];
+        return sp && sp.level === lv;
+      });
+      var own = (saved.lists && saved.lists[lv]) || null;
+      lists[lv] = (own && own.length) ? own.filter(function (n) { return C.bookByName[n]; }) : seed;
+    });
+    s.lists = lists;
+    return s;
+  }
+
+  /* ---- the strip of levels ---- */
 
   function pipButton(full, lv, n, warlock) {
     var b = document.createElement('button');
@@ -17030,9 +17781,8 @@ input[type=range]::-moz-range-thumb{
   }
 
   function renderLevels() {
-    var S = state.spell;
-    el.levels.innerHTML = '';
-    el.levels.classList.toggle('editing', editing);
+    E.levels.innerHTML = '';
+    E.levels.classList.toggle('editing', editing);
 
     /* How many slots each level holds, so the columns can share the width
        and every slot can be the same size in the whole strip. */
@@ -17041,7 +17791,7 @@ input[type=range]::-moz-range-thumb{
     });
     var busiest = Math.max.apply(null, counts) || 1;
     var pipH = Math.max(9, Math.min(16, Math.floor((120 - (busiest - 1) * 2) / busiest)));
-    el.levels.style.setProperty('--pip-h', pipH + 'px');
+    E.levels.style.setProperty('--pip-h', pipH + 'px');
 
     LEVELS.forEach(function (lv, ix) {
       var max = S.max[lv] || 0;
@@ -17119,7 +17869,7 @@ input[type=range]::-moz-range-thumb{
       }
       col.appendChild(edit);
 
-      el.levels.appendChild(col);
+      E.levels.appendChild(col);
     });
 
     if (editing) {
@@ -17145,9 +17895,11 @@ input[type=range]::-moz-range-thumb{
       up.type = 'button'; up.className = 'mini'; up.textContent = '+'; up.dataset.lvl = '1';
       ed.appendChild(down2); ed.appendChild(up);
       cell.appendChild(ed);
-      el.levels.appendChild(cell);
+      E.levels.appendChild(cell);
     }
   }
+
+  /* ---- the list of spells ---- */
 
   /* The summary of a spell: the same fields, in the same order, on every
      card, so the labels line up down the list. */
@@ -17155,177 +17907,105 @@ input[type=range]::-moz-range-thumb{
     var comps = spell.components ? spell.components.split('').join(' ') : '-';
     var time = full ? (spell.timeFull || spell.time) : spell.time;
     var hasTrigger = !!(full && spell.timeFull && spell.timeFull !== spell.time);
-    return field('Cast', time, '', hasTrigger) +
-      field('Range', spell.range) +
-      field('Duration', spell.duration) +
-      field('Comps', comps, 'cmp') +
-      field('Conc', spell.concentration ? 'Yes' : 'No', spell.concentration ? 'yes' : '') +
-      field('Ritual', spell.ritual ? 'Yes' : 'No', spell.ritual ? 'rit' : '');
-  }
-
-  function sourceTag(source) {
-    if (!source) return '';
-    var name = canonSource(source);
-    var cls = sourceClass(name);
-    return '<span class="src' + (cls ? ' ' + cls : '') + '">' + esc(name) + '</span>';
+    return C.field('Cast', time, '', hasTrigger) +
+      C.field('Range', spell.range) +
+      C.field('Duration', spell.duration) +
+      C.field('Comps', comps, 'cmp') +
+      C.field('Conc', spell.concentration ? 'Yes' : 'No', spell.concentration ? 'yes' : '') +
+      C.field('Ritual', spell.ritual ? 'Yes' : 'No', spell.ritual ? 'rit' : '');
   }
 
   function renderSpellList() {
-    var S = state.spell;
     var list = S.lists[S.selected] || [];
-    el.spellList.innerHTML = '';
+    E.spellList.innerHTML = '';
     if (!list.length) {
       var empty = document.createElement('div');
       empty.className = 'empty';
       empty.textContent = 'No spells at level ' + S.selected + ' yet. Open the grimoire with the + button to add some.';
-      el.spellList.appendChild(empty);
+      E.spellList.appendChild(empty);
       return;
     }
     list.forEach(function (name) {
-      var spell = SPELL_BY_NAME[name];
+      var spell = C.bookByName[name];
       if (!spell) return;
       var card = document.createElement('div');
       card.className = 'card';
       card.dataset.name = name;
-      card.innerHTML = '<div class="top"><span class="t">' + esc(spell.name) + '</span>' +
-        sourceTag(spell.source) + '</div><div class="m">' + spellFields(spell) + '</div>';
-      el.spellList.appendChild(card);
-    });
-  }
-
-  function renderSpells() {
-    var S = state.spell;
-    el.dcValue.textContent = S.dc;
-    el.spValue.textContent = S.sp + '/' + S.spMax;
-    el.cunning.setAttribute('aria-pressed', S.cunning ? 'true' : 'false');
-    el.sorcRest.setAttribute('aria-pressed', S.sorcRest ? 'true' : 'false');
-    el.sorcRest.title = 'Restores ' + Math.floor(S.sorcererLevel / 2) + ' sorcery points';
-    el.dcStat.classList.toggle('editing', editing);
-    var list = S.lists[S.selected] || [];
-    el.listTitle.textContent = 'Level ' + S.selected + ' spells · ' + list.length;
-    renderLevels();
-    renderSpellList();
-  }
-
-  /* What the overlay is showing, so the grimoire can come back as it was
-     after a spell was read from it. */
-  var sheetMode = '';
-  var sheetParent = '';
-
-  function closeSheet() {
-    el.condTip.hidden = true;
-    /* A spell read from the grimoire gives the grimoire back, it does not
-       close the overlay. */
-    if (sheetParent === 'grimoire') {
-      sheetParent = '';
-      sheetMode = 'grimoire';
-      el.sheetText.textContent = '';
-      el.grimoireLevel.hidden = false;
-      el.sheetSearch.hidden = false;
-      el.sheetList.hidden = false;
-      el.sheetActions.innerHTML = '';
-      grimoireChrome(state.spell.selected);
-      renderGrimoire(state.spell.selected);
-      return;
-    }
-    el.sheet.hidden = true;
-    if (sheetMode === 'grimoire') renderGrimoire(state.spell.selected);
-    sheetMode = '';
-    sheetParent = '';
-  }
-
-  function renderBlocks(blocks) {
-    var html = '';
-    (blocks || []).forEach(function (b) {
-      if (b.t === 'p') html += '<p>' + markup(b.text) + '</p>';
-      else if (b.t === 'h') html += '<h3>' + markup(b.text) + '</h3>';
-      else if (b.t === 'list') {
-        html += '<ul>' + b.items.map(function (i) { return '<li>' + markup(i) + '</li>'; }).join('') + '</ul>';
-      } else if (b.t === 'table') {
-        if (b.caption) html += '<div class="tcap">' + esc(b.caption) + '</div>';
-        html += '<table>';
-        if (b.head && b.head.length) {
-          html += '<thead><tr>' + b.head.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join('') + '</tr></thead>';
-        }
-        html += '<tbody>' + b.rows.map(function (r) {
-          return '<tr>' + r.map(function (c) { return '<td>' + markup(c) + '</td>'; }).join('') + '</tr>';
-        }).join('') + '</tbody></table>';
-      }
-    });
-    return html;
-  }
-
-  /* The full description of a feature, the one 5e.tools holds. */
-  function openFeature(key) {
-    var f = featureByKey(key);
-    if (!f) return;
-    var data = FEATURE_BY_KEY[key] || {};
-    sheetMode = 'feature';
-    sheetParent = '';
-    el.sheetTitle.textContent = f.name;
-    el.sheetMeta.className = 'sheet-meta';
-    var meta = field('Source', f.source);
-    if (f.max || f.recovery === 'sp') meta += field('Uses', usesText(f));
-    if (data.action) meta += field('Action', data.action);
-    if (data.duration) meta += field('Duration', data.duration);
-    if (f.recovery === 'sp') meta += field('Cost', '1 sorcery point');
-    else if (f.recovery && f.recovery !== 'none') meta += field('Recovery', f.recovery + ' rest');
-    el.sheetMeta.innerHTML = meta + sourceTag(f.source);
-    el.sheetText.innerHTML = renderBlocks(data.blocks);
-    el.grimoireLevel.hidden = true;
-    el.sheetSearch.hidden = true;
-    el.sheetList.innerHTML = '';
-    el.sheetList.hidden = true;
-    el.sheetActions.innerHTML = '';
-    el.sheet.hidden = false;
-  }
-
-  function openSheet(name) {
-    var spell = SPELL_BY_NAME[name];
-    if (!spell) return;
-    if (sheetMode === 'grimoire') sheetParent = 'grimoire';
-    sheetMode = 'spell';
-    el.sheetTitle.textContent = spell.name;
-    el.sheetMeta.className = 'sheet-meta';
-    el.sheetMeta.innerHTML = field('Level', spell.level) + spellFields(spell, true) + sourceTag(spell.source);
-    el.sheetText.innerHTML = renderBlocks(spell.blocks);
-    el.grimoireLevel.hidden = true;
-    el.sheetSearch.hidden = true;
-    el.sheetList.innerHTML = '';
-    el.sheetList.hidden = true;
-    el.condTip.hidden = true;
-    el.sheetActions.innerHTML = '<button class="danger" type="button" id="dropSpell">Remove from level ' + state.spell.selected + '</button>';
-    el.sheet.hidden = false;
-    el.sheetActions.querySelector('#dropSpell').addEventListener('click', function () {
-      var list = state.spell.lists[state.spell.selected] || [];
-      var ix = list.indexOf(name);
-      if (ix >= 0) list.splice(ix, 1);
-      closeSheet();
-      commit();
+      card.innerHTML = '<div class="top"><span class="t">' + C.esc(spell.name) + '</span>' +
+        C.sourceTag(spell.source) + '</div><div class="m">' + spellFields(spell) + '</div>';
+      E.spellList.appendChild(card);
     });
   }
 
   /* The level a spell sits in, or -1 when it is not in the list. */
   function listLevelOf(name) {
     for (var i = 0; i < LEVELS.length; i++) {
-      var list = state.spell.lists[LEVELS[i]] || [];
+      var list = S.lists[LEVELS[i]] || [];
       if (list.indexOf(name) >= 0) return LEVELS[i];
     }
     return -1;
   }
 
-  function renderGrimoire(lv) {
-    var q = (el.sheetSearch.value || '').trim().toLowerCase();
-    var on = state.spell.classes || {};
+  /* The save DC is the character's, until the player moves it here. */
+  function saveDC() {
+    if (S.dcTouched) return S.dc;
+    var ch = api.state.char;
+    if (ch && ch.abilities) return C.SR.spellDC(ch);
+    return S.dc;
+  }
+
+  function renderSpells() {
+    E.dcValue.textContent = saveDC();
+    E.spValue.textContent = S.sp + '/' + S.spMax;
+    E.cunning.setAttribute('aria-pressed', S.cunning ? 'true' : 'false');
+    E.sorcRest.setAttribute('aria-pressed', S.sorcRest ? 'true' : 'false');
+    E.sorcRest.title = 'Restores ' + Math.floor(S.sorcererLevel / 2) + ' sorcery points';
+    E.dcStat.classList.toggle('editing', editing);
+    var list = S.lists[S.selected] || [];
+    E.listTitle.textContent = 'Level ' + S.selected + ' spells · ' + list.length;
+    renderLevels();
+    renderSpellList();
+  }
+
+  /* ---- the spell of the page ---- */
+
+  function openSpell(name) {
+    var spell = C.bookByName[name];
+    if (!spell) return;
+    api.sheet.open({
+      id: 'spell:' + name,
+      title: spell.name,
+      meta: C.field('Level', spell.level) + spellFields(spell, true) + C.sourceTag(spell.source),
+      text: C.renderBlocks(spell.blocks),
+      actions: [{
+        label: 'Remove from level ' + S.selected,
+        kind: 'danger',
+        onClick: function () {
+          var list = S.lists[S.selected] || [];
+          var ix = list.indexOf(name);
+          if (ix >= 0) list.splice(ix, 1);
+          api.sheet.close();
+          commit();
+        }
+      }]
+    });
+  }
+
+  /* ---- the grimoire ---- */
+
+  function grimoireTitle(lv) {
+    var on = S.classes || {};
     var active = Object.keys(on).filter(function (c) { return on[c]; });
-    var byLevel = state.spell.levelFilter !== false;
-
-    el.sheetTitle.textContent = 'Grimoire' + (byLevel ? ', level ' + lv : '') +
+    var byLevel = S.levelFilter !== false;
+    return 'Grimoire' + (byLevel ? ', level ' + lv : '') +
       (active.length ? ' \u00b7 ' + active.join(', ') : '');
-    el.grimoireLevel.setAttribute('aria-pressed', byLevel ? 'true' : 'false');
-    el.grimoireLevel.textContent = byLevel ? 'Level ' + lv : 'All levels';
+  }
 
-    var rows = (SPELLBOOK.spells || [])
+  function grimoireList(lv, q) {
+    var on = S.classes || {};
+    var active = Object.keys(on).filter(function (c) { return on[c]; });
+    var byLevel = S.levelFilter !== false;
+    var rows = (C.book.spells || [])
       .filter(function (s) { return byLevel ? s.level === lv : true; })
       .filter(function (s) {
         if (!active.length) return true;
@@ -17333,350 +18013,429 @@ input[type=range]::-moz-range-thumb{
       })
       .filter(function (s) { return !q || s.name.toLowerCase().indexOf(q) >= 0; });
 
-    el.sheetList.innerHTML = '';
     if (!rows.length) {
-      var none = document.createElement('div');
-      none.className = 'empty';
-      none.textContent = active.length
+      return '<div class="empty">' + C.esc(active.length
         ? 'No spell of ' + active.join(', ') + (byLevel ? ' at this level' : '') + '.'
-        : 'Nothing matches.';
-      el.sheetList.appendChild(none);
-      return;
+        : 'Nothing matches.') + '</div>';
     }
-    rows.forEach(function (s) {
-      var row = document.createElement('div');
-      row.className = 'row';
+
+    return rows.map(function (s) {
       var at = listLevelOf(s.name);
       var added = at >= 0;
-
-      var head = document.createElement('div');
-      head.className = 'g1';
-      var name = document.createElement('span');
-      name.className = 'gn tappable';
-      name.textContent = s.name;
-      name.setAttribute('aria-label', 'Read ' + s.name);
-      name.addEventListener('click', function () { openSheet(s.name); });
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'gadd';
-      b.textContent = added ? '\u2713' : '+';
-      b.setAttribute('aria-label', added ? 'Unlearn ' + s.name : 'Add ' + s.name);
-      b.addEventListener('click', function () {
-        var level = listLevelOf(s.name);
-        if (level >= 0) {
-          var list = state.spell.lists[level] || [];
-          var ix = list.indexOf(s.name);
-          if (ix >= 0) list.splice(ix, 1);
-        } else {
-          var target = state.spell.lists[s.level] || (state.spell.lists[s.level] = []);
-          if (target.indexOf(s.name) < 0) target.push(s.name);
-        }
-        renderGrimoire(lv);
-        renderSpellList();
-        save();
-      });
-      head.appendChild(name);
-      head.appendChild(b);
-
-      /* One button per class that can learn the spell. A tap turns that
-         class on for the whole list, and the list then shows only the
-         spells of the classes that are on. */
-      var foot = document.createElement('div');
-      foot.className = 'g2';
-      (s.classes || []).forEach(function (c) {
-        var chip = document.createElement('button');
-        chip.type = 'button';
-        chip.className = 'gcls' + (on[c] ? ' on' : '');
-        chip.textContent = classShort(c);
-        chip.title = c;
-        chip.setAttribute('aria-label', c + (on[c] ? ', on' : ', off'));
-        chip.addEventListener('click', function () {
-          state.spell.classes[c] = !on[c];
-          renderGrimoire(lv);
-          save();
-        });
-        foot.appendChild(chip);
-      });
-      var side = document.createElement('span');
-      side.className = 'gs';
-      side.textContent = added ? 'in level ' + at : s.time;
-      foot.appendChild(side);
-
-      row.appendChild(head);
-      row.appendChild(foot);
-      el.sheetList.appendChild(row);
-    });
-  }
-
-  function grimoireChrome(lv) {
-    el.sheetMeta.className = 'sheet-meta one';
-    el.sheetMeta.innerHTML = '<span>Tap a spell to read it, a class to filter, + learns, a check unlearns</span>';
+      var chips = (s.classes || []).map(function (c) {
+        return '<button type="button" class="gcls' + (on[c] ? ' on' : '') + '" data-cls="' + C.esc(c) + '" ' +
+          'title="' + C.esc(c) + '" aria-label="' + C.esc(c) + (on[c] ? ', on' : ', off') + '">' +
+          C.esc(C.classShort(c)) + '</button>';
+      }).join('');
+      return '<div class="row">' +
+        '<div class="g1">' +
+          '<span class="gn tappable" data-name="' + C.esc(s.name) + '" aria-label="Read ' + C.esc(s.name) + '">' + C.esc(s.name) + '</span>' +
+          '<button type="button" class="gadd" data-name="' + C.esc(s.name) + '" aria-label="' +
+            (added ? 'Unlearn ' : 'Add ') + C.esc(s.name) + '">' + (added ? '\u2713' : '+') + '</button>' +
+        '</div>' +
+        '<div class="g2">' + chips +
+          '<span class="gs">' + C.esc(added ? 'in level ' + at : s.time) + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
   }
 
   function openGrimoire(lv) {
-    sheetMode = 'grimoire';
-    sheetParent = '';
-    state.spell.selected = lv;
-    el.sheetText.textContent = '';
-    el.grimoireLevel.hidden = false;
-    el.sheetSearch.hidden = false;
-    el.sheetSearch.value = '';
-    el.sheetList.hidden = false;
-    el.sheetActions.innerHTML = '';
-    el.sheet.hidden = false;
-    renderGrimoire(lv);
+    S.selected = lv;
+    api.sheet.open({
+      id: 'grimoire',
+      title: grimoireTitle(lv),
+      metaClass: 'sheet-meta one',
+      meta: '<span>Tap a spell to read it, a class to filter, + learns, a check unlearns</span>',
+      list: true,
+      search: true,
+      level: true,
+      levelLabel: S.levelFilter !== false ? 'Level ' + lv : 'All levels',
+      levelOn: S.levelFilter !== false,
+      onPaint: function (root) {
+        root.querySelector('#sheetTitle').textContent = grimoireTitle(lv);
+        root.querySelector('#sheetList').innerHTML = grimoireList(lv, (api.sheet.search() || '').toLowerCase());
+        var tog = root.querySelector('#grimoireLevel');
+        tog.textContent = S.levelFilter !== false ? 'Level ' + lv : 'All levels';
+        tog.setAttribute('aria-pressed', S.levelFilter !== false ? 'true' : 'false');
+      },
+      onSearch: function () { openGrimoire(lv); },
+      onLevel: function () {
+        S.levelFilter = S.levelFilter === false;
+        api.save();
+        openGrimoire(lv);
+      },
+      onList: function (ev) {
+        var chip = ev.target.closest('.gcls');
+        if (chip) {
+          var cls = chip.dataset.cls;
+          S.classes[cls] = !S.classes[cls];
+          api.save();
+          openGrimoire(lv);
+          return;
+        }
+        var name = ev.target.closest('.gn, .gadd');
+        if (!name) return;
+        var spell = name.dataset.name;
+        if (name.classList.contains('gadd')) {
+          var level = listLevelOf(spell);
+          if (level >= 0) {
+            var list = S.lists[level] || [];
+            var ix = list.indexOf(spell);
+            if (ix >= 0) list.splice(ix, 1);
+          } else {
+            var target = S.lists[S.selected] || (S.lists[S.selected] = []);
+            if (target.indexOf(spell) < 0) target.push(spell);
+          }
+          api.save();
+          openGrimoire(lv);
+          renderSpellList();
+          return;
+        }
+        openSpell(spell);
+      }
+    });
     commit();
   }
 
-  /* ---- character sheet ---- */
+  /* ---- the wild magic surge ---- */
 
-  var editingChar = false;
-
-  /* The tiles and the rows are built once, then only their numbers move.
-     Rebuilding them on every keystroke would take the focus off the field
-     the player is typing in. */
-  function buildChar() {
-    ABILITIES.forEach(function (a) {
-      var col = document.createElement('div');
-      col.className = 'abcol';
-
-      var tile = document.createElement('div');
-      tile.className = 'ab';
-      tile.innerHTML = '<span class="an">' + a.name + '</span>' +
-        '<input class="cinput" type="number" inputmode="numeric" min="0" max="30" data-ab="' + a.key + '" aria-label="' + a.long + ' score">' +
-        '<span class="am" data-mod="' + a.key + '">+0</span>';
-      col.appendChild(tile);
-
-      /* The saving throw rides under the ability it comes from. */
-      var save = document.createElement('div');
-      save.className = 'prow';
-      save.dataset.kind = 'save';
-      save.dataset.key = a.key;
-      save.innerHTML = '<span class="dot"></span><span class="nm dim">save</span>' +
-        '<span class="vl">+0</span>';
-      col.appendChild(save);
-
-      el.charAbilities.appendChild(col);
-    });
-
-    SKILLS.forEach(function (s) {
-      var row = document.createElement('div');
-      row.className = 'prow';
-      row.dataset.kind = 'skill';
-      row.dataset.key = s.key;
-      row.innerHTML = '<span class="dot"></span><span class="nm">' + s.name + '</span>' +
-        '<span class="abk">' + s.ab.toUpperCase() + '</span><span class="vl">+0</span>';
-      el.charSkills.appendChild(row);
-    });
-  }
-
-  function renderChar() {
-    var C = state.char;
-    el.charBody.classList.toggle('editing', editingChar);
-    el.charNameWrap.hidden = !editingChar;
-
-    if (document.activeElement !== el.charName) el.charName.value = C.name;
-    if (document.activeElement !== el.charAc) {
-      el.charAc.value = C.ac === null ? '' : String(C.ac);
-    }
-    if (document.activeElement !== el.charInit) el.charInit.value = String(C.init);
-    if (document.activeElement !== el.charLevel) el.charLevel.value = String(C.level);
-    if (document.activeElement !== el.charHpNow) {
-      el.charHpNow.value = C.hp.current ? String(C.hp.current) : '';
-    }
-    if (document.activeElement !== el.charHpMax) {
-      el.charHpMax.value = C.hp.max ? String(C.hp.max) : '';
-    }
-    el.charHpDown.disabled = !C.hp.current;
-    el.charHpUp.disabled = C.hp.max > 0 && C.hp.current >= C.hp.max;
-    el.charHpRewind.disabled = !C.history.length;
-    el.charHpRewind.title = C.history.length
-      ? 'Rewind the last change, ' + C.history.length + ' to go back'
-      : 'Nothing to rewind';
-
-    ABILITIES.forEach(function (a) {
-      var input = el.charAbilities.querySelector('[data-ab="' + a.key + '"]');
-      if (input && document.activeElement !== input) input.value = String(C.abilities[a.key]);
-      var mod = el.charAbilities.querySelector('[data-mod="' + a.key + '"]');
-      if (mod) mod.textContent = SR.sign(SR.abilityMod(C.abilities[a.key]));
-    });
-
-    ABILITIES.forEach(function (a) {
-      var row = el.charAbilities.querySelector('[data-kind="save"][data-key="' + a.key + '"]');
-      if (!row) return;
-      var v = Number(C.saves[a.key]) || 0;
-      row.classList.toggle('prof', v === 1);
-      row.classList.toggle('exp', v === 2);
-      row.querySelector('.vl').textContent = SR.sign(SR.saveMod(C, a.key));
-      row.title = a.long + ' saving throw, ' + SR.profLabel(v);
-    });
-
-    SKILLS.forEach(function (s) {
-      var row = el.charSkills.querySelector('[data-key="' + s.key + '"]');
-      if (!row) return;
-      var v = Number(C.skills[s.key]) || 0;
-      row.classList.toggle('prof', v === 1);
-      row.classList.toggle('exp', v === 2);
-      row.querySelector('.vl').textContent = SR.sign(SR.skillMod(C, s.key));
-      row.title = s.name + ', ' + SR.profLabel(v);
-    });
-
-    el.charDerived.innerHTML =
-      '<span>proficiency <b>' + SR.sign(SR.profBonus(C.level)) + '</b></span>' +
-      '<span>spell attack <b>' + SR.sign(SR.spellAttack(C)) + '</b></span>' +
-      '<span>save DC <b>' + SR.spellDC(C) + '</b></span>' +
-      '<span>passive perception <b>' + (10 + SR.skillMod(C, 'perception')) + '</b></span>';
-
-    renderDice();
-  }
-
-  function dieSvg(type) {
-    var pts = SR.DIE_SHAPES[type];
-    if (!pts) {
-      var built = [], i, a;
-      for (i = 0; i < type; i++) {
-        a = -Math.PI / 2 + i * 2 * Math.PI / type;
-        built.push((12 + 9.2 * Math.cos(a)).toFixed(2) + ',' + (12 + 9.2 * Math.sin(a)).toFixed(2));
+  function openSurge() {
+    var s = S.surge;
+    var html = '<button class="surgelarge" type="button" id="surgeRoll" aria-label="Roll the wild magic surge">' +
+      '<span class="surged100">' + (s ? s.roll : '--') + '</span></button>';
+    if (s) {
+      html += '<p>' + C.markup(s.text) + '</p>';
+      if (s.dice && s.dice.length) {
+        html += '<p>' + s.dice.map(function (d) {
+          return C.esc(d.label) + ': ' + d.values.join(' + ') + ' = ' + d.total;
+        }).join('<br>') + '</p>';
       }
-      pts = built.join(' ');
+    } else {
+      html += '<p>Roll the surge to see what the wild magic does.</p>';
     }
-    var label = SR.DIE_LABEL[type] || { y: 15.4, size: 9 };
-    return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
-      '<polygon points="' + pts + '" fill="none" stroke="currentColor" stroke-width="1.5"/>' +
-      '<text x="12" y="' + label.y + '" text-anchor="middle" font-size="' + label.size + '" fill="currentColor" ' +
-      'font-family="Cinzel, Georgia, serif">' + type + '</text></svg>';
+
+    api.sheet.open({
+      id: 'surge',
+      title: 'Wild magic surge',
+      meta: s
+        ? C.field('Range', pad2(s.from) + '-' + pad2(s.to)) + C.field('Roll', 'd100: ' + s.roll)
+        : C.field('Roll', 'd100'),
+      text: html,
+      actions: [{ label: 'Roll the surge', onClick: rollSurge }],
+      onPaint: function (root) {
+        var big = root.querySelector('#surgeRoll');
+        if (big) big.addEventListener('click', rollSurge);
+      }
+    });
   }
 
-  function countDice(C, type) {
-    var n = 0;
-    (C.dice || []).forEach(function (d) { if (d.type === type) n++; });
-    return n;
+  function rollSurge() {
+    if (!C.surge.rows || !C.surge.rows.length) {
+      api.toast('The surge table did not load.');
+      return;
+    }
+    var result = R.rollSurge(C.surge.rows);
+    S.surge = { roll: result.roll, from: result.from, to: result.to, text: result.text, dice: result.dice };
+    api.save();
+    openSurge();
+    if (navigator.vibrate) navigator.vibrate(result.dice.length ? [14, 45, 14] : 16);
   }
 
-  function renderDice() {
-    var C = state.char;
-    el.diceBox.innerHTML = '';
+  /* ---- the page ---- */
 
-    if (editingChar) {
-      var grid = document.createElement('div');
-      grid.className = 'diceedit';
-      [12, 10, 8, 6].forEach(function (t) {
-        var row = document.createElement('div');
-        row.className = 'drow';
-        row.innerHTML = '<span class="dico">' + dieSvg(t) + '</span>' +
-          '<span class="dty">d' + t + '</span>' +
-          '<button class="mini" type="button" data-type="' + t + '" data-sign="-">&minus;</button>' +
-          '<span class="dval">' + countDice(C, t) + '</span>' +
-          '<button class="mini" type="button" data-type="' + t + '" data-sign="+">+</button>';
-        grid.appendChild(row);
+  Volley.page({
+    id: 'spells',
+    title: 'Spells',
+    order: 2,
+    blurb: 'The spell slots, the sorcery points and the list of spells.',
+    html: [
+      '<div class="sbar">',
+      '  <div class="stat" id="dcStat">',
+      '    <span class="k">DC</span>',
+      '    <span class="v" id="dcValue">17</span>',
+      '    <button class="mini" type="button" data-act="dc-" aria-label="Lower the DC">&minus;</button>',
+      '    <button class="mini" type="button" data-act="dc+" aria-label="Raise the DC">+</button>',
+      '  </div>',
+      '  <div class="stat live">',
+      '    <span class="k">SP</span>',
+      '    <span class="v" id="spValue">8/8</span>',
+      '    <button class="mini" type="button" data-act="sp-" aria-label="Spend a sorcery point">&minus;</button>',
+      '    <button class="mini" type="button" data-act="sp+" aria-label="Regain a sorcery point">+</button>',
+      '  </div>',
+      '  <button class="tog" id="cunning" type="button" aria-pressed="false" title="Restores 1 warlock slot">Cunning</button>',
+      '  <button class="tog" id="sorcRest" type="button" aria-pressed="false" title="Restores half your sorcerer level in sorcery points">Sorc rest</button>',
+      '  <button class="tog wild" id="wildSurge" type="button" title="The wild magic surge">Wild</button>',
+      '</div>',
+      '<div class="sbody">',
+      '  <div class="slotstrip" id="levels"></div>',
+      '  <div class="listhead">',
+      '    <span class="t" id="listTitle">Level 1 spells</span>',
+      '    <button class="mini" id="addSpell" type="button" aria-label="Add a spell">+</button>',
+      '  </div>',
+      '  <div class="grimoire" id="spellList"></div>',
+      '</div>'
+    ].join('\n'),
+
+    seed: seed,
+
+    mount: function (root, a) {
+      api = a;
+      S = a.state.spells;
+      E = {
+        dcStat: root.querySelector('#dcStat'),
+        dcValue: root.querySelector('#dcValue'),
+        spValue: root.querySelector('#spValue'),
+        cunning: root.querySelector('#cunning'),
+        sorcRest: root.querySelector('#sorcRest'),
+        wildSurge: root.querySelector('#wildSurge'),
+        levels: root.querySelector('#levels'),
+        listTitle: root.querySelector('#listTitle'),
+        addSpell: root.querySelector('#addSpell'),
+        spellList: root.querySelector('#spellList')
+      };
+
+      E.cunning.addEventListener('click', function () {
+        S.cunning = !S.cunning;
+        if (S.cunning) S.warlockLeft = Math.min(S.warlockMax, S.warlockLeft + 1);
+        else S.warlockLeft = Math.max(0, S.warlockLeft - 1);
+        commit();
       });
-      el.diceBox.appendChild(grid);
-      return;
-    }
 
-    var dice = (C.dice || []).map(function (d, ix) { return { d: d, ix: ix }; });
-    dice.sort(function (a, b) { return b.d.type - a.d.type; });
-    if (!dice.length) {
-      var none = document.createElement('span');
-      none.className = 'dnote';
-      none.textContent = 'No hit dice yet. The wrench sets them.';
-      el.diceBox.appendChild(none);
-      return;
-    }
-    dice.forEach(function (item) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'die' + (item.d.spent ? ' spent' : '');
-      b.innerHTML = dieSvg(item.d.type);
-      b.dataset.ix = String(item.ix);
-      b.setAttribute('aria-label', 'd' + item.d.type + (item.d.spent ? ', spent' : ', left'));
-      el.diceBox.appendChild(b);
-    });
-  }
+      E.sorcRest.addEventListener('click', function () {
+        var gain = Math.floor(S.sorcererLevel / 2);
+        S.sorcRest = !S.sorcRest;
+        if (S.sorcRest) S.sp = Math.min(S.spMax, S.sp + gain);
+        else S.sp = Math.max(0, S.sp - gain);
+        commit();
+        bumpSp();
+      });
 
-  el.diceBox.addEventListener('click', function (ev) {
-    var C = state.char;
-    var pick = ev.target.closest('[data-type][data-sign]');
-    if (pick) {
-      var type = Number(pick.dataset.type);
-      var add = pick.dataset.sign === '+';
-      var dice = C.dice || (C.dice = []);
-      if (add) {
-        dice.push({ type: type, spent: false });
-      } else {
-        for (var i = dice.length - 1; i >= 0; i--) {
-          if (dice[i].type === type) { dice.splice(i, 1); break; }
+      E.wildSurge.addEventListener('click', function () { openSurge(); });
+
+      E.addSpell.addEventListener('click', function () { openGrimoire(S.selected); });
+
+      root.querySelector('.sbar').addEventListener('click', function (ev) {
+        var m = ev.target.closest('.mini[data-act]');
+        if (!m) return;
+        var act = m.dataset.act;
+        if (act === 'dc+') { S.dc = saveDC() + 1; S.dcTouched = true; }
+        else if (act === 'dc-') { S.dc = Math.max(0, saveDC() - 1); S.dcTouched = true; }
+        else if (act === 'sp+') S.sp = Math.min(S.spMax, S.sp + 1);
+        else if (act === 'sp-') S.sp = Math.max(0, S.sp - 1);
+        commit();
+      });
+
+      E.levels.addEventListener('click', function (ev) {
+        var bolt = ev.target.closest('.bolt');
+        if (bolt) {
+          var blv = Number(bolt.dataset.bolt);
+          var moved = R.convertSlot({ sp: S.sp, spMax: S.spMax, left: S.left, warlockLeft: S.warlockLeft }, blv);
+          if (moved) {
+            S.left[blv] = moved.left;
+            S.warlockLeft = moved.warlockLeft;
+            S.sp = moved.sp;
+            commit();
+            bumpSp();
+          }
+          return;
         }
-      }
-      pushSnapshot();
-      commitChar();
-      return;
+
+        var pip = ev.target.closest('.pip');
+        if (pip) {
+          var lv = Number(pip.dataset.lv), n = Number(pip.dataset.n);
+          var full = pip.classList.contains('full');
+          if (pip.dataset.wl) {
+            S.warlockLeft = full ? Math.max(0, S.warlockLeft - 1) : n;
+          } else {
+            S.left[lv] = full ? Math.max(0, S.left[lv] - 1) : n;
+          }
+          commit();
+          return;
+        }
+        var lvBtn = ev.target.closest('.mini[data-lvl]');
+        if (lvBtn) {
+          S.sorcererLevel = Math.max(1, Math.min(20, S.sorcererLevel + Number(lvBtn.dataset.lvl)));
+          commit();
+          return;
+        }
+        var eb = ev.target.closest('.edit .mini');
+        if (eb) {
+          var l = Number(eb.dataset.lv);
+          var d = eb.dataset.edit === 'add' ? 1 : -1;
+          if (eb.dataset.wl) {
+            var wBefore = S.warlockMax;
+            S.warlockMax = Math.max(0, Math.min(9, wBefore + d));
+            if (S.warlockMax > wBefore) S.warlockLeft = Math.min(S.warlockMax, S.warlockLeft + (S.warlockMax - wBefore));
+            else S.warlockLeft = Math.min(S.warlockLeft, S.warlockMax);
+          } else {
+            var before = S.max[l] || 0;
+            S.max[l] = Math.max(0, Math.min(9, before + d));
+            if (S.max[l] > before) S.left[l] = Math.min(S.max[l], (S.left[l] || 0) + (S.max[l] - before));
+            else S.left[l] = Math.min(S.left[l], S.max[l]);
+          }
+          commit();
+          return;
+        }
+        var down = ev.target.closest('.down');
+        if (down) {
+          S.selected = Number(down.dataset.lv);
+          commit();
+          E.spellList.scrollTop = 0;
+          return;
+        }
+        var row = ev.target.closest('.lv');
+        if (row && row.dataset.lv !== undefined) {
+          S.selected = Number(row.dataset.lv);
+          commit();
+          E.spellList.scrollTop = 0;
+        }
+      });
+
+      E.spellList.addEventListener('click', function (ev) {
+        if (dragged) { dragged = false; return; }
+        var card = ev.target.closest('.card');
+        if (card) openSpell(card.dataset.name);
+      });
+
+      /* The cards can be dragged to reorder them, the way the feature cards
+         are. A press that turns into a move carries the card, a press that
+         ends straight away is a tap. */
+      E.spellList.addEventListener('pointerdown', function (ev) {
+        var card = ev.target.closest('.card');
+        if (!card) return;
+        var startY = ev.clientY, startX = ev.clientX, timer = null, moved = false;
+
+        function begin() {
+          timer = null;
+          moved = true;
+          card.classList.add('dragging');
+          if (navigator.vibrate) navigator.vibrate(12);
+        }
+
+        function move(e) {
+          if (!moved) {
+            if (Math.abs(e.clientY - startY) > 8 || Math.abs(e.clientX - startX) > 8) {
+              if (timer) { clearTimeout(timer); timer = null; }
+              cleanup();
+            }
+            return;
+          }
+          if (e.cancelable) e.preventDefault();
+          var cards = Array.prototype.slice.call(E.spellList.querySelectorAll('.card'));
+          for (var i = 0; i < cards.length; i++) {
+            var r = cards[i].getBoundingClientRect();
+            if (e.clientY < r.top + r.height / 2 && cards[i] !== card) {
+              E.spellList.insertBefore(card, cards[i]);
+              startY = e.clientY;
+              dragged = true;
+              break;
+            }
+          }
+        }
+
+        function up() {
+          if (timer) { clearTimeout(timer); timer = null; }
+          if (moved) {
+            card.classList.remove('dragging');
+            dragged = true;
+            setTimeout(function () { dragged = false; }, 80);
+            var order = Array.prototype.slice.call(E.spellList.querySelectorAll('.card'))
+              .map(function (c) { return c.dataset.name; });
+            S.lists[S.selected] = order;
+            api.save();
+          }
+          cleanup();
+        }
+
+        function blockScroll(e) { if (moved && e.cancelable) e.preventDefault(); }
+        function cleanup() {
+          window.removeEventListener('pointermove', move);
+          window.removeEventListener('pointerup', up);
+          window.removeEventListener('pointercancel', up);
+          window.removeEventListener('touchmove', blockScroll);
+        }
+
+        timer = setTimeout(begin, 320);
+        window.addEventListener('pointermove', move, { passive: false });
+        window.addEventListener('pointerup', up);
+        window.addEventListener('pointercancel', up);
+        window.addEventListener('touchmove', blockScroll, { passive: false });
+      });
+    },
+
+    /* The wrench edits the maximum of the slots. */
+    head: function (root, a) {
+      api = a;
+      S = a.state.spells;
+      var b = C.wrenchButton('Edit the slot maximums', function () {
+        editing = !editing;
+        api.save();
+        api.refresh();
+      });
+      root.appendChild(b);
+      E.wrench = b;
+    },
+
+    render: function (a) {
+      api = a;
+      S = a.state.spells;
+      if (E.wrench) E.wrench.setAttribute('aria-pressed', editing ? 'true' : 'false');
+      renderSpells();
     }
-    var die = ev.target.closest('.die');
-    if (!die) return;
-    var d = (C.dice || [])[Number(die.dataset.ix)];
-    if (!d) return;
-    pushSnapshot();
-    d.spent = !d.spent;
-    commitChar();
   });
 
-  function commitChar() { save(); render(); }
-
-  /* The rewind undoes the last change of any kind: a point of hit points, a
-     use of a feature, or a rest. Every change leaves a snapshot behind, so
-     the rewind always knows what came before. */
-  function pushSnapshot() {
-    state.char.history.push(SR.snapshot(state.char, state.spell));
-    if (state.char.history.length > 60) state.char.history.shift();
-  }
-
-  function setHp(next) {
-    var C = state.char;
-    if (next === C.hp.current) return;
-    pushSnapshot();
-    C.hp.current = next;
-    commitChar();
-  }
-
-  /* A toast that lingers, so a spent resource stays seen. */
-  var spentTimer = null;
-  function spent(message) {
-    el.spentToast.textContent = message;
-    el.spentToast.classList.add('on');
-    if (spentTimer) clearTimeout(spentTimer);
-    spentTimer = setTimeout(function () { el.spentToast.classList.remove('on'); }, 3000);
-  }
-
   function bumpSp() {
-    el.spValue.classList.remove('bump');
-    void el.spValue.offsetWidth;
-    el.spValue.classList.add('bump');
+    E.spValue.classList.remove('bump');
+    void E.spValue.offsetWidth;
+    E.spValue.classList.add('bump');
   }
+})();
 
-  var noteTimer = null;
-  function note(message) {
-    el.charNote.textContent = message;
-    if (noteTimer) clearTimeout(noteTimer);
-    noteTimer = setTimeout(function () { el.charNote.textContent = ''; }, 2600);
-  }
+</script>
+<script>
+/* The features page: what the character has, what is left of it, and the
+   rests that give it back. */
+(function () {
+  'use strict';
 
-  /* ---- features ---- */
+  var C = Volley.core;
+  var SR = C.SR;
 
-  /* A feature is something the character has uses for: the hexblade curse,
-     a feature that comes back on a short rest, anything like it. The
-     warlock slots live in the spell tab, so that row only reads them. */
+  var api = null;   /* the shell gives it at mount */
+  var E = {};       /* the elements of the page */
+
+  var deleting = null;
+  var editingFeatures = false;
+  var dragged = false;
+
+  var FEATURE_BY_KEY = {};
+  (C.features.features || []).forEach(function (f) { FEATURE_BY_KEY[f.key] = f; });
+
+  var NEW_TYPES = [
+    { id: 'short', label: 'short rest' },
+    { id: 'long', label: 'long rest' },
+    { id: 'special', label: 'special' },
+    { id: 'passive', label: 'passive' }
+  ];
+
+  function commitChar() { api.save(); api.refresh(); }
+
+  function features() { return api.state.char.features; }
+
+  /* The feature waiting to be removed, and the question under it. */
   function featureByKey(key) {
     var found = null;
-    state.char.features.forEach(function (f) { if (f.key === key) found = f; });
+    features().forEach(function (f) { if (f.key === key) found = f; });
     return found;
   }
 
   function featureCount(f) {
     if (f.bind === 'warlock') {
+      var S = api.state.spells;
       return {
-        left: Number(state.spell.warlockLeft) || 0,
-        max: Number(state.spell.warlockMax) || 0
+        left: Number(S.warlockLeft) || 0,
+        max: Number(S.warlockMax) || 0
       };
     }
     return { left: Number(f.left) || 0, max: Number(f.max) || 0 };
@@ -17689,10 +18448,6 @@ input[type=range]::-moz-range-thumb{
       (hidden ? '<path d="M3.5 3.5l17 17"/>' : '') +
       '</svg>';
   }
-
-  /* The feature waiting to be removed, and the question under it. */
-  var deleting = null;
-  var editingFeatures = false;
 
   /* The uses of a feature: how many are left and when they come back. */
   function usesText(f) {
@@ -17708,10 +18463,12 @@ input[type=range]::-moz-range-thumb{
     return '';
   }
 
+  /* ---- the cards ---- */
+
   function buildFeatureCards() {
-    el.featureActive.innerHTML = '';
-    el.featurePassive.innerHTML = '';
-    state.char.features.forEach(function (f) {
+    E.featureActive.innerHTML = '';
+    E.featurePassive.innerHTML = '';
+    features().forEach(function (f) {
       var card = document.createElement('div');
       card.className = 'fcard';
       card.dataset.key = f.key;
@@ -17729,14 +18486,14 @@ input[type=range]::-moz-range-thumb{
         '<div class="fconfirm"><span>Remove it?</span>' +
         '<button class="yes" type="button" data-role="yes">Remove</button>' +
         '<button class="no" type="button" data-role="no">Keep</button></div>';
-      (f.active ? el.featureActive : el.featurePassive).appendChild(card);
+      (f.active ? E.featureActive : E.featurePassive).appendChild(card);
     });
   }
 
   function renderFeatureCards() {
-    el.featureBody.classList.toggle('editing', editingFeatures);
-    state.char.features.forEach(function (f) {
-      var card = el.featureBody.querySelector('.fcard[data-key="' + f.key + '"]');
+    E.featureBody.classList.toggle('editing', editingFeatures);
+    features().forEach(function (f) {
+      var card = E.featureBody.querySelector('.fcard[data-key="' + f.key + '"]');
       if (!card) return;
       var data = FEATURE_BY_KEY[f.key] || {};
       card.classList.toggle('hidden', !!f.hidden);
@@ -17745,7 +18502,7 @@ input[type=range]::-moz-range-thumb{
       name.textContent = f.name;
       name.setAttribute('aria-label', 'Read ' + f.name);
 
-      card.querySelector('.fsrc').innerHTML = sourceTag(f.source);
+      card.querySelector('.fsrc').innerHTML = C.sourceTag(f.source);
 
       var text = usesText(f);
       var uses = card.querySelector('[data-role="uses"]');
@@ -17779,577 +18536,355 @@ input[type=range]::-moz-range-thumb{
     });
   }
 
-  el.featureBody.addEventListener('input', function (ev) {
-    var roleEl = ev.target.closest ? ev.target.closest('[data-role]') : null;
-    if (!roleEl || (roleEl.dataset.role !== 'usesin' && roleEl.dataset.role !== 'maxin')) return;
-    var card = roleEl.closest('.fcard');
-    if (!card) return;
-    var f = featureByKey(card.dataset.key);
+  /* ---- the description of a feature ---- */
+
+  function openFeature(key) {
+    var f = featureByKey(key);
     if (!f) return;
-    if (roleEl.dataset.role === 'usesin') {
-      f.left = Math.max(0, Math.min(99, Number(roleEl.value) || 0));
-    } else if (roleEl.dataset.role === 'maxin') {
-      f.max = Math.max(0, Math.min(99, Number(roleEl.value) || 0));
-      if (f.left > f.max) f.left = f.max;
-    } else return;
-    commitChar();
-  });
+    var data = FEATURE_BY_KEY[key] || {};
+    var meta = C.field('Source', f.source);
+    if (f.max || f.recovery === 'sp') meta += C.field('Uses', usesText(f));
+    if (data.action) meta += C.field('Action', data.action);
+    if (data.duration) meta += C.field('Duration', data.duration);
+    if (f.recovery === 'sp') meta += C.field('Cost', '1 sorcery point');
+    else if (f.recovery && f.recovery !== 'none') meta += C.field('Recovery', f.recovery + ' rest');
 
-  el.featureBody.addEventListener('click', function (ev) {
-    var card = ev.target.closest('.fcard');
-    if (!card) return;
-    var f = featureByKey(card.dataset.key);
-    if (!f) return;
-    /* The eye holds a drawing, so the role is found from the closest
-       element that carries one. */
-    var roleEl = ev.target.closest ? ev.target.closest('[data-role]') : null;
-    var role = roleEl ? roleEl.dataset.role : null;
-
-    if (role === 'uses') { spendFeature(f); return; }
-    if (role === 'name') { openFeature(f.key); return; }
-
-    if (!editingFeatures) return;
-
-    if (role === 'eye') {
-      f.hidden = !f.hidden;
-      f.toggled = true;
-      commitChar();
-      return;
-    }
-    if (role === 'del') {
-      deleting = f.key;
-      commitChar();
-      return;
-    }
-    if (role === 'no') {
-      deleting = null;
-      commitChar();
-      return;
-    }
-    if (role === 'yes') {
-      state.char.features = state.char.features.filter(function (x) { return x.key !== f.key; });
-      deleting = null;
-      buildFeatureCards();
-      commitChar();
-    }
-  });
-
-  /* The cards can be dragged to reorder them, the way the spell list
-     does. A press that turns into a move carries the card, a press that
-     ends straight away is a tap. */
-  var dragged = false;
-
-  el.featureBody.addEventListener('pointerdown', function (ev) {
-    if (ev.target.closest('input, button')) return;
-    var card = ev.target.closest('.fcard');
-    if (!card) return;
-    var startY = ev.clientY, startX = ev.clientX, timer = null, moved = false;
-
-    function begin() {
-      timer = null;
-      moved = true;
-      card.classList.add('dragging');
-      if (navigator.vibrate) navigator.vibrate(12);
-    }
-
-    function move(e) {
-      if (!moved) {
-        if (Math.abs(e.clientY - startY) > 8 || Math.abs(e.clientX - startX) > 8) {
-          if (timer) { clearTimeout(timer); timer = null; }
-          cleanup();
-        }
-        return;
-      }
-      if (e.cancelable) e.preventDefault();
-      var list = card.parentNode;
-      var cards = Array.prototype.slice.call(list.querySelectorAll('.fcard'));
-      for (var i = 0; i < cards.length; i++) {
-        var r = cards[i].getBoundingClientRect();
-        if (e.clientY < r.top + r.height / 2 && cards[i] !== card) {
-          list.insertBefore(card, cards[i]);
-          startY = e.clientY;
-          break;
-        }
-      }
-    }
-
-    function up() {
-      if (timer) { clearTimeout(timer); timer = null; }
-      if (moved) {
-        card.classList.remove('dragging');
-        dragged = true;
-        setTimeout(function () { dragged = false; }, 80);
-        saveFeatureOrder(card.parentNode);
-      }
-      cleanup();
-    }
-
-    function blockScroll(e) { if (moved && e.cancelable) e.preventDefault(); }
-    function cleanup() {
-      window.removeEventListener('pointermove', move);
-      window.removeEventListener('pointerup', up);
-      window.removeEventListener('pointercancel', up);
-      window.removeEventListener('touchmove', blockScroll);
-    }
-
-    timer = setTimeout(begin, 320);
-    window.addEventListener('pointermove', move, { passive: false });
-    window.addEventListener('pointerup', up);
-    window.addEventListener('pointercancel', up);
-    window.addEventListener('touchmove', blockScroll, { passive: false });
-  });
-
-  /* The order the cards sit in becomes the order of the list. */
-  function saveFeatureOrder(list) {
-    var keys = Array.prototype.slice.call(list.querySelectorAll('.fcard')).map(function (c) { return c.dataset.key; });
-    var byKey = {};
-    state.char.features.forEach(function (f) { byKey[f.key] = f; });
-    var others = state.char.features.filter(function (f) { return keys.indexOf(f.key) < 0; });
-    state.char.features = keys.map(function (k) { return byKey[k]; }).concat(others);
-    save();
-    renderFeatureCards();
+    api.sheet.open({
+      id: 'feature:' + key,
+      title: f.name,
+      meta: meta + C.sourceTag(f.source),
+      text: C.renderBlocks(data.blocks)
+    });
   }
 
-  /* One tap spends a use, and at zero it gives one back. The bend luck
-     feature costs a sorcery point rather than a use. */
+  /* ---- the creation of a feature: a name and a recovery type ---- */
+
+  function openNewFeature() {
+    var picked = 'short';
+    api.sheet.open({
+      id: 'newfeature',
+      title: 'New feature',
+      metaClass: 'sheet-meta one',
+      meta: '<input class="sheet-search" id="featureName" type="text" placeholder="Name of the feature" aria-label="Name of the feature">',
+      text: '<div class="fnew">' + NEW_TYPES.map(function (t) {
+        return '<button class="fnewtype" type="button" data-type="' + t.id + '">' + t.label + '</button>';
+      }).join('') + '</div>',
+      actions: [{
+        label: 'Create',
+        onClick: function (root) {
+          var field = root.querySelector('#featureName');
+          var name = (field && field.value ? field.value : '').trim() || 'New feature';
+          var passive = picked === 'passive';
+          features().push({
+            key: 'f' + Date.now(),
+            name: name,
+            source: 'Feat',
+            active: !passive,
+            recovery: picked,
+            cost: '',
+            bind: null,
+            max: passive ? 0 : 1,
+            left: passive ? 0 : 1,
+            short: null,
+            hidden: false
+          });
+          buildFeatureCards();
+          api.sheet.close();
+          commitChar();
+        }
+      }],
+      onPaint: function (root) {
+        var buttons = root.querySelectorAll('.fnewtype');
+        Array.prototype.forEach.call(buttons, function (b) {
+          b.addEventListener('click', function () {
+            picked = b.dataset.type;
+            Array.prototype.forEach.call(buttons, function (x) { x.classList.toggle('on', x === b); });
+          });
+        });
+        if (buttons[0]) buttons[0].classList.add('on');
+      }
+    });
+  }
+
+  /* ---- one tap spends a use, and at zero it gives one back. The bend luck
+     feature costs a sorcery point rather than a use. ---- */
+
   function spendFeature(f) {
+    var S = api.state.spells;
     if (f.cost === 'sp') {
-      if (state.spell.sp > 0) {
-        state.spell.sp -= 1;
-        spent('\u22121 sorcery point \u00b7 ' + state.spell.sp + ' left');
+      if (S.sp > 0) {
+        S.sp -= 1;
+        api.toast('\u22121 sorcery point \u00b7 ' + S.sp + ' left');
       } else {
-        state.spell.sp = state.spell.spMax;
-        spent('The sorcery point is back \u00b7 ' + state.spell.sp + ' left');
+        S.sp = S.spMax;
+        api.toast('The sorcery point is back \u00b7 ' + S.sp + ' left');
       }
       commitChar();
-      bumpSp();
+      C.bumpSp();
       return;
     }
     var count = featureCount(f);
     var next = count.left > 0 ? count.left - 1 : (count.max > 0 ? 1 : count.left);
     if (next === count.left) return;
-    pushSnapshot();
-    if (f.bind === 'warlock') state.spell.warlockLeft = next;
+    C.pushSnapshot(api);
+    if (f.bind === 'warlock') S.warlockLeft = next;
     else f.left = next;
     commitChar();
   }
 
-  el.addFeature.addEventListener('click', function () { openNewFeature(); });
+  /* The order the cards sit in becomes the order of the list. */
+  function saveFeatureOrder(list) {
+    var keys = Array.prototype.slice.call(list.querySelectorAll('.fcard')).map(function (c) { return c.dataset.key; });
+    var byKey = {};
+    features().forEach(function (f) { byKey[f.key] = f; });
+    var others = features().filter(function (f) { return keys.indexOf(f.key) < 0; });
+    api.state.char.features = keys.map(function (k) { return byKey[k]; }).concat(others);
+    api.save();
+    renderFeatureCards();
+  }
 
-  /* The creation of a feature: a name and a recovery type. */
-  var NEW_TYPES = [
-    { id: 'short', label: 'short rest' },
-    { id: 'long', label: 'long rest' },
-    { id: 'special', label: 'special' },
-    { id: 'passive', label: 'passive' }
-  ];
+  /* ---- the page ---- */
 
-  function openNewFeature() {
-    sheetMode = 'newfeature';
-    sheetParent = '';
-    el.sheetTitle.textContent = 'New feature';
-    el.sheetMeta.className = 'sheet-meta one';
-    el.sheetMeta.innerHTML = '<input class="sheet-search" id="featureName" type="text" placeholder="Name of the feature" aria-label="Name of the feature">';
-    el.sheetText.innerHTML = '<div class="fnew">' + NEW_TYPES.map(function (t) {
-      return '<button class="fnewtype" type="button" data-type="' + t.id + '">' + t.label + '</button>';
-    }).join('') + '</div>';
-    el.sheetList.innerHTML = '';
-    el.sheetList.hidden = true;
-    el.sheetSearch.hidden = true;
-    el.grimoireLevel.hidden = true;
-    el.sheetActions.innerHTML = '<button id="createFeature">Create</button>';
-    el.sheet.hidden = false;
+  Volley.page({
+    id: 'features',
+    title: 'Features',
+    order: 3,
+    blurb: 'What the character has and what is left of it.',
+    html: [
+      '<div class="charbody" id="featureBody">',
+      '  <div class="cshead"><span>Active</span><span class="rule"></span><button class="mini" id="addFeature" type="button" aria-label="Add a feature">+</button></div>',
+      '  <div class="fcards" id="featureActive"></div>',
+      '  <div class="cshead"><span>Passive</span><span class="rule"></span></div>',
+      '  <div class="fcards" id="featurePassive"></div>',
+      '</div>'
+    ].join('\n'),
 
-    var picked = 'short';
-    var buttons = el.sheetText.querySelectorAll('.fnewtype');
-    Array.prototype.forEach.call(buttons, function (b) {
-      b.addEventListener('click', function () {
-        picked = b.dataset.type;
-        Array.prototype.forEach.call(buttons, function (x) { x.classList.toggle('on', x === b); });
-      });
-    });
-    buttons[0].classList.add('on');
+    mount: function (root, a) {
+      api = a;
+      E = {
+        featureBody: root.querySelector('#featureBody'),
+        featureActive: root.querySelector('#featureActive'),
+        featurePassive: root.querySelector('#featurePassive'),
+        addFeature: root.querySelector('#addFeature')
+      };
 
-    el.sheetActions.querySelector('#createFeature').addEventListener('click', function () {
-      var field = document.getElementById('featureName');
-      var name = (field && field.value ? field.value : '').trim() || 'New feature';
-      var passive = picked === 'passive';
-      state.char.features.push({
-        key: 'f' + Date.now(),
-        name: name,
-        source: 'Feat',
-        active: !passive,
-        recovery: picked,
-        cost: '',
-        bind: null,
-        max: passive ? 0 : 1,
-        left: passive ? 0 : 1,
-        short: null,
-        hidden: false
-      });
       buildFeatureCards();
-      closeSheet();
-      commitChar();
-    });
-  }
 
-  /* ---- rests ---- */
+      E.featureBody.addEventListener('input', function (ev) {
+        var roleEl = ev.target.closest ? ev.target.closest('[data-role]') : null;
+        if (!roleEl || (roleEl.dataset.role !== 'usesin' && roleEl.dataset.role !== 'maxin')) return;
+        var card = roleEl.closest('.fcard');
+        if (!card) return;
+        var f = featureByKey(card.dataset.key);
+        if (!f) return;
+        if (roleEl.dataset.role === 'usesin') {
+          f.left = Math.max(0, Math.min(99, Number(roleEl.value) || 0));
+        } else if (roleEl.dataset.role === 'maxin') {
+          f.max = Math.max(0, Math.min(99, Number(roleEl.value) || 0));
+          if (f.left > f.max) f.left = f.max;
+        } else return;
+        commitChar();
+      });
 
-  function applyRest(result) {
-    state.char.hp.current = result.hp;
-    state.char.hp.max = result.hpmax;
-    if (result.dice) state.char.dice = result.dice;
-    state.char.features = result.features;
-    state.spell.left = result.left;
-    state.spell.warlockLeft = result.warlockLeft;
-    state.spell.sp = result.sp;
-    state.spell.cunning = result.cunning;
-    state.spell.sorcRest = result.sorcRest;
-  }
+      E.featureBody.addEventListener('click', function (ev) {
+        var card = ev.target.closest('.fcard');
+        if (!card) return;
+        var f = featureByKey(card.dataset.key);
+        if (!f) return;
+        /* The eye holds a drawing, so the role is found from the closest
+           element that carries one. */
+        var roleEl = ev.target.closest ? ev.target.closest('[data-role]') : null;
+        var role = roleEl ? roleEl.dataset.role : null;
 
-  function slotsDiffer(a, b) {
-    var keys = {}, k;
-    for (k in (a || {})) keys[k] = 1;
-    for (k in (b || {})) keys[k] = 1;
-    for (k in keys) if ((a[k] || 0) !== (b[k] || 0)) return true;
-    return false;
-  }
+        if (role === 'uses') { spendFeature(f); return; }
+        if (role === 'name') { openFeature(f.key); return; }
 
-  function doRest(kind) {
-    var before = SR.snapshot(state.char, state.spell);
-    var after = kind === 'long' ? SR.longRest(state.char, state.spell) : SR.shortRest(state.char, state.spell);
-    state.char.history.push(before);
-    if (state.char.history.length > 60) state.char.history.shift();
-    applyRest(after);
-    commitChar();
-    note(restNote(kind, before, after));
-    if (navigator.vibrate) navigator.vibrate([14, 40, 14]);
-  }
+        if (!editingFeatures) return;
 
-  /* What the rest actually gave back, so the note says it. */
-  function restNote(kind, before, after) {
-    var names = [];
-    (after.features || []).forEach(function (f, i) {
-      var b = (before.features || [])[i];
-      if (b && f.left > b.left) names.push(f.name);
-    });
-    if (after.warlockLeft > before.warlockLeft && names.indexOf('Warlock spell slots') < 0) {
-      names.push('Warlock spell slots');
-    }
-    if (kind === 'long') {
-      var bits = [];
-      if (after.hp !== before.hp) bits.push('hit points');
-      if (slotsDiffer(after.left, before.left) || after.warlockLeft !== before.warlockLeft) bits.push('spell slots');
-      if (after.sp !== before.sp) bits.push('sorcery points');
-      if (names.length) bits.push(names.join(' and '));
-      return 'Long rest' + (bits.length ? ': ' + bits.join(', ') + ' back.' : ': nothing to give back.');
-    }
-    return 'Short rest' + (names.length ? ': ' + names.join(' and ') + ' back.' : ': nothing to give back yet.');
-  }
+        if (role === 'eye') {
+          f.hidden = !f.hidden;
+          f.toggled = true;
+          commitChar();
+          return;
+        }
+        if (role === 'del') {
+          deleting = f.key;
+          commitChar();
+          return;
+        }
+        if (role === 'no') {
+          deleting = null;
+          commitChar();
+          return;
+        }
+        if (role === 'yes') {
+          api.state.char.features = features().filter(function (x) { return x.key !== f.key; });
+          deleting = null;
+          buildFeatureCards();
+          commitChar();
+        }
+      });
 
+      /* The cards can be dragged to reorder them, the way the spell list
+         does. A press that turns into a move carries the card, a press that
+         ends straight away is a tap. */
+      E.featureBody.addEventListener('pointerdown', function (ev) {
+        if (ev.target.closest('input, button')) return;
+        var card = ev.target.closest('.fcard');
+        if (!card) return;
+        var startY = ev.clientY, startX = ev.clientX, timer = null, moved = false;
 
-  el.charName.addEventListener('input', function () {
-    state.char.name = el.charName.value;
-    commitChar();
-  });
+        function begin() {
+          timer = null;
+          moved = true;
+          card.classList.add('dragging');
+          if (navigator.vibrate) navigator.vibrate(12);
+        }
 
-  el.charAc.addEventListener('input', function () {
-    var v = el.charAc.value.trim();
-    state.char.ac = v === '' ? null : Number(v);
-    commitChar();
-  });
+        function move(e) {
+          if (!moved) {
+            if (Math.abs(e.clientY - startY) > 8 || Math.abs(e.clientX - startX) > 8) {
+              if (timer) { clearTimeout(timer); timer = null; }
+              cleanup();
+            }
+            return;
+          }
+          if (e.cancelable) e.preventDefault();
+          var list = card.parentNode;
+          var cards = Array.prototype.slice.call(list.querySelectorAll('.fcard'));
+          for (var i = 0; i < cards.length; i++) {
+            var r = cards[i].getBoundingClientRect();
+            if (e.clientY < r.top + r.height / 2 && cards[i] !== card) {
+              list.insertBefore(card, cards[i]);
+              startY = e.clientY;
+              break;
+            }
+          }
+        }
 
-  el.charInit.addEventListener('input', function () {
-    var v = el.charInit.value.trim();
-    state.char.init = v === '' ? 0 : Number(v);
-    commitChar();
-  });
-
-  el.charLevel.addEventListener('input', function () {
-    var v = Number(el.charLevel.value);
-    state.char.level = Math.max(1, Math.min(20, isFinite(v) && v ? v : 1));
-    commitChar();
-  });
-
-  el.charAbilities.addEventListener('input', function (ev) {
-    var input = ev.target.closest('[data-ab]');
-    if (!input) return;
-    var v = input.value.trim();
-    state.char.abilities[input.dataset.ab] = v === '' ? 10 : Math.max(0, Math.min(30, Number(v) || 0));
-    commitChar();
-  });
-
-  /* The field follows the typing, and the value it had when the field was
-     opened goes to the history when the player is done with it, so the
-     rewind takes back a whole typed change and not one keystroke. */
-  var hpBefore = null;
-
-  el.charHpNow.addEventListener('focus', function () {
-    hpBefore = SR.snapshot(state.char, state.spell);
-  });
-
-  el.charHpNow.addEventListener('input', function () {
-    var v = el.charHpNow.value.trim();
-    state.char.hp.current = SR.hpApply(v === '' ? 0 : Number(v) || 0, state.char.hp.max, 0);
-    commitChar();
-  });
-
-  el.charHpNow.addEventListener('change', function () {
-    if (hpBefore && hpBefore.hp !== state.char.hp.current) {
-      state.char.history.push(hpBefore);
-      if (state.char.history.length > 60) state.char.history.shift();
-    }
-    hpBefore = null;
-    commitChar();
-  });
-
-  el.charHpMax.addEventListener('input', function () {
-    var v = el.charHpMax.value.trim();
-    var max = v === '' ? 0 : Math.max(0, Number(v) || 0);
-    state.char.hp.max = max;
-    if (max > 0 && state.char.hp.current > max) state.char.hp.current = max;
-    commitChar();
-  });
-
-  el.charHpUp.addEventListener('click', function () {
-    setHp(SR.hpApply(state.char.hp.current, state.char.hp.max, 1));
-  });
-
-  el.charHpDown.addEventListener('click', function () {
-    setHp(SR.hpApply(state.char.hp.current, state.char.hp.max, -1));
-  });
-
-  el.charHpRewind.addEventListener('click', function () {
-    var r = SR.rewind(state.char.history);
-    if (!r.current) return;
-    state.char.history = r.history;
-    applyRest(r.current);
-    commitChar();
-    note('Rewound to before the last change.');
-  });
-
-  /* The proficiencies only move in the edit mode, so a stray tap at the
-     table never changes a modifier. */
-  el.charBody.addEventListener('click', function (ev) {
-    if (!editingChar) return;
-    var row = ev.target.closest('.prow');
-    if (!row) return;
-    var C = state.char;
-    if (row.dataset.kind === 'save') C.saves[row.dataset.key] = SR.nextProf(C.saves[row.dataset.key]);
-    else if (row.dataset.kind === 'skill') C.skills[row.dataset.key] = SR.nextProf(C.skills[row.dataset.key]);
-    else return;
-    commitChar();
-  });
-
-  el.restShort.addEventListener('click', function () { doRest('short'); });
-
-  el.restLong.addEventListener('click', function () { doRest('long'); });
-
-  el.wrench.addEventListener('click', function () {
-    if (view === 'char') { editingChar = !editingChar; commitChar(); return; }
-    if (view === 'features') { editingFeatures = !editingFeatures; commitChar(); return; }
-    editing = !editing;
-    commit();
-  });
-
-  el.wildSurge.addEventListener('click', function () { openSurge(); });
-
-  el.cunning.addEventListener('click', function () {
-    var S = state.spell;
-    pushSnapshot();
-    S.cunning = !S.cunning;
-    if (S.cunning) S.warlockLeft = Math.min(S.warlockMax, S.warlockLeft + 1);
-    else S.warlockLeft = Math.max(0, S.warlockLeft - 1);
-    commit();
-  });
-
-  el.sorcRest.addEventListener('click', function () {
-    var S = state.spell;
-    var gain = Math.floor(S.sorcererLevel / 2);
-    pushSnapshot();
-    S.sorcRest = !S.sorcRest;
-    if (S.sorcRest) S.sp = Math.min(S.spMax, S.sp + gain);
-    else S.sp = Math.max(0, S.sp - gain);
-    commit();
-  });
-
-  el.viewSpells.addEventListener('click', function (ev) {
-    var m = ev.target.closest('.mini[data-act]');
-    if (!m) return;
-    var S = state.spell;
-    var act = m.dataset.act;
-    if (act === 'dc+') S.dc++;
-    else if (act === 'dc-') S.dc = Math.max(0, S.dc - 1);
-    else if (act === 'sp+') S.sp = Math.min(S.spMax, S.sp + 1);
-    else if (act === 'sp-') S.sp = Math.max(0, S.sp - 1);
-    commit();
-  });
-
-  el.levels.addEventListener('click', function (ev) {
-    var S = state.spell;
-
-    var bolt = ev.target.closest('.bolt');
-    if (bolt) {
-      var blv = Number(bolt.dataset.bolt);
-      var moved = R.convertSlot({ sp: S.sp, spMax: S.spMax, left: S.left, warlockLeft: S.warlockLeft }, blv);
-      if (moved) {
-        S.left[blv] = moved.left;
-        S.warlockLeft = moved.warlockLeft;
-        S.sp = moved.sp;
-        commit();
-        el.spValue.classList.remove('bump');
-        void el.spValue.offsetWidth;
-        el.spValue.classList.add('bump');
-        if (navigator.vibrate) navigator.vibrate(18);
-      }
-      return;
-    }
-
-    var pip = ev.target.closest('.pip');
-    if (pip) {
-      var lv = Number(pip.dataset.lv), n = Number(pip.dataset.n);
-      var full = pip.classList.contains('full');
-      if (pip.dataset.wl) {
-        S.warlockLeft = full ? Math.max(0, S.warlockLeft - 1) : n;
-      } else {
-        S.left[lv] = full ? Math.max(0, S.left[lv] - 1) : n;
-      }
-      commit();
-      return;
-    }
-    var lvBtn = ev.target.closest('.mini[data-lvl]');
-    if (lvBtn) {
-      S.sorcererLevel = Math.max(1, Math.min(20, S.sorcererLevel + Number(lvBtn.dataset.lvl)));
-      commit();
-      return;
-    }
-    var eb = ev.target.closest('.edit .mini');
-    if (eb) {
-      var l = Number(eb.dataset.lv);
-      var d = eb.dataset.edit === 'add' ? 1 : -1;
-      if (eb.dataset.wl) {
-        var wBefore = S.warlockMax;
-        S.warlockMax = Math.max(0, Math.min(9, wBefore + d));
-        if (S.warlockMax > wBefore) S.warlockLeft = Math.min(S.warlockMax, S.warlockLeft + (S.warlockMax - wBefore));
-        else S.warlockLeft = Math.min(S.warlockLeft, S.warlockMax);
-      } else {
-        var before = S.max[l] || 0;
-        S.max[l] = Math.max(0, Math.min(9, before + d));
-        if (S.max[l] > before) S.left[l] = Math.min(S.max[l], (S.left[l] || 0) + (S.max[l] - before));
-        else S.left[l] = Math.min(S.left[l], S.max[l]);
-      }
-      commit();
-      return;
-    }
-    var down = ev.target.closest('.down');
-    if (down) {
-      S.selected = Number(down.dataset.lv);
-      commit();
-      el.spellList.scrollTop = 0;
-      return;
-    }
-    var row = ev.target.closest('.lv');
-    if (row && row.dataset.lv !== undefined) {
-      S.selected = Number(row.dataset.lv);
-      commit();
-      el.spellList.scrollTop = 0;
-    }
-  });
-
-  el.spellList.addEventListener('click', function (ev) {
-    if (dragged) { dragged = false; return; }
-    var card = ev.target.closest('.card');
-    if (card) openSheet(card.dataset.name);
-  });
-
-  el.spellList.addEventListener('pointerdown', function (ev) {
-    var card = ev.target.closest('.card');
-    if (!card) return;
-    var startY = ev.clientY, startX = ev.clientX, timer = null, dragging = false;
-
-    function begin() {
-      timer = null;
-      dragging = true;
-      card.classList.add('dragging');
-      if (navigator.vibrate) navigator.vibrate(12);
-    }
-
-    function move(e) {
-      if (!dragging) {
-        if (Math.abs(e.clientY - startY) > 8 || Math.abs(e.clientX - startX) > 8) {
+        function up() {
           if (timer) { clearTimeout(timer); timer = null; }
+          if (moved) {
+            card.classList.remove('dragging');
+            dragged = true;
+            setTimeout(function () { dragged = false; }, 80);
+            saveFeatureOrder(card.parentNode);
+          }
           cleanup();
         }
-        return;
-      }
-      if (e.cancelable) e.preventDefault();
-      var cards = Array.prototype.slice.call(el.spellList.querySelectorAll('.card'));
-      for (var i = 0; i < cards.length; i++) {
-        var r = cards[i].getBoundingClientRect();
-        if (e.clientY < r.top + r.height / 2 && cards[i] !== card) {
-          el.spellList.insertBefore(card, cards[i]);
-          startY = e.clientY;
-          dragged = true;
-          break;
+
+        function blockScroll(e) { if (moved && e.cancelable) e.preventDefault(); }
+        function cleanup() {
+          window.removeEventListener('pointermove', move);
+          window.removeEventListener('pointerup', up);
+          window.removeEventListener('pointercancel', up);
+          window.removeEventListener('touchmove', blockScroll);
         }
-      }
+
+        timer = setTimeout(begin, 320);
+        window.addEventListener('pointermove', move, { passive: false });
+        window.addEventListener('pointerup', up);
+        window.addEventListener('pointercancel', up);
+        window.addEventListener('touchmove', blockScroll, { passive: false });
+      });
+
+      E.addFeature.addEventListener('click', function () { openNewFeature(); });
+    },
+
+    /* The wrench edits the features. */
+    head: function (root, a) {
+      api = a;
+      var b = C.wrenchButton('Edit the features', function () {
+        editingFeatures = !editingFeatures;
+        api.save();
+        api.refresh();
+      });
+      root.appendChild(b);
+      E.wrench = b;
+    },
+
+    render: function (a) {
+      api = a;
+      if (E.wrench) E.wrench.setAttribute('aria-pressed', editingFeatures ? 'true' : 'false');
+      renderFeatureCards();
     }
-
-    function up() {
-      if (timer) { clearTimeout(timer); timer = null; }
-      if (dragging) {
-        card.classList.remove('dragging');
-        dragged = true;
-        setTimeout(function () { dragged = false; }, 80);
-        var order = Array.prototype.slice.call(el.spellList.querySelectorAll('.card'))
-          .map(function (c) { return c.dataset.name; });
-        state.spell.lists[state.spell.selected] = order;
-        save();
-      }
-      cleanup();
-    }
-
-    function blockScroll(e) { if (dragging && e.cancelable) e.preventDefault(); }
-    function cleanup() {
-      window.removeEventListener('pointermove', move);
-      window.removeEventListener('pointerup', up);
-      window.removeEventListener('pointercancel', up);
-      window.removeEventListener('touchmove', blockScroll);
-    }
-
-    timer = setTimeout(begin, 320);
-    window.addEventListener('pointermove', move, { passive: false });
-    window.addEventListener('pointerup', up);
-    window.addEventListener('pointercancel', up);
-    window.addEventListener('touchmove', blockScroll, { passive: false });
   });
-
-  el.addSpell.addEventListener('click', function () { openGrimoire(state.spell.selected); });
-
-  el.sheetClose.addEventListener('click', closeSheet);
-  el.sheet.addEventListener('click', function (ev) { if (ev.target === el.sheet) closeSheet(); });
-  /* A condition opens the reference to it. */
-  el.sheetText.addEventListener('click', function (ev) {
-    var cond = ev.target.closest('.tcond');
-    if (!cond) return;
-    el.condName.textContent = cond.dataset.cond;
-    el.condTip.hidden = false;
-  });
-
-  el.condClose.addEventListener('click', function () { el.condTip.hidden = true; });
-
-  el.sheetSearch.addEventListener('input', function () { renderGrimoire(state.spell.selected); });
-
-  el.grimoireLevel.addEventListener('click', function () {
-    state.spell.levelFilter = state.spell.levelFilter === false;
-    save();
-    renderGrimoire(state.spell.selected);
-  });
-
-  buildChar();
-  buildFeatureCards();
-  render();
 })();
+
+</script>
+<script>
+/* The settings page: the pages of the app, and the ones that are on. */
+(function () {
+  'use strict';
+
+  var C = Volley.core;
+
+  var api = null;   /* the shell gives it at mount */
+  var E = {};
+
+  function pages() {
+    return api.state.ui.pages || api.defaultPages.slice();
+  }
+
+  function toggle(id) {
+    var list = pages().slice();
+    var ix = list.indexOf(id);
+    if (ix >= 0) list.splice(ix, 1);
+    else list.push(id);
+    api.state.ui.pages = list;
+    api.save();
+    api.refresh();
+  }
+
+  Volley.page({
+    id: 'settings',
+    title: 'Settings',
+    order: 4,
+    hidden: true,   /* the gear opens it, so it has no tab of its own */
+    blurb: 'The pages of the app.',
+    html: [
+      '<div class="charbody" id="settingsBody">',
+      '  <div class="cshead"><span>Pages</span><span class="rule"></span></div>',
+      '  <div class="fcards" id="settingsList"></div>',
+      '  <p class="note">A page that is off keeps its numbers. Turning it back on brings them back.</p>',
+      '</div>'
+    ].join('\n'),
+
+    mount: function (root, a) {
+      api = a;
+      E = {
+        body: root.querySelector('#settingsBody'),
+        list: root.querySelector('#settingsList')
+      };
+    },
+
+    render: function (a) {
+      api = a;
+      E.list.innerHTML = '';
+      api.pages.forEach(function (p) {
+        if (p.hidden) return;
+        var on = p.home || pages().indexOf(p.id) >= 0;
+        var row = document.createElement('div');
+        row.className = 'srow';
+        row.innerHTML = '<span class="t">' + C.esc(typeof p.title === 'function' ? p.title(api) : p.title) + '</span>' +
+          '<span class="d">' + C.esc(p.blurb || '') + '</span>';
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'stog' + (on ? ' on' : '');
+        b.textContent = p.home ? 'Always' : (on ? 'On' : 'Off');
+        b.disabled = !!p.home;
+        b.setAttribute('aria-label', (typeof p.title === 'function' ? p.title(api) : p.title) + ', ' + (on ? 'on' : 'off'));
+        if (!p.home) {
+          b.addEventListener('click', function () { toggle(p.id); });
+        }
+        row.appendChild(b);
+        E.list.appendChild(row);
+      });
+    }
+  });
+})();
+
+</script>
 </script>
 </body>
 </html>
