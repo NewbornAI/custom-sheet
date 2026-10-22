@@ -1,0 +1,37 @@
+source,Spell Level,Spells
+Izzet engineer,0,"produce flame, shocking grasp"
+High elf,0,Blade ward
+Warlock,0,Eldritch blast
+Warlock,0,Mage hand
+Sorcerer,0,Message
+Sorcerer,0,Prestidigitation
+Sorcerer,0,Minor illusion
+Sorcerer,0,Mending
+Sorcerer,0,Thunderclap
+Izzet,1,"chaos bolt, create or destroy water, unseen servant"
+Hexblade,1,"shield, wrathful smite"
+elf,1,Detect Magic
+Warlock,1,https://5e.tools/spells.html#hex_xphb
+Warlock,1,https://5e.tools/spells.html#armor%20of%20agathys_xphb
+Warlock,1,https://5e.tools/spells.html#hellish%20rebuke_xphb
+Sorcerer,1,https://5e.tools/spells.html#tasha's%20hideous%20laughter_xphb
+Sorcerer,1,https://5e.tools/spells.html#absorb%20elements_xge
+Sorcerer,1,https://5e.tools/spells.html#jump_xphb
+Sorcerer,1,https://5e.tools/spells.html#silvery%20barbs_scc
+Izzet,2,"heat metal, rope trick"
+hex,2,"blur, branding smite"
+elf,2,Misty Step
+Sorcerer,2,https://5e.tools/spells.html#blindness%2fdeafness_xphb
+Warlock,2,https://5e.tools/spells.html#battle%20familiar_au
+Sorcerer,2,https://5e.tools/spells.html#mirror%20image_xphb
+Sorcerer,2,https://5e.tools/spells.html#darkness_xphb
+Sorcerer,2,https://5e.tools/spells.html#scorching%20ray_xphb
+Sorcerer,2,https://5e.tools/spells.html#hold%20person_xphb
+Izzet,3,"call lightning, elemental weapon, glyph of warding"
+Sorcerer,3,https://5e.tools/spells.html#fireball_xphb
+Sorcerer,3,https://5e.tools/spells.html#water%20breathing_xphb
+Sorcerer,3,https://5e.tools/spells.html#catnap_au
+Izzet,4,"conjure minor elementals, divination, Otiluke's resilient sphere"
+Izzet,5,"animate objects, conjure elemental"
+Sorcerer,5,https://5e.tools/spells.html#hold%20monster_xphb
+Sorcerer,5,https://5e.tools/spells.html#dominate%20person_xphb

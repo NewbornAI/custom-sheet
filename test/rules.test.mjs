@@ -148,23 +148,26 @@ console.log('wild magic surge');
 
 console.log('the spell book');
 {
-  const book = JSON.parse(readFileSync(resolve(root, 'data', 'spells-sorcerer-xphb.json'), 'utf8'));
-  check('the sorcerer has spells', book.spells.length > 100, true);
-  const levels = {};
-  for (const s of book.spells) levels[s.level] = (levels[s.level] || 0) + 1;
-  check('there are cantrips', levels[0] > 5, true);
-  check('there are level 5 spells', levels[5] > 5, true);
+  const book = JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8'));
+  check('the book has spells', book.spells.length > 150, true);
+  check('the sheet seeded the list', book.seed.length > 40, true);
+  check('every seeded spell is in the book', book.seed.filter((s) => !book.spells.some((x) => x.name === s.name)).length, 0);
+  check('every seeded spell names its source', book.seed.every((s) => !!s.source), true);
+  const seedLevels = {};
+  for (const s of book.seed) seedLevels[s.level] = (seedLevels[s.level] || 0) + 1;
+  check('the sheet has cantrips', seedLevels[0] > 5, true);
+  check('the sheet has level 5 spells', seedLevels[5] > 0, true);
   const eb = book.spells.find((s) => s.name === 'Eldritch Blast');
   check('eldritch blast is a cantrip', eb.level, 0);
   check('it has a casting time', eb.time.length > 0, true);
   check('it has a range', eb.range.length > 0, true);
-  check('it has a description', eb.description.length > 20, true);
   check('it has components', eb.components.length > 0, true);
+  check('it has blocks', eb.blocks.length > 0, true);
+  const fb = book.spells.find((s) => s.name === 'Fireball');
+  check('fireball has the higher level section', fb.blocks.some((b) => b.t === 'h' && /Using a Higher-Level Spell Slot/.test(b.text)), true);
+  check('a spell carries a table', book.spells.some((s) => s.blocks.some((b) => b.t === 'table')), true);
   const hex = book.spells.find((s) => s.name === 'Hex');
   check('hex is a level 1 spell', hex.level, 1);
-  const seed = ['Eldritch Blast', 'Light', 'Prestidigitation', 'Shocking Grasp', 'Sorcerous Burst', 'Burning Hands', 'Detect Magic', 'Hex', 'Scorching Ray'];
-  const missing = seed.filter((n) => !book.spells.some((s) => s.name === n));
-  check('every seeded spell exists', missing, []);
 }
 
 console.log('the built page carries the data');
@@ -182,7 +185,7 @@ console.log('the built page carries the data');
   else {
     const parsedBook = JSON.parse(bookBlock[1]);
     check('the spell book is inlined', parsedBook.spells.length > 100, true);
-    check('the inlined book matches the data file', parsedBook.spells[0].name, JSON.parse(readFileSync(resolve(root, 'data', 'spells-sorcerer-xphb.json'), 'utf8')).spells[0].name);
+    check('the inlined book matches the data file', parsedBook.spells[0].name, JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8')).spells[0].name);
   }
 }
 

@@ -24,10 +24,12 @@ The AC field is optional. Leave it empty and the app shows the damage of every b
 
 A tracker for the character's slots and spell list, built for one hand at the table.
 
-- **The top bar** holds the DC and the sorcery points, each with its own minus and plus, and two toggles: Cunning restores one warlock slot, and a sorcerer rest restores half your sorcerer level in sorcery points.
-- **The slot strip** runs across the top: the levels left to right, and under each one its slots stacked as pips. Filled means you still have it, and tapping a pip sets that level to that count. The arrow beside a level shows the spells of that level.
-- **The spell list** shows one card per spell with its casting time, range, duration and components. Tap a card for the full description, and hold and drag a card to reorder the list. The plus at the head of the list opens the grimoire for that level.
+- **The top bar** holds the DC and the sorcery points, and two toggles: Cunning restores one warlock slot, and a sorcerer rest restores half your sorcerer level in sorcery points. The sorcery points have their own minus and plus; the DC only grows buttons in the edit mode.
+- **The slot strip** runs across the top: the levels left to right, and under each one its slots stacked as pips. A filled pip means you still have it, and tapping one spends it, so tapping the last one empties the level. Tapping an empty pip resets that level up to it. The arrow beside a level shows the spells of that level.
+- **The spell list** shows one card per spell with its casting time, range, duration, components and the class that granted it. Tap a card for the full page, tables and the Using a Higher-Level Spell Slot section included, and hold and drag a card to reorder the list. The plus at the head of the list opens the grimoire for that level.
 - **The wrench** in the top right turns on the edit mode, where each level grows minus and plus buttons for the maximum number of slots, and the sorcerer level can be changed. A level with no slots is dimmed, which is how level 5 starts out until you unlock it.
+
+The list is seeded from the character's own sheet in `data/spell-sheet.csv`, one line per spell with the class that granted it.
 
 The spell list is seeded with the cantrips and the spells the character is known to have, and everything else comes from the grimoire.
 
@@ -37,7 +39,7 @@ The second tab rolls on the Wild Magic Surge table from the 2024 Player's Handbo
 
 The table is never typed by hand. `tools/fetch-5e-data.mjs` pulls it out of the 5e.tools class data, parses it into `data/wild-magic-surge-xphb.json`, and refuses to write a table that does not cover 1 to 100 exactly once. The build inlines that JSON into the page, and the test suite checks the inlined copy against the file.
 
-The same script pulls the spell book: every sorcerer and warlock spell of the 2024 Player's Handbook, with its casting time, range, duration, components and text, into `data/spells-sorcerer-xphb.json`.
+The same script pulls the spell book: the spells on the character's sheet, plus the sorcerer and warlock lists, with their casting time, range, duration, components and full text, into `data/spellbook.json`. The entries keep their structure, so the tables and the Using a Higher-Level Spell Slot sections survive.
 
 ```
 node tools/fetch-5e-data.mjs

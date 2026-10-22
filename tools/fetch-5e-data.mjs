@@ -1,9 +1,11 @@
 /**
  * Pulls the 2024 Player's Handbook data this app needs from 5e.tools and writes
- * two files: the wild magic surge table, and the sorcerer's spell list.
+ * two files: the wild magic surge table, and the spell book.
  *
  *   node tools/fetch-5e-data.mjs
  *
+ * The spell book is built from the character's own sheet (data/spell-sheet.csv)
+ * plus the sorcerer and warlock lists, so the app can offer a grimoire.
  * The raw upstream files are downloaded into tools/.5e-cache/ and are not in git.
  */
 import { spawnSync } from 'node:child_process';
@@ -15,11 +17,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const cache = resolve(root, 'tools', '.5e-cache');
 mkdirSync(cache, { recursive: true });
 
-const FILES = {
-  class: 'https://5e.tools/data/class/class-sorcerer.json',
-  spells: 'https://5e.tools/data/spells/spells-xphb.json',
-  lookup: 'https://5e.tools/data/generated/gendata-spell-source-lookup.json'
-};
+const BASE = 'https://5e.tools/data/';
 
 function download(url, file) {
   const out = resolve(cache, file);
@@ -30,9 +28,43 @@ function download(url, file) {
   return out;
 }
 
-const classData = JSON.parse(readFileSync(download(FILES.class, 'class-sorcerer.json'), 'utf8'));
-const spellData = JSON.parse(readFileSync(download(FILES.spells, 'spells-xphb.json'), 'utf8')).spell;
-const lookup = JSON.parse(readFileSync(download(FILES.lookup, 'gendata-spell-source-lookup.json'), 'utf8'));
+/* ---------- the sheet ---------- */
+
+function parseSheet(csv) {
+  const rows = [];
+  for (const line of csv.split(/\r?\n/)) {
+    if (!line.trim()) continue;
+    const cells = [];
+    let cur = '';
+    let quoted = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { quoted = !quoted; continue; }
+      if (ch === ',' && !quoted) { cells.push(cur); cur = ''; continue; }
+      cur += ch;
+    }
+    cells.push(cur);
+    if (cells.length < 3) continue;
+    if (cells[0].trim().toLowerCase() === 'source') continue;
+    const source = cells[0].trim();
+    const level = Number(cells[1]);
+    if (!source || !Number.isFinite(level) || level < 0) continue;
+    for (const raw of cells.slice(2).join(',').split(',')) {
+      const item = raw.trim();
+      if (!item) continue;
+      let name = item;
+      let hint = null;
+      const m = item.match(/^https?:\/\/[^#]*#(.+)$/);
+      if (m) {
+        const bits = decodeURIComponent(m[1]).split('_');
+        hint = bits.pop();
+        name = bits.join('_');
+      }
+      rows.push({ name: name, level: level, source: source, hint: hint });
+    }
+  }
+  return rows;
+}
 
 /* ---------- 5e.tools markup ---------- */
 
@@ -60,16 +92,80 @@ function clean(text) {
   return out.replace(/\s+/g, ' ').trim();
 }
 
-function entriesToText(entries) {
-  if (!entries) return '';
-  const parts = Array.isArray(entries) ? entries : [entries];
-  const out = [];
-  for (const e of parts) {
-    if (typeof e === 'string') { out.push(clean(e)); continue; }
-    if (e && e.name) { out.push(clean(e.name) + ':'); continue; }
-    if (e && e.entries) out.push(entriesToText(e.entries));
+function textOf(entries) {
+  if (typeof entries === 'string') return clean(entries);
+  if (Array.isArray(entries)) return entries.map(textOf).filter(Boolean).join(' ');
+  if (entries && typeof entries === 'object') {
+    if (entries.entries) return textOf(entries.entries);
+    if (entries.text) return clean(entries.text);
+    if (entries.name) return clean(entries.name);
   }
-  return out.filter(Boolean).join(' ');
+  return '';
+}
+
+/* A table cell can be a die roll rather than a word. */
+function cellText(cell) {
+  if (typeof cell === 'string') return clean(cell);
+  if (!cell || typeof cell !== 'object') return '';
+  if (cell.type === 'cell' && cell.roll) {
+    const r = cell.roll;
+    if (r.exact !== undefined) return String(r.exact);
+    if (r.min !== undefined && r.max !== undefined) return r.min + '-' + r.max;
+    if (r.dice) return clean(String(r.dice) + (r.faces ? 'd' + r.faces : ''));
+    if (r.note) return clean(r.note);
+  }
+  return textOf(cell);
+}
+
+function blocksFrom(entries) {
+  const out = [];
+  for (const e of entries || []) {
+    if (typeof e === 'string') {
+      const t = clean(e);
+      if (t) out.push({ t: 'p', text: t });
+      continue;
+    }
+    if (!e || typeof e !== 'object') continue;
+    if (e.type === 'entries' || e.type === 'section' || e.type === 'subsection') {
+      if (e.name) out.push({ t: 'h', text: clean(e.name) });
+      out.push(...blocksFrom(e.entries));
+      continue;
+    }
+    if (e.type === 'table') {
+      out.push({
+        t: 'table',
+        caption: clean(e.caption || ''),
+        head: (e.colLabels || []).map((h) => clean(h)),
+        rows: (e.rows || []).map((r) => (Array.isArray(r) ? r : [r]).map(cellText))
+      });
+      continue;
+    }
+    if (e.type === 'list') {
+      const items = (e.items || []).map((i) => (typeof i === 'string' ? clean(i) : textOf(i))).filter(Boolean);
+      if (items.length) out.push({ t: 'list', items });
+      continue;
+    }
+    if (e.type === 'inset') {
+      const t = clean(e.title || 'Read aloud') + ': ' + textOf(e.entries);
+      if (t) out.push({ t: 'p', text: t });
+      continue;
+    }
+    if (e.type && e.type.startsWith('ability')) {
+      const attrs = (e.attributes || []).map((a) => clean(a)).join(' or ');
+      const bits = [];
+      if (attrs) bits.push(attrs + ' saving throw');
+      if (e.action) bits.push(clean(e.action));
+      if (e.dc) bits.push('DC ' + e.dc);
+      if (e.atk) bits.push('attack');
+      const t = bits.join(', ');
+      if (t) out.push({ t: 'p', text: t });
+      continue;
+    }
+    if (e.entries) { out.push(...blocksFrom(e.entries)); continue; }
+    if (e.text) { out.push({ t: 'p', text: clean(e.text) }); continue; }
+    if (e.name) { out.push({ t: 'h', text: clean(e.name) }); }
+  }
+  return out;
 }
 
 /* ---------- formatters ---------- */
@@ -92,6 +188,7 @@ function formatTime(time) {
 function formatRange(range) {
   if (!range) return '';
   const d = range.distance;
+  if (d && d.type === 'self') return 'Self' + (d.amount ? ' (' + d.amount + ' feet)' : '');
   const amt = d && d.amount ? d.amount + ' ' + (d.type === 'foot' ? 'feet' : d.type) : '';
   switch (range.type) {
     case 'point': return amt || 'Special';
@@ -99,7 +196,6 @@ function formatRange(range) {
     case 'sphere': return amt ? amt + ' radius' : 'Sphere';
     case 'cone': return amt ? amt + ' cone' : 'Cone';
     case 'line': return amt ? amt + ' line' : 'Line';
-    case 'special': return amt || 'Special';
     default: return amt || 'Special';
   }
 }
@@ -120,9 +216,8 @@ function formatDuration(duration) {
 
 /* ---------- the surge table ---------- */
 
-const surgeFeature = classData.subclassFeature.find(
-  (f) => f.classSource === 'XPHB' && f.name === 'Wild Magic Surge'
-);
+const classData = JSON.parse(readFileSync(download(BASE + 'class/class-sorcerer.json', 'class-sorcerer.json'), 'utf8'));
+const surgeFeature = classData.subclassFeature.find((f) => f.classSource === 'XPHB' && f.name === 'Wild Magic Surge');
 if (!surgeFeature) throw new Error('the Wild Magic Surge feature was not found');
 const table = surgeFeature.entries.find((e) => e && e.type === 'table');
 if (!table) throw new Error('the surge table was not found');
@@ -135,7 +230,7 @@ for (const row of table.rows) {
   let from = Number(m[1]);
   let to = Number(m[2]);
   if (to < from) to = 100;
-  surgeRows.push({ from, to, text: entriesToText(row[1]) });
+  surgeRows.push({ from, to, text: textOf(row[1]) });
 }
 surgeRows.sort((a, b) => a.from - b.from);
 let covered = 0;
@@ -158,15 +253,31 @@ writeFileSync(
 );
 console.log('surge table: ' + surgeRows.length + ' rows covering 1-100');
 
-/* ---------- the sorcerer's spells ---------- */
+/* ---------- the spell data ---------- */
 
-const classLookup = lookup.xphb || lookup.XPHB || {};
-const sorcererSpells = [];
-for (const spell of spellData) {
-  const entry = classLookup[spell.name.toLowerCase()];
-  if (!entry || !entry.class || !entry.class.XPHB) continue;
-  if (!entry.class.XPHB.Sorcerer && !entry.class.XPHB.Warlock) continue;
-  sorcererSpells.push({
+const SOURCES = ['XPHB', 'PHB', 'XGE', 'AU', 'SCC'];
+const files = { XPHB: 'spells/spells-xphb.json', PHB: 'spells/spells-phb.json', XGE: 'spells/spells-xge.json', AU: 'spells/spells-au.json', SCC: 'spells/spells-scc.json' };
+const bySource = {};
+for (const src of SOURCES) {
+  const list = JSON.parse(readFileSync(download(BASE + files[src], 'spells-' + src.toLowerCase() + '.json'), 'utf8')).spell;
+  bySource[src] = list;
+}
+
+const lookup = JSON.parse(readFileSync(download(BASE + 'generated/gendata-spell-source-lookup.json', 'gendata-spell-source-lookup.json'), 'utf8'));
+
+function norm(name) { return String(name).toLowerCase().replace(/[^a-z0-9]/g, ''); }
+
+const index = {};
+for (const src of SOURCES) {
+  for (const s of bySource[src]) {
+    const key = norm(s.name);
+    if (!index[key]) index[key] = [];
+    index[key].push(Object.assign({}, s, { _src: src }));
+  }
+}
+
+function spellRecord(spell, sourceTag) {
+  return {
     name: spell.name,
     level: spell.level,
     school: spell.school || '',
@@ -174,26 +285,57 @@ for (const spell of spellData) {
     range: formatRange(spell.range),
     duration: formatDuration(spell.duration),
     components: ['v', 's', 'm'].filter((k) => spell.components && spell.components[k]).map((k) => k.toUpperCase()).join(''),
-    ritual: !!(spell.miscTags || []).includes('RITUAL'),
+    ritual: (spell.miscTags || []).includes('RITUAL'),
     concentration: !!spell.concentration,
-    description: entriesToText(spell.entries)
-  });
+    source: sourceTag || '',
+    blocks: blocksFrom(spell.entries).concat(blocksFrom(spell.entriesHigherLevel))
+  };
 }
-sorcererSpells.sort((a, b) => a.level - b.level || a.name.localeCompare(b.name));
-const byLevel = {};
-for (const s of sorcererSpells) (byLevel[s.level] = byLevel[s.level] || []).push(s.name);
+
+const sheet = parseSheet(readFileSync(resolve(root, 'data', 'spell-sheet.csv'), 'utf8'));
+const seed = [];
+const book = new Map();
+
+for (const row of sheet) {
+  const key = norm(row.name);
+  const candidates = index[key] || [];
+  const pick = candidates.find((c) => c._src === row.hint) || candidates.find((c) => c._src === 'XPHB') || candidates[0];
+  if (!pick) { console.log('not found: ' + row.name + ' (' + row.source + ')'); continue; }
+  seed.push({ name: pick.name, level: row.level, source: row.source });
+  if (!book.has(pick.name)) book.set(pick.name, spellRecord(pick, row.source));
+}
+
+/* the class lists, so the grimoire can offer more */
+const classLookup = lookup.xphb || {};
+for (const spell of bySource.XPHB) {
+  const entry = classLookup[spell.name.toLowerCase()];
+  if (!entry || !entry.class || !entry.class.XPHB) continue;
+  const classes = Object.keys(entry.class.XPHB).filter((c) => entry.class.XPHB[c] && (c === 'Sorcerer' || c === 'Warlock'));
+  if (!classes.length) continue;
+  if (book.has(spell.name)) {
+    const rec = book.get(spell.name);
+    if (!rec.source) rec.source = classes[0];
+    continue;
+  }
+  book.set(spell.name, spellRecord(spell, classes[0]));
+}
+
+const spells = [...book.values()].sort((a, b) => a.level - b.level || a.name.localeCompare(b.name));
 
 writeFileSync(
-  resolve(root, 'data', 'spells-sorcerer-xphb.json'),
+  resolve(root, 'data', 'spellbook.json'),
   JSON.stringify({
-    edition: "2024 Player's Handbook, the Sorcerer spell list",
+    edition: "2024 Player's Handbook, the character's own sheet plus the sorcerer and warlock lists",
     source: 'https://5e.tools/spells.html',
     fetched: new Date().toISOString().slice(0, 10),
-    spells: sorcererSpells
+    sheet: 'data/spell-sheet.csv',
+    seed: seed,
+    spells: spells
   }, null, 2) + '\n',
   'utf8'
 );
-for (const lv of Object.keys(byLevel).sort((a, b) => a - b)) {
-  console.log('level ' + lv + ': ' + byLevel[lv].length + ' spells');
-}
-console.log('wrote ' + sorcererSpells.length + ' sorcerer spells');
+
+const byLevel = {};
+for (const s of seed) (byLevel[s.level] = byLevel[s.level] || []).push(s.name + ' (' + s.source + ')');
+for (const lv of Object.keys(byLevel).sort((a, b) => a - b)) console.log('level ' + lv + ': ' + byLevel[lv].join(', '));
+console.log('wrote ' + spells.length + ' spells, ' + seed.length + ' of them on the sheet');
