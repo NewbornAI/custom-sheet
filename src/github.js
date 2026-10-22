@@ -128,7 +128,7 @@
       return rows.filter(function (f) {
         return f && f.type === 'file' && /\.json$/.test(f.name);
       }).map(function (f) {
-        return { name: f.name, url: f.download_url, ref: ref || '' };
+        return { name: f.name, url: f.download_url, page: f.html_url || '', ref: ref || '' };
       });
     }).catch(function (e) {
       if (e && e.status === 404) return [];

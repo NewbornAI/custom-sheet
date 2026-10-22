@@ -1099,7 +1099,7 @@
       return rows.filter(function (f) {
         return f && f.type === 'file' && /\.json$/.test(f.name);
       }).map(function (f) {
-        return { name: f.name, url: f.download_url, ref: ref || '' };
+        return { name: f.name, url: f.download_url, page: f.html_url || '', ref: ref || '' };
       });
     }).catch(function (e) {
       /* the folder of the shelf may not be there yet */
@@ -1196,19 +1196,29 @@
     return window.SheetGit.forkRepo(shelfRepo(), ghToken());
   }
 
+  /* The address of a file on GitHub, the one a browser shows, is turned
+     into the address of the file itself, so a player can paste either. */
+  function rawAddress(url) {
+    var blob = String(url || '').match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)$/);
+    if (blob) return 'https://raw.githubusercontent.com/' + blob[1] + '/' + blob[2] + '/' + blob[3] + '/' + blob[4];
+    var raw = String(url || '').match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/raw\/([^/]+)\/(.+)$/);
+    if (raw) return 'https://raw.githubusercontent.com/' + raw[1] + '/' + raw[2] + '/' + raw[3] + '/' + raw[4];
+    return String(url || '');
+  }
+
   /* A package that comes in by a link, or by the address of a file that
      holds one. */
   function importAny(text) {
     var where = String(text || '').trim();
     if (!where) return Promise.resolve({ ok: false, why: 'nothing to fetch' });
     if (/[#&]p=/.test(where)) return importLink(where);
-    return importUrl(where);
+    return importUrl(rawAddress(where));
   }
 
   /* A package that comes in by a link: the machine that holds the file
      answers, and the package lands the way one from a file lands. */
   function importUrl(url) {
-    var where = String(url || '').trim();
+    var where = rawAddress(String(url || '').trim());
     if (!where) return Promise.resolve({ ok: false, why: 'no link' });
     return readUrl(where).then(function (text) {
       return importPackage(text);

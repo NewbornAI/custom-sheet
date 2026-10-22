@@ -20,6 +20,7 @@ are, so an agent can change the app without reading all of it.
 | `tools/` | the build, the data fetch, the icon maker |
 | `test/rules.test.mjs` | the rules engine and the data |
 | `test/github.test.mjs` | the sign in and the calls to GitHub |
+| `test/address.test.mjs` | the address of a file on GitHub |
 
 The README is the human entry point. This file is the agent one.
 
@@ -29,6 +30,7 @@ The README is the human entry point. This file is the agent one.
 node build.mjs                                  # src to dist, the font and the data inlined
 node test/rules.test.mjs                        # the rules engine and the data
 node test/github.test.mjs                       # the sign in and the calls to GitHub
+node test/address.test.mjs                      # the address of a file on GitHub
 node tools/fetch-5e-data.mjs                    # refetch the data from 5e.tools
 powershell -ExecutionPolicy Bypass -File tools/build-apk.ps1
 ```
@@ -145,7 +147,13 @@ arrive. None of them asks the player to type a secret.
   `importUrl` when the text is the address of a file that holds a package.
 - **The shelf.** A folder in the public repository of the app, read with no
   secret: `shelfCharacters(ref)` and `shelfBranches()`. A branch is a shelf
-  of a player, and anybody may open one.
+  of a player, and anybody may open one. A row of the shelf carries the name,
+  the raw address of the file and the address a browser shows.
+- **The address of a file on GitHub is read as well as the raw one.**
+  `rawAddress(url)` turns `github.com/o/r/blob/ref/path` and
+  `github.com/o/r/raw/ref/path` into `raw.githubusercontent.com/o/r/ref/path`,
+  because the page a browser shows answers no cross origin request and the
+  raw file does. `importAny` and `importUrl` both go through it.
 
 ## The shelf writes back
 

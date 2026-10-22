@@ -83,7 +83,9 @@ player across the table.
 **The shelf.** A folder in this repository, read by every app with no secret
 at all. Drop a character in `characters/` and commit it, and every app brings
 it in with one tap. Open a branch and the branch is a shelf of your own, and
-the app lists the branches too.
+the app lists the branches too. A character on the shelf has an address on
+GitHub, and the app brings one in from that address as well, so a character
+can be found by name and address rather than by a link in a message.
 
 The shelf also writes back. Connect the app to GitHub once, and the character
 being played goes onto the shelf with a tap, one file per character, on the
@@ -132,6 +134,7 @@ page says which of them have arrived.
 node build.mjs                                  # src to dist, the font and the data inlined
 node test/rules.test.mjs                        # the rules engine and the data
 node test/github.test.mjs                       # the sign in and the calls to GitHub
+node test/address.test.mjs                      # the address of a file on GitHub
 node tools/fetch-5e-data.mjs                    # refetch the data from 5e.tools
 powershell -ExecutionPolicy Bypass -File tools/build-apk.ps1
 ```

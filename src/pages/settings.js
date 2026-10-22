@@ -330,9 +330,14 @@
     E.shelf.appendChild(own);
 
     /* Where a character is written: the main branch holds the shared ones,
+    /* Where a character is written. The main branch holds the shared ones,
        a branch of one's own holds the ones that are not ready yet. */
     var where = document.createElement('div');
     where.className = 'srow';
+    var whereTitle = document.createElement('span');
+    whereTitle.className = 't';
+    whereTitle.textContent = 'The character being played';
+    where.appendChild(whereTitle);
     var branch = document.createElement('input');
     branch.className = 'cinput slim';
     branch.type = 'text';
@@ -452,14 +457,15 @@
     var text = JSON.stringify(pkg, null, 2);
     C.toast('putting it on the shelf');
     C.shelfWrite(text, name).then(function (url) {
-      C.toast(url ? 'it is on the shelf' : 'it is on the shelf');
+      C.toast('it is on the shelf');
+      showAddress(url);
     }).catch(function (e) {
       var why = String((e && e.message) || e);
       /* the branch may not be there yet, so it is made and the character is
          put again */
       if (branch !== 'main' && why.indexOf('not found') >= 0) {
         C.shelfBranch(branch).then(function () { return C.shelfWrite(text, name); })
-          .then(function () { C.toast('it is on the shelf'); })
+          .then(function (url) { C.toast('it is on the shelf'); showAddress(url); })
           .catch(function (e2) { C.toast(String((e2 && e2.message) || e2)); });
         return;
       }
@@ -467,6 +473,41 @@
     });
   }
 
+  /* The address of the file on GitHub, which is a link anyone can open and
+     which holds the character itself. It is the way to a character that does
+     not travel in a message. */
+  function showAddress(url) {
+    if (!url || !E.address) return;
+    E.address.innerHTML = '';
+    var row = document.createElement('div');
+    row.className = 'srow';
+    var title = document.createElement('span');
+    title.className = 't';
+    title.textContent = 'The file on GitHub';
+    row.appendChild(title);
+    var field = document.createElement('input');
+    field.className = 'cinput slim';
+    field.type = 'text';
+    field.readOnly = true;
+    field.value = url;
+    field.setAttribute('aria-label', 'The address of the file on GitHub');
+    row.appendChild(field);
+    var copy = document.createElement('button');
+    copy.type = 'button';
+    copy.className = 'stog';
+    copy.textContent = 'Copy';
+    copy.setAttribute('aria-label', 'Copy the address of the file');
+    copy.addEventListener('click', function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function () { C.toast('the address is in the clipboard'); })
+          .catch(function () { C.toast('the address is in the field above'); });
+        return;
+      }
+      C.toast('the address is in the field above');
+    });
+    row.appendChild(copy);
+    E.address.appendChild(row);
+  }
   /* A character of the shelf comes in. */
   function takeFrom(url) {
     C.importUrl(url).then(function (pkg) {
@@ -586,6 +627,7 @@
       '  <p class="note">A character is a package: the data in JSON. It can leave as a file or as a link, and come back in by either. Nothing has to be typed.</p>',
       '  <div class="cshead"><span>The shelf</span><span class="rule"></span></div>',
       '  <div class="fcards" id="settingsShelf"></div>',
+      '  <div class="fcards" id="settingsAddress"></div>',
       '  <p class="note">The shelf is a folder in the public repository of the app. The app reads it with no secret, and anybody may open a branch and drop a character there.</p>',
       '  <div class="cshead"><span>Credits</span><span class="rule"></span></div>',
       '  <div class="fcards" id="settingsCredits"></div>',
@@ -603,6 +645,7 @@
         files: root.querySelector('#settingsFiles'),
         exchange: root.querySelector('#settingsExchange'),
         shelf: root.querySelector('#settingsShelf'),
+        address: root.querySelector('#settingsAddress'),
         credits: root.querySelector('#settingsCredits'),
         update: root.querySelector('#settingsUpdate')
       };
@@ -614,6 +657,7 @@
       files();
       update();
       exchange();
+      if (E.address) E.address.innerHTML = '';
       shelfRows();
       credits();
       api.pages.forEach(function (p) {
