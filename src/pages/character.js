@@ -148,7 +148,11 @@
     if (saved && typeof saved === 'object') {
       if (typeof saved.name === 'string') c.name = saved.name;
       if (saved.level) c.level = Math.max(1, Math.min(20, Number(saved.level) || CHAR_DEFAULTS.level));
-      if (saved.init !== undefined && saved.init !== null) c.init = Number(saved.init) || 0;
+      /* The initiative follows the dexterity until the player sets one. */
+      if (saved.initTouched) {
+        c.init = Number(saved.init) || 0;
+        c.initTouched = true;
+      }
       if (saved.ac !== undefined && saved.ac !== null && saved.ac !== '') c.ac = Number(saved.ac) || 0;
       ABILITIES.forEach(function (a) {
         if (saved.abilities && saved.abilities[a.key] !== undefined && saved.abilities[a.key] !== null) {
@@ -247,7 +251,7 @@
     if (document.activeElement !== E.charAc) {
       E.charAc.value = CH.ac === null ? '' : String(CH.ac);
     }
-    if (document.activeElement !== E.charInit) E.charInit.value = String(CH.init);
+    if (document.activeElement !== E.charInit) E.charInit.value = String(SR.initMod(CH));
     if (document.activeElement !== E.charLevel) E.charLevel.value = String(CH.level);
     if (document.activeElement !== E.charHpNow) {
       E.charHpNow.value = CH.hp.current ? String(CH.hp.current) : '';
@@ -296,6 +300,48 @@
       '<span>passive perception <b>' + (10 + SR.skillMod(CH, 'perception')) + '</b></span>';
 
     renderDice();
+    if (editingChar) buildStyle();
+  }
+
+  /* ---- the style of the character ---- */
+
+  /* The colours and the icon are the character's own, and they are set
+     here, in the edit mode, so a stray tap never repaints the app at the
+     table. */
+  function styleRow(list, on, label, blurb, svg, onClick) {
+    var row = document.createElement('div');
+    row.className = 'srow';
+    row.innerHTML = (svg ? '<span class="sico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + svg + '</svg></span>' : '') +
+      '<span class="t">' + C.esc(label) + '</span><span class="d">' + C.esc(blurb) + '</span>';
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'stog' + (on ? ' on' : '');
+    b.textContent = on ? 'On' : 'Off';
+    b.setAttribute('aria-label', label + ', ' + (on ? 'on' : 'off'));
+    b.addEventListener('click', onClick);
+    row.appendChild(b);
+    list.appendChild(row);
+  }
+
+  function buildStyle() {
+    if (!E.charThemes) return;
+    var rec = api.character();
+    E.charThemes.innerHTML = '';
+    E.charIcons.innerHTML = '';
+    C.themes.forEach(function (t) {
+      styleRow(E.charThemes, (rec.theme || '') === t.id, t.label, t.blurb, '', function () {
+        if ((rec.theme || '') === t.id) return;
+        rec.theme = t.id;
+        commitChar();
+      });
+    });
+    Object.keys(C.icons).forEach(function (key) {
+      styleRow(E.charIcons, C.iconOf(rec) === key, C.icons[key].label, C.icons[key].blurb, C.icons[key].svg, function () {
+        if (C.iconOf(rec) === key) return;
+        rec.icon = key;
+        commitChar();
+      });
+    });
   }
 
   /* ---- the hit dice ---- */
@@ -491,6 +537,11 @@
       '  <div class="derived" id="charDerived"></div>',
       '  <div class="cshead"><span>Skills</span><span class="rule"></span></div>',
       '  <div class="sgrid" id="charSkills"></div>',
+      '  <div class="charstyle" id="charStyle">',
+      '    <div class="cshead"><span>Style</span><span class="rule"></span></div>',
+      '    <div class="fcards" id="charThemes"></div>',
+      '    <div class="fcards" id="charIcons"></div>',
+      '  </div>',
       '</div>',
       '<div class="charfoot">',
       '  <p class="note" id="charNote"></p>',
@@ -523,6 +574,8 @@
         charAbilities: root.querySelector('#charAbilities'),
         charDerived: root.querySelector('#charDerived'),
         charSkills: root.querySelector('#charSkills'),
+        charThemes: root.querySelector('#charThemes'),
+        charIcons: root.querySelector('#charIcons'),
         charNote: root.querySelector('#charNote'),
         restShort: root.querySelector('#restShort'),
         restLong: root.querySelector('#restLong')
@@ -547,6 +600,7 @@
       E.charInit.addEventListener('input', function () {
         var v = E.charInit.value.trim();
         CH.init = v === '' ? 0 : Number(v);
+        CH.initTouched = true;
         commitChar();
       });
 

@@ -462,6 +462,15 @@ console.log('the features');
   check('the wild surge is the 2024 one', data.features.find((f) => f.key === 'wildSurge').blocks[0].text.indexOf('1d20') >= 0, true);
 }
 
+console.log('initiative');
+{
+  check('it follows the dexterity', C.initMod({ abilities: { dex: 14 } }), 2);
+  check('a score of eight gives a minus one', C.initMod({ abilities: { dex: 8 } }), -1);
+  check('a score of ten gives nothing', C.initMod({ abilities: { dex: 10 } }), 0);
+  check('a set initiative wins', C.initMod({ abilities: { dex: 14 }, init: 5, initTouched: true }), 5);
+  check('and a set zero keeps its zero', C.initMod({ abilities: { dex: 14 }, init: 0, initTouched: true }), 0);
+}
+
 console.log('seeding a character from the data');
 {
   const features = JSON.parse(readFileSync(resolve(root, 'data', 'features.json'), 'utf8'));
@@ -478,6 +487,10 @@ console.log('seeding a character from the data');
   check('the twelve it brings are its own', features.features.filter((f) => f.preset === 'bard').length, 12);
   check('the eighteen of the app wait for a new character', features.features.filter((f) => !f.preset).length, 18);
   check('the level of the sheet', bard.rec.char.level, 11);
+  check('the name of the sheet', bard.name + '/' + bard.rec.char.name, 'Yngwie/Yngwie');
+  check('the six scores of the sheet', ['str', 'dex', 'con', 'int', 'wis', 'cha'].map((k) => bard.rec.char.abilities[k]).join('/'), '8/14/14/10/12/19');
+  check('it comes with its own colours and icon', bard.rec.theme + '/' + bard.rec.icon, 'blueRed/guitar');
+  check('it sets no initiative, the dexterity gives it', bard.rec.char.initTouched === undefined, true);
   check('eleven hit dice, all d8', bard.rec.char.dice.length + 'd' + bard.rec.char.dice[0].type, '11d8');
   check('proficient in the two bard saves', bard.rec.char.saves.dex + '/' + bard.rec.char.saves.cha, '1/1');
   const slots = bard.rec.spells.max;
@@ -511,6 +524,9 @@ console.log('seeding a character from the data');
   check('and they are its own', char.features.map((f) => f.key).indexOf('musician') >= 0, true);
   check('a feature keeps its uses', char.features.filter((f) => f.key === 'bardicInspiration')[0].max, 5);
   check('the level survives the seeding', char.level, 11);
+  check('charisma 19 and level 11 give a spell attack of +8', C.spellAttack(char), 8);
+  check('and a save DC of 16', C.spellDC(char), 16);
+  check('and an initiative of +2', C.initMod(char), 2);
   const own = taken.character.seed({}, false);
   check('the app\'s own character keeps its features', own.features.length, 19);
   check('and its own numbers', own.level + '/' + own.abilities.cha, '9/20');

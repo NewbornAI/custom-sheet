@@ -140,7 +140,9 @@
       col.dataset.lv = String(lv);
       col.style.flexGrow = String(Math.max(1, counts[ix]));
 
-      if (lv > 0) {
+      /* The bolt turns a slot into sorcery points, so a character with no
+         sorcery points has nothing to do with it. */
+      if (lv > 0 && S.spMax) {
         var bolt = document.createElement('button');
         bolt.type = 'button';
         bolt.className = 'bolt';

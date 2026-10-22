@@ -17,7 +17,11 @@ The vault note `notes/dnd-sheet-handoff.md` has the working procedure, the data 
 
 The name at the top of the sheet opens the list: the characters top down, the one being played marked, a cross to remove one, and a way to add one. Every character keeps its own sheet, its own spell slots, its own spell lists, its own features and its own set of pages, so a bard plays without the volley a warlock plays.
 
-A character is added ready-made or from nothing. The ready-made ones live in `data/characters.json`, each one a record in the shape the store keeps: its pages, the features it names, its slots and its spells. The bard is the first, from the sheet of 2026-10-22: level 11, the college of creation, high elf, the musician and the two adept feats, eleven d8 hit dice, the slots of a level 11 bard at 4/3/3/3/2/1, the ten spells the two adept feats always prepare, and the grimoire open on the bard list. His scores, his hit points, his armour class and his skills wait to be typed on the phone.
+A character is added ready-made or from nothing. The ready-made ones live in `data/characters.json`, each one a record in the shape the store keeps: its pages, the features it names, its slots and its spells. The bard is the first, from the sheet of 2026-10-22: Yngwie, level 11, the college of creation, high elf, the musician and the two adept feats, the scores eight, fourteen, fourteen, ten, twelve and nineteen, eleven d8 hit dice, the slots of a level 11 bard at 4/3/3/3/2/1, the ten spells the two adept feats always prepare, and the grimoire open on the bard list. His hit points, his armour class and his skills wait to be typed on the phone.
+
+**A character wears its own colours and its own icon.** Everything the app paints comes from a few CSS variables, so a theme is one block of them and nothing else. The icon is a small registry in the shell, the rune the app came with and an electric guitar. The record of the character names both, the head of the app paints the one it names, and the edit mode of the character page grows a Style section to change them. Yngwie plays blue and red with a guitar, the warlock keeps the violet and the rune.
+
+**The initiative follows the dexterity** until you type one of your own, which then stays.
 
 The gear at the head of the app opens the settings page, which lists the pages of the character being played. A page that is off keeps its numbers, and turning it back on brings them back. The character page is the home, so it is always on.
 

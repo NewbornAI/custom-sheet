@@ -37,6 +37,54 @@
   var FEATUREDATA = readJson('feature-data');
   var PRESETS = readJson('character-data').presets || [];
 
+  /* ---- the style of a character ---- */
+
+  /* The colours the app can wear. The first has no attribute of its own:
+     it is the one the app came with. */
+  var THEMES = [
+    { id: '', label: 'Violet', blurb: 'The colours the app came with' },
+    { id: 'blueRed', label: 'Blue and red', blurb: 'An electric blue, a hot red' }
+  ];
+
+  /* The icon the head of the app carries. */
+  var ICONS = {
+    sigil: {
+      label: 'Rune',
+      blurb: 'The rune the app came with',
+      svg: '<circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width=".9" opacity=".55"/>' +
+        '<path d="M12 2.2V6M12 18v3.8M2.2 12H6M18 12h3.8" stroke="currentColor" stroke-width=".9" opacity=".35"/>' +
+        '<path d="M12 6.4L17.6 12 12 17.6 6.4 12z" fill="none" stroke="currentColor" stroke-width="1.2"/>' +
+        '<circle cx="12" cy="12" r="1.7" fill="currentColor"/>'
+    },
+    guitar: {
+      label: 'Electric guitar',
+      blurb: 'Six strings, plugged in',
+      svg: '<g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M12.9 10.6c-.5-2 .3-3.6 1.7-4.6-1.5-.9-3.4-.6-4.4.8-.7 1-1.4 1.7-2.6 2.1-2.1.7-3.4 2.8-3.1 4.9.4 2.1 2.4 3.6 4.5 3.2 1.6-.2 2.8-1.3 3.3-2.9.4-1.1 1-1.8 2.2-2.1"/>' +
+        '<path d="M12.6 12.1 18.4 6.3"/><path d="M17.5 5.2l1.4 1.4 2.3-2.3a1 1 0 0 0-1.4-1.4z"/>' +
+        '<path d="M6 14.8l1.9 1.9"/></g>'
+    }
+  };
+
+  function themeOf(rec) {
+    var wanted = rec && rec.theme;
+    return THEMES.filter(function (t) { return t.id === wanted; })[0] || THEMES[0];
+  }
+
+  function iconOf(rec) {
+    return (rec && rec.icon && ICONS[rec.icon]) ? rec.icon : 'sigil';
+  }
+
+  /* The colours and the icon belong to the character being played, so they
+     move when the character does. */
+  function applyStyle() {
+    var rec = state.characters[state.current] || {};
+    var theme = themeOf(rec).id;
+    if (theme) document.body.setAttribute('data-theme', theme);
+    else document.body.removeAttribute('data-theme');
+    if (el.sigil) el.sigil.innerHTML = ICONS[iconOf(rec)].svg;
+  }
+
   var SPELL_BY_NAME = {};
   (BOOK.spells || []).forEach(function (s) { SPELL_BY_NAME[s.name] = s; });
 
@@ -184,7 +232,11 @@
     sourceTag: sourceTag,
     wrenchButton: wrenchButton,
     pushSnapshot: pushSnapshot,
-    bumpSp: bumpSp
+    bumpSp: bumpSp,
+    themes: THEMES,
+    icons: ICONS,
+    themeOf: themeOf,
+    iconOf: iconOf
   };
 
   /* ---- the store ---- */
@@ -518,6 +570,7 @@
   /* ---- the elements of the shell ---- */
 
   var el = {
+    sigil: document.getElementById('sigil'),
     pageTitle: document.getElementById('pageTitle'),
     head: document.getElementById('headSlot'),
     tabs: document.getElementById('tabList'),
@@ -622,12 +675,14 @@
     if (p.head) p.head(el.head, api);
 
     renderTabs();
+    applyStyle();
     el.pageTitle.textContent = titleOf(p);
     if (p.render) p.render(api);
   }
 
   function refresh() {
     renderTabs();
+    applyStyle();
     var m = MOUNTED[current];
     if (m && m.spec.render) m.spec.render(api);
   }
