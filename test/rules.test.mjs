@@ -12,6 +12,12 @@ const ctx = vm.createContext({});
 vm.runInContext(block[1], ctx);
 const R = ctx.Rules;
 
+const sheetBlock = html.match(/<script id="sheet-rules">([\s\S]*?)<\/script>/);
+if (!sheetBlock) throw new Error('sheet rules block not found');
+const sheetCtx = vm.createContext({});
+vm.runInContext(sheetBlock[1], sheetCtx);
+const C = sheetCtx.SheetRules;
+
 let failures = 0;
 function check(name, actual, expected) {
   const a = JSON.stringify(actual), e = JSON.stringify(expected);
@@ -202,12 +208,6 @@ console.log('turning a spell slot into sorcery points');
 
 console.log('the character sheet');
 {
-  const block = html.match(/<script id="sheet-rules">([\s\S]*?)<\/script>/);
-  if (!block) { check('the sheet rules are there', false, true); }
-  else {
-    const sheetCtx = vm.createContext({});
-    vm.runInContext(block[1], sheetCtx);
-    const C = sheetCtx.SheetRules;
     check('six abilities', C.ABILITIES.length, 6);
     check('eighteen skills', C.SKILLS.length, 18);
     check('twenty is a plus five', C.abilityMod(20), 5);
@@ -248,10 +248,62 @@ console.log('the character sheet');
     check('hit points stop at zero', C.hpApply(3, 10, -5), 0);
     check('hit points stop at the maximum', C.hpApply(9, 10, 4), 10);
     check('hit points move by one', C.hpApply(9, 10, -1), 8);
-    check('a rewind brings the last value back', C.hpRewind([7, 9]), { current: 9, history: [7] });
-    check('a rewind with nothing to undo does nothing', C.hpRewind([]), { current: null, history: [] });
-    check('a rewind keeps the rest of the history', C.hpRewind([7, 9, 12]).history, [7, 9]);
-  }
+    check('a rewind with nothing to undo does nothing', C.rewind([]).current, null);
+}
+
+console.log('the rests');
+{
+  const hero = {
+    level: 9,
+    hp: { current: 12, max: 38 },
+    features: [
+      { key: 'warlockSlots', name: 'Warlock spell slots', recovery: 'short', bind: 'warlock', max: 0, left: 0, short: null },
+      { key: 'hexCurse', name: 'Hexblade curse', recovery: 'short', bind: null, max: 2, left: 0, short: 1 },
+      { key: 'invuln', name: 'Invulnerability', recovery: 'long', bind: null, max: 1, left: 0, short: null }
+    ]
+  };
+  const spell = {
+    left: { 1: 4, 2: 3, 3: 3, 4: 2 },
+    max: { 1: 4, 2: 3, 3: 3, 4: 2 },
+    warlockMax: 2,
+    warlockLeft: 0,
+    sp: 3,
+    spMax: 8,
+    cunning: true,
+    sorcRest: false
+  };
+
+  const short = C.shortRest(hero, spell);
+  check('a short rest leaves the hit points alone', short.hp, 12);
+  check('a short rest leaves the spell slots alone', short.left, { 1: 4, 2: 3, 3: 3, 4: 2 });
+  check('a short rest leaves the sorcery points alone', short.sp, 3);
+  check('a short rest gives the warlock slots back', short.warlockLeft, 2);
+  check('a short rest gives one use of the hexblade curse', short.features[1].left, 1);
+  check('a short rest leaves a long rest feature alone', short.features[2].left, 0);
+  check('a short rest keeps the cunning', short.cunning, true);
+
+  const long = C.longRest(hero, spell);
+  check('a long rest fills the hit points', long.hp, 38);
+  check('a long rest fills the spell slots', long.left, { 1: 4, 2: 3, 3: 3, 4: 2 });
+  check('a long rest fills the warlock slots', long.warlockLeft, 2);
+  check('a long rest fills the sorcery points', long.sp, 8);
+  check('a long rest gives every feature back', long.features[1].left, 2);
+  check('a long rest gives a long rest feature back', long.features[2].left, 1);
+  check('a long rest makes the cunning available again', long.cunning, false);
+
+  const spent = { left: { 1: 0, 2: 1 }, max: { 1: 4, 2: 3 } };
+  const spentSpell = Object.assign({}, spell, { left: spent.left });
+  check('a long rest fills a spent level', C.longRest(hero, spentSpell).left, { 1: 4, 2: 3, 3: 3, 4: 2 });
+
+  const snap = C.snapshot(hero, spell);
+  check('a snapshot holds the hit points', snap.hp, 12);
+  check('a snapshot holds the features', snap.features[1].left, 0);
+  check('a snapshot holds the slots', snap.left, { 1: 4, 2: 3, 3: 3, 4: 2 });
+  check('a snapshot holds the warlock slots', snap.warlockLeft, 0);
+  const back = C.rewind([snap, { hp: 20 }]);
+  check('a rewind brings the last snapshot back', back.current.hp, 20);
+  check('a rewind keeps the rest of the history', back.history.length, 1);
+  check('a rewind of one snapshot brings that one back', C.rewind([snap]).current.hp, 12);
 }
 
 console.log('the built page carries the data');

@@ -504,7 +504,7 @@ input[type=range]::-moz-range-thumb{
   scrollbar-width:none;
   display:flex;
   flex-direction:column;
-  gap:9px;
+  gap:7px;
 }
 .charbody::-webkit-scrollbar{width:0}
 
@@ -608,7 +608,7 @@ input[type=range]::-moz-range-thumb{
   align-items:center;
   gap:5px;
   min-width:0;
-  padding:2px 4px;
+  padding:1px 4px;
   border:1px solid transparent;
   border-radius:5px;
 }
@@ -624,6 +624,20 @@ input[type=range]::-moz-range-thumb{
 .charbody.editing .prow{border-color:var(--edge);cursor:pointer}
 .charbody.editing .prow.prof{border-color:rgba(255,196,77,.35);background:rgba(255,196,77,.06)}
 .charbody.editing .prow.exp{border-color:rgba(255,196,77,.55);background:rgba(255,196,77,.12)}
+
+.cshead .mini{margin-left:auto}
+.flist{display:flex;flex-direction:column;gap:2px;flex:0 0 auto}
+.frow{display:flex;align-items:center;gap:6px;min-width:0;padding:2px 4px;border:1px solid transparent;border-radius:5px}
+.frow .fname{flex:1 1 auto;min-width:0;background:none;border:0;outline:none;color:#b9b3d6;font-family:var(--sans);font-size:11px;padding:0}
+.frow .ftag{flex:0 0 auto;border:1px solid var(--edge);border-radius:3px;background:none;color:#6f6a8d;font-size:8.5px;letter-spacing:.06em;padding:2px 4px;cursor:pointer;white-space:nowrap}
+.frow .ftag[data-rec="short"]{color:var(--gold);border-color:rgba(255,196,77,.4)}
+.frow .ftag[data-rec="long"]{color:#9dbcff;border-color:rgba(110,155,255,.4)}
+.frow .fuse{flex:0 0 auto;min-width:1.5em;border:1px solid var(--edge);border-radius:3px;background:none;color:var(--ink);font-family:var(--display);font-size:13px;padding:1px 2px;cursor:pointer}
+.frow .fof{flex:0 0 auto;color:#5c5778;font-size:11px}
+.frow .fmax{flex:0 0 auto;width:2.1em;border:0;background:none;color:var(--muted);font-family:var(--display);font-size:12px;text-align:right;outline:none;padding:0}
+.frow .fdel{flex:0 0 auto;width:20px;height:20px;border:0;background:none;color:#6f6a8d;font-size:15px;line-height:1;cursor:pointer;padding:0;display:none}
+.charbody.editing .frow{border-color:var(--edge)}
+.charbody.editing .frow .fdel{display:flex}
 
 .charfoot{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;padding-top:2px}
 .charfoot .note{margin:0;min-height:13px}
@@ -1016,6 +1030,9 @@ input[type=range]::-moz-range-thumb{
       <div class="cshead"><span>Skills</span><span class="rule"></span></div>
       <div class="sgrid" id="charSkills"></div>
 
+      <div class="cshead"><span>Features</span><span class="rule"></span><button class="mini" id="addFeature" type="button" aria-label="Add a feature">+</button></div>
+      <div class="flist" id="charFeatures"></div>
+
     </div>
 
     <div class="charfoot">
@@ -1347,8 +1364,95 @@ input[type=range]::-moz-range-thumb{
     return next;
   }
 
-  /* The rewind brings back the value the tracker had before the last change. */
-  function hpRewind(history) {
+  /* A feature that lives in the spell tab, the warlock slots, has no counter
+     of its own. */
+  function copyFeature(f) {
+    return {
+      key: f.key,
+      name: f.name,
+      recovery: f.recovery === 'short' || f.recovery === 'long' ? f.recovery : 'none',
+      bind: f.bind === 'warlock' ? 'warlock' : null,
+      max: Number(f.max) || 0,
+      left: Number(f.left) || 0,
+      short: (f.short === undefined || f.short === null) ? null : Number(f.short)
+    };
+  }
+
+  function copySlots(left) {
+    var out = {}, k;
+    for (k in (left || {})) out[k] = Number(left[k]) || 0;
+    return out;
+  }
+
+  function fullSlots(left, max) {
+    var out = {}, k;
+    for (k in (max || {})) out[k] = Number(max[k]) || 0;
+    for (k in (left || {})) if (out[k] === undefined) out[k] = Number(left[k]) || 0;
+    return out;
+  }
+
+  /* What a long rest gives back: the hit points, every spell slot, the
+     sorcery points and every use of every feature. */
+  function longRest(c, spell) {
+    var features = (c.features || []).map(function (f) {
+      var copy = copyFeature(f);
+      if (!copy.bind) copy.left = copy.max;
+      return copy;
+    });
+    return {
+      hp: Number(c.hp.max) || 0,
+      hpmax: Number(c.hp.max) || 0,
+      features: features,
+      left: fullSlots(spell.left, spell.max),
+      warlockLeft: Number(spell.warlockMax) || 0,
+      sp: Number(spell.spMax) || 0,
+      cunning: false,
+      sorcRest: false
+    };
+  }
+
+  /* What a short rest gives back: the features marked as recovering on a
+     short rest, and nothing else. */
+  function shortRest(c, spell) {
+    var features = (c.features || []).map(function (f) {
+      var copy = copyFeature(f);
+      if (copy.bind) return copy;
+      if (copy.recovery !== 'short') return copy;
+      var give = copy.short === null ? copy.max : copy.short;
+      copy.left = Math.min(copy.max, copy.left + give);
+      return copy;
+    });
+    var warlockLeft = Number(spell.warlockLeft) || 0;
+    var warlock = (c.features || []).filter(function (f) { return f.bind === 'warlock'; })[0];
+    if (warlock && warlock.recovery === 'short') warlockLeft = Number(spell.warlockMax) || 0;
+    return {
+      hp: Number(c.hp.current) || 0,
+      hpmax: Number(c.hp.max) || 0,
+      features: features,
+      left: copySlots(spell.left),
+      warlockLeft: warlockLeft,
+      sp: Number(spell.sp) || 0,
+      cunning: !!spell.cunning,
+      sorcRest: !!spell.sorcRest
+    };
+  }
+
+  /* Everything a rest can touch, so the rewind can put it back. */
+  function snapshot(c, spell) {
+    return {
+      hp: Number(c.hp.current) || 0,
+      hpmax: Number(c.hp.max) || 0,
+      features: (c.features || []).map(copyFeature),
+      left: copySlots(spell.left),
+      warlockLeft: Number(spell.warlockLeft) || 0,
+      sp: Number(spell.sp) || 0,
+      cunning: !!spell.cunning,
+      sorcRest: !!spell.sorcRest
+    };
+  }
+
+  /* The rewind brings back the state before the last change. */
+  function rewind(history) {
     var h = (history || []).slice();
     if (!h.length) return { current: null, history: h };
     return { current: h.pop(), history: h };
@@ -1367,7 +1471,10 @@ input[type=range]::-moz-range-thumb{
     spellAttack: spellAttack,
     spellDC: spellDC,
     hpApply: hpApply,
-    hpRewind: hpRewind
+    longRest: longRest,
+    shortRest: shortRest,
+    snapshot: snapshot,
+    rewind: rewind
   };
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 </script>
@@ -1439,10 +1546,14 @@ input[type=range]::-moz-range-thumb{
     abilities: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 20 },
     saves: { str: 0, dex: 0, con: 1, int: 0, wis: 0, cha: 1 },
     skills: {},
+    features: [
+      { key: 'warlockSlots', name: 'Warlock spell slots', recovery: 'short', bind: 'warlock', max: 0, left: 0, short: null },
+      { key: 'hexCurse', name: 'Hexblade curse', recovery: 'short', bind: null, max: 1, left: 1, short: 1 }
+    ],
     init: 0,
     ac: null,
     hp: { current: 0, max: 0 },
-    hpHistory: []
+    history: []
   };
   SKILLS.forEach(function (s) { CHAR_DEFAULTS.skills[s.key] = 0; });
 
@@ -1530,6 +1641,8 @@ input[type=range]::-moz-range-thumb{
     charAbilities: document.getElementById('charAbilities'),
     charDerived: document.getElementById('charDerived'),
     charSkills: document.getElementById('charSkills'),
+    charFeatures: document.getElementById('charFeatures'),
+    addFeature: document.getElementById('addFeature'),
     restShort: document.getElementById('restShort'),
     restLong: document.getElementById('restLong'),
     charNote: document.getElementById('charNote')
@@ -1602,10 +1715,21 @@ input[type=range]::-moz-range-thumb{
       abilities: {},
       saves: {},
       skills: {},
+      features: CHAR_DEFAULTS.features.map(function (f) {
+        return {
+          key: f.key,
+          name: f.name,
+          recovery: f.recovery,
+          bind: f.bind || null,
+          max: f.max || 0,
+          left: f.left || 0,
+          short: (f.short === undefined || f.short === null) ? null : f.short
+        };
+      }),
       init: CHAR_DEFAULTS.init,
       ac: CHAR_DEFAULTS.ac,
       hp: { current: 0, max: 0 },
-      hpHistory: []
+      history: []
     };
     ABILITIES.forEach(function (a) {
       c.abilities[a.key] = CHAR_DEFAULTS.abilities[a.key];
@@ -1630,8 +1754,21 @@ input[type=range]::-moz-range-thumb{
         c.hp.current = Math.max(0, Number(saved.hp.current) || 0);
         c.hp.max = Math.max(0, Number(saved.hp.max) || 0);
       }
-      if (saved.hpHistory && saved.hpHistory.length) {
-        c.hpHistory = saved.hpHistory.map(Number).filter(function (n) { return isFinite(n); });
+      if (saved.features && saved.features.length) {
+        c.features = saved.features.map(function (f) {
+          return {
+            key: String(f.key || ''),
+            name: String(f.name || 'Feature'),
+            recovery: f.recovery === 'short' || f.recovery === 'long' ? f.recovery : 'none',
+            bind: f.bind === 'warlock' ? 'warlock' : null,
+            max: Math.max(0, Number(f.max) || 0),
+            left: Math.max(0, Number(f.left) || 0),
+            short: (f.short === undefined || f.short === null) ? null : Math.max(0, Number(f.short) || 0)
+          };
+        });
+      }
+      if (saved.history && saved.history.length) {
+        c.history = saved.history.filter(function (h) { return h && typeof h === 'object'; }).slice(-60);
       }
     }
     return c;
@@ -1933,7 +2070,7 @@ input[type=range]::-moz-range-thumb{
   var editing = false;
   var dragged = false;
 
-  function commit() { save(); renderSpells(); }
+  function commit() { save(); render(); }
 
   function pipButton(full, lv, n, warlock) {
     var b = document.createElement('button');
@@ -2291,9 +2428,9 @@ input[type=range]::-moz-range-thumb{
     }
     el.charHpDown.disabled = !C.hp.current;
     el.charHpUp.disabled = C.hp.max > 0 && C.hp.current >= C.hp.max;
-    el.charHpRewind.disabled = !C.hpHistory.length;
-    el.charHpRewind.title = C.hpHistory.length
-      ? 'Rewind the last change, ' + C.hpHistory.length + ' to go back'
+    el.charHpRewind.disabled = !C.history.length;
+    el.charHpRewind.title = C.history.length
+      ? 'Rewind the last change, ' + C.history.length + ' to go back'
       : 'Nothing to rewind';
 
     ABILITIES.forEach(function (a) {
@@ -2328,17 +2465,24 @@ input[type=range]::-moz-range-thumb{
       '<span>spell attack <b>' + SR.sign(SR.spellAttack(C)) + '</b></span>' +
       '<span>save DC <b>' + SR.spellDC(C) + '</b></span>' +
       '<span>passive perception <b>' + (10 + SR.skillMod(C, 'perception')) + '</b></span>';
+
+    renderFeatures();
   }
 
   function commitChar() { save(); render(); }
 
-  /* The tracker remembers every value it went through, so the rewind can
-     bring back the one before. */
+  /* The rewind undoes the last change of any kind: a point of hit points, a
+     use of a feature, or a rest. Every change leaves a snapshot behind, so
+     the rewind always knows what came before. */
+  function pushSnapshot() {
+    state.char.history.push(SR.snapshot(state.char, state.spell));
+    if (state.char.history.length > 60) state.char.history.shift();
+  }
+
   function setHp(next) {
     var C = state.char;
     if (next === C.hp.current) return;
-    C.hpHistory.push(C.hp.current);
-    if (C.hpHistory.length > 40) C.hpHistory.shift();
+    pushSnapshot();
     C.hp.current = next;
     commitChar();
   }
@@ -2349,6 +2493,188 @@ input[type=range]::-moz-range-thumb{
     if (noteTimer) clearTimeout(noteTimer);
     noteTimer = setTimeout(function () { el.charNote.textContent = ''; }, 2600);
   }
+
+  /* ---- features ---- */
+
+  /* A feature is something the character has uses for: the hexblade curse,
+     a feature that comes back on a short rest, anything like it. The
+     warlock slots live in the spell tab, so that row only reads them. */
+  function featureByKey(key) {
+    var found = null;
+    state.char.features.forEach(function (f) { if (f.key === key) found = f; });
+    return found;
+  }
+
+  function featureCount(f) {
+    if (f.bind === 'warlock') {
+      return {
+        left: Number(state.spell.warlockLeft) || 0,
+        max: Number(state.spell.warlockMax) || 0
+      };
+    }
+    return { left: Number(f.left) || 0, max: Number(f.max) || 0 };
+  }
+
+  function buildFeatures() {
+    el.charFeatures.innerHTML = '';
+    state.char.features.forEach(function (f) {
+      var row = document.createElement('div');
+      row.className = 'frow';
+      row.dataset.key = f.key;
+      row.innerHTML =
+        '<input class="fname" type="text" data-role="name" aria-label="Feature name">' +
+        '<button class="ftag" type="button" data-role="tag" data-rec="none">none</button>' +
+        '<button class="fuse" type="button" data-role="use">0</button>' +
+        '<span class="fof">/</span>' +
+        '<input class="fmax" type="number" inputmode="numeric" min="0" max="9" data-role="max" aria-label="Maximum uses">' +
+        '<button class="fdel" type="button" data-role="del" aria-label="Remove the feature">&times;</button>';
+      el.charFeatures.appendChild(row);
+    });
+  }
+
+  function renderFeatures() {
+    state.char.features.forEach(function (f) {
+      var row = el.charFeatures.querySelector('[data-key="' + f.key + '"]');
+      if (!row) return;
+      var count = featureCount(f);
+
+      var name = row.querySelector('[data-role="name"]');
+      if (name && document.activeElement !== name) name.value = f.name;
+
+      var tag = row.querySelector('[data-role="tag"]');
+      tag.dataset.rec = f.recovery;
+      tag.textContent = f.recovery;
+      tag.title = 'Recovery: ' + (f.recovery === 'none' ? 'never' : f.recovery + ' rest');
+
+      var use = row.querySelector('[data-role="use"]');
+      use.textContent = String(count.left);
+      use.setAttribute('aria-label', f.name + ': ' + count.left + ' of ' + count.max + ' left');
+
+      var max = row.querySelector('[data-role="max"]');
+      if (max) {
+        if (document.activeElement !== max) max.value = String(count.max);
+        max.disabled = !!f.bind;
+        max.title = f.bind ? 'The warlock slots are set in the spell tab' : 'How many uses in all';
+      }
+    });
+  }
+
+  el.charFeatures.addEventListener('input', function (ev) {
+    var role = ev.target && ev.target.dataset ? ev.target.dataset.role : null;
+    if (!role) return;
+    var row = ev.target.closest('.frow');
+    if (!row) return;
+    var f = featureByKey(row.dataset.key);
+    if (!f) return;
+    if (role === 'name') f.name = ev.target.value;
+    else if (role === 'max') {
+      var m = Math.max(0, Math.min(9, Number(ev.target.value) || 0));
+      f.max = m;
+      if (f.left > m) f.left = m;
+    } else return;
+    commitChar();
+  });
+
+  el.charFeatures.addEventListener('click', function (ev) {
+    var row = ev.target.closest('.frow');
+    if (!row) return;
+    var f = featureByKey(row.dataset.key);
+    if (!f) return;
+    var role = ev.target && ev.target.dataset ? ev.target.dataset.role : null;
+
+    /* One tap spends a use, and at zero it gives one back. */
+    if (role === 'use') {
+      var count = featureCount(f);
+      var next = count.left > 0 ? count.left - 1 : (count.max > 0 ? 1 : count.left);
+      if (next === count.left) return;
+      pushSnapshot();
+      if (f.bind === 'warlock') state.spell.warlockLeft = next;
+      else f.left = next;
+      commitChar();
+      return;
+    }
+
+    if (!editingChar) return;
+
+    if (role === 'tag') {
+      f.recovery = f.recovery === 'short' ? 'long' : (f.recovery === 'long' ? 'none' : 'short');
+      commitChar();
+      return;
+    }
+    if (role === 'del') {
+      state.char.features = state.char.features.filter(function (x) { return x.key !== f.key; });
+      buildFeatures();
+      commitChar();
+    }
+  });
+
+  el.addFeature.addEventListener('click', function () {
+    state.char.features.push({
+      key: 'f' + Date.now(),
+      name: 'New feature',
+      recovery: 'short',
+      bind: null,
+      max: 1,
+      left: 1,
+      short: 1
+    });
+    buildFeatures();
+    commitChar();
+  });
+
+  /* ---- rests ---- */
+
+  function applyRest(result) {
+    state.char.hp.current = result.hp;
+    state.char.hp.max = result.hpmax;
+    state.char.features = result.features;
+    state.spell.left = result.left;
+    state.spell.warlockLeft = result.warlockLeft;
+    state.spell.sp = result.sp;
+    state.spell.cunning = result.cunning;
+    state.spell.sorcRest = result.sorcRest;
+  }
+
+  function slotsDiffer(a, b) {
+    var keys = {}, k;
+    for (k in (a || {})) keys[k] = 1;
+    for (k in (b || {})) keys[k] = 1;
+    for (k in keys) if ((a[k] || 0) !== (b[k] || 0)) return true;
+    return false;
+  }
+
+  function doRest(kind) {
+    var before = SR.snapshot(state.char, state.spell);
+    var after = kind === 'long' ? SR.longRest(state.char, state.spell) : SR.shortRest(state.char, state.spell);
+    state.char.history.push(before);
+    if (state.char.history.length > 60) state.char.history.shift();
+    applyRest(after);
+    commitChar();
+    note(restNote(kind, before, after));
+    if (navigator.vibrate) navigator.vibrate([14, 40, 14]);
+  }
+
+  /* What the rest actually gave back, so the note says it. */
+  function restNote(kind, before, after) {
+    var names = [];
+    (after.features || []).forEach(function (f, i) {
+      var b = (before.features || [])[i];
+      if (b && f.left > b.left) names.push(f.name);
+    });
+    if (after.warlockLeft > before.warlockLeft && names.indexOf('Warlock spell slots') < 0) {
+      names.push('Warlock spell slots');
+    }
+    if (kind === 'long') {
+      var bits = [];
+      if (after.hp !== before.hp) bits.push('hit points');
+      if (slotsDiffer(after.left, before.left) || after.warlockLeft !== before.warlockLeft) bits.push('spell slots');
+      if (after.sp !== before.sp) bits.push('sorcery points');
+      if (names.length) bits.push(names.join(' and '));
+      return 'Long rest' + (bits.length ? ': ' + bits.join(', ') + ' back.' : ': nothing to give back.');
+    }
+    return 'Short rest' + (names.length ? ': ' + names.join(' and ') + ' back.' : ': nothing to give back yet.');
+  }
+
 
   el.charName.addEventListener('input', function () {
     state.char.name = el.charName.value;
@@ -2387,7 +2713,7 @@ input[type=range]::-moz-range-thumb{
   var hpBefore = null;
 
   el.charHpNow.addEventListener('focus', function () {
-    hpBefore = state.char.hp.current;
+    hpBefore = SR.snapshot(state.char, state.spell);
   });
 
   el.charHpNow.addEventListener('input', function () {
@@ -2397,9 +2723,9 @@ input[type=range]::-moz-range-thumb{
   });
 
   el.charHpNow.addEventListener('change', function () {
-    if (hpBefore !== null && hpBefore !== state.char.hp.current) {
-      state.char.hpHistory.push(hpBefore);
-      if (state.char.hpHistory.length > 40) state.char.hpHistory.shift();
+    if (hpBefore && hpBefore.hp !== state.char.hp.current) {
+      state.char.history.push(hpBefore);
+      if (state.char.history.length > 60) state.char.history.shift();
     }
     hpBefore = null;
     commitChar();
@@ -2422,11 +2748,12 @@ input[type=range]::-moz-range-thumb{
   });
 
   el.charHpRewind.addEventListener('click', function () {
-    var r = SR.hpRewind(state.char.hpHistory);
-    if (r.current === null) return;
-    state.char.hpHistory = r.history;
-    state.char.hp.current = r.current;
+    var r = SR.rewind(state.char.history);
+    if (!r.current) return;
+    state.char.history = r.history;
+    applyRest(r.current);
     commitChar();
+    note('Rewound to before the last change.');
   });
 
   /* The proficiencies only move in the edit mode, so a stray tap at the
@@ -2442,13 +2769,9 @@ input[type=range]::-moz-range-thumb{
     commitChar();
   });
 
-  el.restShort.addEventListener('click', function () {
-    note('Short rest is not wired yet.');
-  });
+  el.restShort.addEventListener('click', function () { doRest('short'); });
 
-  el.restLong.addEventListener('click', function () {
-    note('Long rest is not wired yet.');
-  });
+  el.restLong.addEventListener('click', function () { doRest('long'); });
 
   el.wrench.addEventListener('click', function () {
     if (view === 'char') { editingChar = !editingChar; commitChar(); return; }
@@ -2458,6 +2781,7 @@ input[type=range]::-moz-range-thumb{
 
   el.cunning.addEventListener('click', function () {
     var S = state.spell;
+    pushSnapshot();
     S.cunning = !S.cunning;
     if (S.cunning) S.warlockLeft = Math.min(S.warlockMax, S.warlockLeft + 1);
     else S.warlockLeft = Math.max(0, S.warlockLeft - 1);
@@ -2467,6 +2791,7 @@ input[type=range]::-moz-range-thumb{
   el.sorcRest.addEventListener('click', function () {
     var S = state.spell;
     var gain = Math.floor(S.sorcererLevel / 2);
+    pushSnapshot();
     S.sorcRest = !S.sorcRest;
     if (S.sorcRest) S.sp = Math.min(S.spMax, S.sp + gain);
     else S.sp = Math.max(0, S.sp - gain);
@@ -2631,6 +2956,7 @@ input[type=range]::-moz-range-thumb{
   el.sheetSearch.addEventListener('input', function () { renderGrimoire(state.spell.selected); });
 
   buildChar();
+  buildFeatures();
   render();
 })();
 </script>

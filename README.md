@@ -49,13 +49,14 @@ The list is seeded from the character's own sheet in `data/spell-sheet.csv`, one
 The front of the character sheet, for the numbers you look up mid turn.
 
 - **The top row** holds the armor class, the initiative modifier and the level, all three editable and read in the middle. The level gives the proficiency bonus, so raising it moves every saving throw and every skill at once.
-- **The hit points** sit under them, the current over the maximum. The minus takes a point, the plus gives one back, and the field itself takes a number, so a wound of seventeen goes in as seventeen. The round arrow rewinds the last change, and keeps rewinding as far back as the tracker went.
+- **The hit points** sit under them, the current over the maximum. The minus takes a point, the plus gives one back, and the field itself takes a number, so a wound of seventeen goes in as seventeen.
 - **The abilities** are six tiles: the score, with the modifier under it. Type a score and everything that leans on it moves. The saving throw of the ability sits right under its own tile.
 - **The saving throws and the skills** carry a marker and a modifier. An empty dot means the character has nothing in it, a gold dot means proficient, and a dot with a ring around it means expertise, which takes the proficiency twice. In the edit mode a tap cycles a row from none to proficient to expertise and back.
 - **The derived line** under the abilities reads the proficiency bonus, the spell attack, the save DC and the passive perception, all of them computed from the scores above.
+- **The features** are the things the character has uses for: the hexblade curse, and anything like it. Each row carries a recovery tag, short or long, and a count. Tapping the count spends a use, and at zero it gives one back. The warlock spell slots are a row too, but they read the spell tab instead of a counter of their own. The plus at the head of the section adds a feature.
+- **The short rest** gives back the features marked as recovering on a short rest, and nothing else: the warlock spell slots and one use of the hexblade curse. The **long rest** gives back the hit points, every spell slot, the sorcery points and every use of every feature.
+- **The rewind** undoes the last change of any kind: a point of hit points, a use of a feature, or a whole rest. Hit it after a rest you did not mean, and the hit points, the slots and the features come back as they were.
 - **The wrench** in the top right turns on the edit mode, where the proficiencies move and the name of the character can be set. Outside it a stray tap never changes a modifier.
-
-The short and long rest buttons are in place and do nothing yet, they are waiting to be wired.
 
 The sheet starts from what the rest of the app already assumes: charisma 20 and a level 9, which give the attack of +9 and the save DC of 17, with constitution and charisma proficient in the saving throws. The other numbers wait for the player.
 
