@@ -44,6 +44,21 @@ A tracker for the character's slots and spell list, built for one hand at the ta
 
 The list is seeded from the character's own sheet in `data/spell-sheet.csv`, one line per spell with the class that granted it. Everything else comes from the grimoire.
 
+## The character tab
+
+The front of the character sheet, for the numbers you look up mid turn.
+
+- **The top row** holds the armor class, the initiative modifier and the level, all three editable. The level gives the proficiency bonus, so raising it moves every saving throw and every skill at once.
+- **The hit points** sit under them, the current over the maximum. The minus takes a point, the plus gives one back, and the field itself takes a number, so a wound of seventeen goes in as seventeen. The round arrow rewinds the last change, and keeps rewinding as far back as the tracker went.
+- **The abilities** are six tiles: the score, with the modifier under it. Type a score and everything that leans on it moves.
+- **The saving throws and the skills** list every one of them with its modifier. A gold dot means the character is proficient, and the modifier carries the proficiency.
+- **The derived line** under the abilities reads the proficiency bonus, the spell attack, the save DC and the passive perception, all of them computed from the scores above.
+- **The wrench** in the top right turns on the edit mode, where the proficiencies move and the name of the character can be set. Outside it a stray tap never changes a modifier.
+
+The short and long rest buttons are in place and do nothing yet, they are waiting to be wired.
+
+The sheet starts from what the rest of the app already assumes: charisma 20 and a level 9, which give the attack of +9 and the save DC of 17, with constitution and charisma proficient in the saving throws. The other numbers wait for the player.
+
 ## The wild magic surge page
 
 The second tab rolls on the Wild Magic Surge table from the 2024 Player's Handbook, the same one 5e.tools serves under its XPHB source. It rolls d100, shows the range it landed on and the effect text, and rolls any dice the effect names: eight of the twenty five rows ask for dice, so the app rolls them and shows the values and the total.
@@ -98,7 +113,7 @@ node build.mjs
 node test/rules.test.mjs
 ```
 
-The rules engine lives in a `<script id="rules">` block that touches no DOM. The test suite extracts that block and checks the maths: crit thresholds, doubled dice, each toggle, each power, and the tally against an AC.
+The rules engine lives in a `<script id="rules">` block that touches no DOM, and the character sheet rules live in a `<script id="sheet-rules">` block of the same kind. The test suite extracts both and checks the maths: crit thresholds, doubled dice, each toggle, each power, the tally against an AC, the ability modifiers, the saving throws, the skills and the hit point tracker.
 
 ## Choices worth knowing
 

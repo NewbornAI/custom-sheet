@@ -495,6 +495,148 @@ input[type=range]::-moz-range-thumb{
 }
 .sheet-search:focus{border-color:rgba(155,123,255,.6)}
 
+/* ---- character sheet ---- */
+
+.charbody{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  scrollbar-width:none;
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+}
+.charbody::-webkit-scrollbar{width:0}
+
+.csname{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.csname[hidden]{display:none}
+.csname .ck{flex:0 0 auto;font-size:9px;letter-spacing:.16em;color:var(--muted)}
+.csname .cinput{font-size:17px}
+
+.ctop{display:flex;gap:6px;flex:0 0 auto}
+.ctile{
+  flex:1 1 0;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:1px;
+  padding:5px 7px 6px;
+  border:1px solid var(--edge);
+  border-radius:8px;
+  background:rgba(255,255,255,.03);
+}
+.ctile .ck{font-size:9px;letter-spacing:.16em;color:var(--muted)}
+.cinput{
+  width:100%;
+  min-width:0;
+  padding:0;
+  border:0;
+  background:none;
+  color:var(--ink);
+  font-family:var(--display);
+  font-size:19px;
+  font-weight:700;
+  line-height:1.15;
+  font-variant-numeric:tabular-nums;
+  outline:none;
+  appearance:textfield;
+  -moz-appearance:textfield;
+}
+.cinput::-webkit-outer-spin-button,
+.cinput::-webkit-inner-spin-button{appearance:none;-webkit-appearance:none;margin:0}
+.cinput::placeholder{color:#4f4a6b}
+.cinput:focus{color:var(--arcane)}
+
+.hpstrip{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 8px;
+  border:1px solid var(--edge);
+  border-radius:8px;
+  background:rgba(255,255,255,.03);
+}
+.hpstrip .ck{flex:0 0 auto;font-size:9px;letter-spacing:.16em;color:var(--muted)}
+.hpstrip .of{flex:0 0 auto;font-size:15px;color:#5c5778}
+.hpstrip .cur{width:3.2em;flex:0 0 auto;text-align:right;font-size:22px}
+.hpstrip .max{width:2.6em;flex:0 0 auto;text-align:right;font-size:16px;font-weight:400;color:var(--muted)}
+.hpstrip .tools{margin-left:auto;display:flex;gap:4px;flex:0 0 auto}
+.mini svg{width:13px;height:13px;display:block}
+.mini:disabled{opacity:.35;cursor:default}
+
+.cshead{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:9.5px;
+  letter-spacing:.16em;
+  color:#6f6a8d;
+}
+.cshead .rule{flex:1 1 auto;height:1px;background:var(--edge)}
+
+.abgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;flex:0 0 auto}
+.ab{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:5px 3px 6px;
+  border:1px solid var(--edge);
+  border-radius:8px;
+  background:rgba(255,255,255,.03);
+}
+.ab .an{font-size:9px;letter-spacing:.16em;color:var(--muted)}
+.ab .cinput{text-align:center;font-size:21px}
+.ab .am{font-size:11px;color:var(--arcane);font-variant-numeric:tabular-nums}
+
+.derived{
+  flex:0 0 auto;
+  display:flex;
+  flex-wrap:wrap;
+  gap:3px 12px;
+  font-size:10.5px;
+  color:var(--muted);
+}
+.derived b{color:var(--ink);font-weight:600}
+
+.sgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px 6px;flex:0 0 auto}
+.prow{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  min-width:0;
+  padding:2px 4px;
+  border:1px solid transparent;
+  border-radius:5px;
+}
+.prow .dot{width:6px;height:6px;flex:0 0 auto;border-radius:50%;border:1px solid #453f63}
+.prow.prof .dot{background:var(--gold);border-color:var(--gold);box-shadow:0 0 6px rgba(255,196,77,.45)}
+.prow .nm{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:#b9b3d6}
+.prow .abk{flex:0 0 auto;font-size:8.5px;letter-spacing:.08em;color:#5c5778}
+.prow .vl{flex:0 0 auto;min-width:2.4em;text-align:right;font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.prow.prof .vl{color:var(--gold)}
+.charbody.editing .prow{border-color:var(--edge);cursor:pointer}
+.charbody.editing .prow.prof{border-color:rgba(255,196,77,.35);background:rgba(255,196,77,.06)}
+
+.charfoot{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;padding-top:2px}
+.charfoot .note{margin:0;min-height:13px}
+.charfoot .rests{display:flex;gap:6px}
+.rest{
+  flex:1 1 0;
+  padding:9px 6px;
+  border:1px solid var(--edge);
+  border-radius:8px;
+  background:rgba(255,255,255,.03);
+  color:var(--muted);
+  font-family:var(--sans);
+  font-size:11px;
+  letter-spacing:.06em;
+  cursor:pointer;
+}
+.rest:active{border-color:rgba(155,123,255,.5);color:var(--arcane);background:rgba(155,123,255,.12)}
+.note{flex:0 0 auto;margin:0;font-size:10.5px;color:#7d7899}
+
 /* ---- wild magic surge ---- */
 
 .surge{
@@ -759,6 +901,7 @@ input[type=range]::-moz-range-thumb{
     <button class="tab" id="tab-volley" type="button" role="tab" aria-selected="true">Volley</button>
     <button class="tab" id="tab-surge" type="button" role="tab" aria-selected="false">Wild surge</button>
     <button class="tab" id="tab-spells" type="button" role="tab" aria-selected="false">Spells</button>
+    <button class="tab" id="tab-char" type="button" role="tab" aria-selected="false">Character</button>
   </nav>
 
   <div class="views">
@@ -817,6 +960,67 @@ input[type=range]::-moz-range-thumb{
         <button class="mini" id="addSpell" type="button" aria-label="Add a spell">+</button>
       </div>
       <div class="grimoire" id="spellList"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-char">
+
+    <div class="charbody" id="charBody">
+
+      <div class="csname" id="charNameWrap" hidden>
+        <span class="ck">NAME</span>
+        <input class="cinput" id="charName" type="text" placeholder="your character" aria-label="Character name">
+      </div>
+
+      <div class="ctop">
+        <label class="ctile" for="charAc">
+          <span class="ck">AC</span>
+          <input class="cinput" id="charAc" type="number" inputmode="numeric" min="0" max="40" placeholder="--" aria-label="Armor class">
+        </label>
+        <label class="ctile" for="charInit">
+          <span class="ck">INIT</span>
+          <input class="cinput" id="charInit" type="number" inputmode="numeric" min="-9" max="20" placeholder="0" aria-label="Initiative modifier">
+        </label>
+        <label class="ctile" for="charLevel">
+          <span class="ck">LEVEL</span>
+          <input class="cinput" id="charLevel" type="number" inputmode="numeric" min="1" max="20" placeholder="1" aria-label="Character level">
+        </label>
+      </div>
+
+      <div class="hpstrip">
+        <span class="ck">HP</span>
+        <input class="cinput cur" id="charHpNow" type="number" inputmode="numeric" min="0" placeholder="--" aria-label="Current hit points">
+        <span class="of">/</span>
+        <input class="cinput max" id="charHpMax" type="number" inputmode="numeric" min="0" placeholder="--" aria-label="Maximum hit points">
+        <span class="tools">
+          <button class="mini" id="charHpDown" type="button" aria-label="Lose a hit point">&minus;</button>
+          <button class="mini" id="charHpUp" type="button" aria-label="Gain a hit point">+</button>
+          <button class="mini" id="charHpRewind" type="button" aria-label="Rewind the last change">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M3.5 12a8.5 8.5 0 1 0 2.8-6.3"/><path d="M3.5 4.4v5.2h5.2"/>
+            </svg>
+          </button>
+        </span>
+      </div>
+
+      <div class="cshead"><span>Abilities</span><span class="rule"></span></div>
+      <div class="abgrid" id="charAbilities"></div>
+      <div class="derived" id="charDerived"></div>
+
+      <div class="cshead"><span>Saving throws</span><span class="rule"></span></div>
+      <div class="sgrid" id="charSaves"></div>
+
+      <div class="cshead"><span>Skills</span><span class="rule"></span></div>
+      <div class="sgrid" id="charSkills"></div>
+
+    </div>
+
+    <div class="charfoot">
+      <p class="note" id="charNote"></p>
+      <div class="rests">
+        <button class="rest" id="restShort" type="button">Short rest</button>
+        <button class="rest" id="restLong" type="button">Long rest</button>
+      </div>
     </div>
   </section>
 
@@ -7448,6 +7652,121 @@ input[type=range]::-moz-range-thumb{
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 </script>
 
+<script id="sheet-rules">
+/* The character sheet rules. No DOM, no globals beyond this one. */
+(function (root) {
+  'use strict';
+
+  var ABILITIES = [
+    { key: 'str', name: 'STR', long: 'Strength' },
+    { key: 'dex', name: 'DEX', long: 'Dexterity' },
+    { key: 'con', name: 'CON', long: 'Constitution' },
+    { key: 'int', name: 'INT', long: 'Intelligence' },
+    { key: 'wis', name: 'WIS', long: 'Wisdom' },
+    { key: 'cha', name: 'CHA', long: 'Charisma' }
+  ];
+
+  var SKILLS = [
+    { key: 'acrobatics', name: 'Acrobatics', ab: 'dex' },
+    { key: 'animalHandling', name: 'Animal handling', ab: 'wis' },
+    { key: 'arcana', name: 'Arcana', ab: 'int' },
+    { key: 'athletics', name: 'Athletics', ab: 'str' },
+    { key: 'deception', name: 'Deception', ab: 'cha' },
+    { key: 'history', name: 'History', ab: 'int' },
+    { key: 'insight', name: 'Insight', ab: 'wis' },
+    { key: 'intimidation', name: 'Intimidation', ab: 'cha' },
+    { key: 'investigation', name: 'Investigation', ab: 'int' },
+    { key: 'medicine', name: 'Medicine', ab: 'wis' },
+    { key: 'nature', name: 'Nature', ab: 'int' },
+    { key: 'perception', name: 'Perception', ab: 'wis' },
+    { key: 'performance', name: 'Performance', ab: 'cha' },
+    { key: 'persuasion', name: 'Persuasion', ab: 'cha' },
+    { key: 'religion', name: 'Religion', ab: 'int' },
+    { key: 'sleightOfHand', name: 'Sleight of hand', ab: 'dex' },
+    { key: 'stealth', name: 'Stealth', ab: 'dex' },
+    { key: 'survival', name: 'Survival', ab: 'wis' }
+  ];
+
+  var SKILL_BY_KEY = {};
+  SKILLS.forEach(function (s) { SKILL_BY_KEY[s.key] = s; });
+
+  /* The modifier an ability score gives. */
+  function abilityMod(score) {
+    var s = Number(score);
+    if (!isFinite(s)) return 0;
+    return Math.floor((s - 10) / 2);
+  }
+
+  /* The proficiency bonus a character level gives. */
+  function profBonus(level) {
+    var l = Number(level);
+    if (!isFinite(l) || l < 1) l = 1;
+    return 2 + Math.floor((l - 1) / 4);
+  }
+
+  function sign(n) {
+    var v = Number(n) || 0;
+    return v >= 0 ? '+' + v : String(v);
+  }
+
+  /* A saving throw: its ability, plus the proficiency when the character has it. */
+  function saveMod(c, key) {
+    var m = abilityMod(c.abilities[key]);
+    if (c.saves[key]) m += profBonus(c.level);
+    return m;
+  }
+
+  /* A skill: its ability, plus the proficiency when the character has it. */
+  function skillMod(c, key) {
+    var skill = SKILL_BY_KEY[key];
+    if (!skill) return 0;
+    var m = abilityMod(c.abilities[skill.ab]);
+    if (c.skills[key]) m += profBonus(c.level);
+    return m;
+  }
+
+  /* The spell attack and the save DC both lean on charisma and the proficiency. */
+  function spellAttack(c) {
+    return abilityMod(c.abilities.cha) + profBonus(c.level);
+  }
+
+  function spellDC(c) {
+    return 8 + profBonus(c.level) + abilityMod(c.abilities.cha);
+  }
+
+  /* Hit points move inside the range the character has. */
+  function hpApply(current, max, delta) {
+    var cur = Number(current) || 0;
+    var m = Number(max) || 0;
+    var next = cur + (Number(delta) || 0);
+    if (next < 0) next = 0;
+    if (m > 0 && next > m) next = m;
+    return next;
+  }
+
+  /* The rewind brings back the value the tracker had before the last change. */
+  function hpRewind(history) {
+    var h = (history || []).slice();
+    if (!h.length) return { current: null, history: h };
+    return { current: h.pop(), history: h };
+  }
+
+  root.SheetRules = {
+    ABILITIES: ABILITIES,
+    SKILLS: SKILLS,
+    abilityMod: abilityMod,
+    profBonus: profBonus,
+    sign: sign,
+    saveMod: saveMod,
+    skillMod: skillMod,
+    spellAttack: spellAttack,
+    spellDC: spellDC,
+    hpApply: hpApply,
+    hpRewind: hpRewind
+  };
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+</script>
+
 <script>
 (function () {
   'use strict';
@@ -7486,6 +7805,11 @@ input[type=range]::-moz-range-thumb{
   var WARLOCK_LEVEL = R.WARLOCK_LEVEL;
   var LEVELS = R.LEVELS;
 
+  /* the character sheet rules, in their own block */
+  var SR = window.SheetRules;
+  var ABILITIES = SR.ABILITIES;
+  var SKILLS = SR.SKILLS;
+
   var SPELL_DEFAULTS = {
     dc: 17,
     sp: 8,
@@ -7500,6 +7824,22 @@ input[type=range]::-moz-range-thumb{
     selected: 1,
     lists: {}
   };
+
+  /* The character on the sheet. What can be derived is derived: charisma 20
+     with a proficiency of 4 gives the attack of +9 and the save DC of 17 that
+     the rest of the app already uses. The rest waits for the player. */
+  var CHAR_DEFAULTS = {
+    name: '',
+    level: 9,
+    abilities: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 20 },
+    saves: { str: false, dex: false, con: true, int: false, wis: false, cha: true },
+    skills: {},
+    init: 0,
+    ac: null,
+    hp: { current: 0, max: 0 },
+    hpHistory: []
+  };
+  SKILLS.forEach(function (s) { CHAR_DEFAULTS.skills[s.key] = false; });
 
   var SPELL_SEED = (SPELLBOOK.seed || []).map(function (s) { return s.name; });
 
@@ -7568,7 +7908,27 @@ input[type=range]::-moz-range-thumb{
     sheetList: document.getElementById('sheetList'),
     sheetActions: document.getElementById('sheetActions'),
     sheetSearch: document.getElementById('sheetSearch'),
-    sheetClose: document.getElementById('sheetClose')
+    sheetClose: document.getElementById('sheetClose'),
+    tabChar: document.getElementById('tab-char'),
+    viewChar: document.getElementById('view-char'),
+    charBody: document.getElementById('charBody'),
+    charNameWrap: document.getElementById('charNameWrap'),
+    charName: document.getElementById('charName'),
+    charAc: document.getElementById('charAc'),
+    charInit: document.getElementById('charInit'),
+    charLevel: document.getElementById('charLevel'),
+    charHpNow: document.getElementById('charHpNow'),
+    charHpMax: document.getElementById('charHpMax'),
+    charHpDown: document.getElementById('charHpDown'),
+    charHpUp: document.getElementById('charHpUp'),
+    charHpRewind: document.getElementById('charHpRewind'),
+    charAbilities: document.getElementById('charAbilities'),
+    charDerived: document.getElementById('charDerived'),
+    charSaves: document.getElementById('charSaves'),
+    charSkills: document.getElementById('charSkills'),
+    restShort: document.getElementById('restShort'),
+    restLong: document.getElementById('restLong'),
+    charNote: document.getElementById('charNote')
   };
 
   /* ---- state ---- */
@@ -7579,6 +7939,7 @@ input[type=range]::-moz-range-thumb{
     var merged = {};
     Object.keys(DEFAULTS).forEach(function (k) { merged[k] = DEFAULTS[k]; });
     merged.spell = seedSpells(saved.spell || {});
+    merged.char = seedChar(saved.char || {});
     Object.keys(DEFAULTS).forEach(function (k) {
       if (Object.prototype.hasOwnProperty.call(saved, k) && saved[k] !== null && saved[k] !== undefined) merged[k] = saved[k];
     });
@@ -7615,6 +7976,49 @@ input[type=range]::-moz-range-thumb{
     });
     s.lists = lists;
     return s;
+  }
+
+  /* The character, with the saved values over the defaults. */
+  function seedChar(saved) {
+    var c = {
+      name: '',
+      level: CHAR_DEFAULTS.level,
+      abilities: {},
+      saves: {},
+      skills: {},
+      init: CHAR_DEFAULTS.init,
+      ac: CHAR_DEFAULTS.ac,
+      hp: { current: 0, max: 0 },
+      hpHistory: []
+    };
+    ABILITIES.forEach(function (a) {
+      c.abilities[a.key] = CHAR_DEFAULTS.abilities[a.key];
+      c.saves[a.key] = CHAR_DEFAULTS.saves[a.key];
+    });
+    SKILLS.forEach(function (s) { c.skills[s.key] = false; });
+    if (saved && typeof saved === 'object') {
+      if (typeof saved.name === 'string') c.name = saved.name;
+      if (saved.level) c.level = Math.max(1, Math.min(20, Number(saved.level) || CHAR_DEFAULTS.level));
+      if (saved.init !== undefined && saved.init !== null) c.init = Number(saved.init) || 0;
+      if (saved.ac !== undefined && saved.ac !== null && saved.ac !== '') c.ac = Number(saved.ac) || 0;
+      ABILITIES.forEach(function (a) {
+        if (saved.abilities && saved.abilities[a.key] !== undefined && saved.abilities[a.key] !== null) {
+          c.abilities[a.key] = Math.max(0, Math.min(30, Number(saved.abilities[a.key]) || 0));
+        }
+        if (saved.saves && saved.saves[a.key] !== undefined) c.saves[a.key] = !!saved.saves[a.key];
+      });
+      SKILLS.forEach(function (s) {
+        if (saved.skills && saved.skills[s.key] !== undefined) c.skills[s.key] = !!saved.skills[s.key];
+      });
+      if (saved.hp) {
+        c.hp.current = Math.max(0, Number(saved.hp.current) || 0);
+        c.hp.max = Math.max(0, Number(saved.hp.max) || 0);
+      }
+      if (saved.hpHistory && saved.hpHistory.length) {
+        c.hpHistory = saved.hpHistory.map(Number).filter(function (n) { return isFinite(n); });
+      }
+    }
+    return c;
   }
 
   function save() {
@@ -7674,6 +8078,7 @@ input[type=range]::-moz-range-thumb{
   el.tabVolley.addEventListener('click', function () { setView('volley'); });
   el.tabSurge.addEventListener('click', function () { setView('surge'); });
   el.tabSpells.addEventListener('click', function () { setView('spells'); });
+  el.tabChar.addEventListener('click', function () { setView('char'); });
 
   el.cast.addEventListener('click', function () {
     if (view === 'surge') { castSurge(); return; }
@@ -7696,12 +8101,14 @@ input[type=range]::-moz-range-thumb{
     el.viewVolley.classList.toggle('on', next === 'volley');
     el.viewSurge.classList.toggle('on', next === 'surge');
     el.viewSpells.classList.toggle('on', next === 'spells');
+    el.viewChar.classList.toggle('on', next === 'char');
     el.tabVolley.setAttribute('aria-selected', next === 'volley' ? 'true' : 'false');
     el.tabSurge.setAttribute('aria-selected', next === 'surge' ? 'true' : 'false');
     el.tabSpells.setAttribute('aria-selected', next === 'spells' ? 'true' : 'false');
+    el.tabChar.setAttribute('aria-selected', next === 'char' ? 'true' : 'false');
     el.acField.style.visibility = next === 'volley' ? 'visible' : 'hidden';
-    el.wrench.hidden = next !== 'spells';
-    el.cast.hidden = next === 'spells';
+    el.wrench.hidden = next !== 'spells' && next !== 'char';
+    el.cast.hidden = next === 'spells' || next === 'char';
     el.castLabel.textContent = next === 'volley' ? 'Cast' : 'Surge';
     render();
   }
@@ -7730,7 +8137,9 @@ input[type=range]::-moz-range-thumb{
   function render() {
     var power = R.powerOf(state.power);
 
-    el.spellName.textContent = view === 'volley' ? power.name : (view === 'surge' ? 'Wild magic surge' : 'Spells');
+    el.spellName.textContent = view === 'volley' ? power.name
+      : (view === 'surge' ? 'Wild magic surge'
+      : (view === 'spells' ? 'Spells' : (state.char.name || 'Character')));
     el.power.value = String(R.POWERS.indexOf(power));
     var span = Number(el.power.max) - Number(el.power.min);
     el.power.style.setProperty('--fill', (span ? (Number(el.power.value) - Number(el.power.min)) / span * 100 : 0) + '%');
@@ -7751,10 +8160,14 @@ input[type=range]::-moz-range-thumb{
       el.ac.value = state.ac === null ? '' : String(state.ac);
     }
 
+    el.wrench.setAttribute('aria-pressed', (view === 'char' ? editingChar : editing) ? 'true' : 'false');
+    el.wrench.setAttribute('aria-label', view === 'char' ? 'Edit the proficiencies' : 'Edit the slot maximums');
+
     renderSummary();
     renderBoard(false);
     renderTally();
     renderSpells();
+    renderChar();
   }
 
   function renderBoard(animate) {
@@ -8096,7 +8509,6 @@ input[type=range]::-moz-range-thumb{
     el.cunning.setAttribute('aria-pressed', S.cunning ? 'true' : 'false');
     el.sorcRest.setAttribute('aria-pressed', S.sorcRest ? 'true' : 'false');
     el.sorcRest.title = 'Restores ' + Math.floor(S.sorcererLevel / 2) + ' sorcery points';
-    el.wrench.setAttribute('aria-pressed', editing ? 'true' : 'false');
     el.dcStat.classList.toggle('editing', editing);
     var list = S.lists[S.selected] || [];
     el.listTitle.textContent = 'Level ' + S.selected + ' spells · ' + list.length;
@@ -8202,7 +8614,221 @@ input[type=range]::-moz-range-thumb{
     commit();
   }
 
-  el.wrench.addEventListener('click', function () { editing = !editing; commit(); });
+  /* ---- character sheet ---- */
+
+  var editingChar = false;
+
+  /* The tiles and the rows are built once, then only their numbers move.
+     Rebuilding them on every keystroke would take the focus off the field
+     the player is typing in. */
+  function buildChar() {
+    ABILITIES.forEach(function (a) {
+      var tile = document.createElement('div');
+      tile.className = 'ab';
+      tile.innerHTML = '<span class="an">' + a.name + '</span>' +
+        '<input class="cinput" type="number" inputmode="numeric" min="0" max="30" data-ab="' + a.key + '" aria-label="' + a.long + ' score">' +
+        '<span class="am" data-mod="' + a.key + '">+0</span>';
+      el.charAbilities.appendChild(tile);
+    });
+
+    ABILITIES.forEach(function (a) {
+      var row = document.createElement('div');
+      row.className = 'prow';
+      row.dataset.kind = 'save';
+      row.dataset.key = a.key;
+      row.innerHTML = '<span class="dot"></span><span class="nm">' + a.name + '</span>' +
+        '<span class="vl">+0</span>';
+      el.charSaves.appendChild(row);
+    });
+
+    SKILLS.forEach(function (s) {
+      var row = document.createElement('div');
+      row.className = 'prow';
+      row.dataset.kind = 'skill';
+      row.dataset.key = s.key;
+      row.innerHTML = '<span class="dot"></span><span class="nm">' + s.name + '</span>' +
+        '<span class="abk">' + s.ab.toUpperCase() + '</span><span class="vl">+0</span>';
+      el.charSkills.appendChild(row);
+    });
+  }
+
+  function renderChar() {
+    var C = state.char;
+    el.charBody.classList.toggle('editing', editingChar);
+    el.charNameWrap.hidden = !editingChar;
+
+    if (document.activeElement !== el.charName) el.charName.value = C.name;
+    if (document.activeElement !== el.charAc) {
+      el.charAc.value = C.ac === null ? '' : String(C.ac);
+    }
+    if (document.activeElement !== el.charInit) el.charInit.value = String(C.init);
+    if (document.activeElement !== el.charLevel) el.charLevel.value = String(C.level);
+    if (document.activeElement !== el.charHpNow) {
+      el.charHpNow.value = C.hp.current ? String(C.hp.current) : '';
+    }
+    if (document.activeElement !== el.charHpMax) {
+      el.charHpMax.value = C.hp.max ? String(C.hp.max) : '';
+    }
+    el.charHpDown.disabled = !C.hp.current;
+    el.charHpUp.disabled = C.hp.max > 0 && C.hp.current >= C.hp.max;
+    el.charHpRewind.disabled = !C.hpHistory.length;
+    el.charHpRewind.title = C.hpHistory.length
+      ? 'Rewind the last change, ' + C.hpHistory.length + ' to go back'
+      : 'Nothing to rewind';
+
+    ABILITIES.forEach(function (a) {
+      var input = el.charAbilities.querySelector('[data-ab="' + a.key + '"]');
+      if (input && document.activeElement !== input) input.value = String(C.abilities[a.key]);
+      var mod = el.charAbilities.querySelector('[data-mod="' + a.key + '"]');
+      if (mod) mod.textContent = SR.sign(SR.abilityMod(C.abilities[a.key]));
+    });
+
+    ABILITIES.forEach(function (a) {
+      var row = el.charSaves.querySelector('[data-key="' + a.key + '"]');
+      if (!row) return;
+      row.classList.toggle('prof', !!C.saves[a.key]);
+      row.querySelector('.vl').textContent = SR.sign(SR.saveMod(C, a.key));
+    });
+
+    SKILLS.forEach(function (s) {
+      var row = el.charSkills.querySelector('[data-key="' + s.key + '"]');
+      if (!row) return;
+      row.classList.toggle('prof', !!C.skills[s.key]);
+      row.querySelector('.vl').textContent = SR.sign(SR.skillMod(C, s.key));
+    });
+
+    el.charDerived.innerHTML =
+      '<span>proficiency <b>' + SR.sign(SR.profBonus(C.level)) + '</b></span>' +
+      '<span>spell attack <b>' + SR.sign(SR.spellAttack(C)) + '</b></span>' +
+      '<span>save DC <b>' + SR.spellDC(C) + '</b></span>' +
+      '<span>passive perception <b>' + (10 + SR.skillMod(C, 'perception')) + '</b></span>';
+  }
+
+  function commitChar() { save(); render(); }
+
+  /* The tracker remembers every value it went through, so the rewind can
+     bring back the one before. */
+  function setHp(next) {
+    var C = state.char;
+    if (next === C.hp.current) return;
+    C.hpHistory.push(C.hp.current);
+    if (C.hpHistory.length > 40) C.hpHistory.shift();
+    C.hp.current = next;
+    commitChar();
+  }
+
+  var noteTimer = null;
+  function note(message) {
+    el.charNote.textContent = message;
+    if (noteTimer) clearTimeout(noteTimer);
+    noteTimer = setTimeout(function () { el.charNote.textContent = ''; }, 2600);
+  }
+
+  el.charName.addEventListener('input', function () {
+    state.char.name = el.charName.value;
+    commitChar();
+  });
+
+  el.charAc.addEventListener('input', function () {
+    var v = el.charAc.value.trim();
+    state.char.ac = v === '' ? null : Number(v);
+    commitChar();
+  });
+
+  el.charInit.addEventListener('input', function () {
+    var v = el.charInit.value.trim();
+    state.char.init = v === '' ? 0 : Number(v);
+    commitChar();
+  });
+
+  el.charLevel.addEventListener('input', function () {
+    var v = Number(el.charLevel.value);
+    state.char.level = Math.max(1, Math.min(20, isFinite(v) && v ? v : 1));
+    commitChar();
+  });
+
+  el.charAbilities.addEventListener('input', function (ev) {
+    var input = ev.target.closest('[data-ab]');
+    if (!input) return;
+    var v = input.value.trim();
+    state.char.abilities[input.dataset.ab] = v === '' ? 10 : Math.max(0, Math.min(30, Number(v) || 0));
+    commitChar();
+  });
+
+  /* The field follows the typing, and the value it had when the field was
+     opened goes to the history when the player is done with it, so the
+     rewind takes back a whole typed change and not one keystroke. */
+  var hpBefore = null;
+
+  el.charHpNow.addEventListener('focus', function () {
+    hpBefore = state.char.hp.current;
+  });
+
+  el.charHpNow.addEventListener('input', function () {
+    var v = el.charHpNow.value.trim();
+    state.char.hp.current = SR.hpApply(v === '' ? 0 : Number(v) || 0, state.char.hp.max, 0);
+    commitChar();
+  });
+
+  el.charHpNow.addEventListener('change', function () {
+    if (hpBefore !== null && hpBefore !== state.char.hp.current) {
+      state.char.hpHistory.push(hpBefore);
+      if (state.char.hpHistory.length > 40) state.char.hpHistory.shift();
+    }
+    hpBefore = null;
+    commitChar();
+  });
+
+  el.charHpMax.addEventListener('input', function () {
+    var v = el.charHpMax.value.trim();
+    var max = v === '' ? 0 : Math.max(0, Number(v) || 0);
+    state.char.hp.max = max;
+    if (max > 0 && state.char.hp.current > max) state.char.hp.current = max;
+    commitChar();
+  });
+
+  el.charHpUp.addEventListener('click', function () {
+    setHp(SR.hpApply(state.char.hp.current, state.char.hp.max, 1));
+  });
+
+  el.charHpDown.addEventListener('click', function () {
+    setHp(SR.hpApply(state.char.hp.current, state.char.hp.max, -1));
+  });
+
+  el.charHpRewind.addEventListener('click', function () {
+    var r = SR.hpRewind(state.char.hpHistory);
+    if (r.current === null) return;
+    state.char.hpHistory = r.history;
+    state.char.hp.current = r.current;
+    commitChar();
+  });
+
+  /* The proficiencies only move in the edit mode, so a stray tap at the
+     table never changes a modifier. */
+  el.charBody.addEventListener('click', function (ev) {
+    if (!editingChar) return;
+    var row = ev.target.closest('.prow');
+    if (!row) return;
+    var C = state.char;
+    if (row.dataset.kind === 'save') C.saves[row.dataset.key] = !C.saves[row.dataset.key];
+    else if (row.dataset.kind === 'skill') C.skills[row.dataset.key] = !C.skills[row.dataset.key];
+    else return;
+    commitChar();
+  });
+
+  el.restShort.addEventListener('click', function () {
+    note('Short rest is not wired yet.');
+  });
+
+  el.restLong.addEventListener('click', function () {
+    note('Long rest is not wired yet.');
+  });
+
+  el.wrench.addEventListener('click', function () {
+    if (view === 'char') { editingChar = !editingChar; commitChar(); return; }
+    editing = !editing;
+    commit();
+  });
 
   el.cunning.addEventListener('click', function () {
     var S = state.spell;
@@ -8378,6 +9004,7 @@ input[type=range]::-moz-range-thumb{
   el.sheet.addEventListener('click', function (ev) { if (ev.target === el.sheet) closeSheet(); });
   el.sheetSearch.addEventListener('input', function () { renderGrimoire(state.spell.selected); });
 
+  buildChar();
   render();
 })();
 </script>

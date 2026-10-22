@@ -200,6 +200,50 @@ console.log('turning a spell slot into sorcery points');
   check('the warlock slots are only at level 2', R.convertSlot({ sp: 0, spMax: 8, left: { 3: 1 }, warlockLeft: 2 }, 3), { left: 0, warlockLeft: 2, usedWarlock: false, sp: 3, gained: 3 });
 }
 
+console.log('the character sheet');
+{
+  const block = html.match(/<script id="sheet-rules">([\s\S]*?)<\/script>/);
+  if (!block) { check('the sheet rules are there', false, true); }
+  else {
+    const sheetCtx = vm.createContext({});
+    vm.runInContext(block[1], sheetCtx);
+    const C = sheetCtx.SheetRules;
+    check('six abilities', C.ABILITIES.length, 6);
+    check('eighteen skills', C.SKILLS.length, 18);
+    check('twenty is a plus five', C.abilityMod(20), 5);
+    check('ten is a zero', C.abilityMod(10), 0);
+    check('nine is a minus one', C.abilityMod(9), -1);
+    check('eight is a minus one', C.abilityMod(8), -1);
+    check('seven is a minus two', C.abilityMod(7), -2);
+    check('level one gives a plus two', C.profBonus(1), 2);
+    check('level eight gives a plus three', C.profBonus(8), 3);
+    check('level nine gives a plus four', C.profBonus(9), 4);
+    check('level seventeen gives a plus six', C.profBonus(17), 6);
+
+    const hero = {
+      level: 9,
+      abilities: { str: 10, dex: 14, con: 16, int: 8, wis: 12, cha: 20 },
+      saves: { str: false, dex: false, con: true, int: false, wis: false, cha: true },
+      skills: { athletics: true, perception: true }
+    };
+    check('a proficient save takes the proficiency', C.saveMod(hero, 'cha'), 9);
+    check('a plain save does not', C.saveMod(hero, 'str'), 0);
+    check('a proficient skill takes the proficiency', C.skillMod(hero, 'athletics'), 4);
+    check('a plain skill does not', C.skillMod(hero, 'stealth'), 2);
+    check('the spell attack is charisma and proficiency', C.spellAttack(hero), 9);
+    check('the save DC is eight plus both', C.spellDC(hero), 17);
+    check('the attack agrees with the volley', C.spellAttack(hero), R.ATTACK_MOD);
+    check('the DC agrees with the spell tab', C.spellDC(hero), 17);
+
+    check('hit points stop at zero', C.hpApply(3, 10, -5), 0);
+    check('hit points stop at the maximum', C.hpApply(9, 10, 4), 10);
+    check('hit points move by one', C.hpApply(9, 10, -1), 8);
+    check('a rewind brings the last value back', C.hpRewind([7, 9]), { current: 9, history: [7] });
+    check('a rewind with nothing to undo does nothing', C.hpRewind([]), { current: null, history: [] });
+    check('a rewind keeps the rest of the history', C.hpRewind([7, 9, 12]).history, [7, 9]);
+  }
+}
+
 console.log('the built page carries the data');
 {
   const built = readFileSync(resolve(root, 'dist', 'index.html'), 'utf8');
@@ -210,6 +254,8 @@ console.log('the built page carries the data');
     check('the table is inlined with twenty five rows', parsed.rows.length, 25);
     check('the inlined table matches the data file', parsed.rows[0].text, JSON.parse(readFileSync(resolve(root, 'data', 'wild-magic-surge-xphb.json'), 'utf8')).rows[0].text);
   }
+  const sheetBlock = built.match(/<script id="sheet-rules">([\s\S]*?)<\/script>/);
+  check('the sheet rules travel with the page', !!sheetBlock, true);
   const bookBlock = built.match(/<script id="spell-data" type="application\/json">([\s\S]*?)<\/script>/);
   if (!bookBlock) { check('the spell book is inlined', false, true); }
   else {
