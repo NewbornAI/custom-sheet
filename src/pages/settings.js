@@ -7,8 +7,14 @@
   var api = null;   /* the shell gives it at mount */
   var E = {};
 
+  /* The pages belong to the character: a bard can live without the volley
+     page the warlock plays. A character that never chose keeps the pages
+     of the app. */
   function pages() {
-    return api.state.ui.pages || api.defaultPages.slice();
+    var rec = api.character();
+    if (rec.pages) return rec.pages;
+    if (api.state.ui.pages) return api.state.ui.pages;
+    return api.defaultPages.slice();
   }
 
   function toggle(id) {
@@ -16,7 +22,7 @@
     var ix = list.indexOf(id);
     if (ix >= 0) list.splice(ix, 1);
     else list.push(id);
-    api.state.ui.pages = list;
+    api.character().pages = list;
     api.save();
     api.refresh();
   }

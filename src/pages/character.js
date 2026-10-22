@@ -15,7 +15,8 @@
   var editingChar = false;
   var noteTimer = null;
 
-  var FEATURE_SEED = (C.features.features || []).map(function (f) {
+  /* One row of the sheet, from a feature of the data. */
+  function featureRow(f) {
     return {
       key: f.key,
       name: f.name,
@@ -28,7 +29,31 @@
       short: null,
       hidden: !!f.hidden
     };
-  });
+  }
+
+  /* A copy of a row, so two characters never share one. */
+  function copyRow(f) {
+    return {
+      key: f.key,
+      name: f.name,
+      source: f.source || '',
+      active: !!f.active,
+      recovery: f.recovery,
+      bind: f.bind || null,
+      max: f.max || 0,
+      left: f.left || 0,
+      cost: f.cost || '',
+      short: (f.short === undefined || f.short === null) ? null : f.short,
+      hidden: !!f.hidden
+    };
+  }
+
+  /* A new character is given the features of the app's own character. The
+     ones that belong to a ready-made character say so in the data and wait
+     for it. */
+  var FEATURE_SEED = (C.features.features || []).filter(function (f) {
+    return !f.preset;
+  }).map(featureRow);
 
   var CHAR_DEFAULTS = {
     name: '',
@@ -51,6 +76,12 @@
   };
   SKILLS.forEach(function (s) { CHAR_DEFAULTS.skills[s.key] = 0; });
 
+  /* Every feature the app knows, by key, so a character can name the ones
+     it was given. */
+  var FEATURE_BY_KEY = {};
+  (C.features.features || []).forEach(function (f) { FEATURE_BY_KEY[f.key] = featureRow(f); });
+  CHAR_DEFAULTS.features.forEach(function (f) { FEATURE_BY_KEY[f.key] = f; });
+
   function commitChar() { api.save(); api.refresh(); }
 
   /* A proficiency is a number: 0 none, 1 proficient, 2 expertise. The state
@@ -68,27 +99,21 @@
   /* ---- the state ---- */
 
   function seed(saved, fresh) {
+    /* The features the character was given. One that names them keeps
+       exactly those; one that names none is the app's own character,
+       unless it is new, in which case it starts with nothing. */
+    var keys = null;
+    if (saved && Array.isArray(saved.featureKeys)) keys = saved.featureKeys;
+    else if (!fresh) keys = CHAR_DEFAULTS.features.map(function (f) { return f.key; });
     var c = {
       name: '',
       level: CHAR_DEFAULTS.level,
       abilities: {},
       saves: {},
       skills: {},
-      features: CHAR_DEFAULTS.features.map(function (f) {
-        return {
-          key: f.key,
-          name: f.name,
-          source: f.source || '',
-          active: !!f.active,
-          recovery: f.recovery,
-          bind: f.bind || null,
-          max: f.max || 0,
-          left: f.left || 0,
-          cost: f.cost || '',
-          short: (f.short === undefined || f.short === null) ? null : f.short,
-          hidden: !!f.hidden
-        };
-      }),
+      features: (keys || []).map(function (k) {
+        return FEATURE_BY_KEY[k] ? copyRow(FEATURE_BY_KEY[k]) : null;
+      }).filter(Boolean),
       init: CHAR_DEFAULTS.init,
       ac: CHAR_DEFAULTS.ac,
       hp: { current: 0, max: 0 },
@@ -109,7 +134,6 @@
         c.abilities[a.key] = 10;
         c.saves[a.key] = 0;
       });
-      c.features = [];
       c.dice = [];
       c.init = 0;
       c.ac = null;

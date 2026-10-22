@@ -311,6 +311,8 @@ input[type=range]::-moz-range-thumb{
 
 .sbar{display:flex;gap:8px;align-items:center;flex:0 0 auto;flex-wrap:wrap}
 .stat{display:flex;align-items:center;gap:3px;font-size:10.5px;color:var(--muted)}
+.stat[hidden]{display:none}
+.tog[hidden]{display:none}
 .stat .k{letter-spacing:.08em}
 .stat .mini{display:none}
 .stat.editing .mini,.stat.live .mini{display:flex}
@@ -475,6 +477,7 @@ input[type=range]::-moz-range-thumb{
 .card .src.warlock{color:#9dbcff;border-color:rgba(110,155,255,.45);background:rgba(110,155,255,.10)}
 .card .src.izzet{color:#e6ebff;border-color:rgba(140,160,255,.5);background:linear-gradient(90deg,rgba(110,155,255,.26) 0 50%,rgba(255,111,168,.26) 50% 100%)}
 .card .src.elf{color:#8fe084;border-color:rgba(122,216,111,.45);background:rgba(122,216,111,.10)}
+.card .src.bard{color:#c9a7ff;border-color:rgba(178,132,255,.45);background:rgba(178,132,255,.10)}
 .card.dragging{opacity:.95;border-color:var(--arcane);box-shadow:0 10px 24px rgba(0,0,0,.55)}
 .card.ghost{opacity:.25}
 .empty{font-size:11px;color:#615c7d;padding:8px 2px;line-height:1.5}
@@ -511,6 +514,7 @@ input[type=range]::-moz-range-thumb{
 .sheet-meta .src.warlock{color:#9dbcff;border-color:rgba(110,155,255,.45);background:rgba(110,155,255,.10)}
 .sheet-meta .src.izzet{color:#dde4ff;border-color:rgba(140,160,255,.45);background:linear-gradient(90deg,rgba(110,155,255,.20) 0 50%,rgba(255,111,168,.20) 50% 100%)}
 .sheet-meta .src.elf{color:#8fe084;border-color:rgba(122,216,111,.45);background:rgba(122,216,111,.10)}
+.sheet-meta .src.bard{color:#c9a7ff;border-color:rgba(178,132,255,.45);background:rgba(178,132,255,.10)}
 .sheet-text{font-size:13px;line-height:1.6;color:#d9d5ec}
 .sheet-text .tdmg{color:#ff6b6b}
 .sheet-text .tsav{color:#6e9bff}
@@ -837,6 +841,7 @@ input[type=range]::-moz-range-thumb{
 .fcard .src.warlock{color:#9dbcff;border-color:rgba(110,155,255,.45);background:rgba(110,155,255,.10)}
 .fcard .src.izzet{color:#e6ebff;border-color:rgba(140,160,255,.5);background:linear-gradient(90deg,rgba(110,155,255,.26) 0 50%,rgba(255,111,168,.26) 50% 100%)}
 .fcard .src.elf{color:#8fe084;border-color:rgba(122,216,111,.45);background:rgba(122,216,111,.10)}
+.fcard .src.bard{color:#c9a7ff;border-color:rgba(178,132,255,.45);background:rgba(178,132,255,.10)}
 .fcard .feye{flex:0 0 auto;width:18px;height:18px;border:0;background:none;color:#6f6a8d;cursor:pointer;padding:0;display:none;align-items:center;justify-content:center}
 .fcard .feye svg{width:12px;height:12px;display:block}
 .fnew{display:flex;flex-wrap:wrap;gap:6px}
@@ -15153,7 +15158,7 @@ input[type=range]::-moz-range-thumb{
 }</script>
 
 <script id="feature-data" type="application/json">{
-  "edition": "The character's own table of 2026-10-22, with the long text from 5e.tools",
+  "edition": "The features of the app's own character and of the ready-made bard, with the long text from 5e.tools",
   "source": "https://5e.tools",
   "fetched": "2026-10-22",
   "features": [
@@ -15737,6 +15742,610 @@ input[type=range]::-moz-range-thumb{
           ]
         }
       ]
+    },
+    {
+      "key": "bardicInspiration",
+      "name": "Bardic inspiration",
+      "source": "Bard",
+      "active": true,
+      "uses": 5,
+      "recovery": "short",
+      "cost": "",
+      "hidden": false,
+      "action": "B",
+      "duration": "1 hour",
+      "desc": "d10 die, CHA mod uses, short rest",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You can supernaturally inspire others through words, music, or dance. This inspiration is represented by your Bardic Inspiration die, which is a d6."
+        },
+        {
+          "t": "h",
+          "text": "Using Bardic Inspiration"
+        },
+        {
+          "t": "p",
+          "text": "As a Bonus Action, you can inspire another creature within 60 feet of yourself who can see or hear you. That creature gains one of your Bardic Inspiration dice. A creature can have only one Bardic Inspiration die at a time."
+        },
+        {
+          "t": "p",
+          "text": "Once within the next hour when the creature fails a D20 Test, the creature can roll the Bardic Inspiration die and add the number rolled to the d20, potentially turning the failure into a success. A Bardic Inspiration die is expended when it's rolled."
+        },
+        {
+          "t": "h",
+          "text": "Number of Uses"
+        },
+        {
+          "t": "p",
+          "text": "You can confer a Bardic Inspiration die a number of times equal to your Charisma modifier (minimum of once), and you regain all expended uses when you finish a Long Rest."
+        },
+        {
+          "t": "h",
+          "text": "At Higher Levels"
+        },
+        {
+          "t": "p",
+          "text": "Your Bardic Inspiration die changes when you reach certain Bard levels, as shown in the Bardic Die column of the Bard Features table. The die becomes a d8 at level 5, a d10 at level 10, and a d12 at level 15."
+        }
+      ],
+      "preset": "bard"
+    },
+    {
+      "key": "fontOfInspiration",
+      "name": "Font of inspiration",
+      "source": "Bard",
+      "active": false,
+      "uses": 0,
+      "recovery": "passive",
+      "cost": "",
+      "hidden": false,
+      "action": "",
+      "duration": "",
+      "desc": "A slot buys an inspiration back",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You now regain all your expended uses of Bardic Inspiration when you finish a Short Rest or Long Rest."
+        },
+        {
+          "t": "p",
+          "text": "In addition, you can expend a spell slot (no action required) to regain one expended use of Bardic Inspiration."
+        }
+      ],
+      "preset": "bard"
+    },
+    {
+      "key": "jackOfAllTrades",
+      "name": "Jack of all trades",
+      "source": "Bard",
+      "active": false,
+      "uses": 0,
+      "recovery": "passive",
+      "cost": "",
+      "hidden": false,
+      "action": "",
+      "duration": "",
+      "desc": "Half the proficiency on the checks you lack",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You can add half your Proficiency (round down) to any ability check you make that uses a skill proficiency you lack and that doesn't otherwise use your Proficiency."
+        },
+        {
+          "t": "p",
+          "text": "For example, if you make a Strength (Athletics) check and lack Athletics proficiency, you can add half your Proficiency to the check."
+        },
+        {
+          "t": "p",
+          "text": "Read aloud: Does your Bard beat a drum while chanting the deeds of ancient heroes? Strum a lute while crooning romantic tunes? Perform arias of stirring power? Recite dramatic monologues from classic tragedies? Use the rhythm of a folk dance to coordinate the movement of allies in battle? Compose naughty limericks? When you play a Bard, consider the style of artistic performance you favor, the moods you might invoke, and the themes that inspire your own creations. Are your poems inspired by moments of natural beauty, or are they brooding reflections on loss? Do you prefer lofty hymns or rowdy tavern songs? Are you drawn to laments for the fallen or celebrations of joy? Do you dance merry jigs or perform elaborate interpretive choreography? Do you focus on one style of performance or strive to master them all?"
+        }
+      ],
+      "preset": "bard"
+    },
+    {
+      "key": "expertise",
+      "name": "Expertise",
+      "source": "Bard",
+      "active": false,
+      "uses": 0,
+      "recovery": "passive",
+      "cost": "",
+      "hidden": false,
+      "action": "",
+      "duration": "",
+      "desc": "Four skills carry double proficiency",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You gain Expertise in two of your skill proficiencies of your choice. Performance and Persuasion are recommended if you have proficiency in them."
+        },
+        {
+          "t": "p",
+          "text": "At Bard level 9, you gain Expertise in two more of your skill proficiencies of your choice."
+        }
+      ],
+      "preset": "bard"
+    },
+    {
+      "key": "countercharm",
+      "name": "Countercharm",
+      "source": "Bard",
+      "active": true,
+      "uses": 0,
+      "recovery": "passive",
+      "cost": "",
+      "hidden": false,
+      "action": "R",
+      "duration": "",
+      "desc": "Reroll a charm or fear save, with advantage",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You can use musical notes or words of power to disrupt mind-influencing effects. If you or a creature within 30 feet of you fails a saving throw against an effect that applies the [[c:Charmed]] or [[c:Frightened]] condition, you can take a Reaction to cause the save to be rerolled, and the new roll has Advantage."
+        }
+      ],
+      "preset": "bard"
+    },
+    {
+      "key": "magicalSecrets",
+      "name": "Magical secrets",
+      "source": "Bard",
+      "active": false,
+      "uses": 0,
+      "recovery": "passive",
+      "cost": "",
+      "hidden": false,
+      "action": "",
+      "duration": "",
+      "desc": "Any list can fill the new prepared spells",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You've learned secrets from various magical traditions. Whenever you reach a Bard level (including this level) and the Prepared Spells number in the Bard Features table increases, you can choose any of your new prepared spells from the , , , and , and the chosen spells count as Bard spells for you (see a class's section for its spell list). In addition, whenever you replace a spell prepared for this class, you can replace it with a spell from those lists."
+        }
+      ],
+      "preset": "bard"
+    },
+    {
+      "key": "moteOfPotential",
+      "name": "Mote of potential",
+      "source": "Creation",
+      "active": true,
+      "uses": 0,
+      "recovery": "passive",
+      "cost": "",
+      "hidden": false,
+      "action": "",
+      "duration": "",
+      "desc": "The inspiration die does one more thing",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "3rd-level College of Creation feature"
+        },
+        {
+          "t": "p",
+          "text": "Whenever you give a creature a Bardic Inspiration die, you can utter a note from the Song of Creation to create a Tiny mote of potential, which orbits within 5 feet of that creature. The mote is intangible and invulnerable, and it lasts until the Bardic Inspiration die is lost. The mote looks like a musical note, a star, a flower, or another symbol of art or life that you choose."
+        },
+        {
+          "t": "p",
+          "text": "When the creature uses the Bardic Inspiration die, the mote provides an additional effect based on whether the die benefits an ability check, an attack roll, or a saving throw, as detailed below:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "Ability Check",
+            "Attack Roll",
+            "Saving Throw"
+          ]
+        }
+      ],
+      "preset": "bard"
+    },
+    {
+      "key": "performanceOfCreation",
+      "name": "Performance of creation",
+      "source": "Creation",
+      "active": true,
+      "uses": 1,
+      "recovery": "long",
+      "cost": "",
+      "hidden": false,
+      "action": "A",
+      "duration": "",
+      "desc": "Create one item, 20 gp a bard level",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "3rd-level College of Creation feature"
+        },
+        {
+          "t": "p",
+          "text": "As an action, you can channel the magic of the Song of Creation to create one nonmagical item of your choice in an unoccupied space within 10 feet of you. The item must appear on a surface or in a liquid that can support it. The gp value of the item can't be more than 20 times your bard level, and the item must be Medium or smaller. The item glimmers softly, and a creature can faintly hear music when touching it. The created item disappears after a number of hours equal to your proficiency bonus. For examples of items you can create, see the equipment chapter of the Player's Handbook."
+        },
+        {
+          "t": "p",
+          "text": "Once you create an item with this feature, you can't do so again until you finish a long rest, unless you expend a spell slot of 2nd level or higher to use this feature again. You can have only one item created by this feature at a time; if you use this action and already have an item from this feature, the first one immediately vanishes."
+        },
+        {
+          "t": "p",
+          "text": "The size of the item you can create with this feature increases by one size category when you reach 6th level (Large) and 14th level (Huge)."
+        }
+      ],
+      "preset": "bard"
+    },
+    {
+      "key": "animatingPerformance",
+      "name": "Animating performance",
+      "source": "Creation",
+      "active": true,
+      "uses": 1,
+      "recovery": "long",
+      "cost": "",
+      "hidden": false,
+      "action": "A",
+      "duration": "",
+      "desc": "An item walks as a dancing item, one hour",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "6th-level College of Creation feature"
+        },
+        {
+          "t": "p",
+          "text": "As an action, you can animate one Large or smaller nonmagical item within 30 feet of you that isn't being worn or carried. The animate item uses the Dancing Item stat block, which uses your proficiency bonus (PB). The item is friendly to you and your companions and obeys your commands. It lives for 1 hour, until it is reduced to 0 hit points, or until you die."
+        },
+        {
+          "t": "p",
+          "text": "In combat, the item shares your initiative count, but it takes its turn immediately after yours. It can move and use its reaction on its own, but the only action it takes on its turn is the Dodge action, unless you take a bonus action on your turn to command it to take another action. That action can be one in its stat block or some other action. If you are [[c:incapacitated]], the item can take any action of its choice, not just Dodge."
+        },
+        {
+          "t": "p",
+          "text": "When you use your Bardic Inspiration feature, you can command the item as part of the same bonus action you use for Bardic Inspiration."
+        },
+        {
+          "t": "p",
+          "text": "Once you animate an item with this feature, you can't do so again until you finish a long rest, unless you expend a spell slot of 3rd level or higher to use this feature again. You can have only one item animated by this feature at a time; if you use this action and already have a dancing item from this feature, the first one immediately becomes inanimate."
+        }
+      ],
+      "preset": "bard"
+    },
+    {
+      "key": "musician",
+      "name": "Musician",
+      "source": "Feat",
+      "active": false,
+      "uses": 0,
+      "recovery": "passive",
+      "cost": "",
+      "hidden": false,
+      "action": "",
+      "duration": "",
+      "desc": "Three instruments, a song that inspires",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You gain the following benefits."
+        },
+        {
+          "t": "h",
+          "text": "Instrument Training"
+        },
+        {
+          "t": "p",
+          "text": "You gain proficiency with three Musical Instruments of your choice."
+        },
+        {
+          "t": "h",
+          "text": "Encouraging Song"
+        },
+        {
+          "t": "p",
+          "text": "As you finish a Short Rest or Long Rest, you can play a song on a Musical Instrument with which you have proficiency and give Heroic Inspiration to allies who hear the song. The number of allies you can affect in this way equals your Proficiency."
+        }
+      ],
+      "preset": "bard"
+    },
+    {
+      "key": "conjurationAdept",
+      "name": "Conjuration adept",
+      "source": "Feat",
+      "active": false,
+      "uses": 0,
+      "recovery": "passive",
+      "cost": "",
+      "hidden": false,
+      "action": "",
+      "duration": "",
+      "desc": "Conjuration spells always prepared",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You gain the following benefits."
+        },
+        {
+          "t": "h",
+          "text": "Additional Spells"
+        },
+        {
+          "t": "p",
+          "text": "Your prowess allows you to always have certain spells at the ready. When you have spell slots of a level specified in the Conjuration Adept Spells table, you thereafter always have the spells listed for that level and lower prepared."
+        },
+        {
+          "t": "h",
+          "text": "Persistent Conjuration"
+        },
+        {
+          "t": "p",
+          "text": "While maintaining Concentration on a spell from the Conjuration school, you gain a bonus to [[s:Constitution saving throw]]s to maintain this Concentration. This bonus is equal to the ability modifier of the score increased by this feat."
+        },
+        {
+          "t": "table",
+          "caption": "Conjuration Adept Spells",
+          "head": [
+            "Spell Slot Level",
+            "Spell"
+          ],
+          "rows": [
+            [
+              "1",
+              "Entangle"
+            ],
+            [
+              "2",
+              "Misty Step"
+            ],
+            [
+              "3",
+              "Conjure Animals"
+            ],
+            [
+              "4",
+              "Dimension Door"
+            ],
+            [
+              "5",
+              "Conjure Elemental"
+            ]
+          ]
+        }
+      ],
+      "preset": "bard"
+    },
+    {
+      "key": "abjurationAdept",
+      "name": "Abjuration adept",
+      "source": "Feat",
+      "active": false,
+      "uses": 0,
+      "recovery": "passive",
+      "cost": "",
+      "hidden": false,
+      "action": "",
+      "duration": "",
+      "desc": "Abjuration spells always prepared, a ward",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You gain the following benefits."
+        },
+        {
+          "t": "h",
+          "text": "Additional Spells"
+        },
+        {
+          "t": "p",
+          "text": "Your prowess allows you to always have certain spells at the ready. When you have spell slots of a level specified in the Abjuration Adept Spells table, you thereafter always have the spells listed for that level and lower prepared."
+        },
+        {
+          "t": "h",
+          "text": "Protective Ward"
+        },
+        {
+          "t": "p",
+          "text": "When you cast a spell from the Abjuration school using a spell slot, you or one creature you can see within 30 feet of yourself gains Temporary Hit Points equal to twice the level of spell slot expended."
+        },
+        {
+          "t": "table",
+          "caption": "Abjuration Adept Spells",
+          "head": [
+            "Spell Slot Level",
+            "Spell"
+          ],
+          "rows": [
+            [
+              "1",
+              "Shield"
+            ],
+            [
+              "2",
+              "Lesser Restoration"
+            ],
+            [
+              "3",
+              "Protection from Energy"
+            ],
+            [
+              "4",
+              "Banishment"
+            ],
+            [
+              "5",
+              "Mass Cure Wounds"
+            ]
+          ]
+        }
+      ],
+      "preset": "bard"
+    }
+  ]
+}</script>
+
+<script id="character-data" type="application/json">{
+  "edition": "Mandal's second character, the bard, ready to add from the switcher",
+  "source": "Mandal's sheet",
+  "note": "The six scores, the hit points, the armour class and the skills are left at their floor: the numbers of the sheet go in on the phone. The two adept feats always have their ten spells prepared, so those travel with the character.",
+  "presets": [
+    {
+      "id": "bardCreation",
+      "name": "Bram",
+      "blurb": "Bard 11 · creation · high elf",
+      "rec": {
+        "pages": [
+          "spells",
+          "features"
+        ],
+        "char": {
+          "name": "Bram",
+          "level": 11,
+          "abilities": {
+            "str": 10,
+            "dex": 10,
+            "con": 10,
+            "int": 10,
+            "wis": 10,
+            "cha": 10
+          },
+          "saves": {
+            "dex": 1,
+            "cha": 1
+          },
+          "featureKeys": [
+            "bardicInspiration",
+            "countercharm",
+            "moteOfPotential",
+            "performanceOfCreation",
+            "animatingPerformance",
+            "fontOfInspiration",
+            "jackOfAllTrades",
+            "expertise",
+            "magicalSecrets",
+            "musician",
+            "conjurationAdept",
+            "abjurationAdept",
+            "elvenLineageI",
+            "elvenLineageII",
+            "trance",
+            "feyAncestry"
+          ],
+          "hp": {
+            "current": 0,
+            "max": 0
+          },
+          "dice": [
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            }
+          ]
+        },
+        "spells": {
+          "dc": 17,
+          "dcTouched": false,
+          "sp": 0,
+          "spMax": 0,
+          "sorcererLevel": 1,
+          "max": {
+            "1": 4,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 1,
+            "7": 0,
+            "8": 0,
+            "9": 0
+          },
+          "left": {
+            "1": 4,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 1,
+            "7": 0,
+            "8": 0,
+            "9": 0
+          },
+          "warlockMax": 0,
+          "warlockLeft": 0,
+          "selected": 1,
+          "lists": {
+            "0": [],
+            "1": [
+              "Entangle",
+              "Shield"
+            ],
+            "2": [
+              "Misty Step",
+              "Lesser Restoration"
+            ],
+            "3": [
+              "Conjure Animals",
+              "Protection from Energy"
+            ],
+            "4": [
+              "Dimension Door",
+              "Banishment"
+            ],
+            "5": [
+              "Conjure Elemental",
+              "Mass Cure Wounds"
+            ],
+            "6": [],
+            "7": [],
+            "8": [],
+            "9": []
+          },
+          "classes": {
+            "Bard": true
+          },
+          "levelFilter": true,
+          "cunning": false,
+          "sorcRest": false
+        }
+      }
     }
   ]
 }</script>
@@ -16298,6 +16907,7 @@ input[type=range]::-moz-range-thumb{
   var SURGE = readJson('surge-data');
   var BOOK = readJson('spell-data');
   var FEATUREDATA = readJson('feature-data');
+  var PRESETS = readJson('character-data').presets || [];
 
   var SPELL_BY_NAME = {};
   (BOOK.spells || []).forEach(function (s) { SPELL_BY_NAME[s.name] = s; });
@@ -16379,7 +16989,9 @@ input[type=range]::-moz-range-thumb{
     'izzet': 'izzet',
     'izzet engineer': 'izzet',
     'elf': 'elf',
-    'high elf': 'elf'
+    'high elf': 'elf',
+    'bard': 'bard',
+    'creation': 'bard'
   };
 
   function sourceClass(source) {
@@ -16671,17 +17283,66 @@ input[type=range]::-moz-range-thumb{
     });
   }
 
+  /* The page the shell is on may not belong to the character that comes
+     next, so the home of the new one carries. */
+  function reshow() {
+    var on = enabled().some(function (p) { return p.id === current; });
+    show(on ? current : homeId());
+  }
+
   function switchCharacter(id) {
     if (!state.characters[id]) return;
     state.current = id;
     save();
     sheet.closeAll();
-    show(current);
+    reshow();
   }
 
+  /* A character comes ready-made, or from nothing at all. */
   function openNewCharacter() {
+    var html = PRESETS.map(function (p, i) {
+      return '<div class="crow" data-preset="' + i + '">' +
+        '<span class="cn">' + esc(p.name) + '</span>' +
+        '<span class="cl">' + esc(p.blurb || '') + '</span>' +
+        '</div>';
+    }).join('');
+    html += '<div class="crow cadd" data-blank="1"><span class="cn">A character from nothing</span>' +
+      '<span class="cx">+</span></div>';
     sheet.open({
       id: 'newcharacter',
+      title: 'New character',
+      metaClass: 'sheet-meta one',
+      meta: '<span>Ready-made, or from nothing at all.</span>',
+      list: html,
+      onList: function (ev) {
+        var row = ev.target.closest('[data-preset]');
+        if (row) { addCharacter(fromPreset(PRESETS[Number(row.dataset.preset)])); return; }
+        if (ev.target.closest('[data-blank]')) openBlankCharacter();
+      }
+    });
+  }
+
+  /* A ready-made character keeps the pages it wants, so a page can be left
+     out of one character without turning it off for the others. */
+  function fromPreset(preset) {
+    var rec = seedCharacter((preset && preset.rec) || {}, true);
+    if (!rec.char.name && preset && preset.name) rec.char.name = preset.name;
+    if (!rec.pages && preset && preset.rec && preset.rec.pages) rec.pages = preset.rec.pages.slice();
+    return rec;
+  }
+
+  function addCharacter(rec) {
+    var id = 'c' + Date.now();
+    state.characters[id] = rec;
+    state.current = id;
+    save();
+    sheet.closeAll();
+    show(homeId());
+  }
+
+  function openBlankCharacter() {
+    sheet.open({
+      id: 'blankcharacter',
       title: 'New character',
       metaClass: 'sheet-meta one',
       meta: '<input class="sheet-search" id="newCharName" type="text" placeholder="Name of the character" aria-label="Name of the character">',
@@ -16690,14 +17351,9 @@ input[type=range]::-moz-range-thumb{
         onClick: function (root) {
           var field = root.querySelector('#newCharName');
           var name = (field && field.value ? field.value : '').trim() || 'New character';
-          var id = 'c' + Date.now();
           var rec = seedCharacter({}, true);
           rec.char.name = name;
-          state.characters[id] = rec;
-          state.current = id;
-          save();
-          sheet.closeAll();
-          show(homeId());
+          addCharacter(rec);
         }
       }]
     });
@@ -16727,7 +17383,7 @@ input[type=range]::-moz-range-thumb{
     }
     save();
     sheet.closeAll();
-    show(current);
+    reshow();
     openCharacters();
   }
 
@@ -16756,8 +17412,18 @@ input[type=range]::-moz-range-thumb{
 
   /* ---- the tabs ---- */
 
+  /* The pages a character plays with. They sit on the character, so a
+     bard can live without the volley page the warlock plays, and a
+     character that never chose keeps the pages of the app. */
+  function pagesOf() {
+    var rec = state.characters[state.current] || {};
+    if (rec.pages) return rec.pages;
+    if (state.ui.pages) return state.ui.pages;
+    return DEFAULT_PAGES;
+  }
+
   function enabled() {
-    var on = state.ui.pages || DEFAULT_PAGES;
+    var on = pagesOf();
     return PAGES.filter(function (p) {
       if (p.hidden) return false;
       if (p.home) return true;
@@ -16923,7 +17589,8 @@ input[type=range]::-moz-range-thumb{
   var editingChar = false;
   var noteTimer = null;
 
-  var FEATURE_SEED = (C.features.features || []).map(function (f) {
+  /* One row of the sheet, from a feature of the data. */
+  function featureRow(f) {
     return {
       key: f.key,
       name: f.name,
@@ -16936,7 +17603,31 @@ input[type=range]::-moz-range-thumb{
       short: null,
       hidden: !!f.hidden
     };
-  });
+  }
+
+  /* A copy of a row, so two characters never share one. */
+  function copyRow(f) {
+    return {
+      key: f.key,
+      name: f.name,
+      source: f.source || '',
+      active: !!f.active,
+      recovery: f.recovery,
+      bind: f.bind || null,
+      max: f.max || 0,
+      left: f.left || 0,
+      cost: f.cost || '',
+      short: (f.short === undefined || f.short === null) ? null : f.short,
+      hidden: !!f.hidden
+    };
+  }
+
+  /* A new character is given the features of the app's own character. The
+     ones that belong to a ready-made character say so in the data and wait
+     for it. */
+  var FEATURE_SEED = (C.features.features || []).filter(function (f) {
+    return !f.preset;
+  }).map(featureRow);
 
   var CHAR_DEFAULTS = {
     name: '',
@@ -16959,6 +17650,12 @@ input[type=range]::-moz-range-thumb{
   };
   SKILLS.forEach(function (s) { CHAR_DEFAULTS.skills[s.key] = 0; });
 
+  /* Every feature the app knows, by key, so a character can name the ones
+     it was given. */
+  var FEATURE_BY_KEY = {};
+  (C.features.features || []).forEach(function (f) { FEATURE_BY_KEY[f.key] = featureRow(f); });
+  CHAR_DEFAULTS.features.forEach(function (f) { FEATURE_BY_KEY[f.key] = f; });
+
   function commitChar() { api.save(); api.refresh(); }
 
   /* A proficiency is a number: 0 none, 1 proficient, 2 expertise. The state
@@ -16976,27 +17673,21 @@ input[type=range]::-moz-range-thumb{
   /* ---- the state ---- */
 
   function seed(saved, fresh) {
+    /* The features the character was given. One that names them keeps
+       exactly those; one that names none is the app's own character,
+       unless it is new, in which case it starts with nothing. */
+    var keys = null;
+    if (saved && Array.isArray(saved.featureKeys)) keys = saved.featureKeys;
+    else if (!fresh) keys = CHAR_DEFAULTS.features.map(function (f) { return f.key; });
     var c = {
       name: '',
       level: CHAR_DEFAULTS.level,
       abilities: {},
       saves: {},
       skills: {},
-      features: CHAR_DEFAULTS.features.map(function (f) {
-        return {
-          key: f.key,
-          name: f.name,
-          source: f.source || '',
-          active: !!f.active,
-          recovery: f.recovery,
-          bind: f.bind || null,
-          max: f.max || 0,
-          left: f.left || 0,
-          cost: f.cost || '',
-          short: (f.short === undefined || f.short === null) ? null : f.short,
-          hidden: !!f.hidden
-        };
-      }),
+      features: (keys || []).map(function (k) {
+        return FEATURE_BY_KEY[k] ? copyRow(FEATURE_BY_KEY[k]) : null;
+      }).filter(Boolean),
       init: CHAR_DEFAULTS.init,
       ac: CHAR_DEFAULTS.ac,
       hp: { current: 0, max: 0 },
@@ -17017,7 +17708,6 @@ input[type=range]::-moz-range-thumb{
         c.abilities[a.key] = 10;
         c.saves[a.key] = 0;
       });
-      c.features = [];
       c.dice = [];
       c.init = 0;
       c.ac = null;
@@ -17976,6 +18666,21 @@ input[type=range]::-moz-range-thumb{
   function seed(saved, fresh) {
     var s = {};
     Object.keys(SPELL_DEFAULTS).forEach(function (k) { s[k] = SPELL_DEFAULTS[k]; });
+    /* A character that is new holds nothing: no point, no slot, no spell.
+       Its own record is read after, so one made from a ready-made
+       character keeps everything that character was given. */
+    if (fresh) {
+      s.sp = 0;
+      s.spMax = 0;
+      s.max = {};
+      s.left = {};
+      s.warlockMax = 0;
+      s.warlockLeft = 0;
+      s.sorcererLevel = 1;
+      s.classes = {};
+      s.levelFilter = true;
+      s.dcTouched = false;
+    }
     if (saved && typeof saved === 'object') {
       Object.keys(SPELL_DEFAULTS).forEach(function (k) {
         if (saved[k] !== undefined && saved[k] !== null && typeof saved[k] === typeof SPELL_DEFAULTS[k]) s[k] = saved[k];
@@ -17992,30 +18697,22 @@ input[type=range]::-moz-range-thumb{
       if (saved.max) { s.max = {}; Object.keys(SPELL_DEFAULTS.max).forEach(function (k) { s.max[k] = Number(saved.max[k]) || 0; }); }
       if (saved.left) { s.left = {}; Object.keys(SPELL_DEFAULTS.left).forEach(function (k) { s.left[k] = Number(saved.left[k]) || 0; }); }
     }
+    /* The spells of the character come first: a level it filled itself
+       stays the way it left it, an empty one included. */
     var lists = {};
     LEVELS.forEach(function (lv) {
-      /* A character that is new knows no spell and holds no slot. */
+      var own = (saved && saved.lists && saved.lists[lv]) || null;
+      if (own) {
+        lists[lv] = own.filter(function (n) { return C.bookByName[n]; });
+        return;
+      }
       if (fresh) { lists[lv] = []; return; }
-      var seed = SPELL_SEED.filter(function (n) {
+      lists[lv] = SPELL_SEED.filter(function (n) {
         var sp = C.bookByName[n];
         return sp && sp.level === lv;
       });
-      var own = (saved.lists && saved.lists[lv]) || null;
-      lists[lv] = (own && own.length) ? own.filter(function (n) { return C.bookByName[n]; }) : seed;
     });
     s.lists = lists;
-    if (fresh) {
-      s.sp = 0;
-      s.spMax = 0;
-      s.max = {};
-      s.left = {};
-      s.warlockMax = 0;
-      s.warlockLeft = 0;
-      s.sorcererLevel = 1;
-      s.classes = {};
-      s.levelFilter = true;
-      s.dcTouched = false;
-    }
     return s;
   }
 
@@ -18220,6 +18917,15 @@ input[type=range]::-moz-range-thumb{
   function renderSpells() {
     E.dcValue.textContent = saveDC();
     E.spValue.textContent = S.sp + '/' + S.spMax;
+    /* A character with no sorcery point and no pact slot has no use for
+       the sorcerer's controls, and one with no wild surge has no use for
+       the table, so they go away rather than sit there doing nothing. */
+    var sorc = S.spMax > 0;
+    var wild = (api.character().char.features || []).some(function (f) { return f.key === 'wildSurge'; });
+    E.spStat.hidden = !sorc;
+    E.sorcRest.hidden = !sorc;
+    E.cunning.hidden = !(S.warlockMax > 0);
+    E.wildSurge.hidden = !wild;
     E.cunning.setAttribute('aria-pressed', S.cunning ? 'true' : 'false');
     E.sorcRest.setAttribute('aria-pressed', S.sorcRest ? 'true' : 'false');
     E.sorcRest.title = 'Restores ' + Math.floor(S.sorcererLevel / 2) + ' sorcery points';
@@ -18420,7 +19126,7 @@ input[type=range]::-moz-range-thumb{
       '    <button class="mini" type="button" data-act="dc-" aria-label="Lower the DC">&minus;</button>',
       '    <button class="mini" type="button" data-act="dc+" aria-label="Raise the DC">+</button>',
       '  </div>',
-      '  <div class="stat live">',
+      '  <div class="stat live" id="spStat">',
       '    <span class="k">SP</span>',
       '    <span class="v" id="spValue">8/8</span>',
       '    <button class="mini" type="button" data-act="sp-" aria-label="Spend a sorcery point">&minus;</button>',
@@ -18449,6 +19155,7 @@ input[type=range]::-moz-range-thumb{
         dcStat: root.querySelector('#dcStat'),
         dcValue: root.querySelector('#dcValue'),
         spValue: root.querySelector('#spValue'),
+        spStat: root.querySelector('#spStat'),
         cunning: root.querySelector('#cunning'),
         sorcRest: root.querySelector('#sorcRest'),
         wildSurge: root.querySelector('#wildSurge'),
@@ -19085,8 +19792,14 @@ input[type=range]::-moz-range-thumb{
   var api = null;   /* the shell gives it at mount */
   var E = {};
 
+  /* The pages belong to the character: a bard can live without the volley
+     page the warlock plays. A character that never chose keeps the pages
+     of the app. */
   function pages() {
-    return api.state.ui.pages || api.defaultPages.slice();
+    var rec = api.character();
+    if (rec.pages) return rec.pages;
+    if (api.state.ui.pages) return api.state.ui.pages;
+    return api.defaultPages.slice();
   }
 
   function toggle(id) {
@@ -19094,7 +19807,7 @@ input[type=range]::-moz-range-thumb{
     var ix = list.indexOf(id);
     if (ix >= 0) list.splice(ix, 1);
     else list.push(id);
-    api.state.ui.pages = list;
+    api.character().pages = list;
     api.save();
     api.refresh();
   }

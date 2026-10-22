@@ -28,6 +28,11 @@ const features = readFileSync(resolve(root, 'data', 'features.json'), 'utf8').tr
 const featureTag = /(<script id="feature-data" type="application\/json">)[\s\S]*?(<\/script>)/;
 if (!featureTag.test(html)) throw new Error('feature data tag not found in src/index.html');
 built = built.replace(featureTag, (m, open, close) => open + features + close);
+
+const characters = readFileSync(resolve(root, 'data', 'characters.json'), 'utf8').trim();
+const characterTag = /(<script id="character-data" type="application\/json">)[\s\S]*?(<\/script>)/;
+if (!characterTag.test(html)) throw new Error('character data tag not found in src/index.html');
+built = built.replace(characterTag, (m, open, close) => open + characters + close);
 /* The pages and the shell are separate files, and the built page holds
    them inside, so the phone needs one file and nothing else. */
 const scripts = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)];

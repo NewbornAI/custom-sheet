@@ -451,7 +451,22 @@ const FEATURE_SPECS = [
   { key: 'hexWarrior', name: 'Hex Warrior', source: 'Hexblade', active: false, desc: 'Linked weapon attacks with CHA', from: { file: 'class-warlock', list: 'subclassFeature', name: 'Hex Warrior', source: 'XGE' } },
   { key: 'trance', name: 'Trance', source: 'Elf', active: false, desc: 'Sleep 4h, conscious', from: { file: 'races', name: 'Elf', source: 'XPHB', entry: 'Trance' } },
   { key: 'feyAncestry', name: 'Fey Ancestry', source: 'Elf', active: false, desc: 'Advantage vs Charm', from: { file: 'races', name: 'Elf', source: 'XPHB', entry: 'Fey Ancestry' } },
-  { key: 'elvenAccuracy', name: 'Elven Accuracy', source: 'Feat', active: false, desc: 'Attacks roll 3d20 on advantage', from: { file: 'feats', name: 'Elven Accuracy' } }
+  { key: 'elvenAccuracy', name: 'Elven Accuracy', source: 'Feat', active: false, desc: 'Attacks roll 3d20 on advantage', from: { file: 'feats', name: 'Elven Accuracy' } },
+
+  /* The bard of the second character: the 2024 class, the college of
+     creation of 2022, and the three feats of the sheet. */
+  { key: 'bardicInspiration', name: 'Bardic inspiration', source: 'Bard', preset: 'bard', active: true, uses: 5, recovery: 'short', action: 'B', duration: '1 hour', desc: 'd10 die, CHA mod uses, short rest', from: { file: 'class-bard', list: 'classFeature', name: 'Bardic Inspiration', source: 'XPHB' } },
+  { key: 'fontOfInspiration', name: 'Font of inspiration', source: 'Bard', preset: 'bard', active: false, desc: 'A slot buys an inspiration back', from: { file: 'class-bard', list: 'classFeature', name: 'Font of Inspiration', source: 'XPHB' } },
+  { key: 'jackOfAllTrades', name: 'Jack of all trades', source: 'Bard', preset: 'bard', active: false, desc: 'Half the proficiency on the checks you lack', from: { file: 'class-bard', list: 'classFeature', name: 'Jack of All Trades', source: 'XPHB' } },
+  { key: 'expertise', name: 'Expertise', source: 'Bard', preset: 'bard', active: false, desc: 'Four skills carry double proficiency', from: { file: 'class-bard', list: 'classFeature', name: 'Expertise', source: 'XPHB' } },
+  { key: 'countercharm', name: 'Countercharm', source: 'Bard', preset: 'bard', active: true, recovery: 'passive', action: 'R', desc: 'Reroll a charm or fear save, with advantage', from: { file: 'class-bard', list: 'classFeature', name: 'Countercharm', source: 'XPHB' } },
+  { key: 'magicalSecrets', name: 'Magical secrets', source: 'Bard', preset: 'bard', active: false, desc: 'Any list can fill the new prepared spells', from: { file: 'class-bard', list: 'classFeature', name: 'Magical Secrets', source: 'XPHB' } },
+  { key: 'moteOfPotential', name: 'Mote of potential', source: 'Creation', preset: 'bard', active: true, recovery: 'passive', desc: 'The inspiration die does one more thing', from: { file: 'class-bard', list: 'subclassFeature', name: 'Mote of Potential', source: 'TCE' } },
+  { key: 'performanceOfCreation', name: 'Performance of creation', source: 'Creation', preset: 'bard', active: true, uses: 1, recovery: 'long', action: 'A', desc: 'Create one item, 20 gp a bard level', from: { file: 'class-bard', list: 'subclassFeature', name: 'Performance of Creation', source: 'TCE' } },
+  { key: 'animatingPerformance', name: 'Animating performance', source: 'Creation', preset: 'bard', active: true, uses: 1, recovery: 'long', action: 'A', desc: 'An item walks as a dancing item, one hour', from: { file: 'class-bard', list: 'subclassFeature', name: 'Animating Performance', source: 'TCE' } },
+  { key: 'musician', name: 'Musician', source: 'Feat', preset: 'bard', active: false, desc: 'Three instruments, a song that inspires', from: { file: 'feats', name: 'Musician' } },
+  { key: 'conjurationAdept', name: 'Conjuration adept', source: 'Feat', preset: 'bard', active: false, desc: 'Conjuration spells always prepared', from: { file: 'feats', name: 'Conjuration Adept' } },
+  { key: 'abjurationAdept', name: 'Abjuration adept', source: 'Feat', preset: 'bard', active: false, desc: 'Abjuration spells always prepared, a ward', from: { file: 'feats', name: 'Abjuration Adept' } }
 ];
 
 function classFile(name) {
@@ -459,8 +474,8 @@ function classFile(name) {
 }
 
 function featureEntries(spec) {
-  if (spec.file === 'class-sorcerer' || spec.file === 'class-warlock') {
-    const data = spec.file === 'class-sorcerer' ? classData : classFile('warlock');
+  if (spec.file === 'class-sorcerer' || spec.file === 'class-warlock' || spec.file === 'class-bard') {
+    const data = spec.file === 'class-sorcerer' ? classData : classFile(spec.file.slice(6));
     const list = data[spec.list] || [];
     const hit = list.find((f) => f.name === spec.name && f.source === spec.source);
     return hit ? hit.entries : null;
@@ -499,7 +514,7 @@ const featureList = [];
 for (const spec of FEATURE_SPECS) {
   const entries = featureEntries(spec.from);
   if (!entries) { console.log('feature not found: ' + spec.name); continue; }
-  featureList.push({
+  const feature = {
     key: spec.key,
     name: spec.name,
     source: spec.source,
@@ -512,13 +527,17 @@ for (const spec of FEATURE_SPECS) {
     duration: spec.duration || '',
     desc: spec.desc || '',
     blocks: blocksFrom(entries)
-  });
+  };
+  /* A feature that belongs to a ready-made character says which one it
+     waits for; the rest seed a new character. */
+  if (spec.preset) feature.preset = spec.preset;
+  featureList.push(feature);
 }
 
 writeFileSync(
   resolve(root, 'data', 'features.json'),
   JSON.stringify({
-    edition: "The character's own table of 2026-10-22, with the long text from 5e.tools",
+    edition: "The features of the app's own character and of the ready-made bard, with the long text from 5e.tools",
     source: 'https://5e.tools',
     fetched: new Date().toISOString().slice(0, 10),
     features: featureList

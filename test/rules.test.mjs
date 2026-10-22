@@ -439,11 +439,11 @@ console.log('the shapes of the dice');
 console.log('the features');
 {
   const data = JSON.parse(readFileSync(resolve(root, 'data', 'features.json'), 'utf8'));
-  check('the list of features', data.features.length, 18);
+  check('the list of features', data.features.length, 30);
   const active = data.features.filter((f) => f.active);
   const passive = data.features.filter((f) => !f.active);
-  check('the active ones', active.length, 9);
-  check('the passive ones', passive.length, 9);
+  check('the active ones', active.length, 14);
+  check('the passive ones', passive.length, 16);
   check('every feature says where it comes from', data.features.every((f) => !!f.source), true);
   check('every feature has a summary', data.features.every((f) => !!f.desc), true);
   check('every feature has the long text', data.features.every((f) => f.blocks && f.blocks.length > 0), true);
@@ -462,6 +462,70 @@ console.log('the features');
   check('the wild surge is the 2024 one', data.features.find((f) => f.key === 'wildSurge').blocks[0].text.indexOf('1d20') >= 0, true);
 }
 
+console.log('seeding a character from the data');
+{
+  const features = JSON.parse(readFileSync(resolve(root, 'data', 'features.json'), 'utf8'));
+  const book = JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8'));
+  const presets = JSON.parse(readFileSync(resolve(root, 'data', 'characters.json'), 'utf8')).presets;
+  const bard = presets[0];
+  const levelOf = {};
+  book.spells.forEach((s) => { levelOf[s.name] = s.level; });
+
+  check('one ready-made character', presets.length, 1);
+  check('the bard of the sheet', bard.id, 'bardCreation');
+  const known = features.features.map((f) => f.key);
+  check('every feature it names is known', bard.rec.char.featureKeys.every((k) => known.indexOf(k) >= 0), true);
+  check('the twelve it brings are its own', features.features.filter((f) => f.preset === 'bard').length, 12);
+  check('the eighteen of the app wait for a new character', features.features.filter((f) => !f.preset).length, 18);
+  check('the level of the sheet', bard.rec.char.level, 11);
+  check('eleven hit dice, all d8', bard.rec.char.dice.length + 'd' + bard.rec.char.dice[0].type, '11d8');
+  check('proficient in the two bard saves', bard.rec.char.saves.dex + '/' + bard.rec.char.saves.cha, '1/1');
+  const slots = bard.rec.spells.max;
+  check('the slots of a level 11 bard', [slots[1], slots[2], slots[3], slots[4], slots[5], slots[6]].join(''), '433321');
+  check('no pact slot and no sorcery point', bard.rec.spells.warlockMax + '/' + bard.rec.spells.spMax, '0/0');
+  check('no volley page', bard.rec.pages.indexOf('volley'), -1);
+  const listed = [];
+  Object.keys(bard.rec.spells.lists).forEach((lv) => bard.rec.spells.lists[lv].forEach((n) => listed.push(lv + ':' + n)));
+  check('every spell it holds is in the book', listed.every((x) => levelOf[x.split(':')[1]] !== undefined), true);
+  check('every spell sits at its own level', listed.every((x) => levelOf[x.split(':')[1]] === Number(x.split(':')[0])), true);
+  check('the ten spells of the two adept feats', listed.length, 10);
+  check('the grimoire opens on the bard list', JSON.stringify(bard.rec.spells.classes), '{"Bard":true}');
+
+  /* The two pages that hold a character read their own slice, so the way
+     from the ready-made record to the sheet is checked here. */
+  const taken = {};
+  const core = {
+    R: R, SR: C, ABILITIES: C.ABILITIES, SKILLS: C.SKILLS,
+    LEVELS: R.LEVELS, WARLOCK_LEVEL: R.WARLOCK_LEVEL,
+    features: features, book: book, bookByName: {},
+    canonSource: (s) => s
+  };
+  book.spells.forEach((s) => { core.bookByName[s.name] = s; });
+  const ctx = vm.createContext({ Volley: { core: core, page: (spec) => { taken[spec.id] = spec; } } });
+  ['character', 'spells'].forEach((f) => {
+    vm.runInContext(readFileSync(resolve(root, 'src', 'pages', f + '.js'), 'utf8'), ctx);
+  });
+
+  const char = taken.character.seed(bard.rec.char, true);
+  check('the ready-made features arrive whole', char.features.length, bard.rec.char.featureKeys.length);
+  check('and they are its own', char.features.map((f) => f.key).indexOf('musician') >= 0, true);
+  check('a feature keeps its uses', char.features.filter((f) => f.key === 'bardicInspiration')[0].max, 5);
+  check('the level survives the seeding', char.level, 11);
+  const own = taken.character.seed({}, false);
+  check('the app\'s own character keeps its features', own.features.length, 19);
+  check('and its own numbers', own.level + '/' + own.abilities.cha, '9/20');
+  const blank = taken.character.seed({}, true);
+  check('a character from nothing has no feature', blank.features.length, 0);
+  check('and the scores of the floor', blank.abilities.cha, 10);
+  const spell = taken.spells.seed(bard.rec.spells, true);
+  check('the ready-made spells travel', spell.lists[1].join(','), 'Entangle,Shield');
+  check('a level it left empty stays empty', spell.lists[0].length, 0);
+  check('the slots travel too', [spell.max[1], spell.max[5]].join('/'), '4/2');
+  const kept = taken.spells.seed({ lists: { 1: [] } }, false);
+  check('a level the player emptied stays empty', kept.lists[1].length, 0);
+  check('and the rest keeps the app\'s spells', kept.lists[0].length, 10);
+}
+
 console.log('the built page carries the data');
 {
   const built = readFileSync(resolve(root, 'dist', 'index.html'), 'utf8');
@@ -478,8 +542,11 @@ console.log('the built page carries the data');
   check('the features travel with the page', !!featureBlock, true);
   if (featureBlock) {
     const parsedFeatures = JSON.parse(featureBlock[1]);
-    check('the features are inlined', parsedFeatures.features.length, 18);
+    check('the features are inlined', parsedFeatures.features.length, 30);
   }
+  const charBlock = built.match(/<script id="character-data" type="application\/json">([\s\S]*?)<\/script>/);
+  if (!charBlock) { check('the ready-made characters travel', false, true); }
+  else check('the ready-made characters travel', JSON.parse(charBlock[1]).presets.length, 1);
   const bookBlock = built.match(/<script id="spell-data" type="application\/json">([\s\S]*?)<\/script>/);
   if (!bookBlock) { check('the spell book is inlined', false, true); }
   else {

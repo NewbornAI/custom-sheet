@@ -44,6 +44,21 @@
   function seed(saved, fresh) {
     var s = {};
     Object.keys(SPELL_DEFAULTS).forEach(function (k) { s[k] = SPELL_DEFAULTS[k]; });
+    /* A character that is new holds nothing: no point, no slot, no spell.
+       Its own record is read after, so one made from a ready-made
+       character keeps everything that character was given. */
+    if (fresh) {
+      s.sp = 0;
+      s.spMax = 0;
+      s.max = {};
+      s.left = {};
+      s.warlockMax = 0;
+      s.warlockLeft = 0;
+      s.sorcererLevel = 1;
+      s.classes = {};
+      s.levelFilter = true;
+      s.dcTouched = false;
+    }
     if (saved && typeof saved === 'object') {
       Object.keys(SPELL_DEFAULTS).forEach(function (k) {
         if (saved[k] !== undefined && saved[k] !== null && typeof saved[k] === typeof SPELL_DEFAULTS[k]) s[k] = saved[k];
@@ -60,30 +75,22 @@
       if (saved.max) { s.max = {}; Object.keys(SPELL_DEFAULTS.max).forEach(function (k) { s.max[k] = Number(saved.max[k]) || 0; }); }
       if (saved.left) { s.left = {}; Object.keys(SPELL_DEFAULTS.left).forEach(function (k) { s.left[k] = Number(saved.left[k]) || 0; }); }
     }
+    /* The spells of the character come first: a level it filled itself
+       stays the way it left it, an empty one included. */
     var lists = {};
     LEVELS.forEach(function (lv) {
-      /* A character that is new knows no spell and holds no slot. */
+      var own = (saved && saved.lists && saved.lists[lv]) || null;
+      if (own) {
+        lists[lv] = own.filter(function (n) { return C.bookByName[n]; });
+        return;
+      }
       if (fresh) { lists[lv] = []; return; }
-      var seed = SPELL_SEED.filter(function (n) {
+      lists[lv] = SPELL_SEED.filter(function (n) {
         var sp = C.bookByName[n];
         return sp && sp.level === lv;
       });
-      var own = (saved.lists && saved.lists[lv]) || null;
-      lists[lv] = (own && own.length) ? own.filter(function (n) { return C.bookByName[n]; }) : seed;
     });
     s.lists = lists;
-    if (fresh) {
-      s.sp = 0;
-      s.spMax = 0;
-      s.max = {};
-      s.left = {};
-      s.warlockMax = 0;
-      s.warlockLeft = 0;
-      s.sorcererLevel = 1;
-      s.classes = {};
-      s.levelFilter = true;
-      s.dcTouched = false;
-    }
     return s;
   }
 
@@ -288,6 +295,15 @@
   function renderSpells() {
     E.dcValue.textContent = saveDC();
     E.spValue.textContent = S.sp + '/' + S.spMax;
+    /* A character with no sorcery point and no pact slot has no use for
+       the sorcerer's controls, and one with no wild surge has no use for
+       the table, so they go away rather than sit there doing nothing. */
+    var sorc = S.spMax > 0;
+    var wild = (api.character().char.features || []).some(function (f) { return f.key === 'wildSurge'; });
+    E.spStat.hidden = !sorc;
+    E.sorcRest.hidden = !sorc;
+    E.cunning.hidden = !(S.warlockMax > 0);
+    E.wildSurge.hidden = !wild;
     E.cunning.setAttribute('aria-pressed', S.cunning ? 'true' : 'false');
     E.sorcRest.setAttribute('aria-pressed', S.sorcRest ? 'true' : 'false');
     E.sorcRest.title = 'Restores ' + Math.floor(S.sorcererLevel / 2) + ' sorcery points';
@@ -488,7 +504,7 @@
       '    <button class="mini" type="button" data-act="dc-" aria-label="Lower the DC">&minus;</button>',
       '    <button class="mini" type="button" data-act="dc+" aria-label="Raise the DC">+</button>',
       '  </div>',
-      '  <div class="stat live">',
+      '  <div class="stat live" id="spStat">',
       '    <span class="k">SP</span>',
       '    <span class="v" id="spValue">8/8</span>',
       '    <button class="mini" type="button" data-act="sp-" aria-label="Spend a sorcery point">&minus;</button>',
@@ -517,6 +533,7 @@
         dcStat: root.querySelector('#dcStat'),
         dcValue: root.querySelector('#dcValue'),
         spValue: root.querySelector('#spValue'),
+        spStat: root.querySelector('#spStat'),
         cunning: root.querySelector('#cunning'),
         sorcRest: root.querySelector('#sorcRest'),
         wildSurge: root.querySelector('#wildSurge'),

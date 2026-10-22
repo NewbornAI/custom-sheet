@@ -1,0 +1,167 @@
+{
+  "edition": "Mandal's second character, the bard, ready to add from the switcher",
+  "source": "Mandal's sheet",
+  "note": "The six scores, the hit points, the armour class and the skills are left at their floor: the numbers of the sheet go in on the phone. The two adept feats always have their ten spells prepared, so those travel with the character.",
+  "presets": [
+    {
+      "id": "bardCreation",
+      "name": "Bram",
+      "blurb": "Bard 11 · creation · high elf",
+      "rec": {
+        "pages": [
+          "spells",
+          "features"
+        ],
+        "char": {
+          "name": "Bram",
+          "level": 11,
+          "abilities": {
+            "str": 10,
+            "dex": 10,
+            "con": 10,
+            "int": 10,
+            "wis": 10,
+            "cha": 10
+          },
+          "saves": {
+            "dex": 1,
+            "cha": 1
+          },
+          "featureKeys": [
+            "bardicInspiration",
+            "countercharm",
+            "moteOfPotential",
+            "performanceOfCreation",
+            "animatingPerformance",
+            "fontOfInspiration",
+            "jackOfAllTrades",
+            "expertise",
+            "magicalSecrets",
+            "musician",
+            "conjurationAdept",
+            "abjurationAdept",
+            "elvenLineageI",
+            "elvenLineageII",
+            "trance",
+            "feyAncestry"
+          ],
+          "hp": {
+            "current": 0,
+            "max": 0
+          },
+          "dice": [
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            }
+          ]
+        },
+        "spells": {
+          "dc": 17,
+          "dcTouched": false,
+          "sp": 0,
+          "spMax": 0,
+          "sorcererLevel": 1,
+          "max": {
+            "1": 4,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 1,
+            "7": 0,
+            "8": 0,
+            "9": 0
+          },
+          "left": {
+            "1": 4,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 1,
+            "7": 0,
+            "8": 0,
+            "9": 0
+          },
+          "warlockMax": 0,
+          "warlockLeft": 0,
+          "selected": 1,
+          "lists": {
+            "0": [],
+            "1": [
+              "Entangle",
+              "Shield"
+            ],
+            "2": [
+              "Misty Step",
+              "Lesser Restoration"
+            ],
+            "3": [
+              "Conjure Animals",
+              "Protection from Energy"
+            ],
+            "4": [
+              "Dimension Door",
+              "Banishment"
+            ],
+            "5": [
+              "Conjure Elemental",
+              "Mass Cure Wounds"
+            ],
+            "6": [],
+            "7": [],
+            "8": [],
+            "9": []
+          },
+          "classes": {
+            "Bard": true
+          },
+          "levelFilter": true,
+          "cunning": false,
+          "sorcRest": false
+        }
+      }
+    }
+  ]
+}

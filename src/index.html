@@ -311,6 +311,8 @@ input[type=range]::-moz-range-thumb{
 
 .sbar{display:flex;gap:8px;align-items:center;flex:0 0 auto;flex-wrap:wrap}
 .stat{display:flex;align-items:center;gap:3px;font-size:10.5px;color:var(--muted)}
+.stat[hidden]{display:none}
+.tog[hidden]{display:none}
 .stat .k{letter-spacing:.08em}
 .stat .mini{display:none}
 .stat.editing .mini,.stat.live .mini{display:flex}
@@ -475,6 +477,7 @@ input[type=range]::-moz-range-thumb{
 .card .src.warlock{color:#9dbcff;border-color:rgba(110,155,255,.45);background:rgba(110,155,255,.10)}
 .card .src.izzet{color:#e6ebff;border-color:rgba(140,160,255,.5);background:linear-gradient(90deg,rgba(110,155,255,.26) 0 50%,rgba(255,111,168,.26) 50% 100%)}
 .card .src.elf{color:#8fe084;border-color:rgba(122,216,111,.45);background:rgba(122,216,111,.10)}
+.card .src.bard{color:#c9a7ff;border-color:rgba(178,132,255,.45);background:rgba(178,132,255,.10)}
 .card.dragging{opacity:.95;border-color:var(--arcane);box-shadow:0 10px 24px rgba(0,0,0,.55)}
 .card.ghost{opacity:.25}
 .empty{font-size:11px;color:#615c7d;padding:8px 2px;line-height:1.5}
@@ -511,6 +514,7 @@ input[type=range]::-moz-range-thumb{
 .sheet-meta .src.warlock{color:#9dbcff;border-color:rgba(110,155,255,.45);background:rgba(110,155,255,.10)}
 .sheet-meta .src.izzet{color:#dde4ff;border-color:rgba(140,160,255,.45);background:linear-gradient(90deg,rgba(110,155,255,.20) 0 50%,rgba(255,111,168,.20) 50% 100%)}
 .sheet-meta .src.elf{color:#8fe084;border-color:rgba(122,216,111,.45);background:rgba(122,216,111,.10)}
+.sheet-meta .src.bard{color:#c9a7ff;border-color:rgba(178,132,255,.45);background:rgba(178,132,255,.10)}
 .sheet-text{font-size:13px;line-height:1.6;color:#d9d5ec}
 .sheet-text .tdmg{color:#ff6b6b}
 .sheet-text .tsav{color:#6e9bff}
@@ -837,6 +841,7 @@ input[type=range]::-moz-range-thumb{
 .fcard .src.warlock{color:#9dbcff;border-color:rgba(110,155,255,.45);background:rgba(110,155,255,.10)}
 .fcard .src.izzet{color:#e6ebff;border-color:rgba(140,160,255,.5);background:linear-gradient(90deg,rgba(110,155,255,.26) 0 50%,rgba(255,111,168,.26) 50% 100%)}
 .fcard .src.elf{color:#8fe084;border-color:rgba(122,216,111,.45);background:rgba(122,216,111,.10)}
+.fcard .src.bard{color:#c9a7ff;border-color:rgba(178,132,255,.45);background:rgba(178,132,255,.10)}
 .fcard .feye{flex:0 0 auto;width:18px;height:18px;border:0;background:none;color:#6f6a8d;cursor:pointer;padding:0;display:none;align-items:center;justify-content:center}
 .fcard .feye svg{width:12px;height:12px;display:block}
 .fnew{display:flex;flex-wrap:wrap;gap:6px}
@@ -1150,6 +1155,8 @@ input[type=range]::-moz-range-thumb{
 <script id="spell-data" type="application/json">{"spells":[]}</script>
 
 <script id="feature-data" type="application/json">{"features":[]}</script>
+
+<script id="character-data" type="application/json">{"presets":[]}</script>
 
 <script id="rules">
 /* Pure rules engine. No DOM, no globals beyond this one. */

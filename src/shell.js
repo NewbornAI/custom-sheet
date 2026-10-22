@@ -35,6 +35,7 @@
   var SURGE = readJson('surge-data');
   var BOOK = readJson('spell-data');
   var FEATUREDATA = readJson('feature-data');
+  var PRESETS = readJson('character-data').presets || [];
 
   var SPELL_BY_NAME = {};
   (BOOK.spells || []).forEach(function (s) { SPELL_BY_NAME[s.name] = s; });
@@ -116,7 +117,9 @@
     'izzet': 'izzet',
     'izzet engineer': 'izzet',
     'elf': 'elf',
-    'high elf': 'elf'
+    'high elf': 'elf',
+    'bard': 'bard',
+    'creation': 'bard'
   };
 
   function sourceClass(source) {
@@ -408,17 +411,66 @@
     });
   }
 
+  /* The page the shell is on may not belong to the character that comes
+     next, so the home of the new one carries. */
+  function reshow() {
+    var on = enabled().some(function (p) { return p.id === current; });
+    show(on ? current : homeId());
+  }
+
   function switchCharacter(id) {
     if (!state.characters[id]) return;
     state.current = id;
     save();
     sheet.closeAll();
-    show(current);
+    reshow();
   }
 
+  /* A character comes ready-made, or from nothing at all. */
   function openNewCharacter() {
+    var html = PRESETS.map(function (p, i) {
+      return '<div class="crow" data-preset="' + i + '">' +
+        '<span class="cn">' + esc(p.name) + '</span>' +
+        '<span class="cl">' + esc(p.blurb || '') + '</span>' +
+        '</div>';
+    }).join('');
+    html += '<div class="crow cadd" data-blank="1"><span class="cn">A character from nothing</span>' +
+      '<span class="cx">+</span></div>';
     sheet.open({
       id: 'newcharacter',
+      title: 'New character',
+      metaClass: 'sheet-meta one',
+      meta: '<span>Ready-made, or from nothing at all.</span>',
+      list: html,
+      onList: function (ev) {
+        var row = ev.target.closest('[data-preset]');
+        if (row) { addCharacter(fromPreset(PRESETS[Number(row.dataset.preset)])); return; }
+        if (ev.target.closest('[data-blank]')) openBlankCharacter();
+      }
+    });
+  }
+
+  /* A ready-made character keeps the pages it wants, so a page can be left
+     out of one character without turning it off for the others. */
+  function fromPreset(preset) {
+    var rec = seedCharacter((preset && preset.rec) || {}, true);
+    if (!rec.char.name && preset && preset.name) rec.char.name = preset.name;
+    if (!rec.pages && preset && preset.rec && preset.rec.pages) rec.pages = preset.rec.pages.slice();
+    return rec;
+  }
+
+  function addCharacter(rec) {
+    var id = 'c' + Date.now();
+    state.characters[id] = rec;
+    state.current = id;
+    save();
+    sheet.closeAll();
+    show(homeId());
+  }
+
+  function openBlankCharacter() {
+    sheet.open({
+      id: 'blankcharacter',
       title: 'New character',
       metaClass: 'sheet-meta one',
       meta: '<input class="sheet-search" id="newCharName" type="text" placeholder="Name of the character" aria-label="Name of the character">',
@@ -427,14 +479,9 @@
         onClick: function (root) {
           var field = root.querySelector('#newCharName');
           var name = (field && field.value ? field.value : '').trim() || 'New character';
-          var id = 'c' + Date.now();
           var rec = seedCharacter({}, true);
           rec.char.name = name;
-          state.characters[id] = rec;
-          state.current = id;
-          save();
-          sheet.closeAll();
-          show(homeId());
+          addCharacter(rec);
         }
       }]
     });
@@ -464,7 +511,7 @@
     }
     save();
     sheet.closeAll();
-    show(current);
+    reshow();
     openCharacters();
   }
 
@@ -493,8 +540,18 @@
 
   /* ---- the tabs ---- */
 
+  /* The pages a character plays with. They sit on the character, so a
+     bard can live without the volley page the warlock plays, and a
+     character that never chose keeps the pages of the app. */
+  function pagesOf() {
+    var rec = state.characters[state.current] || {};
+    if (rec.pages) return rec.pages;
+    if (state.ui.pages) return state.ui.pages;
+    return DEFAULT_PAGES;
+  }
+
   function enabled() {
-    var on = state.ui.pages || DEFAULT_PAGES;
+    var on = pagesOf();
     return PAGES.filter(function (p) {
       if (p.hidden) return false;
       if (p.home) return true;
