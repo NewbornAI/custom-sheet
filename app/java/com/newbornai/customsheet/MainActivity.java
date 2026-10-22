@@ -202,6 +202,21 @@ public class MainActivity extends Activity {
             }
         }
 
+        /* Opens an address in the browser of the phone, so a sign in can
+           be approved there and the app waits at home. */
+        @JavascriptInterface
+        public String openUrl(String url) {
+            if (url == null) return null;
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                host.startActivity(intent);
+                return "ok";
+            } catch (Exception e) {
+                return "error " + e.getClass().getSimpleName();
+            }
+        }
+
         /* Opens the explorer of the phone, so a file can be picked. */
         @JavascriptInterface
         public String pick() {

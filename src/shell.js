@@ -40,6 +40,21 @@
     el.textContent = spec.css || '';
   }
 
+  /* An address goes to the browser of the phone, so a sign in can be
+     approved there while the app waits at home. A page of a browser opens
+     it in a new tab. */
+  function openUrl(url) {
+    if (window.SheetNet && window.SheetNet.openUrl) {
+      try {
+        return window.SheetNet.openUrl(url);
+      } catch (e) {
+        return 'error ' + String((e && e.message) || e);
+      }
+    }
+    window.open(url, '_blank');
+    return 'ok';
+  }
+
   /* ---- what the build brought with it ---- */
 
   function readJson(id) {
@@ -513,6 +528,7 @@
     pickFile: pickFile,
     toast: toast,
     installUpdate: installUpdate,
+    openUrl: openUrl,
     plugFeature: plugFeature,
     esc: esc,
     markup: markup,

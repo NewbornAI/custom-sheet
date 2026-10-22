@@ -380,7 +380,7 @@
           '<a class="mini" href="' + C.esc(where) + '" target="_blank" rel="noreferrer" aria-label="Open GitHub">&#8599;</a></div>',
         actions: [{
           label: 'Open GitHub',
-          onClick: function () { window.open(where, '_blank'); }
+          onClick: function () { C.openUrl(where); }
         }]
       });
       poll(code, answer.interval || 5);
