@@ -1,17 +1,25 @@
-# Volley
+# DND-sheet
 
-*Eldritch blast and scorching ray roller for one sorcerer, built to fit a phone screen.*
+*A character sheet and a dice roller for a table, built to fit a phone screen.*
 
 ## Picking this up
 
 ```
 node build.mjs                                  # src to dist, inlines the font and the data
 node test\rules.test.mjs                        # the rules engine and the data
-node tools\fetch-5e-data.mjs                    # refetch the surge table and the spell book
+node tools\fetch-5e-data.mjs                    # refetch the surge table, the spell book and the features
 powershell -ExecutionPolicy Bypass -File tools\build-apk.ps1
 ```
 
-The vault note `notes/eldritch-blast-handoff.md` has the working procedure, the data pipeline and the traps.
+The vault note `notes/dnd-sheet-handoff.md` has the working procedure, the data pipeline and the traps.
+
+## The characters
+
+The name at the top of the sheet opens the list: the characters top down, the one being played marked, a cross to remove one, and a way to add one. Every character keeps its own sheet, its own spell slots, its own spell lists, its own features and its own set of pages, so a bard plays without the volley a warlock plays.
+
+A character is added ready-made or from nothing. The ready-made ones live in `data/characters.json`, each one a record in the shape the store keeps: its pages, the features it names, its slots and its spells. The bard is the first, from the sheet of 2026-10-22: level 11, the college of creation, high elf, the musician and the two adept feats, eleven d8 hit dice, the slots of a level 11 bard at 4/3/3/3/2/1, the ten spells the two adept feats always prepare, and the grimoire open on the bard list. His scores, his hit points, his armour class and his skills wait to be typed on the phone.
+
+The gear at the head of the app opens the settings page, which lists the pages of the character being played. A page that is off keeps its numbers, and turning it back on brings them back. The character page is the home, so it is always on.
 
 ## What it rolls
 
@@ -78,7 +86,7 @@ The list of what the character can do, and what is left of it.
 - **The cards can be dragged** to reorder them, the way the spell list does. A press that turns into a move carries the card, a press that ends at once is a tap.
 - **Spending a sorcery point** leaves a mark: a gold toast says how many points are left, and it lingers for three seconds.
 
-The list is Mandal's own table of 2026-10-22: the short text, the uses and the recovery are his words, and the long text is pulled from 5e.tools by `tools/fetch-5e-data.mjs` into `data/features.json`.
+The list is Mandal's own table of 2026-10-22: the short text, the uses and the recovery are his words, and the long text is pulled from 5e.tools by `tools/fetch-5e-data.mjs` into `data/features.json`. The file holds the features of both characters, the eighteen the app's own character starts with and the twelve the bard brings, and a feature that belongs to one of them says so. A character that names its features keeps exactly those, and once it exists its own list is the truth.
 
 ## The wild magic surge
 
@@ -96,7 +104,7 @@ The 2014 table is a different file with the same shape, so swapping editions mea
 
 ## Run it
 
-`dist/index.html` is the whole app: one file, no server, no network, 686 KB with the font, the spell book and the features inlined. Copy it to the phone, open it in Chrome, then Add to home screen for a full screen launcher.
+`dist/index.html` is the whole app: one file, no server, no network, 761 KB with the font, the spell book and the features inlined. Copy it to the phone, open it in Chrome, then Add to home screen for a full screen launcher.
 
 To serve it to a phone on the same wifi:
 
@@ -106,7 +114,7 @@ python -m http.server 8123 --directory dist
 
 ## The Android app
 
-The same page ships as an installed app, with no browser and no server. The APK lives at `dist/volley.apk` and carries the page in its assets, so it works offline and keeps its state between launches.
+The same page ships as an installed app, with no browser and no server. The APK lives at `dist/dnd-sheet.apk` and carries the page in its assets, so it works offline and keeps its state between launches.
 
 ```
 tools\install-android-sdk.ps1   # once: command line tools, android-34, build-tools
@@ -123,7 +131,7 @@ To put it on the phone, serve the folder and open the file there:
 python -m http.server 8123 --directory dist
 ```
 
-Then on the phone open `http://<this machine>:8123/volley.apk`. Chrome says the file can harm the device, tap Download anyway, and allow installs from that source when it asks. The Volley icon lands on the home screen and opens full screen, offline.
+Then on the phone open `http://<this machine>:8123/dnd-sheet.apk`. Chrome says the file can harm the device, tap Download anyway, and allow installs from that source when it asks. The DND-sheet icon lands on the home screen and opens full screen, offline.
 
 ## Build
 
