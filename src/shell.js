@@ -745,7 +745,9 @@
         '<span class="cl">' + esc(p.blurb || '') + '</span>' +
         '</div>';
     }).join('');
-    html += '<div class="crow cadd" data-blank="1"><span class="cn">A character from nothing</span>' +
+    html += '<div class="crow cadd" data-class="1"><span class="cn">A character from a class</span>' +
+      '<span class="cx">+</span></div>' +
+      '<div class="crow cadd" data-blank="1"><span class="cn">A character from nothing</span>' +
       '<span class="cx">+</span></div>';
     sheet.open({
       id: 'newcharacter',
@@ -756,9 +758,140 @@
       onList: function (ev) {
         var row = ev.target.closest('[data-preset]');
         if (row) { addCharacter(fromPreset(PRESETS[Number(row.dataset.preset)])); return; }
+        if (ev.target.closest('[data-class]')) {
+          /* The class and the library have to be there before a skeleton can
+             be built out of them. */
+          data('classes').then(function (ok) {
+            return ok ? data('features') : false;
+          }).then(function (ok) {
+            if (ok) openClassChooser();
+          });
+          return;
+        }
         if (ev.target.closest('[data-blank]')) openBlankCharacter();
       }
     });
+  }
+
+  /* A character from a class. The skeleton is built from the class data
+     and the library, so the player or the agent only fills what is left: the
+     scores, the hit points, the armour class, the skills and the spells. */
+  function openClassChooser() {
+    if (!CLASSDATA.length) {
+      sheet.open({
+        id: 'classchooser',
+        title: 'A class',
+        metaClass: 'sheet-meta one',
+        meta: '<span>The class file did not arrive.</span>',
+        list: ''
+      });
+      return;
+    }
+    var html = CLASSDATA.map(function (c) {
+      var caster = c.caster === 'full' ? 'full caster'
+        : (c.caster === 'half' ? 'half caster'
+        : (c.caster === 'third' ? 'third caster'
+        : (c.caster === 'pact' ? 'pact magic' : '')));
+      return '<div class="crow" data-class="' + esc(c.name) + '">' +
+        '<span class="cn">' + esc(c.name) + '</span>' +
+        '<span class="cl">d' + (c.hd || 6) + (caster ? ', ' + caster : '') + '</span>' +
+        '</div>';
+    }).join('');
+    sheet.open({
+      id: 'classchooser',
+      title: 'A class',
+      metaClass: 'sheet-meta one',
+      meta: '<span>The class brings its features, its saves and its dice.</span>',
+      list: html,
+      onList: function (ev) {
+        var row = ev.target.closest('.crow[data-class]');
+        if (row) openLevelChooser(row.dataset.class);
+      }
+    });
+  }
+
+  function openLevelChooser(className) {
+    var level = 1;
+    sheet.open({
+      id: 'levelchooser',
+      title: className,
+      metaClass: 'sheet-meta one',
+      meta: '<span>How many levels?</span>',
+      list: '<div class="crow">' +
+        '<button class="mini" type="button" data-step="-" aria-label="One level less">&minus;</button>' +
+        '<span class="cn" id="skelLevel">Level 1</span>' +
+        '<button class="mini" type="button" data-step="+" aria-label="One level more">+</button>' +
+        '</div>',
+      onList: function (ev) {
+        var step = ev.target.closest('[data-step]');
+        if (!step) return;
+        level = Math.max(1, Math.min(20, level + (step.dataset.step === '+' ? 1 : -1)));
+        var num = document.getElementById('skelLevel');
+        if (num) num.textContent = 'Level ' + level;
+      },
+      actions: [{ label: 'Next', onClick: function () { openSubclassChooser(className, level); } }]
+    });
+  }
+
+  function openSubclassChooser(className, level) {
+    var cls = null;
+    CLASSDATA.forEach(function (c) { if (c.name === className) cls = c; });
+    var subs = (cls && cls.subclasses) || [];
+    var html = subs.map(function (s) {
+      return '<div class="crow" data-sub="' + esc(s.name) + '">' +
+        '<span class="cn">' + esc(s.name) + '</span>' +
+        '<span class="cl">' + esc(s.source || '') + '</span></div>';
+    }).join('');
+    html += '<div class="crow" data-none="1"><span class="cn">No archetype</span></div>';
+    sheet.open({
+      id: 'subchooser',
+      title: 'The archetype',
+      metaClass: 'sheet-meta one',
+      meta: '<input class="sheet-search" id="skelName" type="text" placeholder="Name of the character" aria-label="Name of the character">',
+      list: html,
+      onList: function (ev) {
+        var field = document.getElementById('skelName');
+        var name = (field && field.value ? field.value : '').trim();
+        var row = ev.target.closest('.crow[data-sub]');
+        if (row) { addCharacter(skeleton(className, level, row.dataset.sub, name)); return; }
+        if (ev.target.closest('[data-none]')) addCharacter(skeleton(className, level, '', name));
+      }
+    });
+  }
+
+  /* The skeleton: the class, the level, the archetype, the features those
+     bring and the saves of the class. */
+  function skeleton(className, level, subclass, name) {
+    var cls = null;
+    CLASSDATA.forEach(function (c) { if (c.name === className) cls = c; });
+    var sub = null;
+    if (cls && subclass) {
+      (cls.subclasses || []).forEach(function (s) { if (s.name === subclass) sub = s; });
+    }
+    var keys = [];
+    Object.keys(FEATURE_BY_KEY).forEach(function (key) {
+      var f = FEATURE_BY_KEY[key];
+      if (f.class !== className) return;
+      if (Number(f.level) > level) return;
+      if (/subclass$/i.test(f.name)) return;        /* a heading, not a feature */
+      if (f.subclass) {
+        if (!sub || f.subclass !== sub.short) return;
+        if (f.name === sub.name) return;             /* the note of the archetype */
+      }
+      keys.push(key);
+    });
+    var saves = {};
+    SR.ABILITIES.forEach(function (a) { saves[a.key] = 0; });
+    ((cls && cls.saves) || []).forEach(function (a) { saves[a] = 1; });
+    return seedCharacter({
+      char: {
+        name: name || '',
+        level: level,
+        classes: [{ name: className, level: level, subclass: subclass || '' }],
+        saves: saves,
+        featureKeys: keys
+      }
+    }, true);
   }
 
   /* A ready-made character keeps the pages it wants, so a page can be left
