@@ -36,17 +36,16 @@ The AC field is optional. Leave it empty and the app shows the damage of every b
 A tracker for the character's slots and spell list, built for one hand at the table.
 
 - **The top bar** holds the DC and the sorcery points, and two toggles: Cunning restores one warlock slot, and a sorcerer rest restores half your sorcerer level in sorcery points. The sorcery points have their own minus and plus; the DC only grows buttons in the edit mode.
-- **The slot strip** runs across the top: the levels left to right, and under each one its slots stacked as pips. A filled pip means you still have it, and tapping one spends it, so tapping the last one empties the level. Tapping an empty pip resets that level up to it. The arrow beside a level shows the spells of that level.
-- **The spell list** shows one card per spell with its casting time, range, duration, components and the class that granted it. Tap a card for the full page, tables and the Using a Higher-Level Spell Slot section included, and hold and drag a card to reorder the list. The plus at the head of the list opens the grimoire for that level.
+- **The slot strip** runs across the top: the levels left to right, and under each one its slots stacked as pips. A filled pip means you still have it, and tapping one spends it, so tapping the last one empties the level. Tapping an empty pip resets that level up to it. A level holds up to nine slots, and the columns share the width in proportion to what they hold, so the slots widen into ellipses when a level holds more of them. The arrow beside a level shows the spells of that level.
+- **The lightning** above a level turns one of that level's slots into sorcery points, one point for each level of the slot, so a second level slot gives two points. It stays dim while the points are full or the level has no slot left.
+- **The spell list** shows one card per spell with labelled fields: casting time, range, duration, components, concentration and ritual. The same fields sit in the same place on every card, so the labels line up down the list. The class that granted the spell sits at the end of the title, red for the sorcerer, blue for the warlock and the hexblade, and half blue half red for the Izzet engineer. Tap a card for the full page, tables and the Using a Higher-Level Spell Slot section included, and hold and drag a card to reorder the list. The plus at the head of the list opens the grimoire for that level.
 - **The wrench** in the top right turns on the edit mode, where each level grows minus and plus buttons for the maximum number of slots, and the sorcerer level can be changed. A level with no slots is dimmed, which is how level 5 starts out until you unlock it.
 
-The list is seeded from the character's own sheet in `data/spell-sheet.csv`, one line per spell with the class that granted it.
-
-The spell list is seeded with the cantrips and the spells the character is known to have, and everything else comes from the grimoire.
+The list is seeded from the character's own sheet in `data/spell-sheet.csv`, one line per spell with the class that granted it. Everything else comes from the grimoire.
 
 ## The wild magic surge page
 
-The second tab rolls on the Wild Magic Surge table from the 2024 Player's Handbook, the same one 5e.tools serves under its XPHB source. It rolls d100, shows the range it landed on and the effect text, and rolls any dice the effect names: eight of the fifty rows ask for dice, so the app rolls them and shows the values and the total.
+The second tab rolls on the Wild Magic Surge table from the 2024 Player's Handbook, the same one 5e.tools serves under its XPHB source. It rolls d100, shows the range it landed on and the effect text, and rolls any dice the effect names: eight of the twenty five rows ask for dice, so the app rolls them and shows the values and the total.
 
 The table is never typed by hand. `tools/fetch-5e-data.mjs` pulls it out of the 5e.tools class data, parses it into `data/wild-magic-surge-xphb.json`, and refuses to write a table that does not cover 1 to 100 exactly once. The build inlines that JSON into the page, and the test suite checks the inlined copy against the file.
 
@@ -60,7 +59,7 @@ The 2014 table is a different file with the same shape, so swapping editions mea
 
 ## Run it
 
-`dist/index.html` is the whole app: one file, no server, no network, 60 KB with the font inlined. Copy it to the phone, open it in Chrome, then Add to home screen for a full screen launcher.
+`dist/index.html` is the whole app: one file, no server, no network, 350 KB with the font and the spell book inlined. Copy it to the phone, open it in Chrome, then Add to home screen for a full screen launcher.
 
 To serve it to a phone on the same wifi:
 
@@ -106,3 +105,5 @@ The rules engine lives in a `<script id="rules">` block that touches no DOM. The
 - Scorching ray carries no flat bonus, only Eldritch blast does. The `flat` field of each power says so.
 - Advantage rolls 3d20 and keeps the highest, as specified, where the rules book rolls 2.
 - A critical doubles the dice of every damage group, of any type, and never the flat bonuses.
+- The concentration flag comes from the duration in the 2024 data, not from a field of its own. The fetcher reads both, so a spell that holds concentration says so.
+- Turning a slot into sorcery points is one rule, `Rules.convertSlot`, so the test suite can check it without a browser.

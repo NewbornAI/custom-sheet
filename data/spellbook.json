@@ -276,7 +276,7 @@
       "duration": "1 minute",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "High elf",
       "blocks": [
         {
@@ -320,7 +320,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -452,7 +452,7 @@
       "duration": "1 minute",
       "components": "SM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -723,7 +723,7 @@
       "school": "C",
       "time": "Bonus Action",
       "range": "Self",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VS",
       "ritual": false,
       "concentration": false,
@@ -994,7 +994,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {
@@ -1248,10 +1248,10 @@
       "school": "D",
       "time": "Action",
       "range": "30 feet radius",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "elf",
       "blocks": [
         {
@@ -1296,10 +1296,10 @@
       "school": "T",
       "time": "Bonus Action",
       "range": "Self",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -1361,7 +1361,7 @@
       "duration": "1 hour",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -1435,7 +1435,7 @@
       "duration": "1 hour",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {
@@ -1488,7 +1488,7 @@
       "school": "I",
       "time": "1 minute",
       "range": "Touch",
-      "duration": "10 day",
+      "duration": "10 days",
       "components": "SM",
       "ritual": false,
       "concentration": false,
@@ -1540,7 +1540,7 @@
       "school": "A",
       "time": "Action",
       "range": "Touch",
-      "duration": "8 hour",
+      "duration": "8 hours",
       "components": "VSM",
       "ritual": false,
       "concentration": false,
@@ -1584,10 +1584,10 @@
       "school": "A",
       "time": "Action",
       "range": "Touch",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {
@@ -1646,10 +1646,10 @@
       "school": "I",
       "time": "Action",
       "range": "60 feet",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -1697,7 +1697,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -1716,7 +1716,7 @@
       "school": "D",
       "time": "Action",
       "range": "Self",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VS",
       "ritual": false,
       "concentration": false,
@@ -1741,7 +1741,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -1827,7 +1827,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -1887,7 +1887,7 @@
       "duration": "1 hour",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2035,7 +2035,7 @@
       "duration": "1 minute",
       "components": "V",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "hex",
       "blocks": [
         {
@@ -2053,7 +2053,7 @@
       "duration": "1 minute",
       "components": "V",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "hex",
       "blocks": [
         {
@@ -2079,7 +2079,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2109,7 +2109,7 @@
       "duration": "1 minute",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2132,10 +2132,10 @@
       "school": "V",
       "time": "Action",
       "range": "60 feet",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2158,7 +2158,7 @@
       "school": "T",
       "time": "Action",
       "range": "Touch",
-      "duration": "8 hour",
+      "duration": "8 hours",
       "components": "VSM",
       "ritual": false,
       "concentration": false,
@@ -2179,7 +2179,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2221,7 +2221,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2247,7 +2247,7 @@
       "duration": "1 hour",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2273,7 +2273,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2311,7 +2311,7 @@
       "duration": "1 minute",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {
@@ -2326,10 +2326,10 @@
       "school": "V",
       "time": "Bonus Action",
       "range": "Self",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2363,7 +2363,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2397,7 +2397,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2427,7 +2427,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Izzet",
       "blocks": [
         {
@@ -2457,7 +2457,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2483,7 +2483,7 @@
       "duration": "1 hour",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2536,10 +2536,10 @@
       "school": "T",
       "time": "Action",
       "range": "60 feet",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2591,7 +2591,7 @@
       "duration": "1 hour",
       "components": "S",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2661,7 +2661,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2691,7 +2691,7 @@
       "duration": "1 minute",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {
@@ -2809,7 +2809,7 @@
       "duration": "1 hour",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2832,10 +2832,10 @@
       "school": "E",
       "time": "Action",
       "range": "30 feet",
-      "duration": "8 hour",
+      "duration": "8 hours",
       "components": "VM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2857,7 +2857,7 @@
       "duration": "1 hour",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -2910,10 +2910,10 @@
       "school": "C",
       "time": "Action",
       "range": "120 feet",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Izzet",
       "blocks": [
         {
@@ -2948,7 +2948,7 @@
       "school": "E",
       "time": "Action",
       "range": "30 feet",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "SM",
       "ritual": false,
       "concentration": false,
@@ -2974,10 +2974,10 @@
       "school": "D",
       "time": "10 minutes",
       "range": "1 miles",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -3073,7 +3073,7 @@
       "duration": "1 hour",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Izzet",
       "blocks": [
         {
@@ -3099,7 +3099,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -3148,10 +3148,10 @@
       "school": "T",
       "time": "Action",
       "range": "Touch",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -3177,7 +3177,7 @@
       "duration": "1 hour",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -3277,7 +3277,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -3299,7 +3299,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {
@@ -3329,7 +3329,7 @@
       "duration": "1 minute",
       "components": "SM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -3416,10 +3416,10 @@
       "school": "I",
       "time": "Action",
       "range": "120 feet",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -3453,7 +3453,7 @@
       "duration": "1 hour",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -3489,7 +3489,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -3511,7 +3511,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -3537,7 +3537,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -3559,7 +3559,7 @@
       "duration": "1 hour",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {
@@ -3589,7 +3589,7 @@
       "duration": "1 hour",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {
@@ -3637,7 +3637,7 @@
       "duration": "1 minute",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -3664,7 +3664,7 @@
       "school": "T",
       "time": "Action",
       "range": "30 feet",
-      "duration": "24 hour",
+      "duration": "24 hours",
       "components": "VSM",
       "ritual": false,
       "concentration": false,
@@ -3707,7 +3707,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -3793,7 +3793,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -3846,10 +3846,10 @@
       "school": "C",
       "time": "Action",
       "range": "15 feet",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Izzet",
       "blocks": [
         {
@@ -3927,7 +3927,7 @@
       "duration": "1 minute",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -3958,7 +3958,7 @@
       "school": "V",
       "time": "Action",
       "range": "Self",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VSM",
       "ritual": false,
       "concentration": false,
@@ -3987,7 +3987,7 @@
       "duration": "1 minute",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -4002,7 +4002,7 @@
       "school": "I",
       "time": "10 minutes",
       "range": "300 feet",
-      "duration": "24 hour",
+      "duration": "24 hours",
       "components": "VSM",
       "ritual": false,
       "concentration": false,
@@ -4057,7 +4057,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Izzet",
       "blocks": [
         {
@@ -4087,7 +4087,7 @@
       "duration": "1 hour",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -4117,7 +4117,7 @@
       "duration": "1 hour",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -4135,7 +4135,7 @@
       "duration": "1 hour",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {
@@ -4191,7 +4191,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -4225,7 +4225,7 @@
       "duration": "1 minute",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Izzet",
       "blocks": [
         {
@@ -4259,7 +4259,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -4299,10 +4299,10 @@
       "school": "C",
       "time": "Action",
       "range": "120 feet",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -4359,10 +4359,10 @@
       "school": "C",
       "time": "Action",
       "range": "60 feet",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Izzet",
       "blocks": [
         {
@@ -4474,7 +4474,7 @@
       "duration": "1 minute",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -4505,7 +4505,7 @@
       "school": "I",
       "time": "1 minute",
       "range": "Self",
-      "duration": "8 hour",
+      "duration": "8 hours",
       "components": "VSM",
       "ritual": false,
       "concentration": false,
@@ -4538,7 +4538,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -4561,10 +4561,10 @@
       "school": "C",
       "time": "Action",
       "range": "300 feet",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -4594,7 +4594,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {
@@ -4624,7 +4624,7 @@
       "duration": "1 hour",
       "components": "S",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {
@@ -4647,7 +4647,7 @@
       "school": "A",
       "time": "1 hour",
       "range": "60 feet",
-      "duration": "24 hour",
+      "duration": "24 hours",
       "components": "VSM",
       "ritual": false,
       "concentration": false,
@@ -4677,10 +4677,10 @@
       "school": "D",
       "time": "10 minutes",
       "range": "Self",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {
@@ -4751,7 +4751,7 @@
       "school": "I",
       "time": "Action",
       "range": "30 feet",
-      "duration": "8 hour",
+      "duration": "8 hours",
       "components": "VS",
       "ritual": false,
       "concentration": false,
@@ -4803,10 +4803,10 @@
       "school": "T",
       "time": "Action",
       "range": "60 feet",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -4875,10 +4875,10 @@
       "school": "V",
       "time": "Action",
       "range": "120 feet",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -4913,10 +4913,10 @@
       "school": "C",
       "time": "Action",
       "range": "500 feet",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -5066,7 +5066,7 @@
       "duration": "1 minute",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -5112,7 +5112,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -5138,7 +5138,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -5165,7 +5165,7 @@
       "school": "E",
       "time": "Action",
       "range": "60 feet",
-      "duration": "24 hour",
+      "duration": "24 hours",
       "components": "VM",
       "ritual": false,
       "concentration": false,
@@ -5195,10 +5195,10 @@
       "school": "T",
       "time": "Action",
       "range": "120 feet",
-      "duration": "2 hour",
+      "duration": "2 hours",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -5262,7 +5262,7 @@
       "duration": "1 hour",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {
@@ -5292,7 +5292,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -5315,7 +5315,7 @@
       "school": "C",
       "time": "Action",
       "range": "5 feet",
-      "duration": "10 minute",
+      "duration": "10 minutes",
       "components": "VSM",
       "ritual": false,
       "concentration": false,
@@ -5362,7 +5362,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -5397,7 +5397,7 @@
       "school": "C",
       "time": "Action",
       "range": "Self",
-      "duration": "8 hour",
+      "duration": "8 hours",
       "components": "VS",
       "ritual": false,
       "concentration": false,
@@ -5482,7 +5482,7 @@
       "duration": "1 hour",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {
@@ -5598,7 +5598,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -5800,7 +5800,7 @@
       "duration": "1 hour",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -5834,7 +5834,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -5898,7 +5898,7 @@
       "duration": "1 minute",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -6003,7 +6003,7 @@
       "school": "D",
       "time": "1 minute",
       "range": "Touch",
-      "duration": "8 hour",
+      "duration": "8 hours",
       "components": "VSM",
       "ritual": false,
       "concentration": false,
@@ -6024,7 +6024,7 @@
       "duration": "1 minute",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Sorcerer",
       "blocks": [
         {
@@ -6160,7 +6160,7 @@
       "duration": "1 hour",
       "components": "VSM",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {
@@ -6222,7 +6222,7 @@
       "duration": "1 minute",
       "components": "VS",
       "ritual": false,
-      "concentration": false,
+      "concentration": true,
       "source": "Warlock",
       "blocks": [
         {

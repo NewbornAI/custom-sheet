@@ -258,7 +258,7 @@ input[type=range]::-moz-range-thumb{
 .stat{display:flex;align-items:center;gap:3px;font-size:10.5px;color:var(--muted)}
 .stat .k{letter-spacing:.08em}
 .stat .mini{display:none}
-.stat.editing .mini{display:flex}
+.stat.editing .mini,.stat.live .mini{display:flex}
 .stat .v{
   font-family:var(--display);
   font-size:15px;
@@ -280,6 +280,8 @@ input[type=range]::-moz-range-thumb{
   flex:0 0 auto;
 }
 .mini:active{background:rgba(155,123,255,.2);color:var(--ink)}
+@keyframes bump{0%{transform:scale(1)}30%{transform:scale(1.2);color:var(--gold)}100%{transform:scale(1)}}
+.stat .v.bump{animation:bump .45s ease-out;display:inline-block}
 .tog{
   border:1px solid var(--edge);
   border-radius:999px;
@@ -298,22 +300,53 @@ input[type=range]::-moz-range-thumb{
 .sbody{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:7px}
 .slotstrip{
   flex:0 0 auto;
+  --pip-h:16px;
   display:flex;
   align-items:flex-start;
-  gap:7px;
+  gap:4px;
   padding:2px 0 6px;
   overflow-x:auto;
   scrollbar-width:none;
 }
 .slotstrip::-webkit-scrollbar{height:0}
-.lv{display:flex;flex-direction:column;align-items:center;gap:5px;padding:3px;border-radius:6px;cursor:pointer;flex:0 0 auto}
+.lv{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  padding:3px 2px;
+  border-radius:6px;
+  cursor:pointer;
+  flex:1 1 30px;
+  min-width:30px;
+}
 .lv.on{background:rgba(155,123,255,.12)}
 .lv .head{display:flex;align-items:center;gap:1px}
 .lv .n{font-size:11px;color:var(--muted);line-height:1}
 .lv.on .n{color:var(--arcane)}
+.bolt{
+  width:100%;
+  max-width:28px;
+  height:17px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  border:1px solid transparent;
+  border-radius:5px;
+  background:none;
+  color:#5f5a80;
+  cursor:pointer;
+}
+.bolt svg{width:12px;height:12px;display:block}
+.bolt:not(:disabled):active{color:var(--lightning);background:rgba(255,212,71,.14)}
+.bolt:disabled{opacity:.28;cursor:default}
+.bolt:focus-visible{outline:2px solid var(--arcane);outline-offset:1px}
+.lv.editing .bolt{display:none}
 .pip{
-  width:14px;height:14px;
-  border-radius:50%;
+  width:100%;
+  height:var(--pip-h);
+  border-radius:999px;
   border:1px solid #3a3454;
   background:transparent;
   flex:0 0 auto;
@@ -321,17 +354,20 @@ input[type=range]::-moz-range-thumb{
   cursor:pointer;
 }
 .pip.full{background:var(--arcane);border-color:var(--arcane)}
-.pip.wl{border-radius:3px}
+.pip.wl{border-color:rgba(84,207,196,.4)}
 .pip.wl.full{background:#54cfc4;border-color:#54cfc4}
 .lv .plus{font-size:9px;color:#4f4a6b;flex:0 0 auto}
 .lv .arrow{background:none;border:0;color:#615c7d;font-size:13px;padding:0;cursor:pointer;flex:0 0 auto;line-height:1}
 .lv.dim{opacity:.35}
-.lv .edit{display:none;gap:3px;flex:0 0 auto}
+.lv .edit{display:none;gap:3px;flex:0 0 auto;flex-wrap:wrap;justify-content:center}
 .lv.editing .edit{display:flex}
 .lv.editing .pips{display:none}
-.pips{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:14px}
-.wlgroup{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:4px}
+.pips{display:flex;flex-direction:column;align-items:stretch;gap:2px;width:100%}
+.wlgroup{display:flex;flex-direction:column;align-items:stretch;gap:2px;width:100%;margin-top:4px}
 .lv .val{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.slotstrip.editing{gap:3px}
+.slotstrip.editing .lv{flex:0 0 auto;width:44px}
+.slotstrip.editing .mini{width:18px}
 
 .listhead{flex:0 0 auto;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)}
 .listhead .t{color:var(--ink);font-size:12px}
@@ -347,11 +383,19 @@ input[type=range]::-moz-range-thumb{
   cursor:pointer;
   touch-action:pan-y;
 }
-.card .t{font-size:12.5px;color:var(--ink);line-height:1.25}
-.card .m{font-size:10px;color:var(--muted);margin-top:3px;display:flex;gap:7px;flex-wrap:wrap;align-items:baseline}
-.card .cmp{color:var(--arcane);letter-spacing:.1em}
-.card .rit{color:var(--gold)}
-.card .src{font-size:9.5px;color:var(--muted);border:1px solid var(--edge);border-radius:3px;padding:0 4px}
+.card .top{display:flex;align-items:center;gap:8px}
+.card .t{flex:1 1 auto;min-width:0;font-size:12.5px;color:var(--ink);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card .m{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:8px;row-gap:3px;margin-top:4px}
+.f{display:grid;grid-template-columns:3.8em minmax(0,1fr);column-gap:4px;align-items:baseline;font-size:9.5px;line-height:1.4}
+.f .k{color:#635e7e}
+.f .v{color:var(--muted);overflow-wrap:anywhere}
+.f .v.cmp{color:var(--arcane);letter-spacing:.08em}
+.f .v.rit{color:var(--gold)}
+.f .v.yes{color:#b9b3d6}
+.card .src{flex:0 0 auto;font-size:9.5px;color:var(--muted);border:1px solid var(--edge);border-radius:3px;padding:0 4px;white-space:nowrap}
+.card .src.sorc{color:#ff8fb0;border-color:rgba(255,111,168,.45);background:rgba(255,111,168,.10)}
+.card .src.warlock{color:#9dbcff;border-color:rgba(110,155,255,.45);background:rgba(110,155,255,.10)}
+.card .src.izzet{color:#e6ebff;border-color:rgba(140,160,255,.5);background:linear-gradient(90deg,rgba(110,155,255,.26) 0 50%,rgba(255,111,168,.26) 50% 100%)}
 .card.dragging{opacity:.95;border-color:var(--arcane);box-shadow:0 10px 24px rgba(0,0,0,.55)}
 .card.ghost{opacity:.25}
 .empty{font-size:11px;color:#615c7d;padding:8px 2px;line-height:1.5}
@@ -378,8 +422,12 @@ input[type=range]::-moz-range-thumb{
   position:relative;
 }
 .sheet h2{font-family:var(--display);font-size:20px;font-weight:700;margin:0;padding-right:34px}
-.sheet-meta{font-size:10.5px;color:var(--muted);display:flex;gap:9px;flex-wrap:wrap;align-items:baseline}
-.sheet-meta .src{color:var(--arcane);border:1px solid rgba(155,123,255,.35);border-radius:3px;padding:0 4px}
+.sheet-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:12px;row-gap:4px;margin-top:2px}
+.sheet-meta .f{font-size:10.5px;grid-template-columns:4.2em minmax(0,1fr)}
+.sheet-meta .src{color:var(--muted);border:1px solid var(--edge);border-radius:3px;padding:0 4px;white-space:nowrap;justify-self:start}
+.sheet-meta .src.sorc{color:#ff8fb0;border-color:rgba(255,111,168,.45);background:rgba(255,111,168,.10)}
+.sheet-meta .src.warlock{color:#9dbcff;border-color:rgba(110,155,255,.45);background:rgba(110,155,255,.10)}
+.sheet-meta .src.izzet{color:#dde4ff;border-color:rgba(140,160,255,.45);background:linear-gradient(90deg,rgba(110,155,255,.20) 0 50%,rgba(255,111,168,.20) 50% 100%)}
 .sheet-text{font-size:13px;line-height:1.6;color:#d9d5ec}
 .sheet-text p{margin:0 0 9px}
 .sheet-text h3{font-family:var(--display);font-size:14px;font-weight:700;color:var(--arcane);margin:14px 0 5px}
@@ -659,6 +707,7 @@ input[type=range]::-moz-range-thumb{
 @media (prefers-reduced-motion:reduce){
   .cell{animation:none}
   .cast{transition:none}
+  .stat .v.bump{animation:none}
 }
 
 @media (min-height:760px){
@@ -730,7 +779,7 @@ input[type=range]::-moz-range-thumb{
         <button class="mini" type="button" data-act="dc-" aria-label="Lower the DC">&minus;</button>
         <button class="mini" type="button" data-act="dc+" aria-label="Raise the DC">+</button>
       </div>
-      <div class="stat">
+      <div class="stat live">
         <span class="k">SP</span>
         <span class="v" id="spValue">8/8</span>
         <button class="mini" type="button" data-act="sp-" aria-label="Spend a sorcery point">&minus;</button>
@@ -923,6 +972,18 @@ input[type=range]::-moz-range-thumb{
     return { roll: roll, from: row.from, to: row.to, text: row.text, dice: rolled };
   }
 
+  /* Turns one spell slot into sorcery points: one point for each level of the slot.
+     Returns the new counts, or null when the slot cannot be turned. */
+  function convertSlot(spell, lv) {
+    spell = spell || {};
+    lv = Number(lv);
+    var sp = Number(spell.sp) || 0;
+    var spMax = Number(spell.spMax) || 0;
+    var left = (spell.left || {})[lv] || 0;
+    if (!(lv >= 1) || left <= 0 || sp >= spMax) return null;
+    return { left: left - 1, sp: Math.min(spMax, sp + lv), gained: Math.min(spMax, sp + lv) - sp };
+  }
+
   root.Rules = {
     ATTACK_MOD: ATTACK_MOD,
     POWERS: POWERS,
@@ -931,7 +992,8 @@ input[type=range]::-moz-range-thumb{
     rollVolley: rollVolley,
     tally: tally,
     diceIn: diceIn,
-    rollSurge: rollSurge
+    rollSurge: rollSurge,
+    convertSlot: convertSlot
   };
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 </script>
@@ -990,6 +1052,27 @@ input[type=range]::-moz-range-thumb{
   };
 
   var SPELL_SEED = (SPELLBOOK.seed || []).map(function (s) { return s.name; });
+
+  /* The class a spell came from, as the app colours it. */
+  var SOURCE_CLASS = {
+    'sorcerer': 'sorc',
+    'warlock': 'warlock',
+    'hexblade': 'warlock',
+    'hex': 'warlock',
+    'izzet': 'izzet',
+    'izzet engineer': 'izzet'
+  };
+
+  function sourceClass(source) {
+    return SOURCE_CLASS[String(source || '').trim().toLowerCase()] || '';
+  }
+
+  /* One labelled field of the spell summary. */
+  function field(label, value, cls) {
+    var text = value ? String(value) : '-';
+    return '<span class="f"><span class="k">' + esc(label) + '</span>' +
+      '<span class="v' + (cls ? ' ' + cls : '') + '">' + esc(text) + '</span></span>';
+  }
 
   var state = load();
 
@@ -1396,13 +1479,41 @@ input[type=range]::-moz-range-thumb{
   function renderLevels() {
     var S = state.spell;
     el.levels.innerHTML = '';
-    LEVELS.forEach(function (lv) {
+    el.levels.classList.toggle('editing', editing);
+
+    /* How many slots each level holds, so the columns can share the width
+       and every slot can be the same size in the whole strip. */
+    var counts = LEVELS.map(function (lv) {
+      return (S.max[lv] || 0) + (lv === WARLOCK_LEVEL ? (S.warlockMax || 0) : 0);
+    });
+    var busiest = Math.max.apply(null, counts) || 1;
+    var pipH = Math.max(9, Math.min(16, Math.floor((120 - (busiest - 1) * 2) / busiest)));
+    el.levels.style.setProperty('--pip-h', pipH + 'px');
+
+    LEVELS.forEach(function (lv, ix) {
       var max = S.max[lv] || 0;
       var left = Math.min(S.left[lv] || 0, max);
       var col = document.createElement('div');
       col.className = 'lv' + (lv === S.selected ? ' on' : '') + (editing ? ' editing' : '');
       if (lv > 0 && !max) col.classList.add('dim');
       col.dataset.lv = String(lv);
+      col.style.flexGrow = String(Math.max(1, counts[ix]));
+
+      if (lv > 0) {
+        var bolt = document.createElement('button');
+        bolt.type = 'button';
+        bolt.className = 'bolt';
+        bolt.dataset.bolt = String(lv);
+        bolt.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
+          '<path d="M13.6 2L4.2 13.4h5.4L9.6 22 19.4 10.2H14L13.6 2z"/></svg>';
+        var why = S.sp >= S.spMax
+          ? 'Your sorcery points are full'
+          : (!(S.left[lv] > 0) ? 'No level ' + lv + ' slot left' : '');
+        bolt.setAttribute('aria-label', 'Turn a level ' + lv + ' slot into ' + lv + ' sorcery points' + (why ? ', ' + why : ''));
+        bolt.title = why || ('Turn a level ' + lv + ' slot into ' + lv + ' sorcery points');
+        bolt.disabled = !!why;
+        col.appendChild(bolt);
+      }
 
       var head = document.createElement('span');
       head.className = 'head';
@@ -1475,6 +1586,24 @@ input[type=range]::-moz-range-thumb{
     }
   }
 
+  /* The summary of a spell: the same fields, in the same order, on every
+     card, so the labels line up down the list. */
+  function spellFields(spell) {
+    var comps = spell.components ? spell.components.split('').join(' ') : '-';
+    return field('Cast', spell.time) +
+      field('Range', spell.range) +
+      field('Duration', spell.duration) +
+      field('Comps', comps, 'cmp') +
+      field('Conc', spell.concentration ? 'Yes' : 'No', spell.concentration ? 'yes' : '') +
+      field('Ritual', spell.ritual ? 'Yes' : 'No', spell.ritual ? 'rit' : '');
+  }
+
+  function sourceTag(source) {
+    if (!source) return '';
+    var cls = sourceClass(source);
+    return '<span class="src' + (cls ? ' ' + cls : '') + '">' + esc(source) + '</span>';
+  }
+
   function renderSpellList() {
     var S = state.spell;
     var list = S.lists[S.selected] || [];
@@ -1482,7 +1611,7 @@ input[type=range]::-moz-range-thumb{
     if (!list.length) {
       var empty = document.createElement('div');
       empty.className = 'empty';
-      empty.textContent = 'No spells at level ' + S.selected + ' yet. Open the grimoire with the arrow on the left to add some.';
+      empty.textContent = 'No spells at level ' + S.selected + ' yet. Open the grimoire with the + button to add some.';
       el.spellList.appendChild(empty);
       return;
     }
@@ -1492,12 +1621,8 @@ input[type=range]::-moz-range-thumb{
       var card = document.createElement('div');
       card.className = 'card';
       card.dataset.name = name;
-      var meta = '<span>' + esc(spell.time) + '</span><span>' + esc(spell.range) + '</span><span>' + esc(spell.duration) + '</span>';
-      if (spell.components) meta += '<span class="cmp">' + esc(spell.components) + '</span>';
-      if (spell.ritual) meta += '<span class="rit">ritual</span>';
-      if (spell.concentration) meta += '<span class="rit">conc</span>';
-      if (spell.source) meta += '<span class="src">' + esc(spell.source) + '</span>';
-      card.innerHTML = '<div class="t">' + spell.name + '</div><div class="m">' + meta + '</div>';
+      card.innerHTML = '<div class="top"><span class="t">' + esc(spell.name) + '</span>' +
+        sourceTag(spell.source) + '</div><div class="m">' + spellFields(spell) + '</div>';
       el.spellList.appendChild(card);
     });
   }
@@ -1544,12 +1669,7 @@ input[type=range]::-moz-range-thumb{
     var spell = SPELL_BY_NAME[name];
     if (!spell) return;
     el.sheetTitle.textContent = spell.name;
-    var meta = '<span>level ' + spell.level + '</span><span>' + esc(spell.time) + '</span><span>' + esc(spell.range) + '</span><span>' + esc(spell.duration) + '</span>';
-    if (spell.components) meta += '<span class="cmp">' + esc(spell.components) + '</span>';
-    if (spell.source) meta += '<span class="src">' + esc(spell.source) + '</span>';
-    if (spell.ritual) meta += '<span class="rit">ritual</span>';
-    if (spell.concentration) meta += '<span class="rit">concentration</span>';
-    el.sheetMeta.innerHTML = meta;
+    el.sheetMeta.innerHTML = field('Level', spell.level) + spellFields(spell) + sourceTag(spell.source);
     el.sheetText.innerHTML = renderBlocks(spell.blocks);
     el.sheetSearch.hidden = true;
     el.sheetList.hidden = true;
@@ -1652,6 +1772,23 @@ input[type=range]::-moz-range-thumb{
 
   el.levels.addEventListener('click', function (ev) {
     var S = state.spell;
+
+    var bolt = ev.target.closest('.bolt');
+    if (bolt) {
+      var blv = Number(bolt.dataset.bolt);
+      var moved = R.convertSlot({ sp: S.sp, spMax: S.spMax, left: S.left }, blv);
+      if (moved) {
+        S.left[blv] = moved.left;
+        S.sp = moved.sp;
+        commit();
+        el.spValue.classList.remove('bump');
+        void el.spValue.offsetWidth;
+        el.spValue.classList.add('bump');
+        if (navigator.vibrate) navigator.vibrate(18);
+      }
+      return;
+    }
+
     var pip = ev.target.closest('.pip');
     if (pip) {
       var lv = Number(pip.dataset.lv), n = Number(pip.dataset.n);
@@ -1661,6 +1798,12 @@ input[type=range]::-moz-range-thumb{
       } else {
         S.left[lv] = full ? Math.max(0, S.left[lv] - 1) : n;
       }
+      commit();
+      return;
+    }
+    var lvBtn = ev.target.closest('.mini[data-lvl]');
+    if (lvBtn) {
+      S.sorcererLevel = Math.max(1, Math.min(20, S.sorcererLevel + Number(lvBtn.dataset.lvl)));
       commit();
       return;
     }
@@ -1679,12 +1822,6 @@ input[type=range]::-moz-range-thumb{
         if (S.max[l] > before) S.left[l] = Math.min(S.max[l], (S.left[l] || 0) + (S.max[l] - before));
         else S.left[l] = Math.min(S.left[l], S.max[l]);
       }
-      commit();
-      return;
-    }
-    var lvBtn = ev.target.closest('.mini[data-lvl]');
-    if (lvBtn) {
-      S.sorcererLevel = Math.max(1, Math.min(20, S.sorcererLevel + Number(lvBtn.dataset.lvl)));
       commit();
       return;
     }

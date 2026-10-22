@@ -201,6 +201,16 @@ function formatRange(range) {
   }
 }
 
+function plural(unit, n) {
+  if (n === 1) return unit;
+  if (unit === 'minute') return 'minutes';
+  if (unit === 'hour') return 'hours';
+  if (unit === 'day') return 'days';
+  if (unit === 'second') return 'seconds';
+  if (unit === 'round') return 'rounds';
+  return unit ? unit + 's' : unit;
+}
+
 function formatDuration(duration) {
   if (!Array.isArray(duration)) return '';
   return duration.map((d) => {
@@ -208,8 +218,9 @@ function formatDuration(duration) {
     if (d.type === 'permanent') return 'Permanent';
     if (d.type === 'special') return 'Special';
     if (d.duration) {
-      const n = d.duration.amount ? d.duration.amount + ' ' : '';
-      return n + String(d.duration.type || '');
+      const amount = d.duration.amount;
+      const unit = String(d.duration.type || '');
+      return amount ? amount + ' ' + plural(unit, amount) : unit;
     }
     return String(d.type || '');
   }).join(' or ');
@@ -287,7 +298,8 @@ function spellRecord(spell, sourceTag) {
     duration: formatDuration(spell.duration),
     components: ['v', 's', 'm'].filter((k) => spell.components && spell.components[k]).map((k) => k.toUpperCase()).join(''),
     ritual: (spell.miscTags || []).includes('RITUAL'),
-    concentration: !!spell.concentration,
+    /* In the 2024 data the concentration flag sits on the duration. */
+    concentration: !!(spell.concentration || (Array.isArray(spell.duration) && spell.duration.some((d) => d && d.concentration))),
     source: sourceTag || '',
     blocks: blocksFrom(spell.entries).concat(blocksFrom(spell.entriesHigherLevel))
   };

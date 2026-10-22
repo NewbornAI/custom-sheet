@@ -168,6 +168,25 @@ console.log('the spell book');
   check('a spell carries a table', book.spells.some((s) => s.blocks.some((b) => b.t === 'table')), true);
   const hex = book.spells.find((s) => s.name === 'Hex');
   check('hex is a level 1 spell', hex.level, 1);
+  const shield = book.spells.find((s) => s.name === 'Shield');
+  check('shield reaches self', shield.range, 'Self');
+  const fog = book.spells.find((s) => s.name === 'Fog Cloud');
+  check('fog cloud holds concentration', fog.concentration, true);
+  check('magic missile does not', book.spells.find((s) => s.name === 'Magic Missile').concentration, false);
+  check('durations read in the plural', book.spells.find((s) => s.name === 'Detect Magic').duration, '10 minutes');
+  check('the sheet seeded the level 2 spells', book.seed.filter((s) => s.level === 2).length, 11);
+}
+
+console.log('turning a spell slot into sorcery points');
+{
+  const spell = { sp: 3, spMax: 8, left: { 1: 4, 2: 3, 3: 3 } };
+  check('a level 2 slot gives 2 points', R.convertSlot(spell, 2), { left: 2, sp: 5, gained: 2 });
+  check('a level 1 slot gives 1 point', R.convertSlot({ sp: 0, spMax: 8, left: { 1: 2 } }, 1), { left: 1, sp: 1, gained: 1 });
+  check('a level 3 slot gives 3 points', R.convertSlot({ sp: 0, spMax: 8, left: { 3: 1 } }, 3), { left: 0, sp: 3, gained: 3 });
+  check('no slot, no points', R.convertSlot({ sp: 0, spMax: 8, left: { 2: 0 } }, 2), null);
+  check('cantrips are not slots', R.convertSlot({ sp: 0, spMax: 8, left: { 0: 9 } }, 0), null);
+  check('full points take no slot', R.convertSlot({ sp: 8, spMax: 8, left: { 2: 3 } }, 2), null);
+  check('the points stop at the maximum', R.convertSlot({ sp: 7, spMax: 8, left: { 3: 1 } }, 3), { left: 0, sp: 8, gained: 1 });
 }
 
 console.log('the built page carries the data');
