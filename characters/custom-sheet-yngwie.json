@@ -1,0 +1,248 @@
+{
+  "kind": "custom-sheet-character",
+  "version": 1,
+  "name": "Yngwie",
+  "record": {
+    "char": {
+      "name": "Yngwie",
+      "level": 11,
+      "classes": [
+        {
+          "name": "Bard",
+          "level": 11,
+          "subclass": "College of Creation"
+        }
+      ],
+      "abilities": {
+        "str": 8,
+        "dex": 14,
+        "con": 14,
+        "int": 10,
+        "wis": 12,
+        "cha": 19
+      },
+      "saves": {
+        "str": 0,
+        "dex": 1,
+        "con": 0,
+        "int": 0,
+        "wis": 0,
+        "cha": 1
+      },
+      "skills": {
+        "acrobatics": 0,
+        "animalHandling": 0,
+        "arcana": 0,
+        "athletics": 0,
+        "deception": 0,
+        "history": 0,
+        "insight": 0,
+        "intimidation": 0,
+        "investigation": 0,
+        "medicine": 0,
+        "nature": 0,
+        "perception": 0,
+        "performance": 0,
+        "persuasion": 0,
+        "religion": 0,
+        "sleightOfHand": 0,
+        "stealth": 0,
+        "survival": 0
+      },
+      "features": [
+        {
+          "key": "elvenLineageI",
+          "name": "Elven Lineage I",
+          "source": "High Elf",
+          "active": true,
+          "recovery": "long",
+          "bind": null,
+          "max": 1,
+          "left": 1,
+          "cost": "",
+          "short": null,
+          "hidden": false
+        },
+        {
+          "key": "elvenLineageII",
+          "name": "Elven Lineage II",
+          "source": "High Elf",
+          "active": true,
+          "recovery": "long",
+          "bind": null,
+          "max": 1,
+          "left": 1,
+          "cost": "",
+          "short": null,
+          "hidden": false
+        },
+        {
+          "key": "trance",
+          "name": "Trance",
+          "source": "Elf",
+          "active": false,
+          "recovery": "passive",
+          "bind": null,
+          "max": 0,
+          "left": 0,
+          "cost": "",
+          "short": null,
+          "hidden": false
+        },
+        {
+          "key": "feyAncestry",
+          "name": "Fey Ancestry",
+          "source": "Elf",
+          "active": false,
+          "recovery": "passive",
+          "bind": null,
+          "max": 0,
+          "left": 0,
+          "cost": "",
+          "short": null,
+          "hidden": false
+        }
+      ],
+      "init": 0,
+      "ac": null,
+      "hp": {
+        "current": 0,
+        "max": 0
+      },
+      "dice": [
+        {
+          "type": 8,
+          "spent": false
+        },
+        {
+          "type": 8,
+          "spent": false
+        },
+        {
+          "type": 8,
+          "spent": false
+        },
+        {
+          "type": 8,
+          "spent": false
+        },
+        {
+          "type": 8,
+          "spent": false
+        },
+        {
+          "type": 8,
+          "spent": false
+        },
+        {
+          "type": 8,
+          "spent": false
+        },
+        {
+          "type": 8,
+          "spent": false
+        },
+        {
+          "type": 8,
+          "spent": false
+        },
+        {
+          "type": 8,
+          "spent": false
+        },
+        {
+          "type": 8,
+          "spent": false
+        }
+      ],
+      "history": []
+    },
+    "spells": {
+      "dc": 17,
+      "dcTouched": false,
+      "sp": 0,
+      "spMax": 0,
+      "cunning": false,
+      "sorcRest": false,
+      "sorcererLevel": 1,
+      "max": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 2,
+        "6": 1,
+        "7": 0,
+        "8": 0,
+        "9": 0
+      },
+      "left": {
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 3,
+        "5": 2,
+        "6": 1,
+        "7": 0,
+        "8": 0,
+        "9": 0
+      },
+      "warlockMax": 0,
+      "warlockLeft": 0,
+      "warlockLevel": 1,
+      "slotsTouched": false,
+      "selected": 1,
+      "lists": {
+        "0": [],
+        "1": [
+          "Entangle",
+          "Shield"
+        ],
+        "2": [
+          "Misty Step",
+          "Lesser Restoration"
+        ],
+        "3": [
+          "Conjure Animals",
+          "Protection from Energy"
+        ],
+        "4": [
+          "Dimension Door",
+          "Banishment"
+        ],
+        "5": [
+          "Conjure Elemental",
+          "Mass Cure Wounds"
+        ],
+        "6": [],
+        "7": [],
+        "8": [],
+        "9": []
+      },
+      "sources": {},
+      "pick": "Bard",
+      "classes": {
+        "Bard": true
+      },
+      "levelFilter": true,
+      "surge": null
+    },
+    "volley": {
+      "power": "eb",
+      "advantage": false,
+      "hex": false,
+      "curse": false,
+      "elem": false,
+      "elemPlus": false,
+      "quicken": false,
+      "ac": null
+    },
+    "pages": [
+      "spells",
+      "features"
+    ],
+    "theme": "blueRed",
+    "icon": "guitar"
+  },
+  "pages": []
+}

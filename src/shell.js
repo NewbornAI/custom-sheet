@@ -500,6 +500,16 @@
     shelfRepo: shelfRepo,
     shelfCharacters: shelfCharacters,
     shelfBranches: shelfBranches,
+    shelfWrite: shelfWrite,
+    shelfBranch: shelfBranch,
+    shelfCreateRepo: shelfCreateRepo,
+    shelfFork: shelfFork,
+    ghToken: ghToken,
+    ghSetToken: ghSetToken,
+    ghLogin: ghLogin,
+    ghSetLogin: ghSetLogin,
+    ghBranch: ghBranch,
+    ghSetBranch: ghSetBranch,
     pickFile: pickFile,
     toast: toast,
     installUpdate: installUpdate,
@@ -1057,8 +1067,14 @@
     return 'https://api.github.com/repos/' + shelfRepo() + path;
   }
 
-  /* The characters of a branch: the files of the folder, one package each. */
+  /* The characters of a branch: the files of the folder, one package each.
+     The token of the player is used when there is one, so a shelf of one's
+     own can be private. */
   function shelfCharacters(ref) {
+    if (window.SheetGit) {
+      return window.SheetGit.listCharacters(shelfRepo(), ref, ghToken())
+        .catch(function (e) { throw e; });
+    }
     var where = shelfApi('/contents/characters' + (ref ? '?ref=' + encodeURIComponent(ref) : ''));
     return readUrl(where).then(function (text) {
       var rows = JSON.parse(text);
@@ -1078,11 +1094,83 @@
 
   /* The branches are the shelves of the players: anybody may open one. */
   function shelfBranches() {
+    if (window.SheetGit) {
+      return window.SheetGit.api('GET', '/repos/' + shelfRepo() + '/branches', null, ghToken())
+        .then(function (rows) {
+          if (!Array.isArray(rows)) return [];
+          return rows.map(function (b) { return b.name; });
+        });
+    }
     return readUrl(shelfApi('/branches')).then(function (text) {
       var rows = JSON.parse(text);
       if (!Array.isArray(rows)) return [];
       return rows.map(function (b) { return b.name; });
     });
+  }
+
+  /* ---- the shelf writes back ---- */
+
+  /* The token of the player. It is asked for once, kept in the state of the
+     app, and it never leaves the machine except to GitHub. */
+  function ghToken() {
+    return (state.ui && state.ui.token) || '';
+  }
+
+  function ghSetToken(token) {
+    state.ui = state.ui || {};
+    state.ui.token = token || '';
+    save();
+  }
+
+  function ghLogin() {
+    return (state.ui && state.ui.login) || '';
+  }
+
+  function ghSetLogin(login) {
+    state.ui = state.ui || {};
+    state.ui.login = login || '';
+    save();
+  }
+
+  /* Where a character is written. The main branch holds the shared ones, and
+     a branch of one's own holds the ones that are not ready yet. */
+  function ghBranch() {
+    return (state.ui && state.ui.branch) || 'main';
+  }
+
+  function ghSetBranch(branch) {
+    state.ui = state.ui || {};
+    state.ui.branch = branch || 'main';
+    save();
+  }
+
+  /* A character is written to the shelf as a package, one file per
+     character, and the answer is the address of the file. */
+  function shelfWrite(pkgText, fileName) {
+    if (!window.SheetGit) return Promise.reject(new Error('the shelf cannot write yet'));
+    var path = 'characters/' + fileName;
+    return window.SheetGit.putFile(shelfRepo(), path, pkgText, 'a character joins the shelf', ghBranch(), ghToken())
+      .then(function (answer) {
+        return (answer && answer.content && answer.content.html_url) || '';
+      });
+  }
+
+  /* A branch of the shelf, made when it is not there yet. */
+  function shelfBranch(name) {
+    if (!window.SheetGit) return Promise.reject(new Error('the shelf cannot write yet'));
+    return window.SheetGit.createBranch(shelfRepo(), name, ghToken());
+  }
+
+  /* A shelf of one's own: a new repository, or a fork of the one of the
+     project. */
+  function shelfCreateRepo(name, isPrivate) {
+    if (!window.SheetGit) return Promise.reject(new Error('the shelf cannot write yet'));
+    return window.SheetGit.createRepo(name, ghToken(), isPrivate);
+  }
+
+  function shelfFork() {
+    if (!window.SheetGit) return Promise.reject(new Error('the shelf cannot write yet'));
+    return window.SheetGit.forkRepo(shelfRepo(), ghToken());
   }
 
   /* A package that comes in by a link, or by the address of a file that

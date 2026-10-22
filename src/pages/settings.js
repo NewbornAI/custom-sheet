@@ -252,6 +252,104 @@
     address.appendChild(input);
     E.shelf.appendChild(address);
 
+    /* The connection. The phone asks GitHub for a code and the player
+       approves it in the browser, so nothing is typed. A page of a browser
+       cannot ask GitHub for that, so it takes a token pasted instead, and a
+       paste is accurate where a typing is not. */
+    var sign = document.createElement('div');
+    sign.className = 'srow';
+    var signed = C.ghLogin();
+    sign.innerHTML = '<span class="t">The connection</span><span class="d">' +
+      C.esc(signed ? 'signed in as ' + signed : 'not signed in') + '</span>';
+    if (signed) {
+      var out = document.createElement('button');
+      out.type = 'button';
+      out.className = 'stog';
+      out.textContent = 'Leave';
+      out.setAttribute('aria-label', 'Leave the connection to GitHub');
+      out.addEventListener('click', function () {
+        C.ghSetToken('');
+        C.ghSetLogin('');
+        C.toast('the connection is closed');
+        api.refresh();
+      });
+      sign.appendChild(out);
+    } else if (C.isPhone()) {
+      var go = document.createElement('button');
+      go.type = 'button';
+      go.className = 'stog';
+      go.textContent = 'Connect';
+      go.setAttribute('aria-label', 'Connect to GitHub');
+      go.addEventListener('click', connect);
+      sign.appendChild(go);
+    } else {
+      var tokenField = document.createElement('input');
+      tokenField.className = 'cinput slim';
+      tokenField.type = 'password';
+      tokenField.placeholder = 'a token to paste';
+      tokenField.setAttribute('aria-label', 'A token to paste');
+      var use = document.createElement('button');
+      use.type = 'button';
+      use.className = 'stog';
+      use.textContent = 'Use';
+      use.setAttribute('aria-label', 'Use that token');
+      use.addEventListener('click', function () {
+        var value = (tokenField.value || '').trim();
+        if (!value) { C.toast('there is no token in the field'); return; }
+        C.ghSetToken(value);
+        window.SheetGit.whoAmI(value).then(function (login) {
+          C.ghSetLogin(login);
+          C.toast('signed in as ' + login);
+          api.refresh();
+        }).catch(function (e) { C.toast(String((e && e.message) || e)); });
+      });
+      sign.appendChild(tokenField);
+      sign.appendChild(use);
+    }
+    E.shelf.appendChild(sign);
+
+    /* A shelf of one's own: a new repository, or a fork of the one of the
+       project. */
+    var own = document.createElement('div');
+    own.className = 'srow';
+    own.innerHTML = '<span class="t">A shelf of my own</span><span class="d">a repository of mine</span>';
+    var mine = document.createElement('button');
+    mine.type = 'button';
+    mine.className = 'stog';
+    mine.textContent = 'New';
+    mine.setAttribute('aria-label', 'Create a repository of my own');
+    mine.addEventListener('click', function () { ownRepo(); });
+    own.appendChild(mine);
+    var fork = document.createElement('button');
+    fork.type = 'button';
+    fork.className = 'stog';
+    fork.textContent = 'Fork';
+    fork.setAttribute('aria-label', 'Fork the shelf of the project');
+    fork.addEventListener('click', function () { ownFork(); });
+    own.appendChild(fork);
+    E.shelf.appendChild(own);
+
+    /* Where a character is written: the main branch holds the shared ones,
+       a branch of one's own holds the ones that are not ready yet. */
+    var where = document.createElement('div');
+    where.className = 'srow';
+    var branch = document.createElement('input');
+    branch.className = 'cinput slim';
+    branch.type = 'text';
+    branch.value = C.ghBranch();
+    branch.placeholder = 'main';
+    branch.setAttribute('aria-label', 'The branch to write to');
+    branch.addEventListener('input', function () { C.ghSetBranch(branch.value.trim() || 'main'); });
+    where.appendChild(branch);
+    var send = document.createElement('button');
+    send.type = 'button';
+    send.className = 'stog';
+    send.textContent = 'Put';
+    send.setAttribute('aria-label', 'Put the character being played on the shelf');
+    send.addEventListener('click', function () { putOnShelf(); });
+    where.appendChild(send);
+    E.shelf.appendChild(where);
+
     var row = document.createElement('div');
     row.className = 'srow';
     row.innerHTML = '<span class="t">The characters</span><span class="d">the ones the shelf holds</span>';
@@ -263,6 +361,110 @@
     list.addEventListener('click', openShelf);
     row.appendChild(list);
     E.shelf.appendChild(row);
+  }
+
+  /* The device flow: the app asks GitHub for a code, the player reads
+     it in the browser, and the app polls until the token lands. */
+  function connect() {
+    C.toast('asking GitHub for a code');
+    window.SheetGit.deviceStart('public_repo').then(function (answer) {
+      if (!answer || !answer.user_code) { C.toast('GitHub did not answer'); return; }
+      var code = answer.user_code;
+      var where = answer.verification_uri || 'https://github.com/login/device';
+      api.sheet.open({
+        id: 'ghconnect',
+        title: 'Connect to GitHub',
+        metaClass: 'sheet-meta one',
+        meta: '<span>Open GitHub, read the code, approve it. The app waits.</span>' +
+          '<div class="crow"><span class="cn">' + C.esc(code) + '</span>' +
+          '<a class="mini" href="' + C.esc(where) + '" target="_blank" rel="noreferrer" aria-label="Open GitHub">&#8599;</a></div>',
+        actions: [{
+          label: 'Open GitHub',
+          onClick: function () { window.open(where, '_blank'); }
+        }]
+      });
+      poll(code, answer.interval || 5);
+    }).catch(function (e) { C.toast(String((e && e.message) || e)); });
+  }
+
+  function poll(code, wait) {
+    window.setTimeout(function () {
+      window.SheetGit.devicePoll(code).then(function (answer) {
+        if (answer && answer.access_token) {
+          C.ghSetToken(answer.access_token);
+          api.sheet.close();
+          window.SheetGit.whoAmI(answer.access_token).then(function (login) {
+            C.ghSetLogin(login);
+            C.toast('signed in as ' + login);
+            api.refresh();
+          }).catch(function () { api.refresh(); });
+          return;
+        }
+        var why = (answer && (answer.error || answer.error_description)) || 'not yet';
+        if (why === 'authorization_pending' || why === 'slow_down') {
+          poll(code, wait);
+          return;
+        }
+        C.toast(String(why));
+      }).catch(function (e) { C.toast(String((e && e.message) || e)); });
+    }, (wait || 5) * 1000);
+  }
+
+  /* A repository of the player, and the shelf points at it. */
+  function ownRepo() {
+    if (!C.ghToken()) { C.toast('connect to GitHub first'); return; }
+    window.SheetGit.whoAmI(C.ghToken()).then(function (login) {
+      var name = 'custom-sheet-' + login;
+      return C.shelfCreateRepo(name, false).then(function (full) {
+        if (!full) { C.toast('GitHub did not answer'); return; }
+        api.state.ui = api.state.ui || {};
+        api.state.ui.shelf = full;
+        api.save();
+        C.toast(full + ' is your shelf');
+        api.refresh();
+      });
+    }).catch(function (e) { C.toast(String((e && e.message) || e)); });
+  }
+
+  /* A fork of the shelf of the project. */
+  function ownFork() {
+    if (!C.ghToken()) { C.toast('connect to GitHub first'); return; }
+    C.shelfFork().then(function (full) {
+      if (!full) { C.toast('GitHub did not answer'); return; }
+      api.state.ui = api.state.ui || {};
+      api.state.ui.shelf = full;
+      api.save();
+      C.toast(full + ' is your shelf');
+      api.refresh();
+    }).catch(function (e) { C.toast(String((e && e.message) || e)); });
+  }
+
+  /* The character being played goes on the shelf, as a package, one file per
+     character, on the branch that is named. */
+  function putOnShelf() {
+    if (!C.ghToken()) { C.toast('connect to GitHub first'); return; }
+    var rec = api.character();
+    if (!rec || !rec.char) { C.toast('there is no character'); return; }
+    var pkg = C.packageOf(rec);
+    var name = 'custom-sheet-' + ((rec.char.name || 'character').toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')) + '.json';
+    var branch = C.ghBranch();
+    var text = JSON.stringify(pkg, null, 2);
+    C.toast('putting it on the shelf');
+    C.shelfWrite(text, name).then(function (url) {
+      C.toast(url ? 'it is on the shelf' : 'it is on the shelf');
+    }).catch(function (e) {
+      var why = String((e && e.message) || e);
+      /* the branch may not be there yet, so it is made and the character is
+         put again */
+      if (branch !== 'main' && why.indexOf('not found') >= 0) {
+        C.shelfBranch(branch).then(function () { return C.shelfWrite(text, name); })
+          .then(function () { C.toast('it is on the shelf'); })
+          .catch(function (e2) { C.toast(String((e2 && e2.message) || e2)); });
+        return;
+      }
+      C.toast(why);
+    });
   }
 
   /* A character of the shelf comes in. */

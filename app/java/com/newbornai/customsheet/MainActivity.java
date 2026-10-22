@@ -263,6 +263,49 @@ public class MainActivity extends Activity {
         }
 
         /* Asks the repository something, with the token of the player. */
+        /* A call to GitHub, in any method, with a token or without one.
+           The answer comes back as a small envelope, so the page knows the
+           status as well as the body: the sign in answers 200 while it waits,
+           and the calls that write answer 201 when a file was made. */
+        @JavascriptInterface
+        public String request(String url, String method, String body, String token) {
+            if (url == null) return null;
+            try {
+                java.net.HttpURLConnection c = (java.net.HttpURLConnection) new java.net.URL(url).openConnection();
+                c.setConnectTimeout(5000);
+                c.setReadTimeout(20000);
+                c.setRequestMethod(method == null ? "GET" : method);
+                c.setRequestProperty("Accept", "application/json");
+                if (token != null && token.length() > 0) c.setRequestProperty("Authorization", "Bearer " + token);
+                if (body != null && body.length() > 0) {
+                    c.setDoOutput(true);
+                    c.setRequestProperty("Content-Type", "application/json");
+                    java.io.OutputStream out = c.getOutputStream();
+                    out.write(body.getBytes("UTF-8"));
+                    out.close();
+                }
+                int code = c.getResponseCode();
+                java.io.InputStream in = (code >= 200 && code <= 299) ? c.getInputStream() : c.getErrorStream();
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                if (in != null) {
+                    byte[] chunk = new byte[8192];
+                    int n;
+                    while ((n = in.read(chunk)) > 0) out.write(chunk, 0, n);
+                    in.close();
+                }
+                c.disconnect();
+                String text = out.toString("UTF-8");
+                StringBuilder env = new StringBuilder();
+                env.append("{\"status\":").append(code).append(",\"body\":");
+                org.json.JSONObject o = new org.json.JSONObject();
+                o.put("status", code);
+                o.put("body", text);
+                return o.toString();
+            } catch (Exception e) {
+                return "error " + e.getClass().getSimpleName();
+            }
+        }
+
         @JavascriptInterface
         public String postUrl(String url, String body, String token) {
             if (url == null) return null;
