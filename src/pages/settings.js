@@ -113,6 +113,16 @@
             line.querySelector('.d').textContent = 'downloading';
             C.installUpdate(apk).then(function (answer) {
               line.querySelector('.d').textContent = answer === 'ok' ? 'the installer is open' : answer;
+              if (answer !== 'ok') return;
+              /* The installer of the phone does not always come up. The
+                 browser is the way that always works. */
+              var other = document.createElement('button');
+              other.type = 'button';
+              other.className = 'stog';
+              other.textContent = 'Browser';
+              other.setAttribute('aria-label', 'Open the build in the browser');
+              other.addEventListener('click', function () { window.open(apk, '_blank'); });
+              line.appendChild(other);
             }).catch(function (e) {
               line.querySelector('.d').textContent = String((e && e.message) || e);
             });
@@ -252,6 +262,24 @@
     }).catch(function (e) { C.toast(String((e && e.message) || e)); });
   }
 
+  /* The credits. The text of the rules comes from the System Reference
+     Document, which is under Creative Commons Attribution 4.0, and the
+     licence asks for this notice wherever the text is published. */
+  function credits() {
+    E.credits.innerHTML = '';
+    var rows = [
+      { t: 'The rules', d: 'The spells, the classes, the archetypes and the surge table come from the System Reference Document 5.2 by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd, under the Creative Commons Attribution 4.0 International Licence, https://creativecommons.org/licenses/by/4.0/legalcode. The text was taken from 5e.tools and laid out by this app; the app itself is not part of the SRD and is not under that licence.' },
+      { t: 'The name', d: 'Dungeons & Dragons, D&D and the D20 logo are trademarks of Wizards of the Coast LLC. This app is not affiliated with, endorsed by or sponsored by Wizards of the Coast.' },
+      { t: 'The font', d: 'Cinzel is under the SIL Open Font Licence 1.1.' }
+    ];
+    rows.forEach(function (r) {
+      var row = document.createElement('div');
+      row.className = 'srow';
+      row.innerHTML = '<span class="t">' + C.esc(r.t) + '</span><span class="d">' + C.esc(r.d) + '</span>';
+      E.credits.appendChild(row);
+    });
+  }
+
   Volley.page({
     id: 'settings',
     title: 'Settings',
@@ -271,6 +299,8 @@
       '  <p class="note">A character is a package: the data in JSON. It can leave the phone as a file, or sit in a repository that the players share.</p>',
       '  <div class="cshead"><span>The repository</span><span class="rule"></span></div>',
       '  <div class="fcards" id="settingsRepository"></div>',
+      '  <div class="cshead"><span>Credits</span><span class="rule"></span></div>',
+      '  <div class="fcards" id="settingsCredits"></div>',
       '  <div class="cshead"><span>Update</span><span class="rule"></span></div>',
       '  <div class="fcards" id="settingsUpdate"></div>',
       '  <p class="note">The app is served from the machine that holds it. Give that address here and the app will tell you when a newer build is there.</p>',
@@ -285,6 +315,7 @@
         files: root.querySelector('#settingsFiles'),
         exchange: root.querySelector('#settingsExchange'),
         repository: root.querySelector('#settingsRepository'),
+        credits: root.querySelector('#settingsCredits'),
         update: root.querySelector('#settingsUpdate')
       };
     },
@@ -296,6 +327,7 @@
       update();
       exchange();
       repositoryRows();
+      credits();
       api.pages.forEach(function (p) {
         if (p.hidden) return;
         var on = p.home || pages().indexOf(p.id) >= 0;
