@@ -706,6 +706,10 @@ input[type=range]::-moz-range-thumb{
 .fcard .src.elf{color:#8fe084;border-color:rgba(122,216,111,.45);background:rgba(122,216,111,.10)}
 .fcard .feye{flex:0 0 auto;width:18px;height:18px;border:0;background:none;color:#6f6a8d;cursor:pointer;padding:0;display:none;align-items:center;justify-content:center}
 .fcard .feye svg{width:12px;height:12px;display:block}
+.fnew{display:flex;flex-wrap:wrap;gap:6px}
+.fnewtype{border:1px solid var(--edge);border-radius:6px;background:none;color:var(--muted);font-family:var(--sans);font-size:11px;padding:7px 11px;cursor:pointer}
+.fnewtype.on{border-color:rgba(122,216,111,.5);background:rgba(122,216,111,.12);color:#8fe084}
+.fcard.dragging{opacity:.95;border-color:var(--arcane);box-shadow:0 10px 24px rgba(0,0,0,.55)}
 .fcard .fdel{flex:0 0 auto;width:18px;height:18px;border:0;background:none;color:#d08a9c;cursor:pointer;padding:0;display:none;align-items:center;justify-content:center;font-size:16px;line-height:1}
 .charbody.editing .fcard .feye,.charbody.editing .fcard .fdel{display:flex}
 .fcard .fconfirm{display:none;align-items:center;gap:6px;margin-top:6px;padding-top:6px;border-top:1px solid var(--edge);font-size:10.5px;color:var(--muted)}
@@ -713,10 +717,12 @@ input[type=range]::-moz-range-thumb{
 .fcard .fconfirm button{border:1px solid var(--edge);border-radius:5px;background:none;color:var(--muted);font-family:var(--sans);font-size:10.5px;padding:4px 9px;cursor:pointer}
 .fcard .fconfirm button.yes{border-color:rgba(208,138,156,.5);color:#d08a9c}
 .fcard .fuses{flex:0 0 auto;font-family:var(--display);font-size:12px;color:var(--arcane);border:1px solid var(--edge);border-radius:4px;background:none;padding:3px 6px;cursor:pointer;font-variant-numeric:tabular-nums}
-.fcard .fusesin{display:none;flex:0 0 auto;width:3.4em;border:1px solid var(--edge);border-radius:4px;background:none;color:var(--ink);font-family:var(--display);font-size:12px;padding:3px 4px;text-align:center;font-variant-numeric:tabular-nums}
+.fcard .fusesin{display:none;flex:0 0 auto;width:2.8em;border:1px solid var(--edge);border-radius:4px;background:none;color:var(--ink);font-family:var(--display);font-size:12px;padding:3px 3px;text-align:center;font-variant-numeric:tabular-nums}
+.fcard .fmaxin{display:none;flex:0 0 auto;width:2.8em;border:1px solid var(--edge);border-radius:4px;background:none;color:var(--muted);font-family:var(--display);font-size:12px;padding:3px 3px;text-align:center;font-variant-numeric:tabular-nums}
+.fcard .fslash{display:none;flex:0 0 auto;color:#5c5778;font-size:11px}
 .fcard .frec{display:none;flex:0 0 auto;font-family:var(--display);font-size:12px;color:var(--muted)}
 .charbody.editing .fcard .fuses{display:none}
-.charbody.editing .fcard .fusesin{display:block}
+.charbody.editing .fcard .fusesin,.charbody.editing .fcard .fmaxin,.charbody.editing .fcard .fslash{display:block}
 .charbody.editing .fcard .frec{display:inline}
 .fcard .fuses.sp{color:var(--gold);border-color:rgba(255,196,77,.35)}
 .fcard.hidden{display:none}
@@ -15181,6 +15187,7 @@ input[type=range]::-moz-range-thumb{
       "active": true,
       "uses": 2,
       "recovery": "long",
+      "cost": "",
       "hidden": false,
       "action": "B",
       "duration": "1 min",
@@ -15210,6 +15217,7 @@ input[type=range]::-moz-range-thumb{
       "active": true,
       "uses": 8,
       "recovery": "long",
+      "cost": "",
       "hidden": true,
       "action": "",
       "duration": "",
@@ -15236,6 +15244,7 @@ input[type=range]::-moz-range-thumb{
       "active": true,
       "uses": 1,
       "recovery": "long",
+      "cost": "",
       "hidden": false,
       "action": "",
       "duration": "",
@@ -15258,6 +15267,7 @@ input[type=range]::-moz-range-thumb{
       "active": true,
       "uses": 1,
       "recovery": "long",
+      "cost": "",
       "hidden": true,
       "action": "",
       "duration": "",
@@ -15275,7 +15285,8 @@ input[type=range]::-moz-range-thumb{
       "source": "Wild Magic",
       "active": true,
       "uses": 0,
-      "recovery": "sp",
+      "recovery": "special",
+      "cost": "sp",
       "hidden": false,
       "action": "R",
       "duration": "",
@@ -15294,6 +15305,7 @@ input[type=range]::-moz-range-thumb{
       "active": true,
       "uses": 1,
       "recovery": "long",
+      "cost": "",
       "hidden": true,
       "action": "",
       "duration": "1 min",
@@ -15312,6 +15324,7 @@ input[type=range]::-moz-range-thumb{
       "active": true,
       "uses": 1,
       "recovery": "short",
+      "cost": "",
       "hidden": false,
       "action": "B",
       "duration": "1 min",
@@ -15342,6 +15355,7 @@ input[type=range]::-moz-range-thumb{
       "active": true,
       "uses": 1,
       "recovery": "long",
+      "cost": "",
       "hidden": false,
       "action": "",
       "duration": "",
@@ -15398,6 +15412,7 @@ input[type=range]::-moz-range-thumb{
       "active": true,
       "uses": 1,
       "recovery": "long",
+      "cost": "",
       "hidden": false,
       "action": "",
       "duration": "",
@@ -15453,7 +15468,8 @@ input[type=range]::-moz-range-thumb{
       "source": "Sorcerer",
       "active": false,
       "uses": 0,
-      "recovery": "none",
+      "recovery": "passive",
+      "cost": "",
       "hidden": false,
       "action": "",
       "duration": "",
@@ -15475,7 +15491,8 @@ input[type=range]::-moz-range-thumb{
       "source": "Warlock",
       "active": false,
       "uses": 0,
-      "recovery": "none",
+      "recovery": "passive",
+      "cost": "",
       "hidden": false,
       "action": "",
       "duration": "",
@@ -15493,7 +15510,8 @@ input[type=range]::-moz-range-thumb{
       "source": "Warlock",
       "active": false,
       "uses": 0,
-      "recovery": "none",
+      "recovery": "passive",
+      "cost": "",
       "hidden": false,
       "action": "",
       "duration": "",
@@ -15511,7 +15529,8 @@ input[type=range]::-moz-range-thumb{
       "source": "Warlock",
       "active": false,
       "uses": 0,
-      "recovery": "none",
+      "recovery": "passive",
+      "cost": "",
       "hidden": false,
       "action": "",
       "duration": "",
@@ -15529,7 +15548,8 @@ input[type=range]::-moz-range-thumb{
       "source": "Wild Magic",
       "active": false,
       "uses": 0,
-      "recovery": "none",
+      "recovery": "passive",
+      "cost": "",
       "hidden": false,
       "action": "",
       "duration": "",
@@ -15661,7 +15681,8 @@ input[type=range]::-moz-range-thumb{
       "source": "Hexblade",
       "active": false,
       "uses": 0,
-      "recovery": "none",
+      "recovery": "passive",
+      "cost": "",
       "hidden": false,
       "action": "",
       "duration": "",
@@ -15683,7 +15704,8 @@ input[type=range]::-moz-range-thumb{
       "source": "Elf",
       "active": false,
       "uses": 0,
-      "recovery": "none",
+      "recovery": "passive",
+      "cost": "",
       "hidden": false,
       "action": "",
       "duration": "",
@@ -15701,7 +15723,8 @@ input[type=range]::-moz-range-thumb{
       "source": "Elf",
       "active": false,
       "uses": 0,
-      "recovery": "none",
+      "recovery": "passive",
+      "cost": "",
       "hidden": false,
       "action": "",
       "duration": "",
@@ -15719,7 +15742,8 @@ input[type=range]::-moz-range-thumb{
       "source": "Feat",
       "active": false,
       "uses": 0,
-      "recovery": "none",
+      "recovery": "passive",
+      "cost": "",
       "hidden": false,
       "action": "",
       "duration": "",
@@ -16195,7 +16219,8 @@ input[type=range]::-moz-range-thumb{
       active: !!f.active,
       max: f.uses || 0,
       left: f.uses || 0,
-      recovery: f.recovery || 'none',
+      recovery: f.recovery || 'passive',
+      cost: f.cost || '',
       short: null,
       hidden: !!f.hidden
     };
@@ -16477,6 +16502,7 @@ input[type=range]::-moz-range-thumb{
           if (s.max !== undefined) copy.max = Math.max(0, Number(s.max) || 0);
           if (s.left !== undefined) copy.left = Math.max(0, Number(s.left) || 0);
           if (s.recovery !== undefined) copy.recovery = s.recovery;
+          if (s.cost !== undefined) copy.cost = s.cost;
           if (s.short !== undefined) copy.short = s.short;
           /* the hidden flag follows the data, unless the player moved it */
           copy.hidden = s.toggled ? !!s.hidden : !!f.hidden;
@@ -17392,9 +17418,16 @@ input[type=range]::-moz-range-thumb{
 
   /* The uses of a feature: how many are left and when they come back. */
   function usesText(f) {
-    if (f.recovery === 'sp') return '1 SP';
+    if (f.cost === 'sp') return '1 SP';
     if (!f.max) return '';
-    return f.left + ' / ' + f.recovery;
+    if (f.recovery === 'short' || f.recovery === 'long') return f.left + ' / ' + f.recovery;
+    return String(f.left);
+  }
+
+  function recoveryWord(f) {
+    if (f.recovery === 'short' || f.recovery === 'long') return f.recovery;
+    if (f.recovery === 'special') return 'special';
+    return '';
   }
 
   function buildFeatureCards() {
@@ -17408,7 +17441,9 @@ input[type=range]::-moz-range-thumb{
         '<div class="top"><span class="t" data-role="name"></span>' +
         '<span class="fsrc"></span>' +
         '<button class="fuses" type="button" data-role="uses"></button>' +
-        '<input class="fusesin" type="number" inputmode="numeric" min="0" max="9" data-role="usesin" aria-label="Uses left">' +
+        '<input class="fusesin" type="number" inputmode="numeric" min="0" max="99" data-role="usesin" aria-label="Uses left">' +
+        '<span class="fslash">/</span>' +
+        '<input class="fmaxin" type="number" inputmode="numeric" min="0" max="99" data-role="maxin" aria-label="Maximum uses">' +
         '<span class="frec"></span></div>' +
         '<div class="fm"><span class="fdesc"></span>' +
         '<button class="feye" type="button" data-role="eye" aria-label="Hide the feature"></button>' +
@@ -17445,8 +17480,12 @@ input[type=range]::-moz-range-thumb{
       if (input && document.activeElement !== input) input.value = String(f.left || 0);
       input.hidden = !f.max;
 
+      var maxInput = card.querySelector('[data-role="maxin"]');
+      if (maxInput && document.activeElement !== maxInput) maxInput.value = String(f.max || 0);
+      maxInput.hidden = !f.max;
+
       var rec = card.querySelector('.frec');
-      rec.textContent = f.max ? ' / ' + f.recovery : '';
+      rec.textContent = editingFeatures ? (recoveryWord(f) ? ' ' + recoveryWord(f) : '') : '';
 
       var bits = [];
       if (data.desc) bits.push(data.desc);
@@ -17464,12 +17503,17 @@ input[type=range]::-moz-range-thumb{
 
   el.featureBody.addEventListener('input', function (ev) {
     var roleEl = ev.target.closest ? ev.target.closest('[data-role]') : null;
-    if (!roleEl || roleEl.dataset.role !== 'usesin') return;
+    if (!roleEl || (roleEl.dataset.role !== 'usesin' && roleEl.dataset.role !== 'maxin')) return;
     var card = roleEl.closest('.fcard');
     if (!card) return;
     var f = featureByKey(card.dataset.key);
     if (!f) return;
-    f.left = Math.max(0, Math.min(99, Number(roleEl.value) || 0));
+    if (roleEl.dataset.role === 'usesin') {
+      f.left = Math.max(0, Math.min(99, Number(roleEl.value) || 0));
+    } else if (roleEl.dataset.role === 'maxin') {
+      f.max = Math.max(0, Math.min(99, Number(roleEl.value) || 0));
+      if (f.left > f.max) f.left = f.max;
+    } else return;
     commitChar();
   });
 
@@ -17512,10 +17556,86 @@ input[type=range]::-moz-range-thumb{
     }
   });
 
+  /* The cards can be dragged to reorder them, the way the spell list
+     does. A press that turns into a move carries the card, a press that
+     ends straight away is a tap. */
+  var dragged = false;
+
+  el.featureBody.addEventListener('pointerdown', function (ev) {
+    if (ev.target.closest('input, button')) return;
+    var card = ev.target.closest('.fcard');
+    if (!card) return;
+    var startY = ev.clientY, startX = ev.clientX, timer = null, moved = false;
+
+    function begin() {
+      timer = null;
+      moved = true;
+      card.classList.add('dragging');
+      if (navigator.vibrate) navigator.vibrate(12);
+    }
+
+    function move(e) {
+      if (!moved) {
+        if (Math.abs(e.clientY - startY) > 8 || Math.abs(e.clientX - startX) > 8) {
+          if (timer) { clearTimeout(timer); timer = null; }
+          cleanup();
+        }
+        return;
+      }
+      if (e.cancelable) e.preventDefault();
+      var list = card.parentNode;
+      var cards = Array.prototype.slice.call(list.querySelectorAll('.fcard'));
+      for (var i = 0; i < cards.length; i++) {
+        var r = cards[i].getBoundingClientRect();
+        if (e.clientY < r.top + r.height / 2 && cards[i] !== card) {
+          list.insertBefore(card, cards[i]);
+          startY = e.clientY;
+          break;
+        }
+      }
+    }
+
+    function up() {
+      if (timer) { clearTimeout(timer); timer = null; }
+      if (moved) {
+        card.classList.remove('dragging');
+        dragged = true;
+        setTimeout(function () { dragged = false; }, 80);
+        saveFeatureOrder(card.parentNode);
+      }
+      cleanup();
+    }
+
+    function blockScroll(e) { if (moved && e.cancelable) e.preventDefault(); }
+    function cleanup() {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+      window.removeEventListener('touchmove', blockScroll);
+    }
+
+    timer = setTimeout(begin, 320);
+    window.addEventListener('pointermove', move, { passive: false });
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
+    window.addEventListener('touchmove', blockScroll, { passive: false });
+  });
+
+  /* The order the cards sit in becomes the order of the list. */
+  function saveFeatureOrder(list) {
+    var keys = Array.prototype.slice.call(list.querySelectorAll('.fcard')).map(function (c) { return c.dataset.key; });
+    var byKey = {};
+    state.char.features.forEach(function (f) { byKey[f.key] = f; });
+    var others = state.char.features.filter(function (f) { return keys.indexOf(f.key) < 0; });
+    state.char.features = keys.map(function (k) { return byKey[k]; }).concat(others);
+    save();
+    renderFeatureCards();
+  }
+
   /* One tap spends a use, and at zero it gives one back. The bend luck
      feature costs a sorcery point rather than a use. */
   function spendFeature(f) {
-    if (f.recovery === 'sp') {
+    if (f.cost === 'sp') {
       if (state.spell.sp > 0) {
         state.spell.sp -= 1;
         spent('\u22121 sorcery point \u00b7 ' + state.spell.sp + ' left');
@@ -17536,21 +17656,64 @@ input[type=range]::-moz-range-thumb{
     commitChar();
   }
 
-  el.addFeature.addEventListener('click', function () {
-    state.char.features.push({
-      key: 'f' + Date.now(),
-      name: 'New feature',
-      source: 'Feat',
-      active: true,
-      recovery: 'short',
-      bind: null,
-      max: 1,
-      left: 1,
-      short: null
+  el.addFeature.addEventListener('click', function () { openNewFeature(); });
+
+  /* The creation of a feature: a name and a recovery type. */
+  var NEW_TYPES = [
+    { id: 'short', label: 'short rest' },
+    { id: 'long', label: 'long rest' },
+    { id: 'special', label: 'special' },
+    { id: 'passive', label: 'passive' }
+  ];
+
+  function openNewFeature() {
+    sheetMode = 'newfeature';
+    sheetParent = '';
+    el.sheetTitle.textContent = 'New feature';
+    el.sheetMeta.className = 'one';
+    el.sheetMeta.innerHTML = '<input class="sheet-search" id="featureName" type="text" placeholder="Name of the feature" aria-label="Name of the feature">';
+    el.sheetText.innerHTML = '<div class="fnew">' + NEW_TYPES.map(function (t) {
+      return '<button class="fnewtype" type="button" data-type="' + t.id + '">' + t.label + '</button>';
+    }).join('') + '</div>';
+    el.sheetList.innerHTML = '';
+    el.sheetList.hidden = true;
+    el.sheetSearch.hidden = true;
+    el.grimoireLevel.hidden = true;
+    el.sheetActions.innerHTML = '<button id="createFeature">Create</button>';
+    el.sheet.hidden = false;
+
+    var picked = 'short';
+    var buttons = el.sheetText.querySelectorAll('.fnewtype');
+    Array.prototype.forEach.call(buttons, function (b) {
+      b.addEventListener('click', function () {
+        picked = b.dataset.type;
+        Array.prototype.forEach.call(buttons, function (x) { x.classList.toggle('on', x === b); });
+      });
     });
-    buildFeatureCards();
-    commitChar();
-  });
+    buttons[0].classList.add('on');
+
+    el.sheetActions.querySelector('#createFeature').addEventListener('click', function () {
+      var field = document.getElementById('featureName');
+      var name = (field && field.value ? field.value : '').trim() || 'New feature';
+      var passive = picked === 'passive';
+      state.char.features.push({
+        key: 'f' + Date.now(),
+        name: name,
+        source: 'Feat',
+        active: !passive,
+        recovery: picked,
+        cost: '',
+        bind: null,
+        max: passive ? 0 : 1,
+        left: passive ? 0 : 1,
+        short: null,
+        hidden: false
+      });
+      buildFeatureCards();
+      closeSheet();
+      commitChar();
+    });
+  }
 
   /* ---- rests ---- */
 
