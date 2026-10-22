@@ -516,6 +516,7 @@
     shelfCharacters: shelfCharacters,
     shelfBranches: shelfBranches,
     shelfWrite: shelfWrite,
+    shelfRemove: shelfRemove,
     shelfBranch: shelfBranch,
     shelfCreateRepo: shelfCreateRepo,
     shelfFork: shelfFork,
@@ -1175,6 +1176,12 @@
   function shelfBranch(name) {
     if (!window.SheetGit) return Promise.reject(new Error('the shelf cannot write yet'));
     return window.SheetGit.createBranch(shelfRepo(), name, ghToken());
+  }
+
+  /* A character goes off the shelf as well as on it. */
+  function shelfRemove(fileName) {
+    if (!window.SheetGit) return Promise.reject(new Error('the shelf cannot write yet'));
+    return window.SheetGit.deleteFile(shelfRepo(), 'characters/' + fileName, 'a character leaves the shelf', ghBranch(), ghToken());
   }
 
   /* A shelf of one's own: a new repository, or a fork of the one of the

@@ -476,6 +476,15 @@
     }).catch(function (e) { C.toast(String((e && e.message) || e)); });
   }
 
+  /* A character of the shelf can be taken off it, when the app is the one
+     that put it there. */
+  function takeOff(name) {
+    if (!C.ghToken()) { C.toast('connect to GitHub first'); return; }
+    C.shelfRemove(name).then(function () {
+      C.toast(name + ' is off the shelf');
+    }).catch(function (e) { C.toast(String((e && e.message) || e)); });
+  }
+
   /* The window of the shelf: the characters of the main branch, then the
      branches, which are the shelves of the players. */
   function openShelf() {
@@ -485,6 +494,7 @@
           return '<div class="crow">' +
             '<span class="cn">' + C.esc(c.name) + '</span>' +
             '<button class="mini" type="button" data-take="' + C.esc(c.url) + '" aria-label="Bring ' + C.esc(c.name) + ' in">&darr;</button>' +
+            (C.ghToken() ? '<button class="mini" type="button" data-off="' + C.esc(c.name) + '" aria-label="Take ' + C.esc(c.name) + ' off the shelf">&times;</button>' : '') +
             '</div>';
         }).join('');
         if (!html) html = '<div class="empty">The shelf is empty.</div>';
@@ -503,6 +513,8 @@
           list: html,
           onList: function (ev) {
             var take = ev.target.closest('[data-take]');
+            var off = ev.target.closest('[data-off]');
+            if (off) { takeOff(off.dataset.off); return; }
             if (take) { takeFrom(take.dataset.take); return; }
             var open = ev.target.closest('[data-open]');
             if (open) openBranch(open.dataset.open);

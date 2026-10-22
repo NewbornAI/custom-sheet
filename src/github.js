@@ -17,7 +17,7 @@
 (function () {
   'use strict';
 
-  var CLIENT_ID = 'Ov23lisAN816JonLWV8I';
+  var CLIENT_ID = 'Ov23lihSRU49cPT8Hzfp';
   var OAUTH = 'https://github.com/';
   var API = 'https://api.github.com/';
 
@@ -154,6 +154,19 @@
       });
   }
 
+  /* A file the shelf no longer needs goes away, so a character can be
+     taken off the shelf without a machine at the other end. */
+  function deleteFile(repo, path, message, branch, token) {
+    return api('GET', '/repos/' + repo + '/contents/' + path + '?ref=' + encodeURIComponent(branch), null, token)
+      .then(function (found) {
+        return api('DELETE', '/repos/' + repo + '/contents/' + path, {
+          message: message,
+          sha: found.sha,
+          branch: branch
+        }, token);
+      });
+  }
+
   /* A shelf of one's own: a repository of the player, empty and ready. */
   function createRepo(name, token, isPrivate) {
     return api('POST', '/user/repos', {
@@ -193,6 +206,7 @@
     whoAmI: whoAmI,
     listCharacters: listCharacters,
     putFile: putFile,
+    deleteFile: deleteFile,
     createRepo: createRepo,
     forkRepo: forkRepo,
     createBranch: createBranch,
