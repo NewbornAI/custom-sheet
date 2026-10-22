@@ -425,11 +425,11 @@ writeFileSync(
    from 5e.tools. */
 const FEATURE_SPECS = [
   { key: 'innateSorcery', name: 'Innate sorcery', source: 'Sorcerer', active: true, uses: 2, recovery: 'long', action: 'B', duration: '1 min', desc: 'DC +1, advantage attack w/ spells sorcerer', from: { file: 'class-sorcerer', list: 'classFeature', name: 'Innate Sorcery', source: 'XPHB' } },
-  { key: 'metamagic', name: 'Metamagic', source: 'Sorcerer', active: true, uses: 8, recovery: 'long', action: '', duration: '', desc: 'Heighten + quicken', from: { file: 'class-sorcerer', list: 'classFeature', name: 'Metamagic', source: 'XPHB' } },
+  { key: 'metamagic', name: 'Metamagic', source: 'Sorcerer', active: true, uses: 8, recovery: 'long', action: '', duration: '', desc: 'Heighten + quicken', hidden: true, from: { file: 'class-sorcerer', list: 'classFeature', name: 'Metamagic', source: 'XPHB' } },
   { key: 'tidesOfChaos', name: 'Tides of chaos', source: 'Wild Magic', active: true, uses: 1, recovery: 'long', action: '', duration: '', desc: 'Advantage, on spell slot: roll surge to refund', from: { file: 'class-sorcerer', list: 'subclassFeature', name: 'Tides of Chaos', source: 'XPHB' } },
-  { key: 'sorcerousRest', name: 'Sorcerous rest', source: 'Sorcerer', active: true, uses: 1, recovery: 'long', action: '', duration: '', desc: 'Regain 1/2 sorc level SP', from: { file: 'class-sorcerer', list: 'classFeature', name: 'Sorcerous Restoration', source: 'XPHB' } },
+  { key: 'sorcerousRest', name: 'Sorcerous rest', source: 'Sorcerer', active: true, uses: 1, recovery: 'long', action: '', duration: '', desc: 'Regain 1/2 sorc level SP', hidden: true, from: { file: 'class-sorcerer', list: 'classFeature', name: 'Sorcerous Restoration', source: 'XPHB' } },
   { key: 'bendLuck', name: 'Bend luck', source: 'Wild Magic', active: true, uses: 0, recovery: 'sp', action: 'R', duration: '', desc: 'Creature I can see rolls D20: +/-1d4', from: { file: 'class-sorcerer', list: 'subclassFeature', name: 'Bend Luck', source: 'XPHB' } },
-  { key: 'magicalCunning', name: 'Magical Cunning', source: 'Warlock', active: true, uses: 1, recovery: 'long', action: '', duration: '1 min', desc: 'Regain 1 spell slot', from: { file: 'class-warlock', list: 'classFeature', name: 'Magical Cunning', source: 'XPHB' } },
+  { key: 'magicalCunning', name: 'Magical Cunning', source: 'Warlock', active: true, uses: 1, recovery: 'long', action: '', duration: '1 min', desc: 'Regain 1 spell slot', hidden: true, from: { file: 'class-warlock', list: 'classFeature', name: 'Magical Cunning', source: 'XPHB' } },
   { key: 'hexCurse', name: 'Hexblade curse', source: 'Hexblade', active: true, uses: 1, recovery: 'short', action: 'B', duration: '1 min', desc: '+PRO damage, crit 19+, regain CHA+lvl hp', from: { file: 'class-warlock', list: 'subclassFeature', name: "Hexblade's Curse", source: 'XGE' } },
   { key: 'elvenLineageI', name: 'Elven Lineage I', source: 'High Elf', active: true, uses: 1, recovery: 'long', action: '', duration: '', desc: 'Detect Magic for free', from: { file: 'races', name: 'Elf', source: 'XPHB', entry: 'Elven Lineage' } },
   { key: 'elvenLineageII', name: 'Elven Lineage II', source: 'High Elf', active: true, uses: 1, recovery: 'long', action: '', duration: '', desc: 'Misty Step for free', from: { file: 'races', name: 'Elf', source: 'XPHB', entry: 'Elven Lineage' } },
@@ -497,6 +497,7 @@ for (const spec of FEATURE_SPECS) {
     active: !!spec.active,
     uses: spec.uses || 0,
     recovery: spec.recovery || 'none',
+    hidden: !!spec.hidden,
     action: spec.action || '',
     duration: spec.duration || '',
     desc: spec.desc || '',

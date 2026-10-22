@@ -355,6 +355,7 @@ console.log('the features');
   const luck = data.features.find((f) => f.key === 'bendLuck');
   check('bend luck costs a sorcery point', luck.recovery, 'sp');
   check('the hexblade curse is the 2014 one', curse.blocks[0].text.indexOf('baleful curse') >= 0, true);
+  check('the features the spell tab tracks start hidden', data.features.filter((f) => f.hidden).map((f) => f.key).join(','), 'metamagic,sorcerousRest,magicalCunning');
   check('the wild surge is the 2024 one', data.features.find((f) => f.key === 'wildSurge').blocks[0].text.indexOf('1d20') >= 0, true);
 }
 

@@ -672,6 +672,26 @@ input[type=range]::-moz-range-thumb{
 
 .charfoot{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;padding-top:2px}
 .charfoot .note{margin:0;min-height:13px}
+.spent{
+  position:fixed;
+  left:50%;
+  bottom:calc(env(safe-area-inset-bottom) + 14px);
+  transform:translateX(-50%) translateY(6px);
+  z-index:45;
+  padding:7px 14px;
+  border:1px solid rgba(255,196,77,.5);
+  border-radius:999px;
+  background:rgba(28,22,8,.95);
+  color:var(--gold);
+  font-size:11px;
+  letter-spacing:.03em;
+  white-space:nowrap;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .22s, transform .22s;
+}
+.spent.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
 .fcards{display:flex;flex-direction:column;gap:6px;flex:0 0 auto}
 .fcard{border:1px solid var(--edge);border-radius:5px;background:rgba(255,255,255,.03);padding:7px 8px}
 .fcard .top{display:flex;align-items:center;gap:8px}
@@ -686,8 +706,18 @@ input[type=range]::-moz-range-thumb{
 .fcard .src.elf{color:#8fe084;border-color:rgba(122,216,111,.45);background:rgba(122,216,111,.10)}
 .fcard .feye{flex:0 0 auto;width:18px;height:18px;border:0;background:none;color:#6f6a8d;cursor:pointer;padding:0;display:none;align-items:center;justify-content:center}
 .fcard .feye svg{width:12px;height:12px;display:block}
-.charbody.editing .fcard .feye{display:flex}
+.fcard .fdel{flex:0 0 auto;width:18px;height:18px;border:0;background:none;color:#d08a9c;cursor:pointer;padding:0;display:none;align-items:center;justify-content:center;font-size:16px;line-height:1}
+.charbody.editing .fcard .feye,.charbody.editing .fcard .fdel{display:flex}
+.fcard .fconfirm{display:none;align-items:center;gap:6px;margin-top:6px;padding-top:6px;border-top:1px solid var(--edge);font-size:10.5px;color:var(--muted)}
+.fcard.confirming .fconfirm{display:flex}
+.fcard .fconfirm button{border:1px solid var(--edge);border-radius:5px;background:none;color:var(--muted);font-family:var(--sans);font-size:10.5px;padding:4px 9px;cursor:pointer}
+.fcard .fconfirm button.yes{border-color:rgba(208,138,156,.5);color:#d08a9c}
 .fcard .fuses{flex:0 0 auto;font-family:var(--display);font-size:12px;color:var(--arcane);border:1px solid var(--edge);border-radius:4px;background:none;padding:3px 6px;cursor:pointer;font-variant-numeric:tabular-nums}
+.fcard .fusesin{display:none;flex:0 0 auto;width:3.4em;border:1px solid var(--edge);border-radius:4px;background:none;color:var(--ink);font-family:var(--display);font-size:12px;padding:3px 4px;text-align:center;font-variant-numeric:tabular-nums}
+.fcard .frec{display:none;flex:0 0 auto;font-family:var(--display);font-size:12px;color:var(--muted)}
+.charbody.editing .fcard .fuses{display:none}
+.charbody.editing .fcard .fusesin{display:block}
+.charbody.editing .fcard .frec{display:inline}
 .fcard .fuses.sp{color:var(--gold);border-color:rgba(255,196,77,.35)}
 .fcard.hidden{display:none}
 .charbody.editing .fcard.hidden{display:block;opacity:.45}
@@ -1114,6 +1144,8 @@ input[type=range]::-moz-range-thumb{
   </button>
 
 </div>
+
+<div class="spent" id="spentToast" role="status" aria-live="polite"></div>
 
 <div class="sheet" id="sheet" hidden>
   <div class="sheet-in">
@@ -1593,7 +1625,7 @@ input[type=range]::-moz-range-thumb{
       left: f.uses || 0,
       recovery: f.recovery || 'none',
       short: null,
-      hidden: false
+      hidden: !!f.hidden
     };
   });
 
@@ -1747,7 +1779,8 @@ input[type=range]::-moz-range-thumb{
     featurePassive: document.getElementById('featurePassive'),
     restShort: document.getElementById('restShort'),
     restLong: document.getElementById('restLong'),
-    charNote: document.getElementById('charNote')
+    charNote: document.getElementById('charNote'),
+    spentToast: document.getElementById('spentToast')
   };
 
   /* ---- state ---- */
@@ -1873,7 +1906,8 @@ input[type=range]::-moz-range-thumb{
           if (s.left !== undefined) copy.left = Math.max(0, Number(s.left) || 0);
           if (s.recovery !== undefined) copy.recovery = s.recovery;
           if (s.short !== undefined) copy.short = s.short;
-          if (s.hidden !== undefined) copy.hidden = !!s.hidden;
+          /* the hidden flag follows the data, unless the player moved it */
+          copy.hidden = s.toggled ? !!s.hidden : !!f.hidden;
           return copy;
         });
         /* the features that are not in the seed any more */
@@ -2032,9 +2066,9 @@ input[type=range]::-moz-range-thumb{
       el.ac.value = state.ac === null ? '' : String(state.ac);
     }
 
-    el.wrench.setAttribute('aria-pressed', (view === 'char' ? editingChar : editing) ? 'true' : 'false');
+    el.wrench.setAttribute('aria-pressed', (view === 'char' ? editingChar : (view === 'features' ? editingFeatures : editing)) ? 'true' : 'false');
     el.wrench.setAttribute('aria-label', view === 'char' ? 'Edit the proficiencies'
-      : (view === 'features' ? 'Show the hidden features' : 'Edit the slot maximums'));
+      : (view === 'features' ? 'Edit the features' : 'Edit the slot maximums'));
 
     renderSummary();
     renderBoard(false);
@@ -2729,6 +2763,21 @@ input[type=range]::-moz-range-thumb{
     commitChar();
   }
 
+  /* A toast that lingers, so a spent resource stays seen. */
+  var spentTimer = null;
+  function spent(message) {
+    el.spentToast.textContent = message;
+    el.spentToast.classList.add('on');
+    if (spentTimer) clearTimeout(spentTimer);
+    spentTimer = setTimeout(function () { el.spentToast.classList.remove('on'); }, 3000);
+  }
+
+  function bumpSp() {
+    el.spValue.classList.remove('bump');
+    void el.spValue.offsetWidth;
+    el.spValue.classList.add('bump');
+  }
+
   var noteTimer = null;
   function note(message) {
     el.charNote.textContent = message;
@@ -2765,6 +2814,10 @@ input[type=range]::-moz-range-thumb{
       '</svg>';
   }
 
+  /* The feature waiting to be removed, and the question under it. */
+  var deleting = null;
+  var editingFeatures = false;
+
   /* The uses of a feature: how many are left and when they come back. */
   function usesText(f) {
     if (f.recovery === 'sp') return '1 SP';
@@ -2782,15 +2835,21 @@ input[type=range]::-moz-range-thumb{
       card.innerHTML =
         '<div class="top"><span class="t" data-role="name"></span>' +
         '<span class="fsrc"></span>' +
-        '<button class="fuses" type="button" data-role="uses"></button></div>' +
+        '<button class="fuses" type="button" data-role="uses"></button>' +
+        '<input class="fusesin" type="number" inputmode="numeric" min="0" max="9" data-role="usesin" aria-label="Uses left">' +
+        '<span class="frec"></span></div>' +
         '<div class="fm"><span class="fdesc"></span>' +
-        '<button class="feye" type="button" data-role="eye" aria-label="Hide the feature"></button></div>';
+        '<button class="feye" type="button" data-role="eye" aria-label="Hide the feature"></button>' +
+        '<button class="fdel" type="button" data-role="del" aria-label="Remove the feature">&times;</button></div>' +
+        '<div class="fconfirm"><span>Remove it?</span>' +
+        '<button class="yes" type="button" data-role="yes">Remove</button>' +
+        '<button class="no" type="button" data-role="no">Keep</button></div>';
       (f.active ? el.featureActive : el.featurePassive).appendChild(card);
     });
   }
 
   function renderFeatureCards() {
-    el.featureBody.classList.toggle('editing', editingChar);
+    el.featureBody.classList.toggle('editing', editingFeatures);
     state.char.features.forEach(function (f) {
       var card = el.featureBody.querySelector('.fcard[data-key="' + f.key + '"]');
       if (!card) return;
@@ -2803,12 +2862,19 @@ input[type=range]::-moz-range-thumb{
 
       card.querySelector('.fsrc').innerHTML = sourceTag(f.source);
 
-      var uses = card.querySelector('[data-role="uses"]');
       var text = usesText(f);
+      var uses = card.querySelector('[data-role="uses"]');
       uses.textContent = text;
       uses.hidden = !text;
       uses.classList.toggle('sp', f.recovery === 'sp');
       uses.setAttribute('aria-label', f.name + ': ' + text);
+
+      var input = card.querySelector('[data-role="usesin"]');
+      if (input && document.activeElement !== input) input.value = String(f.left || 0);
+      input.hidden = !f.max;
+
+      var rec = card.querySelector('.frec');
+      rec.textContent = f.max ? ' / ' + f.recovery : '';
 
       var bits = [];
       if (data.desc) bits.push(data.desc);
@@ -2819,8 +2885,21 @@ input[type=range]::-moz-range-thumb{
       var eye = card.querySelector('[data-role="eye"]');
       eye.innerHTML = eyeSvg(f.hidden);
       eye.setAttribute('aria-label', f.hidden ? 'Show the feature' : 'Hide the feature');
+
+      card.classList.toggle('confirming', deleting === f.key);
     });
   }
+
+  el.featureBody.addEventListener('input', function (ev) {
+    var roleEl = ev.target.closest ? ev.target.closest('[data-role]') : null;
+    if (!roleEl || roleEl.dataset.role !== 'usesin') return;
+    var card = roleEl.closest('.fcard');
+    if (!card) return;
+    var f = featureByKey(card.dataset.key);
+    if (!f) return;
+    f.left = Math.max(0, Math.min(99, Number(roleEl.value) || 0));
+    commitChar();
+  });
 
   el.featureBody.addEventListener('click', function (ev) {
     var card = ev.target.closest('.fcard');
@@ -2835,9 +2914,28 @@ input[type=range]::-moz-range-thumb{
     if (role === 'uses') { spendFeature(f); return; }
     if (role === 'name') { openFeature(f.key); return; }
 
-    if (!editingChar) return;
+    if (!editingFeatures) return;
+
     if (role === 'eye') {
       f.hidden = !f.hidden;
+      f.toggled = true;
+      commitChar();
+      return;
+    }
+    if (role === 'del') {
+      deleting = f.key;
+      commitChar();
+      return;
+    }
+    if (role === 'no') {
+      deleting = null;
+      commitChar();
+      return;
+    }
+    if (role === 'yes') {
+      state.char.features = state.char.features.filter(function (x) { return x.key !== f.key; });
+      deleting = null;
+      buildFeatureCards();
       commitChar();
     }
   });
@@ -2848,12 +2946,13 @@ input[type=range]::-moz-range-thumb{
     if (f.recovery === 'sp') {
       if (state.spell.sp > 0) {
         state.spell.sp -= 1;
-        note('Bend luck: one sorcery point spent.');
+        spent('\u22121 sorcery point \u00b7 ' + state.spell.sp + ' left');
       } else {
         state.spell.sp = state.spell.spMax;
-        note('Bend luck: the sorcery point is back.');
+        spent('The sorcery point is back \u00b7 ' + state.spell.sp + ' left');
       }
       commitChar();
+      bumpSp();
       return;
     }
     var count = featureCount(f);
@@ -3034,6 +3133,7 @@ input[type=range]::-moz-range-thumb{
 
   el.wrench.addEventListener('click', function () {
     if (view === 'char') { editingChar = !editingChar; commitChar(); return; }
+    if (view === 'features') { editingFeatures = !editingFeatures; commitChar(); return; }
     editing = !editing;
     commit();
   });
