@@ -189,6 +189,7 @@ function formatRange(range) {
   if (!range) return '';
   const d = range.distance;
   if (d && d.type === 'self') return 'Self' + (d.amount ? ' (' + d.amount + ' feet)' : '');
+  if (d && d.type === 'touch') return 'Touch';
   const amt = d && d.amount ? d.amount + ' ' + (d.type === 'foot' ? 'feet' : d.type) : '';
   switch (range.type) {
     case 'point': return amt || 'Special';

@@ -2,6 +2,17 @@
 
 *Eldritch blast and scorching ray roller for one sorcerer, built to fit a phone screen.*
 
+## Picking this up
+
+```
+node build.mjs                                  # src to dist, inlines the font and the data
+node test\rules.test.mjs                        # the rules engine and the data
+node tools\fetch-5e-data.mjs                    # refetch the surge table and the spell book
+powershell -ExecutionPolicy Bypass -File tools\build-apk.ps1
+```
+
+The vault note `notes/eldritch-blast-handoff.md` has the working procedure, the data pipeline and the traps.
+
 ## What it rolls
 
 Default: attack d20+9, critical on a natural 20, which doubles every damage die. Damage is 1d10+5 force. One tap rolls the whole volley and every die lands on screen.
