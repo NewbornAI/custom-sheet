@@ -1796,8 +1796,18 @@ input[type=range]::-moz-range-thumb{
   var CLASS_SHORT = {
     'Sorcerer': 'Sor', 'Warlock': 'War', 'Wizard': 'Wiz', 'Bard': 'Bar',
     'Cleric': 'Cle', 'Druid': 'Dru', 'Ranger': 'Ran', 'Paladin': 'Pal',
-    'Hexblade': 'Hex', 'Izzet engineer': 'Izz', 'elf': 'Elf'
+    'Hexblade': 'Hex', 'Izzet engineer': 'Izz', 'Elf': 'Elf', 'elf': 'Elf'
   };
+
+  /* The same class, written two ways on the sheet. */
+  var SOURCE_CANON = {
+    'izzet': 'Izzet engineer', 'high elf': 'Elf', 'elf': 'Elf', 'hex': 'Hexblade'
+  };
+
+  function canonSource(source) {
+    var name = String(source || '').trim();
+    return SOURCE_CANON[name.toLowerCase()] || name;
+  }
 
   function classShort(name) {
     return CLASS_SHORT[name] || String(name || '').slice(0, 3);
@@ -1940,7 +1950,11 @@ input[type=range]::-moz-range-thumb{
       Object.keys(SPELL_DEFAULTS).forEach(function (k) {
         if (saved[k] !== undefined && saved[k] !== null && typeof saved[k] === typeof SPELL_DEFAULTS[k]) s[k] = saved[k];
       });
-      if (saved.classes) { s.classes = {}; Object.keys(saved.classes).forEach(function (k) { s.classes[k] = !!saved.classes[k]; }); }
+      if (saved.classes) {
+        s.classes = {};
+        /* the class names were canonicalised, so an old key follows */
+        Object.keys(saved.classes).forEach(function (k) { s.classes[canonSource(k)] = !!saved.classes[k]; });
+      }
       if (saved.levelFilter !== undefined) s.levelFilter = !!saved.levelFilter;
       if (saved.max) { s.max = {}; Object.keys(SPELL_DEFAULTS.max).forEach(function (k) { s.max[k] = Number(saved.max[k]) || 0; }); }
       if (saved.left) { s.left = {}; Object.keys(SPELL_DEFAULTS.left).forEach(function (k) { s.left[k] = Number(saved.left[k]) || 0; }); }
@@ -2561,8 +2575,9 @@ input[type=range]::-moz-range-thumb{
 
   function sourceTag(source) {
     if (!source) return '';
-    var cls = sourceClass(source);
-    return '<span class="src' + (cls ? ' ' + cls : '') + '">' + esc(source) + '</span>';
+    var name = canonSource(source);
+    var cls = sourceClass(name);
+    return '<span class="src' + (cls ? ' ' + cls : '') + '">' + esc(name) + '</span>';
   }
 
   function renderSpellList() {

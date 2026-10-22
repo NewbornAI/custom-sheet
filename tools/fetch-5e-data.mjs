@@ -367,6 +367,15 @@ function spellRecord(spell, sourceTag) {
   };
 }
 
+/* The same class, written two ways on the sheet: the hexblade's second
+   level list is written "hex", the izzet engineer is written both ways, and
+   the elf is written "high elf" on some lines. */
+const SOURCE_ALIAS = { 'izzet': 'Izzet engineer', 'high elf': 'Elf', 'elf': 'Elf', 'hex': 'Hexblade' };
+function canonSource(source) {
+  const name = String(source || '').trim();
+  return SOURCE_ALIAS[name.toLowerCase()] || name;
+}
+
 const sheet = parseSheet(readFileSync(resolve(root, 'data', 'spell-sheet.csv'), 'utf8'));
 const seed = [];
 const book = new Map();
@@ -376,8 +385,8 @@ for (const row of sheet) {
   const candidates = index[key] || [];
   const pick = candidates.find((c) => c._src === row.hint) || candidates.find((c) => c._src === 'XPHB') || candidates[0];
   if (!pick) { console.log('not found: ' + row.name + ' (' + row.source + ')'); continue; }
-  seed.push({ name: pick.name, level: row.level, source: row.source });
-  if (!book.has(pick.name)) book.set(pick.name, spellRecord(pick, row.source));
+  seed.push({ name: pick.name, level: row.level, source: canonSource(row.source) });
+  if (!book.has(pick.name)) book.set(pick.name, spellRecord(pick, canonSource(row.source)));
 }
 
 /* every spell the classes can learn, and the classes of each one */
@@ -393,15 +402,6 @@ for (const spell of bySource.XPHB) {
   const rec = spellRecord(spell, classes[0]);
   rec.classes = classes;
   book.set(spell.name, rec);
-}
-
-/* The same class, written two ways on the sheet: the hexblade's second
-   level list is written "hex", and the izzet engineer is written both
-   ways. */
-const SOURCE_ALIAS = { 'izzet': 'Izzet engineer', 'high elf': 'elf', 'hex': 'Hexblade' };
-function canonSource(source) {
-  const name = String(source || '').trim();
-  return SOURCE_ALIAS[name.toLowerCase()] || name;
 }
 
 /* the source the sheet gave a spell joins the classes that can learn it */

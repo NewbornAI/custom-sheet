@@ -17,7 +17,7 @@
     {
       "name": "Blade Ward",
       "level": 0,
-      "source": "High elf"
+      "source": "Elf"
     },
     {
       "name": "Eldritch Blast",
@@ -57,17 +57,17 @@
     {
       "name": "Chaos Bolt",
       "level": 1,
-      "source": "Izzet"
+      "source": "Izzet engineer"
     },
     {
       "name": "Create or Destroy Water",
       "level": 1,
-      "source": "Izzet"
+      "source": "Izzet engineer"
     },
     {
       "name": "Unseen Servant",
       "level": 1,
-      "source": "Izzet"
+      "source": "Izzet engineer"
     },
     {
       "name": "Shield",
@@ -82,7 +82,7 @@
     {
       "name": "Detect Magic",
       "level": 1,
-      "source": "elf"
+      "source": "Elf"
     },
     {
       "name": "Hex",
@@ -122,27 +122,27 @@
     {
       "name": "Heat Metal",
       "level": 2,
-      "source": "Izzet"
+      "source": "Izzet engineer"
     },
     {
       "name": "Rope Trick",
       "level": 2,
-      "source": "Izzet"
+      "source": "Izzet engineer"
     },
     {
       "name": "Blur",
       "level": 2,
-      "source": "hex"
+      "source": "Hexblade"
     },
     {
       "name": "Branding Smite",
       "level": 2,
-      "source": "hex"
+      "source": "Hexblade"
     },
     {
       "name": "Misty Step",
       "level": 2,
-      "source": "elf"
+      "source": "Elf"
     },
     {
       "name": "Blindness/Deafness",
@@ -177,17 +177,17 @@
     {
       "name": "Call Lightning",
       "level": 3,
-      "source": "Izzet"
+      "source": "Izzet engineer"
     },
     {
       "name": "Elemental Weapon",
       "level": 3,
-      "source": "Izzet"
+      "source": "Izzet engineer"
     },
     {
       "name": "Glyph of Warding",
       "level": 3,
-      "source": "Izzet"
+      "source": "Izzet engineer"
     },
     {
       "name": "Fireball",
@@ -207,27 +207,27 @@
     {
       "name": "Conjure Minor Elementals",
       "level": 4,
-      "source": "Izzet"
+      "source": "Izzet engineer"
     },
     {
       "name": "Divination",
       "level": 4,
-      "source": "Izzet"
+      "source": "Izzet engineer"
     },
     {
       "name": "Otiluke's Resilient Sphere",
       "level": 4,
-      "source": "Izzet"
+      "source": "Izzet engineer"
     },
     {
       "name": "Animate Objects",
       "level": 5,
-      "source": "Izzet"
+      "source": "Izzet engineer"
     },
     {
       "name": "Conjure Elemental",
       "level": 5,
-      "source": "Izzet"
+      "source": "Izzet engineer"
     },
     {
       "name": "Hold Monster",
@@ -283,13 +283,13 @@
       "components": "VS",
       "ritual": false,
       "concentration": true,
-      "source": "High elf",
+      "source": "Elf",
       "classes": [
         "Sorcerer",
         "Warlock",
         "Wizard",
         "Bard",
-        "elf"
+        "Elf"
       ],
       "blocks": [
         {
@@ -1698,7 +1698,7 @@
       "components": "VS",
       "ritual": false,
       "concentration": false,
-      "source": "Izzet",
+      "source": "Izzet engineer",
       "classes": [
         "Izzet engineer"
       ],
@@ -1964,7 +1964,7 @@
       "components": "VSM",
       "ritual": false,
       "concentration": false,
-      "source": "Izzet",
+      "source": "Izzet engineer",
       "classes": [
         "Cleric",
         "Druid",
@@ -2064,7 +2064,7 @@
       "components": "VS",
       "ritual": false,
       "concentration": true,
-      "source": "elf",
+      "source": "Elf",
       "classes": [
         "Sorcerer",
         "Warlock",
@@ -2074,7 +2074,7 @@
         "Druid",
         "Ranger",
         "Paladin",
-        "elf"
+        "Elf"
       ],
       "blocks": [
         {
@@ -3448,7 +3448,7 @@
       "components": "VSM",
       "ritual": false,
       "concentration": false,
-      "source": "Izzet",
+      "source": "Izzet engineer",
       "classes": [
         "Warlock",
         "Wizard",
@@ -3917,7 +3917,7 @@
       "components": "V",
       "ritual": false,
       "concentration": true,
-      "source": "hex",
+      "source": "Hexblade",
       "classes": [
         "Sorcerer",
         "Wizard",
@@ -3941,7 +3941,7 @@
       "components": "V",
       "ritual": false,
       "concentration": true,
-      "source": "hex",
+      "source": "Hexblade",
       "classes": [
         "Hexblade"
       ],
@@ -4590,7 +4590,7 @@
       "components": "VSM",
       "ritual": false,
       "concentration": true,
-      "source": "Izzet",
+      "source": "Izzet engineer",
       "classes": [
         "Bard",
         "Druid",
@@ -5005,12 +5005,12 @@
       "components": "V",
       "ritual": false,
       "concentration": false,
-      "source": "elf",
+      "source": "Elf",
       "classes": [
         "Sorcerer",
         "Warlock",
         "Wizard",
-        "elf"
+        "Elf"
       ],
       "blocks": [
         {
@@ -5244,7 +5244,7 @@
       "components": "VSM",
       "ritual": false,
       "concentration": false,
-      "source": "Izzet",
+      "source": "Izzet engineer",
       "classes": [
         "Wizard",
         "Izzet engineer"
@@ -5852,7 +5852,7 @@
       "components": "VS",
       "ritual": false,
       "concentration": true,
-      "source": "Izzet",
+      "source": "Izzet engineer",
       "classes": [
         "Druid",
         "Izzet engineer"
@@ -6167,7 +6167,7 @@
       "components": "VS",
       "ritual": false,
       "concentration": true,
-      "source": "Izzet",
+      "source": "Izzet engineer",
       "classes": [
         "Druid",
         "Ranger",
@@ -6370,7 +6370,7 @@
       "components": "VSM",
       "ritual": false,
       "concentration": false,
-      "source": "Izzet",
+      "source": "Izzet engineer",
       "classes": [
         "Wizard",
         "Bard",
@@ -7659,7 +7659,7 @@
       "components": "VS",
       "ritual": false,
       "concentration": true,
-      "source": "Izzet",
+      "source": "Izzet engineer",
       "classes": [
         "Wizard",
         "Druid",
@@ -7850,7 +7850,7 @@
       "components": "VSM",
       "ritual": false,
       "concentration": false,
-      "source": "Izzet",
+      "source": "Izzet engineer",
       "classes": [
         "Wizard",
         "Cleric",
@@ -8415,7 +8415,7 @@
       "components": "VSM",
       "ritual": false,
       "concentration": true,
-      "source": "Izzet",
+      "source": "Izzet engineer",
       "classes": [
         "Wizard",
         "Izzet engineer"
@@ -8779,7 +8779,7 @@
       "components": "VS",
       "ritual": false,
       "concentration": true,
-      "source": "Izzet",
+      "source": "Izzet engineer",
       "classes": [
         "Sorcerer",
         "Wizard",
@@ -9111,7 +9111,7 @@
       "components": "VS",
       "ritual": false,
       "concentration": true,
-      "source": "Izzet",
+      "source": "Izzet engineer",
       "classes": [
         "Wizard",
         "Druid",
