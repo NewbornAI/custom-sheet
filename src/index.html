@@ -463,6 +463,8 @@ input[type=range]::-moz-range-thumb{
 .sheet-list .row{display:flex;flex-direction:column;align-items:stretch;gap:4px;border:1px solid var(--edge);border-radius:5px;padding:6px 8px;background:rgba(255,255,255,.02)}
 .sheet-list .row .g1{display:flex;align-items:center;gap:8px;min-width:0}
 .sheet-list .row .gn{flex:1 1 auto;min-width:0;font-size:12.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sheet-list .row .gn.tappable{cursor:pointer}
+.sheet-list .row .gn.tappable:active{color:var(--arcane)}
 .sheet-list .row .gadd{width:24px;height:24px;border-radius:6px;border:1px solid var(--edge);background:rgba(255,255,255,.03);color:var(--arcane);font-size:15px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0}
 .sheet-list .row .g2{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
 .sheet-list .row .gcls{border:1px solid var(--edge);border-radius:3px;background:none;color:#6f6a8d;font-family:var(--sans);font-size:8.5px;letter-spacing:.06em;line-height:1;padding:3px 4px;cursor:pointer}
@@ -489,6 +491,22 @@ input[type=range]::-moz-range-thumb{
   font-size:20px;line-height:1;
   cursor:pointer;
 }
+.gsbar{display:flex;align-items:center;gap:6px}
+.gsbar .sheet-search{flex:1 1 auto;min-width:0}
+.gtog{
+  flex:0 0 auto;
+  border:1px solid var(--edge);
+  border-radius:7px;
+  background:rgba(255,255,255,.03);
+  color:var(--muted);
+  font-family:var(--sans);
+  font-size:10.5px;
+  letter-spacing:.02em;
+  padding:7px 9px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.gtog[aria-pressed="false"]{border-color:rgba(122,216,111,.45);background:rgba(122,216,111,.10);color:#8fe084}
 .sheet-search{
   border:1px solid var(--edge);
   border-radius:7px;
@@ -642,8 +660,13 @@ input[type=range]::-moz-range-thumb{
 .frow .fof{flex:0 0 auto;color:#5c5778;font-size:11px}
 .frow .fmax{flex:0 0 auto;width:2.1em;border:0;background:none;color:var(--muted);font-family:var(--display);font-size:12px;text-align:right;outline:none;padding:0}
 .frow .fdel{flex:0 0 auto;width:20px;height:20px;border:0;background:none;color:#6f6a8d;font-size:15px;line-height:1;cursor:pointer;padding:0;display:none}
+.frow .feye{flex:0 0 auto;width:20px;height:20px;border:0;background:none;color:#6f6a8d;cursor:pointer;padding:0;display:none;align-items:center;justify-content:center}
+.frow .feye svg{width:14px;height:14px;display:block}
+.frow.hidden{display:none}
 .charbody.editing .frow{border-color:var(--edge)}
-.charbody.editing .frow .fdel{display:flex}
+.charbody.editing .frow .fdel,.charbody.editing .frow .feye{display:flex}
+.charbody.editing .frow.hidden{display:flex}
+.charbody.editing .frow.hidden .fname,.charbody.editing .frow.hidden .ftag,.charbody.editing .frow.hidden .fuse,.charbody.editing .frow.hidden .fof,.charbody.editing .frow.hidden .fmax{opacity:.4}
 
 .charfoot{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;padding-top:2px}
 .charfoot .note{margin:0;min-height:13px}
@@ -1033,11 +1056,11 @@ input[type=range]::-moz-range-thumb{
       <div class="abgrid" id="charAbilities"></div>
       <div class="derived" id="charDerived"></div>
 
-      <div class="cshead"><span>Skills</span><span class="rule"></span></div>
-      <div class="sgrid" id="charSkills"></div>
-
       <div class="cshead"><span>Features</span><span class="rule"></span><button class="mini" id="addFeature" type="button" aria-label="Add a feature">+</button></div>
       <div class="flist" id="charFeatures"></div>
+
+      <div class="cshead"><span>Skills</span><span class="rule"></span></div>
+      <div class="sgrid" id="charSkills"></div>
 
     </div>
 
@@ -1068,7 +1091,10 @@ input[type=range]::-moz-range-thumb{
     <button class="sheet-x" id="sheetClose" type="button" aria-label="Close">&times;</button>
     <h2 id="sheetTitle"></h2>
     <div class="sheet-meta" id="sheetMeta"></div>
-    <input class="sheet-search" id="sheetSearch" type="search" placeholder="Search the grimoire" hidden>
+    <div class="gsbar">
+      <button class="gtog" id="grimoireLevel" type="button" aria-pressed="true" hidden>Level 1</button>
+      <input class="sheet-search" id="sheetSearch" type="search" placeholder="Search the grimoire" hidden>
+    </div>
     <div class="sheet-text" id="sheetText"></div>
     <div class="sheet-list" id="sheetList" hidden></div>
     <div class="sheet-actions" id="sheetActions"></div>
@@ -1541,7 +1567,8 @@ input[type=range]::-moz-range-thumb{
     warlockLeft: 2,
     selected: 1,
     lists: {},
-    classes: {}
+    classes: {},
+    levelFilter: true
   };
 
   /* The character on the sheet. What can be derived is derived: charisma 20
@@ -1554,7 +1581,7 @@ input[type=range]::-moz-range-thumb{
     saves: { str: 0, dex: 0, con: 1, int: 0, wis: 0, cha: 1 },
     skills: {},
     features: [
-      { key: 'warlockSlots', name: 'Warlock spell slots', recovery: 'short', bind: 'warlock', max: 0, left: 0, short: null },
+      { key: 'warlockSlots', name: 'Warlock spell slots', recovery: 'short', bind: 'warlock', max: 0, left: 0, short: null, hidden: true },
       { key: 'hexCurse', name: 'Hexblade curse', recovery: 'short', bind: null, max: 1, left: 1, short: 1 }
     ],
     init: 0,
@@ -1642,6 +1669,7 @@ input[type=range]::-moz-range-thumb{
     sheetList: document.getElementById('sheetList'),
     sheetActions: document.getElementById('sheetActions'),
     sheetSearch: document.getElementById('sheetSearch'),
+    grimoireLevel: document.getElementById('grimoireLevel'),
     sheetClose: document.getElementById('sheetClose'),
     tabChar: document.getElementById('tab-char'),
     viewChar: document.getElementById('view-char'),
@@ -1698,6 +1726,7 @@ input[type=range]::-moz-range-thumb{
         if (saved[k] !== undefined && saved[k] !== null && typeof saved[k] === typeof SPELL_DEFAULTS[k]) s[k] = saved[k];
       });
       if (saved.classes) { s.classes = {}; Object.keys(saved.classes).forEach(function (k) { s.classes[k] = !!saved.classes[k]; }); }
+      if (saved.levelFilter !== undefined) s.levelFilter = !!saved.levelFilter;
       if (saved.max) { s.max = {}; Object.keys(SPELL_DEFAULTS.max).forEach(function (k) { s.max[k] = Number(saved.max[k]) || 0; }); }
       if (saved.left) { s.left = {}; Object.keys(SPELL_DEFAULTS.left).forEach(function (k) { s.left[k] = Number(saved.left[k]) || 0; }); }
     }
@@ -1742,7 +1771,8 @@ input[type=range]::-moz-range-thumb{
           bind: f.bind || null,
           max: f.max || 0,
           left: f.left || 0,
-          short: (f.short === undefined || f.short === null) ? null : f.short
+          short: (f.short === undefined || f.short === null) ? null : f.short,
+          hidden: !!f.hidden
         };
       }),
       init: CHAR_DEFAULTS.init,
@@ -1782,7 +1812,8 @@ input[type=range]::-moz-range-thumb{
             bind: f.bind === 'warlock' ? 'warlock' : null,
             max: Math.max(0, Number(f.max) || 0),
             left: Math.max(0, Number(f.left) || 0),
-            short: (f.short === undefined || f.short === null) ? null : Math.max(0, Number(f.short) || 0)
+            short: (f.short === undefined || f.short === null) ? null : Math.max(0, Number(f.short) || 0),
+            hidden: !!f.hidden
           };
         });
       }
@@ -2290,7 +2321,31 @@ input[type=range]::-moz-range-thumb{
     renderSpellList();
   }
 
-  function closeSheet() { el.sheet.hidden = true; }
+  /* What the overlay is showing, so the grimoire can come back as it was
+     after a spell was read from it. */
+  var sheetMode = '';
+  var sheetParent = '';
+
+  function closeSheet() {
+    /* A spell read from the grimoire gives the grimoire back, it does not
+       close the overlay. */
+    if (sheetParent === 'grimoire') {
+      sheetParent = '';
+      sheetMode = 'grimoire';
+      el.sheetText.textContent = '';
+      el.grimoireLevel.hidden = false;
+      el.sheetSearch.hidden = false;
+      el.sheetList.hidden = false;
+      el.sheetActions.innerHTML = '';
+      grimoireChrome(state.spell.selected);
+      renderGrimoire(state.spell.selected);
+      return;
+    }
+    el.sheet.hidden = true;
+    if (sheetMode === 'grimoire') renderGrimoire(state.spell.selected);
+    sheetMode = '';
+    sheetParent = '';
+  }
 
   function renderBlocks(blocks) {
     var html = '';
@@ -2316,9 +2371,12 @@ input[type=range]::-moz-range-thumb{
   function openSheet(name) {
     var spell = SPELL_BY_NAME[name];
     if (!spell) return;
+    if (sheetMode === 'grimoire') sheetParent = 'grimoire';
+    sheetMode = 'spell';
     el.sheetTitle.textContent = spell.name;
     el.sheetMeta.innerHTML = field('Level', spell.level) + spellFields(spell, true) + sourceTag(spell.source);
     el.sheetText.innerHTML = renderBlocks(spell.blocks);
+    el.grimoireLevel.hidden = true;
     el.sheetSearch.hidden = true;
     el.sheetList.innerHTML = '';
     el.sheetList.hidden = true;
@@ -2333,14 +2391,28 @@ input[type=range]::-moz-range-thumb{
     });
   }
 
+  /* The level a spell sits in, or -1 when it is not in the list. */
+  function listLevelOf(name) {
+    for (var i = 0; i < LEVELS.length; i++) {
+      var list = state.spell.lists[LEVELS[i]] || [];
+      if (list.indexOf(name) >= 0) return LEVELS[i];
+    }
+    return -1;
+  }
+
   function renderGrimoire(lv) {
     var q = (el.sheetSearch.value || '').trim().toLowerCase();
-    var have = state.spell.lists[lv] || [];
     var on = state.spell.classes || {};
     var active = Object.keys(on).filter(function (c) { return on[c]; });
-    el.sheetTitle.textContent = 'Grimoire, level ' + lv + (active.length ? ' \u00b7 ' + active.join(', ') : '');
+    var byLevel = state.spell.levelFilter !== false;
 
-    var rows = (SPELLBOOK.spells || []).filter(function (s) { return s.level === lv; })
+    el.sheetTitle.textContent = 'Grimoire' + (byLevel ? ', level ' + lv : '') +
+      (active.length ? ' \u00b7 ' + active.join(', ') : '');
+    el.grimoireLevel.setAttribute('aria-pressed', byLevel ? 'true' : 'false');
+    el.grimoireLevel.textContent = byLevel ? 'Level ' + lv : 'All levels';
+
+    var rows = (SPELLBOOK.spells || [])
+      .filter(function (s) { return byLevel ? s.level === lv : true; })
       .filter(function (s) {
         if (!active.length) return true;
         return (s.classes || []).some(function (c) { return active.indexOf(c) >= 0; });
@@ -2351,29 +2423,40 @@ input[type=range]::-moz-range-thumb{
     if (!rows.length) {
       var none = document.createElement('div');
       none.className = 'empty';
-      none.textContent = active.length ? 'No spell of ' + active.join(', ') + ' at this level.' : 'Nothing matches.';
+      none.textContent = active.length
+        ? 'No spell of ' + active.join(', ') + (byLevel ? ' at this level' : '') + '.'
+        : 'Nothing matches.';
       el.sheetList.appendChild(none);
       return;
     }
     rows.forEach(function (s) {
       var row = document.createElement('div');
       row.className = 'row';
-      var added = have.indexOf(s.name) >= 0;
+      var at = listLevelOf(s.name);
+      var added = at >= 0;
 
       var head = document.createElement('div');
       head.className = 'g1';
       var name = document.createElement('span');
-      name.className = 'gn';
+      name.className = 'gn tappable';
       name.textContent = s.name;
+      name.setAttribute('aria-label', 'Read ' + s.name);
+      name.addEventListener('click', function () { openSheet(s.name); });
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'gadd';
       b.textContent = added ? '\u2713' : '+';
-      b.disabled = added;
-      b.setAttribute('aria-label', added ? 'Already in the list' : 'Add ' + s.name);
+      b.setAttribute('aria-label', added ? 'Unlearn ' + s.name : 'Add ' + s.name);
       b.addEventListener('click', function () {
-        var list = state.spell.lists[lv] || (state.spell.lists[lv] = []);
-        if (list.indexOf(s.name) < 0) list.push(s.name);
+        var level = listLevelOf(s.name);
+        if (level >= 0) {
+          var list = state.spell.lists[level] || [];
+          var ix = list.indexOf(s.name);
+          if (ix >= 0) list.splice(ix, 1);
+        } else {
+          var target = state.spell.lists[s.level] || (state.spell.lists[s.level] = []);
+          if (target.indexOf(s.name) < 0) target.push(s.name);
+        }
         renderGrimoire(lv);
         renderSpellList();
         save();
@@ -2402,7 +2485,7 @@ input[type=range]::-moz-range-thumb{
       });
       var side = document.createElement('span');
       side.className = 'gs';
-      side.textContent = added ? 'in the list' : s.time;
+      side.textContent = added ? 'in level ' + at : s.time;
       foot.appendChild(side);
 
       row.appendChild(head);
@@ -2411,13 +2494,16 @@ input[type=range]::-moz-range-thumb{
     });
   }
 
+  function grimoireChrome(lv) {
+    el.sheetMeta.innerHTML = '<span>Tap a spell to read it, a class to filter the list, + to learn it, a check to unlearn it</span>';
+  }
+
   function openGrimoire(lv) {
+    sheetMode = 'grimoire';
+    sheetParent = '';
     state.spell.selected = lv;
-    var on = state.spell.classes || {};
-    var active = Object.keys(on).filter(function (c) { return on[c]; });
-    el.sheetTitle.textContent = 'Grimoire, level ' + lv + (active.length ? ' · ' + active.join(', ') : '');
-    el.sheetMeta.innerHTML = '<span>Tap a class to filter the list, + to add a spell to level ' + lv + '</span>';
     el.sheetText.textContent = '';
+    el.grimoireLevel.hidden = false;
     el.sheetSearch.hidden = false;
     el.sheetSearch.value = '';
     el.sheetList.hidden = false;
@@ -2575,6 +2661,14 @@ input[type=range]::-moz-range-thumb{
     return { left: Number(f.left) || 0, max: Number(f.max) || 0 };
   }
 
+  function eyeSvg(hidden) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+      '<path d="M2 12s3.7-6.5 10-6.5S22 12 22 12s-3.7 6.5-10 6.5S2 12 2 12z"/>' +
+      '<circle cx="12" cy="12" r="2.6"/>' +
+      (hidden ? '<path d="M3.5 3.5l17 17"/>' : '') +
+      '</svg>';
+  }
+
   function buildFeatures() {
     el.charFeatures.innerHTML = '';
     state.char.features.forEach(function (f) {
@@ -2587,6 +2681,7 @@ input[type=range]::-moz-range-thumb{
         '<button class="fuse" type="button" data-role="use">0</button>' +
         '<span class="fof">/</span>' +
         '<input class="fmax" type="number" inputmode="numeric" min="0" max="9" data-role="max" aria-label="Maximum uses">' +
+        '<button class="feye" type="button" data-role="eye" aria-label="Hide the feature"></button>' +
         '<button class="fdel" type="button" data-role="del" aria-label="Remove the feature">&times;</button>';
       el.charFeatures.appendChild(row);
     });
@@ -2616,6 +2711,13 @@ input[type=range]::-moz-range-thumb{
         max.disabled = !!f.bind;
         max.title = f.bind ? 'The warlock slots are set in the spell tab' : 'How many uses in all';
       }
+
+      var eye = row.querySelector('[data-role="eye"]');
+      if (eye) {
+        eye.innerHTML = eyeSvg(f.hidden);
+        eye.setAttribute('aria-label', f.hidden ? 'Show the feature' : 'Hide the feature');
+      }
+      row.classList.toggle('hidden', !!f.hidden);
     });
   }
 
@@ -2640,7 +2742,10 @@ input[type=range]::-moz-range-thumb{
     if (!row) return;
     var f = featureByKey(row.dataset.key);
     if (!f) return;
-    var role = ev.target && ev.target.dataset ? ev.target.dataset.role : null;
+    /* The eye holds a drawing, so the role is found from the closest
+       element that carries one. */
+    var roleEl = ev.target.closest ? ev.target.closest('[data-role]') : null;
+    var role = roleEl ? roleEl.dataset.role : null;
 
     /* One tap spends a use, and at zero it gives one back. */
     if (role === 'use') {
@@ -2658,6 +2763,11 @@ input[type=range]::-moz-range-thumb{
 
     if (role === 'tag') {
       f.recovery = f.recovery === 'short' ? 'long' : (f.recovery === 'long' ? 'none' : 'short');
+      commitChar();
+      return;
+    }
+    if (role === 'eye') {
+      f.hidden = !f.hidden;
       commitChar();
       return;
     }
@@ -3014,6 +3124,12 @@ input[type=range]::-moz-range-thumb{
   el.sheetClose.addEventListener('click', closeSheet);
   el.sheet.addEventListener('click', function (ev) { if (ev.target === el.sheet) closeSheet(); });
   el.sheetSearch.addEventListener('input', function () { renderGrimoire(state.spell.selected); });
+
+  el.grimoireLevel.addEventListener('click', function () {
+    state.spell.levelFilter = state.spell.levelFilter === false;
+    save();
+    renderGrimoire(state.spell.selected);
+  });
 
   buildChar();
   buildFeatures();
