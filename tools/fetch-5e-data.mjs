@@ -561,13 +561,32 @@ for (const name of CLASS_NAMES) {
   const list = data.class || [];
   const cls = list.find((c) => c.source === 'XPHB') || list.find((c) => !c.reprintedAs) || list[0];
   if (!cls) { console.log('class not found: ' + name); continue; }
-  /* A subclass can be printed twice, once carrying the marker of its
-     reprint and once not, so the 2024 printing wins and the name decides
-     the rest. */
-  const subs = (data.subclass || [])
-    .filter((s) => s.className === name && !s.reprintedAs)
+  /* The newest printing of each archetype. A subclass that carries the
+     marker of a reprint is an old one, and so is any copy that shares its
+     short name, since 5e.tools keeps an unmarked alias of it beside the
+     marked one. When two remain under the same short name the 2024 printing
+     wins. */
+  const everySub = (data.subclass || []).filter((s) => s.className === name);
+  const deadShort = {}, liveSource = {};
+  everySub.forEach((s) => {
+    if (!s.reprintedAs) return;
+    const bits = String(s.reprintedAs[0] || '').split('|');
+    const oldShort = String(s.shortName || s.name).toLowerCase();
+    const newShort = String(bits[0] || '').toLowerCase();
+    /* a reprint under a new name kills the old name, a reprint under the
+       same name keeps only the printing it points at */
+    if (!newShort || newShort === oldShort) liveSource[oldShort] = bits[2] || 'XPHB';
+    else deadShort[oldShort] = true;
+  });
+  const subs = everySub
+    .filter((s) => {
+      const short = String(s.shortName || s.name).toLowerCase();
+      if (deadShort[short] || s.reprintedAs) return false;
+      if (liveSource[short]) return s.source === liveSource[short];
+      return true;
+    })
     .sort((a, b) => (b.source === 'XPHB' ? 1 : 0) - (a.source === 'XPHB' ? 1 : 0))
-    .filter((s, i, all) => all.findIndex((x) => x.name === s.name) === i)
+    .filter((s, i, list) => list.findIndex((x) => (x.shortName || x.name) === (s.shortName || s.name)) === i)
     .map((s) => ({ name: s.name, short: s.shortName || s.name, source: s.source }))
     .sort((a, b) => a.name.localeCompare(b.name));
   classes.push({
