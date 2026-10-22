@@ -418,6 +418,104 @@ writeFileSync(
   'utf8'
 );
 
+/* ---------- the features ---------- */
+
+/* The features the character tracks. The short text, the uses and the
+   recovery are Mandal's own table of 2026-10-22; the long text is pulled
+   from 5e.tools. */
+const FEATURE_SPECS = [
+  { key: 'innateSorcery', name: 'Innate sorcery', source: 'Sorcerer', active: true, uses: 2, recovery: 'long', action: 'B', duration: '1 min', desc: 'DC +1, advantage attack w/ spells sorcerer', from: { file: 'class-sorcerer', list: 'classFeature', name: 'Innate Sorcery', source: 'XPHB' } },
+  { key: 'metamagic', name: 'Metamagic', source: 'Sorcerer', active: true, uses: 8, recovery: 'long', action: '', duration: '', desc: 'Heighten + quicken', from: { file: 'class-sorcerer', list: 'classFeature', name: 'Metamagic', source: 'XPHB' } },
+  { key: 'tidesOfChaos', name: 'Tides of chaos', source: 'Wild Magic', active: true, uses: 1, recovery: 'long', action: '', duration: '', desc: 'Advantage, on spell slot: roll surge to refund', from: { file: 'class-sorcerer', list: 'subclassFeature', name: 'Tides of Chaos', source: 'XPHB' } },
+  { key: 'sorcerousRest', name: 'Sorcerous rest', source: 'Sorcerer', active: true, uses: 1, recovery: 'long', action: '', duration: '', desc: 'Regain 1/2 sorc level SP', from: { file: 'class-sorcerer', list: 'classFeature', name: 'Sorcerous Restoration', source: 'XPHB' } },
+  { key: 'bendLuck', name: 'Bend luck', source: 'Wild Magic', active: true, uses: 0, recovery: 'sp', action: 'R', duration: '', desc: 'Creature I can see rolls D20: +/-1d4', from: { file: 'class-sorcerer', list: 'subclassFeature', name: 'Bend Luck', source: 'XPHB' } },
+  { key: 'magicalCunning', name: 'Magical Cunning', source: 'Warlock', active: true, uses: 1, recovery: 'long', action: '', duration: '1 min', desc: 'Regain 1 spell slot', from: { file: 'class-warlock', list: 'classFeature', name: 'Magical Cunning', source: 'XPHB' } },
+  { key: 'hexCurse', name: 'Hexblade curse', source: 'Hexblade', active: true, uses: 1, recovery: 'short', action: 'B', duration: '1 min', desc: '+PRO damage, crit 19+, regain CHA+lvl hp', from: { file: 'class-warlock', list: 'subclassFeature', name: "Hexblade's Curse", source: 'XGE' } },
+  { key: 'elvenLineageI', name: 'Elven Lineage I', source: 'High Elf', active: true, uses: 1, recovery: 'long', action: '', duration: '', desc: 'Detect Magic for free', from: { file: 'races', name: 'Elf', source: 'XPHB', entry: 'Elven Lineage' } },
+  { key: 'elvenLineageII', name: 'Elven Lineage II', source: 'High Elf', active: true, uses: 1, recovery: 'long', action: '', duration: '', desc: 'Misty Step for free', from: { file: 'races', name: 'Elf', source: 'XPHB', entry: 'Elven Lineage' } },
+
+  { key: 'sorceryIncarnate', name: 'Sorc incarnate', source: 'Sorcerer', active: false, desc: 'Spend 2 SP: regain innate sorcery', from: { file: 'class-sorcerer', list: 'classFeature', name: 'Sorcery Incarnate', source: 'XPHB' } },
+  { key: 'devilsSight', name: "Devil's sight", source: 'Warlock', active: false, desc: 'Darkvision 120 ft, see darkness', from: { file: 'optionalfeatures', name: "Devil's Sight", source: 'PHB' } },
+  { key: 'repellingBlast', name: 'Repelling blast', source: 'Warlock', active: false, desc: 'Hit: push 10 feet straight away from you', from: { file: 'optionalfeatures', name: 'Repelling Blast', source: 'PHB' } },
+  { key: 'agonisingBlast', name: 'Agonising blast', source: 'Warlock', active: false, desc: '+CHA damage', from: { file: 'optionalfeatures', name: 'Agonizing Blast', source: 'PHB' } },
+  { key: 'wildSurge', name: 'Wild surge', source: 'Wild Magic', active: false, desc: 'Every spell slot: roll d20, 20 = roll surge', from: { file: 'class-sorcerer', list: 'subclassFeature', name: 'Wild Magic Surge', source: 'XPHB' } },
+  { key: 'hexWarrior', name: 'Hex Warrior', source: 'Hexblade', active: false, desc: 'Linked weapon attacks with CHA', from: { file: 'class-warlock', list: 'subclassFeature', name: 'Hex Warrior', source: 'XGE' } },
+  { key: 'trance', name: 'Trance', source: 'Elf', active: false, desc: 'Sleep 4h, conscious', from: { file: 'races', name: 'Elf', source: 'XPHB', entry: 'Trance' } },
+  { key: 'feyAncestry', name: 'Fey Ancestry', source: 'Elf', active: false, desc: 'Advantage vs Charm', from: { file: 'races', name: 'Elf', source: 'XPHB', entry: 'Fey Ancestry' } },
+  { key: 'elvenAccuracy', name: 'Elven Accuracy', source: 'Feat', active: false, desc: 'Attacks roll 3d20 on advantage', from: { file: 'feats', name: 'Elven Accuracy' } }
+];
+
+function classFile(name) {
+  return JSON.parse(readFileSync(download(BASE + 'class/class-' + name + '.json', 'class-' + name + '.json'), 'utf8'));
+}
+
+function featureEntries(spec) {
+  if (spec.file === 'class-sorcerer' || spec.file === 'class-warlock') {
+    const data = spec.file === 'class-sorcerer' ? classData : classFile('warlock');
+    const list = data[spec.list] || [];
+    const hit = list.find((f) => f.name === spec.name && f.source === spec.source);
+    return hit ? hit.entries : null;
+  }
+  if (spec.file === 'races') {
+    const races = JSON.parse(readFileSync(download(BASE + 'races.json', 'races.json'), 'utf8'));
+    const race = (races.race || []).find((r) => r.name === spec.name && r.source === spec.source);
+    if (!race) return null;
+    if (!spec.entry) return race.entries;
+    let found = null;
+    const walk = (n) => {
+      if (found) return;
+      if (Array.isArray(n)) { n.forEach(walk); return; }
+      if (n && typeof n === 'object') {
+        if (n.name === spec.entry && n.type === 'entries') { found = n.entries; return; }
+        for (const k of Object.keys(n)) walk(n[k]);
+      }
+    };
+    walk(race.entries);
+    return found;
+  }
+  if (spec.file === 'feats') {
+    const feats = JSON.parse(readFileSync(download(BASE + 'feats.json', 'feats.json'), 'utf8'));
+    const hit = (feats.feat || []).find((f) => f.name === spec.name);
+    return hit ? hit.entries : null;
+  }
+  if (spec.file === 'optionalfeatures') {
+    const opt = JSON.parse(readFileSync(download(BASE + 'optionalfeatures.json', 'optionalfeatures.json'), 'utf8'));
+    const hit = (opt.optionalfeature || []).find((f) => f.name === spec.name && f.source === spec.source);
+    return hit ? hit.entries : null;
+  }
+  return null;
+}
+
+const featureList = [];
+for (const spec of FEATURE_SPECS) {
+  const entries = featureEntries(spec.from);
+  if (!entries) { console.log('feature not found: ' + spec.name); continue; }
+  featureList.push({
+    key: spec.key,
+    name: spec.name,
+    source: spec.source,
+    active: !!spec.active,
+    uses: spec.uses || 0,
+    recovery: spec.recovery || 'none',
+    action: spec.action || '',
+    duration: spec.duration || '',
+    desc: spec.desc || '',
+    blocks: blocksFrom(entries)
+  });
+}
+
+writeFileSync(
+  resolve(root, 'data', 'features.json'),
+  JSON.stringify({
+    edition: "The character's own table of 2026-10-22, with the long text from 5e.tools",
+    source: 'https://5e.tools',
+    fetched: new Date().toISOString().slice(0, 10),
+    features: featureList
+  }, null, 2) + '\n',
+  'utf8'
+);
+console.log('wrote ' + featureList.length + ' features');
+
 const byLevel = {};
 for (const s of seed) (byLevel[s.level] = byLevel[s.level] || []).push(s.name + ' (' + s.source + ')');
 for (const lv of Object.keys(byLevel).sort((a, b) => a - b)) console.log('level ' + lv + ': ' + byLevel[lv].join(', '));

@@ -442,6 +442,8 @@ input[type=range]::-moz-range-thumb{
 }
 .sheet h2{font-family:var(--display);font-size:20px;font-weight:700;margin:0;padding-right:34px}
 .sheet-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:12px;row-gap:4px;margin-top:2px}
+.sheet-meta.one{grid-template-columns:minmax(0,1fr)}
+.sheet-meta.one span{font-size:9.5px;font-style:italic;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sheet-meta .f{font-size:10.5px;grid-template-columns:4.2em minmax(0,1fr)}
 .sheet-meta .f.wide{grid-column:1 / -1}
 .sheet-meta .src{color:var(--muted);border:1px solid var(--edge);border-radius:3px;padding:0 4px;white-space:nowrap;justify-self:start}
@@ -670,6 +672,26 @@ input[type=range]::-moz-range-thumb{
 
 .charfoot{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;padding-top:2px}
 .charfoot .note{margin:0;min-height:13px}
+.fcards{display:flex;flex-direction:column;gap:6px;flex:0 0 auto}
+.fcard{border:1px solid var(--edge);border-radius:5px;background:rgba(255,255,255,.03);padding:7px 8px}
+.fcard .top{display:flex;align-items:center;gap:8px}
+.fcard .t{flex:1 1 auto;min-width:0;font-size:12.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.fcard .t:active{color:var(--arcane)}
+.fcard .fm{display:flex;align-items:flex-start;gap:6px;margin-top:3px;font-size:10px;color:var(--muted);line-height:1.45}
+.fcard .fm .fdesc{flex:1 1 auto;min-width:0}
+.fcard .src{flex:0 0 auto;font-size:9.5px;color:var(--muted);border:1px solid var(--edge);border-radius:3px;padding:0 4px;white-space:nowrap}
+.fcard .src.sorc{color:#ff8fb0;border-color:rgba(255,111,168,.45);background:rgba(255,111,168,.10)}
+.fcard .src.warlock{color:#9dbcff;border-color:rgba(110,155,255,.45);background:rgba(110,155,255,.10)}
+.fcard .src.izzet{color:#e6ebff;border-color:rgba(140,160,255,.5);background:linear-gradient(90deg,rgba(110,155,255,.26) 0 50%,rgba(255,111,168,.26) 50% 100%)}
+.fcard .src.elf{color:#8fe084;border-color:rgba(122,216,111,.45);background:rgba(122,216,111,.10)}
+.fcard .feye{flex:0 0 auto;width:18px;height:18px;border:0;background:none;color:#6f6a8d;cursor:pointer;padding:0;display:none;align-items:center;justify-content:center}
+.fcard .feye svg{width:12px;height:12px;display:block}
+.charbody.editing .fcard .feye{display:flex}
+.fcard .fuses{flex:0 0 auto;font-family:var(--display);font-size:12px;color:var(--arcane);border:1px solid var(--edge);border-radius:4px;background:none;padding:3px 6px;cursor:pointer;font-variant-numeric:tabular-nums}
+.fcard .fuses.sp{color:var(--gold);border-color:rgba(255,196,77,.35)}
+.fcard.hidden{display:none}
+.charbody.editing .fcard.hidden{display:block;opacity:.45}
+
 .charfoot .rests{display:flex;gap:6px}
 .rest{
   flex:1 1 0;
@@ -951,6 +973,7 @@ input[type=range]::-moz-range-thumb{
     <button class="tab" id="tab-surge" type="button" role="tab" aria-selected="false">Wild surge</button>
     <button class="tab" id="tab-spells" type="button" role="tab" aria-selected="false">Spells</button>
     <button class="tab" id="tab-char" type="button" role="tab" aria-selected="false">Character</button>
+    <button class="tab" id="tab-features" type="button" role="tab" aria-selected="false">Features</button>
   </nav>
 
   <div class="views">
@@ -1012,6 +1035,15 @@ input[type=range]::-moz-range-thumb{
     </div>
   </section>
 
+  <section class="view" id="view-features">
+    <div class="charbody" id="featureBody">
+      <div class="cshead"><span>Active</span><span class="rule"></span><button class="mini" id="addFeature" type="button" aria-label="Add a feature">+</button></div>
+      <div class="fcards" id="featureActive"></div>
+      <div class="cshead"><span>Passive</span><span class="rule"></span></div>
+      <div class="fcards" id="featurePassive"></div>
+    </div>
+  </section>
+
   <section class="view" id="view-char">
 
     <div class="charbody" id="charBody">
@@ -1055,9 +1087,6 @@ input[type=range]::-moz-range-thumb{
       <div class="cshead"><span>Abilities</span><span class="rule"></span></div>
       <div class="abgrid" id="charAbilities"></div>
       <div class="derived" id="charDerived"></div>
-
-      <div class="cshead"><span>Features</span><span class="rule"></span><button class="mini" id="addFeature" type="button" aria-label="Add a feature">+</button></div>
-      <div class="flist" id="charFeatures"></div>
 
       <div class="cshead"><span>Skills</span><span class="rule"></span></div>
       <div class="sgrid" id="charSkills"></div>
@@ -15108,6 +15137,559 @@ input[type=range]::-moz-range-thumb{
   ]
 }</script>
 
+<script id="feature-data" type="application/json">{
+  "edition": "The character's own table of 2026-10-22, with the long text from 5e.tools",
+  "source": "https://5e.tools",
+  "fetched": "2026-10-22",
+  "features": [
+    {
+      "key": "innateSorcery",
+      "name": "Innate sorcery",
+      "source": "Sorcerer",
+      "active": true,
+      "uses": 2,
+      "recovery": "long",
+      "action": "B",
+      "duration": "1 min",
+      "desc": "DC +1, advantage attack w/ spells sorcerer",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "An event in your past left an indelible mark on you, infusing you with simmering magic. As a Bonus Action, you can unleash that magic for 1 minute, during which you gain the following benefits:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "The spell save DC of your Sorcerer spells increases by 1.",
+            "You have Advantage on the attack rolls of Sorcerer spells you cast."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "You can use this feature twice, and you regain all expended uses of it when you finish a Long Rest."
+        }
+      ]
+    },
+    {
+      "key": "metamagic",
+      "name": "Metamagic",
+      "source": "Sorcerer",
+      "active": true,
+      "uses": 8,
+      "recovery": "long",
+      "action": "",
+      "duration": "",
+      "desc": "Heighten + quicken",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Because your magic flows from within, you can alter your spells to suit your needs; you gain two Metamagic options of your choice from \"\" later in this class's description. You use the chosen options to temporarily modify spells you cast. To use an option, you must spend the number of Sorcery Points that it costs."
+        },
+        {
+          "t": "p",
+          "text": "You can use only one Metamagic option on a spell when you cast it unless otherwise noted in one of those options."
+        },
+        {
+          "t": "p",
+          "text": "Whenever you gain a Sorcerer level, you can replace one of your Metamagic options with one you don't know. You gain two more options at Sorcerer level 10 and two more at Sorcerer level 17."
+        }
+      ]
+    },
+    {
+      "key": "tidesOfChaos",
+      "name": "Tides of chaos",
+      "source": "Wild Magic",
+      "active": true,
+      "uses": 1,
+      "recovery": "long",
+      "action": "",
+      "duration": "",
+      "desc": "Advantage, on spell slot: roll surge to refund",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You can manipulate chaos itself to give yourself Advantage on one D20 Test before you roll the d20. Once you do so, you must cast a Sorcerer spell with a spell slot or finish a Long Rest before you can use this feature again."
+        },
+        {
+          "t": "p",
+          "text": "If you do cast a Sorcerer spell with a spell slot before you finish a Long Rest, you automatically roll on the Wild Magic Surge table."
+        }
+      ]
+    },
+    {
+      "key": "sorcerousRest",
+      "name": "Sorcerous rest",
+      "source": "Sorcerer",
+      "active": true,
+      "uses": 1,
+      "recovery": "long",
+      "action": "",
+      "duration": "",
+      "desc": "Regain 1/2 sorc level SP",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "When you finish a Short Rest, you can regain expended Sorcery Points, but no more than a number equal to half your Sorcerer level (round down). Once you use this feature, you can't do so again until you finish a Long Rest."
+        }
+      ]
+    },
+    {
+      "key": "bendLuck",
+      "name": "Bend luck",
+      "source": "Wild Magic",
+      "active": true,
+      "uses": 0,
+      "recovery": "sp",
+      "action": "R",
+      "duration": "",
+      "desc": "Creature I can see rolls D20: +/-1d4",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You have the ability to twist fate using your wild magic. Immediately after another creature you can see rolls the d20 for a D20 Test, you can take a Reaction and spend 1 Sorcery Point to roll 1d4 and apply the number rolled as a bonus or penalty (your choice) to the d20 roll."
+        }
+      ]
+    },
+    {
+      "key": "magicalCunning",
+      "name": "Magical Cunning",
+      "source": "Warlock",
+      "active": true,
+      "uses": 1,
+      "recovery": "long",
+      "action": "",
+      "duration": "1 min",
+      "desc": "Regain 1 spell slot",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You can perform an esoteric rite for 1 minute. At the end of it, you regain expended Pact Magic spell slots but no more than a number equal to half your maximum (round up). Once you use this feature, you can't do so again until you finish a Long Rest."
+        }
+      ]
+    },
+    {
+      "key": "hexCurse",
+      "name": "Hexblade curse",
+      "source": "Hexblade",
+      "active": true,
+      "uses": 1,
+      "recovery": "short",
+      "action": "B",
+      "duration": "1 min",
+      "desc": "+PRO damage, crit 19+, regain CHA+lvl hp",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Starting at 1st level, you gain the ability to place a baleful curse on someone. As a bonus action, choose one creature you can see within 30 feet of you. The target is cursed for 1 minute. The curse ends early if the target dies, you die, or you are incapacitated. Until the curse ends, you gain the following benefits:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "You gain a bonus to damage rolls against the cursed target. The bonus equals your proficiency bonus.",
+            "Any attack roll you make against the cursed target is a critical hit on a roll of 19 or 20 on the d20.",
+            "If the cursed target dies, you regain hit points equal to your warlock level + your Charisma modifier (minimum of 1 hit point)."
+          ]
+        },
+        {
+          "t": "p",
+          "text": "You can't use this feature again until you finish a short or long rest."
+        }
+      ]
+    },
+    {
+      "key": "elvenLineageI",
+      "name": "Elven Lineage I",
+      "source": "High Elf",
+      "active": true,
+      "uses": 1,
+      "recovery": "long",
+      "action": "",
+      "duration": "",
+      "desc": "Detect Magic for free",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You are part of a lineage that grants you supernatural abilities. Choose a lineage from the Elven Lineages table. You gain the level 1 benefit of that lineage."
+        },
+        {
+          "t": "p",
+          "text": "When you reach character levels 3 and 5, you learn a higher-level spell, as shown on the table. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level."
+        },
+        {
+          "t": "p",
+          "text": "Intelligence, Wisdom, or Charisma is your spellcasting ability for the spells you cast with this trait (choose the ability when you select the lineage)."
+        },
+        {
+          "t": "table",
+          "caption": "Elven Lineages",
+          "head": [
+            "Lineage",
+            "Level 1",
+            "Level 3",
+            "Level 5"
+          ],
+          "rows": [
+            [
+              "Drow",
+              "The range of your Darkvision increases to 120 feet. You also know the Dancing Lights cantrip.",
+              "Faerie Fire",
+              "Darkness"
+            ],
+            [
+              "High Elf",
+              "You know the Prestidigitation cantrip. Whenever you finish a Long Rest, you can replace that cantrip with a different .",
+              "Detect Magic",
+              "Misty Step"
+            ],
+            [
+              "Wood Elf",
+              "Your Speed increases to 35 feet. You also know the Druidcraft cantrip.",
+              "Longstrider",
+              "Pass without Trace"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "key": "elvenLineageII",
+      "name": "Elven Lineage II",
+      "source": "High Elf",
+      "active": true,
+      "uses": 1,
+      "recovery": "long",
+      "action": "",
+      "duration": "",
+      "desc": "Misty Step for free",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You are part of a lineage that grants you supernatural abilities. Choose a lineage from the Elven Lineages table. You gain the level 1 benefit of that lineage."
+        },
+        {
+          "t": "p",
+          "text": "When you reach character levels 3 and 5, you learn a higher-level spell, as shown on the table. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level."
+        },
+        {
+          "t": "p",
+          "text": "Intelligence, Wisdom, or Charisma is your spellcasting ability for the spells you cast with this trait (choose the ability when you select the lineage)."
+        },
+        {
+          "t": "table",
+          "caption": "Elven Lineages",
+          "head": [
+            "Lineage",
+            "Level 1",
+            "Level 3",
+            "Level 5"
+          ],
+          "rows": [
+            [
+              "Drow",
+              "The range of your Darkvision increases to 120 feet. You also know the Dancing Lights cantrip.",
+              "Faerie Fire",
+              "Darkness"
+            ],
+            [
+              "High Elf",
+              "You know the Prestidigitation cantrip. Whenever you finish a Long Rest, you can replace that cantrip with a different .",
+              "Detect Magic",
+              "Misty Step"
+            ],
+            [
+              "Wood Elf",
+              "Your Speed increases to 35 feet. You also know the Druidcraft cantrip.",
+              "Longstrider",
+              "Pass without Trace"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "key": "sorceryIncarnate",
+      "name": "Sorc incarnate",
+      "source": "Sorcerer",
+      "active": false,
+      "uses": 0,
+      "recovery": "none",
+      "action": "",
+      "duration": "",
+      "desc": "Spend 2 SP: regain innate sorcery",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "If you have no uses of Innate Sorcery left, you can use it if you spend 2 Sorcery Points when you take the Bonus Action to activate it."
+        },
+        {
+          "t": "p",
+          "text": "In addition, while your Innate Sorcery feature is active, you can use up to two of your on each spell you cast."
+        }
+      ]
+    },
+    {
+      "key": "devilsSight",
+      "name": "Devil's sight",
+      "source": "Warlock",
+      "active": false,
+      "uses": 0,
+      "recovery": "none",
+      "action": "",
+      "duration": "",
+      "desc": "Darkvision 120 ft, see darkness",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You can see normally in darkness, both magical and nonmagical, to a distance of 120 feet."
+        }
+      ]
+    },
+    {
+      "key": "repellingBlast",
+      "name": "Repelling blast",
+      "source": "Warlock",
+      "active": false,
+      "uses": 0,
+      "recovery": "none",
+      "action": "",
+      "duration": "",
+      "desc": "Hit: push 10 feet straight away from you",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "When you hit a creature with eldritch blast, you can push the creature up to 10 feet away from you in a straight line."
+        }
+      ]
+    },
+    {
+      "key": "agonisingBlast",
+      "name": "Agonising blast",
+      "source": "Warlock",
+      "active": false,
+      "uses": 0,
+      "recovery": "none",
+      "action": "",
+      "duration": "",
+      "desc": "+CHA damage",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "When you cast eldritch blast, add your Charisma modifier to the damage it deals on a hit."
+        }
+      ]
+    },
+    {
+      "key": "wildSurge",
+      "name": "Wild surge",
+      "source": "Wild Magic",
+      "active": false,
+      "uses": 0,
+      "recovery": "none",
+      "action": "",
+      "duration": "",
+      "desc": "Every spell slot: roll d20, 20 = roll surge",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Your spellcasting can unleash surges of untamed magic. Once per turn, you can roll 1d20 immediately after you cast a Sorcerer spell with a spell slot. If you roll a 20, roll on the Wild Magic Surge table to create a magical effect."
+        },
+        {
+          "t": "p",
+          "text": "If the magical effect is a spell, it is too wild to be affected by your Metamagic."
+        },
+        {
+          "t": "table",
+          "caption": "Wild Magic Surge",
+          "head": [
+            "1d100",
+            "Effect"
+          ],
+          "rows": [
+            [
+              "01–04",
+              "Roll on this table at the start of each of your turns for the next minute, ignoring this result on subsequent rolls."
+            ],
+            [
+              "05–08",
+              "A creature that is Friendly toward you appears in a random unoccupied space within 60 feet of you. The creature is under the DM's control and disappears 1 minute later. Roll 1d4 to determine the creature: on a 1, a Modron Duodrone appears; on a 2, a Flumph appears; on a 3, a Modron Monodrone appears; on a 4, a Unicorn appears. See the Monster Manual for the creature's stat block."
+            ],
+            [
+              "09–12",
+              "For the next minute, you regain 5 Hit Points at the start of each of your turns."
+            ],
+            [
+              "13–16",
+              "Creatures have Disadvantage on saving throws against the next spell you cast in the next minute that involves a saving throw."
+            ],
+            [
+              "17–20",
+              "You are subjected to an effect that lasts for 1 minute unless its description says otherwise. Roll 1d8 to determine the effect: on a 1, you're surrounded by faint, ethereal music only you and creatures within 5 feet of you can hear; on a 2, your size increases by one size category; on a 3, you grow a long beard made of feathers that remains until you sneeze, at which point the feathers explode from your face and vanish; on a 4, you must shout when you speak; on a 5, illusory butterflies flutter in the air within 10 feet of you; on a 6, an eye appears on your forehead, granting you Advantage on Wisdom (Perception) checks; on a 7, pink bubbles float out of your mouth whenever you speak; on an 8, your skin turns a vibrant shade of blue for 24 hours or until the effect is ended by a Remove Curse spell."
+            ],
+            [
+              "21–24",
+              "For the next minute, all your spells with a casting time of an action have a casting time of a Bonus Action."
+            ],
+            [
+              "25–28",
+              "You are transported to the Astral Plane until the end of your next turn. You then return to the space you previously occupied or the nearest unoccupied space if that space is occupied."
+            ],
+            [
+              "29–32",
+              "The next time you cast a spell that deals damage within the next minute, don't roll the spell's damage dice for the damage. Instead use the highest number possible for each damage die."
+            ],
+            [
+              "33–36",
+              "You have Resistance to all damage for the next minute."
+            ],
+            [
+              "37–40",
+              "You turn into a potted plant until the start of your next turn. While you're a plant, you have the Incapacitated condition and have Vulnerability to all damage. If you drop to 0 Hit Points, your pot breaks, and your form reverts."
+            ],
+            [
+              "41–44",
+              "For the next minute, you can teleport up to 20 feet as a Bonus Action on each of your turns."
+            ],
+            [
+              "45–48",
+              "You and up to three creatures you choose within 30 feet of you have the Invisible condition for 1 minute. This invisibility ends on a creature immediately after it makes an attack roll, deals damage, or casts a spell."
+            ],
+            [
+              "49–52",
+              "A spectral shield hovers near you for the next minute, granting you a +2 bonus to AC and immunity to Magic Missile."
+            ],
+            [
+              "53–56",
+              "You can take one extra action on this turn."
+            ],
+            [
+              "57–60",
+              "You cast a random spell. If the spell normally requires Concentration, it doesn't require Concentration in this case; the spell lasts for its full duration. Roll 1d10 to determine the spell: on a 1, Confusion; on a 2, Fireball; on a 3, Fog Cloud; on a 4, Fly (cast on a random creature within 60 feet of you), on a 5, Grease; on a 6, Levitate (cast on yourself); on a 7, Magic Missile (cast as a level 5 spell); on an 8, Mirror Image; on a 9, Polymorph (cast on yourself), and if you fail the saving throw, you turn into a Goat (see appendix B); on a 10, See Invisibility."
+            ],
+            [
+              "61–64",
+              "For the next minute, any flammable, nonmagical object you touch that isn't being worn or carried by another creature bursts into flame, takes 1d4 Fire damage, and is burning."
+            ],
+            [
+              "65–68",
+              "If you die within the next hour, you immediately revive as if by the Reincarnate spell."
+            ],
+            [
+              "69–72",
+              "You have the Frightened condition until the end of your next turn. The DM determines the source of your fear."
+            ],
+            [
+              "73–76",
+              "You teleport up to 60 feet to an unoccupied space you can see."
+            ],
+            [
+              "77–80",
+              "A random creature within 60 feet of you has the Poisoned condition for 1d4 hours."
+            ],
+            [
+              "81–84",
+              "You radiate Bright Light in a 30-foot radius for the next minute. Any creature that ends its turn within 5 feet of you has the Blinded condition until the end of its next turn."
+            ],
+            [
+              "85–88",
+              "Up to three creatures of your choice that you can see within 30 feet of you take 1d10 Necrotic damage. You regain Hit Points equal to the sum of the Necrotic damage dealt."
+            ],
+            [
+              "89–92",
+              "Up to three creatures of your choice that you can see within 30 feet of you take 4d10 Lightning damage."
+            ],
+            [
+              "93–96",
+              "You and all creatures within 30 feet of you have Vulnerability to Piercing damage for the next minute."
+            ],
+            [
+              "97–00",
+              "Roll 1d6. On a 1, you regain 2d10 Hit Points; on a 2, one ally of your choice within 300 feet of you regains 2d10 Hit Points; on a 3, you regain your lowest-level expended spell slot; on a 4, one ally of your choice within 300 feet of you regains their lowest-level expended spell slot; on a 5, you regain all your expended Sorcery Points; on a 6, all the effects of row 17–20 affect you simultaneously."
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "key": "hexWarrior",
+      "name": "Hex Warrior",
+      "source": "Hexblade",
+      "active": false,
+      "uses": 0,
+      "recovery": "none",
+      "action": "",
+      "duration": "",
+      "desc": "Linked weapon attacks with CHA",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "At 1st level, you acquire the training necessary to effectively arm yourself for battle. You gain proficiency with medium armor, shields, and martial weapons."
+        },
+        {
+          "t": "p",
+          "text": "The influence of your patron also allows you to mystically channel your will through a particular weapon. Whenever you finish a long rest, you can touch one weapon that you are proficient with and that lacks the two-handed property. When you attack with that weapon, you can use your Charisma modifier, instead of Strength or Dexterity, for the attack and damage rolls. This benefit lasts until you finish a long rest. If you later gain the Pact of the Blade feature, this benefit extends to every pact weapon you conjure with that feature, no matter the weapon's type."
+        }
+      ]
+    },
+    {
+      "key": "trance",
+      "name": "Trance",
+      "source": "Elf",
+      "active": false,
+      "uses": 0,
+      "recovery": "none",
+      "action": "",
+      "duration": "",
+      "desc": "Sleep 4h, conscious",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You don't need to sleep, and magic can't put you to sleep. You can finish a Long Rest in 4 hours if you spend those hours in a trancelike meditation, during which you retain consciousness."
+        }
+      ]
+    },
+    {
+      "key": "feyAncestry",
+      "name": "Fey Ancestry",
+      "source": "Elf",
+      "active": false,
+      "uses": 0,
+      "recovery": "none",
+      "action": "",
+      "duration": "",
+      "desc": "Advantage vs Charm",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "You have Advantage on saving throws you make to avoid or end the Charmed condition."
+        }
+      ]
+    },
+    {
+      "key": "elvenAccuracy",
+      "name": "Elven Accuracy",
+      "source": "Feat",
+      "active": false,
+      "uses": 0,
+      "recovery": "none",
+      "action": "",
+      "duration": "",
+      "desc": "Attacks roll 3d20 on advantage",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "The accuracy of elves is legendary, especially that of elf archers and spellcasters. You have uncanny aim with attacks that rely on precision rather than brute force. You gain the following benefits:"
+        },
+        {
+          "t": "list",
+          "items": [
+            "Whenever you have advantage on an attack roll using Dexterity, Intelligence, Wisdom, or Charisma, you can reroll one of the dice once."
+          ]
+        }
+      ]
+    }
+  ]
+}</script>
+
 <script id="rules">
 /* Pure rules engine. No DOM, no globals beyond this one. */
 (function (root) {
@@ -15548,6 +16130,27 @@ input[type=range]::-moz-range-thumb{
   var SPELL_BY_NAME = {};
   (SPELLBOOK.spells || []).forEach(function (s) { SPELL_BY_NAME[s.name] = s; });
 
+  /* The features the character tracks, with their long text from 5e.tools.
+     The counters live in the state, the rest comes from the data. */
+  var FEATUREDATA = { features: [] };
+  try { FEATUREDATA = JSON.parse(document.getElementById('feature-data').textContent); } catch (e) {}
+  var FEATURE_BY_KEY = {};
+  (FEATUREDATA.features || []).forEach(function (f) { FEATURE_BY_KEY[f.key] = f; });
+
+  var FEATURE_SEED = (FEATUREDATA.features || []).map(function (f) {
+    return {
+      key: f.key,
+      name: f.name,
+      source: f.source,
+      active: !!f.active,
+      max: f.uses || 0,
+      left: f.uses || 0,
+      recovery: f.recovery || 'none',
+      short: null,
+      hidden: false
+    };
+  });
+
   /* the warlock slots sit on the second level row */
   var WARLOCK_LEVEL = R.WARLOCK_LEVEL;
   var LEVELS = R.LEVELS;
@@ -15583,10 +16186,9 @@ input[type=range]::-moz-range-thumb{
     abilities: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 20 },
     saves: { str: 0, dex: 0, con: 1, int: 0, wis: 0, cha: 1 },
     skills: {},
-    features: [
-      { key: 'warlockSlots', name: 'Warlock spell slots', recovery: 'short', bind: 'warlock', max: 0, left: 0, short: null, hidden: true },
-      { key: 'hexCurse', name: 'Hexblade curse', recovery: 'short', bind: null, max: 1, left: 1, short: 1 }
-    ],
+    features: FEATURE_SEED.concat([
+      { key: 'warlockSlots', name: 'Warlock spell slots', source: 'Warlock', active: true, recovery: 'short', bind: 'warlock', max: 0, left: 0, short: null, hidden: true }
+    ]),
     init: 0,
     ac: null,
     hp: { current: 0, max: 0 },
@@ -15610,6 +16212,7 @@ input[type=range]::-moz-range-thumb{
   /* The class a spell came from, as the app colours it. */
   var SOURCE_CLASS = {
     'sorcerer': 'sorc',
+    'wild magic': 'sorc',
     'warlock': 'warlock',
     'hexblade': 'warlock',
     'hex': 'warlock',
@@ -15690,8 +16293,12 @@ input[type=range]::-moz-range-thumb{
     charAbilities: document.getElementById('charAbilities'),
     charDerived: document.getElementById('charDerived'),
     charSkills: document.getElementById('charSkills'),
-    charFeatures: document.getElementById('charFeatures'),
     addFeature: document.getElementById('addFeature'),
+    tabFeatures: document.getElementById('tab-features'),
+    viewFeatures: document.getElementById('view-features'),
+    featureBody: document.getElementById('featureBody'),
+    featureActive: document.getElementById('featureActive'),
+    featurePassive: document.getElementById('featurePassive'),
     restShort: document.getElementById('restShort'),
     restLong: document.getElementById('restLong'),
     charNote: document.getElementById('charNote')
@@ -15770,6 +16377,8 @@ input[type=range]::-moz-range-thumb{
         return {
           key: f.key,
           name: f.name,
+          source: f.source || '',
+          active: !!f.active,
           recovery: f.recovery,
           bind: f.bind || null,
           max: f.max || 0,
@@ -15807,17 +16416,24 @@ input[type=range]::-moz-range-thumb{
         c.hp.max = Math.max(0, Number(saved.hp.max) || 0);
       }
       if (saved.features && saved.features.length) {
-        c.features = saved.features.map(function (f) {
-          return {
-            key: String(f.key || ''),
-            name: String(f.name || 'Feature'),
-            recovery: f.recovery === 'short' || f.recovery === 'long' ? f.recovery : 'none',
-            bind: f.bind === 'warlock' ? 'warlock' : null,
-            max: Math.max(0, Number(f.max) || 0),
-            left: Math.max(0, Number(f.left) || 0),
-            short: (f.short === undefined || f.short === null) ? null : Math.max(0, Number(f.short) || 0),
-            hidden: !!f.hidden
-          };
+        var savedByKey = {};
+        saved.features.forEach(function (f) { savedByKey[f.key] = f; });
+        c.features = c.features.map(function (f) {
+          var s = savedByKey[f.key];
+          if (!s) return f;
+          var copy = Object.assign({}, f);
+          if (s.name) copy.name = s.name;
+          if (s.max !== undefined) copy.max = Math.max(0, Number(s.max) || 0);
+          if (s.left !== undefined) copy.left = Math.max(0, Number(s.left) || 0);
+          if (s.recovery !== undefined) copy.recovery = s.recovery;
+          if (s.short !== undefined) copy.short = s.short;
+          if (s.hidden !== undefined) copy.hidden = !!s.hidden;
+          return copy;
+        });
+        /* the features that are not in the seed any more */
+        saved.features.forEach(function (f) {
+          var known = c.features.some(function (x) { return x.key === f.key; });
+          if (!known) c.features.push(f);
         });
       }
       if (saved.history && saved.history.length) {
@@ -15885,6 +16501,7 @@ input[type=range]::-moz-range-thumb{
   el.tabSurge.addEventListener('click', function () { setView('surge'); });
   el.tabSpells.addEventListener('click', function () { setView('spells'); });
   el.tabChar.addEventListener('click', function () { setView('char'); });
+  el.tabFeatures.addEventListener('click', function () { setView('features'); });
 
   el.cast.addEventListener('click', function () {
     if (view === 'surge') { castSurge(); return; }
@@ -15908,13 +16525,15 @@ input[type=range]::-moz-range-thumb{
     el.viewSurge.classList.toggle('on', next === 'surge');
     el.viewSpells.classList.toggle('on', next === 'spells');
     el.viewChar.classList.toggle('on', next === 'char');
+    el.viewFeatures.classList.toggle('on', next === 'features');
     el.tabVolley.setAttribute('aria-selected', next === 'volley' ? 'true' : 'false');
     el.tabSurge.setAttribute('aria-selected', next === 'surge' ? 'true' : 'false');
     el.tabSpells.setAttribute('aria-selected', next === 'spells' ? 'true' : 'false');
     el.tabChar.setAttribute('aria-selected', next === 'char' ? 'true' : 'false');
+    el.tabFeatures.setAttribute('aria-selected', next === 'features' ? 'true' : 'false');
     el.acField.style.visibility = next === 'volley' ? 'visible' : 'hidden';
-    el.wrench.hidden = next !== 'spells' && next !== 'char';
-    el.cast.hidden = next === 'spells' || next === 'char';
+    el.wrench.hidden = next !== 'spells' && next !== 'char' && next !== 'features';
+    el.cast.hidden = next === 'spells' || next === 'char' || next === 'features';
     el.castLabel.textContent = next === 'volley' ? 'Cast' : 'Surge';
     render();
   }
@@ -15945,7 +16564,8 @@ input[type=range]::-moz-range-thumb{
 
     el.spellName.textContent = view === 'volley' ? power.name
       : (view === 'surge' ? 'Wild magic surge'
-      : (view === 'spells' ? 'Spells' : (state.char.name || 'Character')));
+      : (view === 'spells' ? 'Spells'
+      : (view === 'features' ? 'Features' : (state.char.name || 'Character'))));
     el.power.value = String(R.POWERS.indexOf(power));
     var span = Number(el.power.max) - Number(el.power.min);
     el.power.style.setProperty('--fill', (span ? (Number(el.power.value) - Number(el.power.min)) / span * 100 : 0) + '%');
@@ -15967,13 +16587,15 @@ input[type=range]::-moz-range-thumb{
     }
 
     el.wrench.setAttribute('aria-pressed', (view === 'char' ? editingChar : editing) ? 'true' : 'false');
-    el.wrench.setAttribute('aria-label', view === 'char' ? 'Edit the proficiencies' : 'Edit the slot maximums');
+    el.wrench.setAttribute('aria-label', view === 'char' ? 'Edit the proficiencies'
+      : (view === 'features' ? 'Show the hidden features' : 'Edit the slot maximums'));
 
     renderSummary();
     renderBoard(false);
     renderTally();
     renderSpells();
     renderChar();
+    renderFeatureCards();
   }
 
   function renderBoard(animate) {
@@ -16371,12 +16993,38 @@ input[type=range]::-moz-range-thumb{
     return html;
   }
 
+  /* The full description of a feature, the one 5e.tools holds. */
+  function openFeature(key) {
+    var f = featureByKey(key);
+    if (!f) return;
+    var data = FEATURE_BY_KEY[key] || {};
+    sheetMode = 'feature';
+    sheetParent = '';
+    el.sheetTitle.textContent = f.name;
+    el.sheetMeta.className = '';
+    var meta = field('Source', f.source);
+    if (f.max || f.recovery === 'sp') meta += field('Uses', usesText(f));
+    if (data.action) meta += field('Action', data.action);
+    if (data.duration) meta += field('Duration', data.duration);
+    if (f.recovery === 'sp') meta += field('Cost', '1 sorcery point');
+    else if (f.recovery && f.recovery !== 'none') meta += field('Recovery', f.recovery + ' rest');
+    el.sheetMeta.innerHTML = meta + sourceTag(f.source);
+    el.sheetText.innerHTML = renderBlocks(data.blocks);
+    el.grimoireLevel.hidden = true;
+    el.sheetSearch.hidden = true;
+    el.sheetList.innerHTML = '';
+    el.sheetList.hidden = true;
+    el.sheetActions.innerHTML = '';
+    el.sheet.hidden = false;
+  }
+
   function openSheet(name) {
     var spell = SPELL_BY_NAME[name];
     if (!spell) return;
     if (sheetMode === 'grimoire') sheetParent = 'grimoire';
     sheetMode = 'spell';
     el.sheetTitle.textContent = spell.name;
+    el.sheetMeta.className = '';
     el.sheetMeta.innerHTML = field('Level', spell.level) + spellFields(spell, true) + sourceTag(spell.source);
     el.sheetText.innerHTML = renderBlocks(spell.blocks);
     el.grimoireLevel.hidden = true;
@@ -16498,7 +17146,8 @@ input[type=range]::-moz-range-thumb{
   }
 
   function grimoireChrome(lv) {
-    el.sheetMeta.innerHTML = '<span>Tap a spell to read it, a class to filter the list, + to learn it, a check to unlearn it</span>';
+    el.sheetMeta.className = 'one';
+    el.sheetMeta.innerHTML = '<span>Tap a spell to read it, a class to filter, + learns, a check unlearns</span>';
   }
 
   function openGrimoire(lv) {
@@ -16614,8 +17263,6 @@ input[type=range]::-moz-range-thumb{
       '<span>spell attack <b>' + SR.sign(SR.spellAttack(C)) + '</b></span>' +
       '<span>save DC <b>' + SR.spellDC(C) + '</b></span>' +
       '<span>passive perception <b>' + (10 + SR.skillMod(C, 'perception')) + '</b></span>';
-
-    renderFeatures();
   }
 
   function commitChar() { save(); render(); }
@@ -16672,126 +17319,119 @@ input[type=range]::-moz-range-thumb{
       '</svg>';
   }
 
-  function buildFeatures() {
-    el.charFeatures.innerHTML = '';
+  /* The uses of a feature: how many are left and when they come back. */
+  function usesText(f) {
+    if (f.recovery === 'sp') return '1 SP';
+    if (!f.max) return '';
+    return f.left + ' / ' + f.recovery;
+  }
+
+  function buildFeatureCards() {
+    el.featureActive.innerHTML = '';
+    el.featurePassive.innerHTML = '';
     state.char.features.forEach(function (f) {
-      var row = document.createElement('div');
-      row.className = 'frow';
-      row.dataset.key = f.key;
-      row.innerHTML =
-        '<input class="fname" type="text" data-role="name" aria-label="Feature name">' +
-        '<button class="ftag" type="button" data-role="tag" data-rec="none">none</button>' +
-        '<button class="fuse" type="button" data-role="use">0</button>' +
-        '<span class="fof">/</span>' +
-        '<input class="fmax" type="number" inputmode="numeric" min="0" max="9" data-role="max" aria-label="Maximum uses">' +
-        '<button class="feye" type="button" data-role="eye" aria-label="Hide the feature"></button>' +
-        '<button class="fdel" type="button" data-role="del" aria-label="Remove the feature">&times;</button>';
-      el.charFeatures.appendChild(row);
+      var card = document.createElement('div');
+      card.className = 'fcard';
+      card.dataset.key = f.key;
+      card.innerHTML =
+        '<div class="top"><span class="t" data-role="name"></span>' +
+        '<span class="fsrc"></span>' +
+        '<button class="fuses" type="button" data-role="uses"></button></div>' +
+        '<div class="fm"><span class="fdesc"></span>' +
+        '<button class="feye" type="button" data-role="eye" aria-label="Hide the feature"></button></div>';
+      (f.active ? el.featureActive : el.featurePassive).appendChild(card);
     });
   }
 
-  function renderFeatures() {
+  function renderFeatureCards() {
+    el.featureBody.classList.toggle('editing', editingChar);
     state.char.features.forEach(function (f) {
-      var row = el.charFeatures.querySelector('[data-key="' + f.key + '"]');
-      if (!row) return;
-      var count = featureCount(f);
+      var card = el.featureBody.querySelector('.fcard[data-key="' + f.key + '"]');
+      if (!card) return;
+      var data = FEATURE_BY_KEY[f.key] || {};
+      card.classList.toggle('hidden', !!f.hidden);
 
-      var name = row.querySelector('[data-role="name"]');
-      if (name && document.activeElement !== name) name.value = f.name;
+      var name = card.querySelector('[data-role="name"]');
+      name.textContent = f.name;
+      name.setAttribute('aria-label', 'Read ' + f.name);
 
-      var tag = row.querySelector('[data-role="tag"]');
-      tag.dataset.rec = f.recovery;
-      tag.textContent = f.recovery;
-      tag.title = 'Recovery: ' + (f.recovery === 'none' ? 'never' : f.recovery + ' rest');
+      card.querySelector('.fsrc').innerHTML = sourceTag(f.source);
 
-      var use = row.querySelector('[data-role="use"]');
-      use.textContent = String(count.left);
-      use.setAttribute('aria-label', f.name + ': ' + count.left + ' of ' + count.max + ' left');
+      var uses = card.querySelector('[data-role="uses"]');
+      var text = usesText(f);
+      uses.textContent = text;
+      uses.hidden = !text;
+      uses.classList.toggle('sp', f.recovery === 'sp');
+      uses.setAttribute('aria-label', f.name + ': ' + text);
 
-      var max = row.querySelector('[data-role="max"]');
-      if (max) {
-        if (document.activeElement !== max) max.value = String(count.max);
-        max.disabled = !!f.bind;
-        max.title = f.bind ? 'The warlock slots are set in the spell tab' : 'How many uses in all';
-      }
+      var bits = [];
+      if (data.desc) bits.push(data.desc);
+      if (data.action) bits.push(data.action);
+      if (data.duration) bits.push(data.duration);
+      card.querySelector('.fdesc').textContent = bits.join(' \u00b7 ');
 
-      var eye = row.querySelector('[data-role="eye"]');
-      if (eye) {
-        eye.innerHTML = eyeSvg(f.hidden);
-        eye.setAttribute('aria-label', f.hidden ? 'Show the feature' : 'Hide the feature');
-      }
-      row.classList.toggle('hidden', !!f.hidden);
+      var eye = card.querySelector('[data-role="eye"]');
+      eye.innerHTML = eyeSvg(f.hidden);
+      eye.setAttribute('aria-label', f.hidden ? 'Show the feature' : 'Hide the feature');
     });
   }
 
-  el.charFeatures.addEventListener('input', function (ev) {
-    var role = ev.target && ev.target.dataset ? ev.target.dataset.role : null;
-    if (!role) return;
-    var row = ev.target.closest('.frow');
-    if (!row) return;
-    var f = featureByKey(row.dataset.key);
-    if (!f) return;
-    if (role === 'name') f.name = ev.target.value;
-    else if (role === 'max') {
-      var m = Math.max(0, Math.min(9, Number(ev.target.value) || 0));
-      f.max = m;
-      if (f.left > m) f.left = m;
-    } else return;
-    commitChar();
-  });
-
-  el.charFeatures.addEventListener('click', function (ev) {
-    var row = ev.target.closest('.frow');
-    if (!row) return;
-    var f = featureByKey(row.dataset.key);
+  el.featureBody.addEventListener('click', function (ev) {
+    var card = ev.target.closest('.fcard');
+    if (!card) return;
+    var f = featureByKey(card.dataset.key);
     if (!f) return;
     /* The eye holds a drawing, so the role is found from the closest
        element that carries one. */
     var roleEl = ev.target.closest ? ev.target.closest('[data-role]') : null;
     var role = roleEl ? roleEl.dataset.role : null;
 
-    /* One tap spends a use, and at zero it gives one back. */
-    if (role === 'use') {
-      var count = featureCount(f);
-      var next = count.left > 0 ? count.left - 1 : (count.max > 0 ? 1 : count.left);
-      if (next === count.left) return;
-      pushSnapshot();
-      if (f.bind === 'warlock') state.spell.warlockLeft = next;
-      else f.left = next;
-      commitChar();
-      return;
-    }
+    if (role === 'uses') { spendFeature(f); return; }
+    if (role === 'name') { openFeature(f.key); return; }
 
     if (!editingChar) return;
-
-    if (role === 'tag') {
-      f.recovery = f.recovery === 'short' ? 'long' : (f.recovery === 'long' ? 'none' : 'short');
-      commitChar();
-      return;
-    }
     if (role === 'eye') {
       f.hidden = !f.hidden;
       commitChar();
-      return;
-    }
-    if (role === 'del') {
-      state.char.features = state.char.features.filter(function (x) { return x.key !== f.key; });
-      buildFeatures();
-      commitChar();
     }
   });
+
+  /* One tap spends a use, and at zero it gives one back. The bend luck
+     feature costs a sorcery point rather than a use. */
+  function spendFeature(f) {
+    if (f.recovery === 'sp') {
+      if (state.spell.sp > 0) {
+        state.spell.sp -= 1;
+        note('Bend luck: one sorcery point spent.');
+      } else {
+        state.spell.sp = state.spell.spMax;
+        note('Bend luck: the sorcery point is back.');
+      }
+      commitChar();
+      return;
+    }
+    var count = featureCount(f);
+    var next = count.left > 0 ? count.left - 1 : (count.max > 0 ? 1 : count.left);
+    if (next === count.left) return;
+    pushSnapshot();
+    if (f.bind === 'warlock') state.spell.warlockLeft = next;
+    else f.left = next;
+    commitChar();
+  }
 
   el.addFeature.addEventListener('click', function () {
     state.char.features.push({
       key: 'f' + Date.now(),
       name: 'New feature',
+      source: 'Feat',
+      active: true,
       recovery: 'short',
       bind: null,
       max: 1,
       left: 1,
-      short: 1
+      short: null
     });
-    buildFeatures();
+    buildFeatureCards();
     commitChar();
   });
 
@@ -17135,7 +17775,7 @@ input[type=range]::-moz-range-thumb{
   });
 
   buildChar();
-  buildFeatures();
+  buildFeatureCards();
   render();
 })();
 </script>

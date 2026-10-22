@@ -335,6 +335,29 @@ console.log('the rests');
   check('a rewind of one snapshot brings that one back', C.rewind([snap]).current.hp, 12);
 }
 
+console.log('the features');
+{
+  const data = JSON.parse(readFileSync(resolve(root, 'data', 'features.json'), 'utf8'));
+  check('the list of features', data.features.length, 18);
+  const active = data.features.filter((f) => f.active);
+  const passive = data.features.filter((f) => !f.active);
+  check('the active ones', active.length, 9);
+  check('the passive ones', passive.length, 9);
+  check('every feature says where it comes from', data.features.every((f) => !!f.source), true);
+  check('every feature has a summary', data.features.every((f) => !!f.desc), true);
+  check('every feature has the long text', data.features.every((f) => f.blocks && f.blocks.length > 0), true);
+  const innate = data.features.find((f) => f.key === 'innateSorcery');
+  check('innate sorcery has two uses', innate.uses, 2);
+  check('innate sorcery comes back on a long rest', innate.recovery, 'long');
+  const curse = data.features.find((f) => f.key === 'hexCurse');
+  check('the hexblade curse has one use', curse.uses, 1);
+  check('the hexblade curse comes back on a short rest', curse.recovery, 'short');
+  const luck = data.features.find((f) => f.key === 'bendLuck');
+  check('bend luck costs a sorcery point', luck.recovery, 'sp');
+  check('the hexblade curse is the 2014 one', curse.blocks[0].text.indexOf('baleful curse') >= 0, true);
+  check('the wild surge is the 2024 one', data.features.find((f) => f.key === 'wildSurge').blocks[0].text.indexOf('1d20') >= 0, true);
+}
+
 console.log('the built page carries the data');
 {
   const built = readFileSync(resolve(root, 'dist', 'index.html'), 'utf8');
@@ -347,6 +370,12 @@ console.log('the built page carries the data');
   }
   const sheetBlock = built.match(/<script id="sheet-rules">([\s\S]*?)<\/script>/);
   check('the sheet rules travel with the page', !!sheetBlock, true);
+  const featureBlock = built.match(/<script id="feature-data" type="application\/json">([\s\S]*?)<\/script>/);
+  check('the features travel with the page', !!featureBlock, true);
+  if (featureBlock) {
+    const parsedFeatures = JSON.parse(featureBlock[1]);
+    check('the features are inlined', parsedFeatures.features.length, 18);
+  }
   const bookBlock = built.match(/<script id="spell-data" type="application\/json">([\s\S]*?)<\/script>/);
   if (!bookBlock) { check('the spell book is inlined', false, true); }
   else {

@@ -23,6 +23,11 @@ const spells = readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8').tri
 const spellTag = /(<script id="spell-data" type="application\/json">)[\s\S]*?(<\/script>)/;
 if (!spellTag.test(html)) throw new Error('spell data tag not found in src/index.html');
 built = built.replace(spellTag, (m, open, close) => open + spells + close);
+
+const features = readFileSync(resolve(root, 'data', 'features.json'), 'utf8').trim();
+const featureTag = /(<script id="feature-data" type="application\/json">)[\s\S]*?(<\/script>)/;
+if (!featureTag.test(html)) throw new Error('feature data tag not found in src/index.html');
+built = built.replace(featureTag, (m, open, close) => open + features + close);
 mkdirSync(out, { recursive: true });
 writeFileSync(resolve(out, 'index.html'), built, 'utf8');
 

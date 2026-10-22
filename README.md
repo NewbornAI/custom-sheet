@@ -56,12 +56,23 @@ The front of the character sheet, for the numbers you look up mid turn.
 - **The abilities** are six tiles: the score, with the modifier under it. Type a score and everything that leans on it moves. The saving throw of the ability sits right under its own tile.
 - **The saving throws and the skills** carry a marker and a modifier. An empty dot means the character has nothing in it, a gold dot means proficient, and a dot with a ring around it means expertise, which takes the proficiency twice. In the edit mode a tap cycles a row from none to proficient to expertise and back.
 - **The derived line** under the abilities reads the proficiency bonus, the spell attack, the save DC and the passive perception, all of them computed from the scores above.
-- **The features** are the things the character has uses for: the hexblade curse, and anything like it. Each row carries a recovery tag, short or long, and a count. Tapping the count spends a use, and at zero it gives one back. The warlock spell slots are a row too, but they read the spell tab instead of a counter of their own, and they stay hidden because the spell tab already shows them. The eye in the edit mode brings a hidden feature back. The plus at the head of the section adds a feature.
+- **The features** have their own tab, the one below. The rests here still restore them, and the note says which ones came back.
 - **The short rest** gives back the features marked as recovering on a short rest, and nothing else: the warlock spell slots and one use of the hexblade curse. The **long rest** gives back the hit points, every spell slot, the sorcery points and every use of every feature.
 - **The rewind** undoes the last change of any kind: a point of hit points, a use of a feature, or a whole rest. Hit it after a rest you did not mean, and the hit points, the slots and the features come back as they were.
 - **The wrench** in the top right turns on the edit mode, where the proficiencies move and the name of the character can be set. Outside it a stray tap never changes a modifier.
 
 The sheet starts from what the rest of the app already assumes: charisma 20 and a level 9, which give the attack of +9 and the save DC of 17, with constitution and charisma proficient in the saving throws. The other numbers wait for the player.
+
+## The features tab
+
+The list of what the character can do, and what is left of it.
+
+- **The active features** are the ones with uses: innate sorcery, metamagic, tides of chaos, sorcerous rest, bend luck, magical cunning, the hexblade curse and the two elven lineages. Each row shows the source, the uses left and when they come back, "2 / long" meaning two uses that a long rest gives back. Tapping the count spends a use, and at zero it gives one back. Bend luck costs a sorcery point rather than a use, so its count spends a point from the spell tab.
+- **The passive features** are the ones that always work: sorcery incarnate, the three warlock invocations, the wild surge, hex warrior, trance, fey ancestry and elven accuracy.
+- **Tapping a name** opens the full description, the text 5e.tools holds, with the action and the duration.
+- **The wrench** brings the hidden rows back, the warlock spell slots among them, and the eye on a row hides it again.
+
+The list is Mandal's own table of 2026-10-22: the short text, the uses and the recovery are his words, and the long text is pulled from 5e.tools by `tools/fetch-5e-data.mjs` into `data/features.json`.
 
 ## The wild magic surge page
 
@@ -79,7 +90,7 @@ The 2014 table is a different file with the same shape, so swapping editions mea
 
 ## Run it
 
-`dist/index.html` is the whole app: one file, no server, no network, 655 KB with the font and the spell book inlined. Copy it to the phone, open it in Chrome, then Add to home screen for a full screen launcher.
+`dist/index.html` is the whole app: one file, no server, no network, 686 KB with the font, the spell book and the features inlined. Copy it to the phone, open it in Chrome, then Add to home screen for a full screen launcher.
 
 To serve it to a phone on the same wifi:
 
