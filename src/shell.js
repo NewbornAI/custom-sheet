@@ -24,6 +24,19 @@
     }
     spec.order = spec.order === undefined ? PAGES.length : spec.order;
     PAGES.push(spec);
+    if (spec.css) styleFor(spec);
+  }
+
+  /* The style of a page lives in a tag of its own, so a page that comes in a
+     package carries its own with it. */
+  function styleFor(spec) {
+    var el = document.getElementById('style-' + spec.id);
+    if (!el) {
+      el = document.createElement('style');
+      el.id = 'style-' + spec.id;
+      document.head.appendChild(el);
+    }
+    el.textContent = spec.css || '';
   }
 
   /* ---- what the build brought with it ---- */
@@ -740,6 +753,7 @@
   function switchCharacter(id) {
     if (!state.characters[id]) return;
     state.current = id;
+    registerPluginPages(state.characters[id]);
     save();
     sheet.closeAll();
     reshow();
@@ -798,7 +812,8 @@
         pages: rec.pages,
         theme: rec.theme,
         icon: rec.icon
-      }
+      },
+      pages: rec.pluginPages || []
     };
   }
 
@@ -821,6 +836,50 @@
     return out;
   }
 
+  /* The rules of a page are the source of a function. They run with the
+     rights of the app itself, so a package is only as safe as the person
+     who sent it. */
+  function compileRule(src) {
+    if (!src) return function () {};
+    try {
+      return new Function('return (' + src + ');')();
+    } catch (e) {
+      return function () {};
+    }
+  }
+
+  /* A page of a package: its markup, its style and the rules that read it.
+     A page that is already there is replaced, because the package that came
+     in is the one that counts. */
+  function registerPluginPage(p) {
+    if (!p || !p.id) return null;
+    var spec = {
+      id: p.id,
+      title: p.title || p.id,
+      order: p.order === undefined ? PAGES.length : Number(p.order),
+      blurb: p.blurb || '',
+      html: typeof p.html === 'string' ? p.html : '',
+      css: p.css || '',
+      plugin: true,
+      mount: compileRule(p.mount),
+      render: compileRule(p.render)
+    };
+    var replaced = false;
+    PAGES.forEach(function (old, i) {
+      if (old.id === spec.id) { PAGES[i] = spec; replaced = true; }
+    });
+    if (!replaced) PAGES.push(spec);
+    styleFor(spec);
+    return spec;
+  }
+
+  /* The pages of a character are registered when it is played and when the
+     app opens, so a package that came in keeps its pages. */
+  function registerPluginPages(rec) {
+    if (!rec) return;
+    (rec.pluginPages || []).forEach(function (p) { registerPluginPage(p); });
+  }
+
   function importPackage(text) {
     var pkg = null;
     try { pkg = JSON.parse(text); } catch (e) { return { ok: false, why: 'that file is not a character' }; }
@@ -829,6 +888,17 @@
     }
     var rec = seedCharacter(JSON.parse(JSON.stringify(pkg.record)), false);
     rec.char.name = freeName((rec.char.name || pkg.name || 'Unnamed character'));
+    /* The pages of the package are registered and the character plays them. */
+    var pages = Array.isArray(pkg.pages) ? pkg.pages : [];
+    if (pages.length) {
+      rec.pluginPages = pages;
+      var list = rec.pages ? rec.pages.slice() : DEFAULT_PAGES.slice();
+      pages.forEach(function (p) {
+        registerPluginPage(p);
+        if (p && p.id && list.indexOf(p.id) < 0) list.push(p.id);
+      });
+      rec.pages = list;
+    }
     addCharacter(rec);
     return { ok: true, name: rec.char.name };
   }
@@ -1305,6 +1375,7 @@ wireHead();
     /* every page seeds the slice it owns, for every character */
     Object.keys(state.characters).forEach(function (id) {
       seedCharacter(state.characters[id], false);
+    registerPluginPages(state.characters[id]);
     });
     save();
     var home = PAGES.filter(function (p) { return p.home; })[0];
