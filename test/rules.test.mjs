@@ -188,13 +188,16 @@ console.log('the spell levels');
 console.log('turning a spell slot into sorcery points');
 {
   const spell = { sp: 3, spMax: 8, left: { 1: 4, 2: 3, 3: 3 } };
-  check('a level 2 slot gives 2 points', R.convertSlot(spell, 2), { left: 2, sp: 5, gained: 2 });
-  check('a level 1 slot gives 1 point', R.convertSlot({ sp: 0, spMax: 8, left: { 1: 2 } }, 1), { left: 1, sp: 1, gained: 1 });
-  check('a level 3 slot gives 3 points', R.convertSlot({ sp: 0, spMax: 8, left: { 3: 1 } }, 3), { left: 0, sp: 3, gained: 3 });
+  check('a level 2 slot gives 2 points', R.convertSlot(spell, 2), { left: 2, warlockLeft: 0, usedWarlock: false, sp: 5, gained: 2 });
+  check('a level 1 slot gives 1 point', R.convertSlot({ sp: 0, spMax: 8, left: { 1: 2 } }, 1), { left: 1, warlockLeft: 0, usedWarlock: false, sp: 1, gained: 1 });
+  check('a level 3 slot gives 3 points', R.convertSlot({ sp: 0, spMax: 8, left: { 3: 1 } }, 3), { left: 0, warlockLeft: 0, usedWarlock: false, sp: 3, gained: 3 });
   check('no slot, no points', R.convertSlot({ sp: 0, spMax: 8, left: { 2: 0 } }, 2), null);
   check('cantrips are not slots', R.convertSlot({ sp: 0, spMax: 8, left: { 0: 9 } }, 0), null);
   check('full points take no slot', R.convertSlot({ sp: 8, spMax: 8, left: { 2: 3 } }, 2), null);
-  check('the points stop at the maximum', R.convertSlot({ sp: 7, spMax: 8, left: { 3: 1 } }, 3), { left: 0, sp: 8, gained: 1 });
+  check('the points stop at the maximum', R.convertSlot({ sp: 7, spMax: 8, left: { 3: 1 } }, 3), { left: 0, warlockLeft: 0, usedWarlock: false, sp: 8, gained: 1 });
+  check('the warlock slots go first', R.convertSlot({ sp: 0, spMax: 8, left: { 2: 3 }, warlockLeft: 2 }, 2), { left: 3, warlockLeft: 1, usedWarlock: true, sp: 2, gained: 2 });
+  check('the sorcerer slot is next', R.convertSlot({ sp: 0, spMax: 8, left: { 2: 3 }, warlockLeft: 0 }, 2), { left: 2, warlockLeft: 0, usedWarlock: false, sp: 2, gained: 2 });
+  check('the warlock slots are only at level 2', R.convertSlot({ sp: 0, spMax: 8, left: { 3: 1 }, warlockLeft: 2 }, 3), { left: 0, warlockLeft: 2, usedWarlock: false, sp: 3, gained: 3 });
 }
 
 console.log('the built page carries the data');

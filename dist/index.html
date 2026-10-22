@@ -302,7 +302,7 @@ input[type=range]::-moz-range-thumb{
   flex:0 0 auto;
   --pip-h:16px;
   display:flex;
-  align-items:flex-start;
+  align-items:stretch;
   gap:3px;
   padding:2px 0 6px;
   overflow-x:auto;
@@ -328,6 +328,7 @@ input[type=range]::-moz-range-thumb{
   width:100%;
   max-width:28px;
   height:17px;
+  margin-top:auto;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -335,12 +336,12 @@ input[type=range]::-moz-range-thumb{
   border:1px solid transparent;
   border-radius:5px;
   background:none;
-  color:#5f5a80;
+  color:var(--lightning);
   cursor:pointer;
 }
 .bolt svg{width:12px;height:12px;display:block}
-.bolt:not(:disabled):active{color:var(--lightning);background:rgba(255,212,71,.14)}
-.bolt:disabled{opacity:.28;cursor:default}
+.bolt:not(:disabled):active{background:rgba(255,212,71,.2);color:#fff3c4}
+.bolt:disabled{opacity:.55;cursor:default}
 .bolt:focus-visible{outline:2px solid var(--arcane);outline-offset:1px}
 .lv.editing .bolt{display:none}
 .pip{
@@ -354,7 +355,7 @@ input[type=range]::-moz-range-thumb{
   cursor:pointer;
 }
 .pip.full{background:var(--arcane);border-color:var(--arcane)}
-.pip.wl{border-color:rgba(84,207,196,.4)}
+.pip.wl{height:calc(var(--pip-h) * .7);border-color:rgba(84,207,196,.4)}
 .pip.wl.full{background:#54cfc4;border-color:#54cfc4}
 .lv .plus{font-size:9px;color:#4f4a6b;flex:0 0 auto}
 .lv.dim{opacity:.35}
@@ -362,7 +363,8 @@ input[type=range]::-moz-range-thumb{
 .lv.editing .edit{display:flex}
 .lv.editing .pips{display:none}
 .pips{display:flex;flex-direction:column;align-items:stretch;gap:2px;width:100%}
-.wlgroup{display:flex;flex-direction:column;align-items:stretch;gap:2px;width:100%;margin-top:4px}
+.lanes{display:flex;flex-direction:row;align-items:flex-end;gap:2px;width:100%;justify-content:center}
+.lane{display:flex;flex-direction:column;align-items:stretch;gap:2px;min-width:0}
 .lv .val{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
 .slotstrip.editing{gap:2px}
 .slotstrip.editing .lv{flex:0 0 auto;width:28px;padding:3px 1px}
@@ -7392,6 +7394,7 @@ input[type=range]::-moz-range-thumb{
   }
 
   /* Turns one spell slot into sorcery points: one point for each level of the slot.
+     The warlock slots go first, they are the scarcer ones.
      Returns the new counts, or null when the slot cannot be turned. */
   function convertSlot(spell, lv) {
     spell = spell || {};
@@ -7399,8 +7402,17 @@ input[type=range]::-moz-range-thumb{
     var sp = Number(spell.sp) || 0;
     var spMax = Number(spell.spMax) || 0;
     var left = (spell.left || {})[lv] || 0;
-    if (!(lv >= 1) || left <= 0 || sp >= spMax) return null;
-    return { left: left - 1, sp: Math.min(spMax, sp + lv), gained: Math.min(spMax, sp + lv) - sp };
+    var warlockLeft = Number(spell.warlockLeft) || 0;
+    if (!(lv >= 1) || sp >= spMax) return null;
+    var useWarlock = lv === WARLOCK_LEVEL && warlockLeft > 0;
+    if (!useWarlock && left <= 0) return null;
+    return {
+      left: useWarlock ? left : left - 1,
+      warlockLeft: useWarlock ? warlockLeft - 1 : warlockLeft,
+      usedWarlock: useWarlock,
+      sp: Math.min(spMax, sp + lv),
+      gained: Math.min(spMax, sp + lv) - sp
+    };
   }
 
   root.Rules = {
@@ -7904,41 +7916,27 @@ input[type=range]::-moz-range-thumb{
     el.levels.innerHTML = '';
     el.levels.classList.toggle('editing', editing);
 
-    /* How many slots each level holds, so the columns can share the width
-       and every slot can be the same size in the whole strip. */
-    var counts = LEVELS.map(function (lv) {
-      return (S.max[lv] || 0) + (lv === WARLOCK_LEVEL ? (S.warlockMax || 0) : 0);
+    /* How each level is laid out: the sorcerer slots in one lane, and the
+       warlock slots in a lane of their own beside them at level 2. */
+    var plans = LEVELS.map(function (lv) {
+      var sorc = S.max[lv] || 0;
+      var wl = (lv === WARLOCK_LEVEL && S.warlockMax) ? S.warlockMax : 0;
+      return { sorc: sorc, wl: wl, lanes: wl ? 2 : 1, count: sorc + wl, tallest: Math.max(sorc, wl) };
     });
-    var busiest = Math.max.apply(null, counts) || 1;
+
+    var busiest = Math.max.apply(null, plans.map(function (p) { return p.tallest; })) || 1;
     var pipH = Math.max(9, Math.min(16, Math.floor((120 - (busiest - 1) * 2) / busiest)));
     el.levels.style.setProperty('--pip-h', pipH + 'px');
 
     LEVELS.forEach(function (lv, ix) {
-      var max = S.max[lv] || 0;
+      var plan = plans[ix];
+      var max = plan.sorc;
       var left = Math.min(S.left[lv] || 0, max);
       var col = document.createElement('div');
       col.className = 'lv' + (lv === S.selected ? ' on' : '') + (editing ? ' editing' : '');
-      if (lv > 0 && !max) col.classList.add('dim');
+      if (lv > 0 && !plan.count) col.classList.add('dim');
       col.dataset.lv = String(lv);
-      col.style.flexGrow = String(Math.max(1, counts[ix]));
-
-      var bolt = document.createElement('button');
-      bolt.type = 'button';
-      bolt.className = 'bolt';
-      bolt.dataset.bolt = String(lv);
-      bolt.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
-        '<path d="M13.6 2L4.2 13.4h5.4L9.6 22 19.4 10.2H14L13.6 2z"/></svg>';
-      var why = lv === 0
-        ? 'Cantrips have no slots to turn'
-        : (S.sp >= S.spMax
-            ? 'Your sorcery points are full'
-            : (!(S.left[lv] > 0) ? 'No level ' + lv + ' slot left' : ''));
-      bolt.setAttribute('aria-label', lv === 0
-        ? 'Cantrips have no slots to turn'
-        : 'Turn a level ' + lv + ' slot into ' + lv + ' sorcery points' + (why ? ', ' + why : ''));
-      bolt.title = why || ('Turn a level ' + lv + ' slot into ' + lv + ' sorcery points');
-      bolt.disabled = !!why;
-      col.appendChild(bolt);
+      col.style.flexGrow = String(Math.max(1, plan.count));
 
       var head = document.createElement('span');
       head.className = 'head';
@@ -7950,14 +7948,43 @@ input[type=range]::-moz-range-thumb{
 
       var pips = document.createElement('span');
       pips.className = 'pips';
-      for (var i = 1; i <= max; i++) pips.appendChild(pipButton(i <= left, lv, i, false));
-      if (lv === WARLOCK_LEVEL && S.warlockMax) {
-        var wlGroup = document.createElement('span');
-        wlGroup.className = 'wlgroup';
-        for (var w = 1; w <= S.warlockMax; w++) wlGroup.appendChild(pipButton(w <= S.warlockLeft, lv, w, true));
-        pips.appendChild(wlGroup);
+      if (plan.lanes === 2) {
+        var lanes = document.createElement('span');
+        lanes.className = 'lanes';
+        var sorcLane = document.createElement('span');
+        sorcLane.className = 'lane';
+        sorcLane.style.flex = '0 1 ' + (plan.sorc / plan.count * 100) + '%';
+        for (var i = 1; i <= max; i++) sorcLane.appendChild(pipButton(i <= left, lv, i, false));
+        var wlLane = document.createElement('span');
+        wlLane.className = 'lane';
+        wlLane.style.flex = '0 1 ' + (plan.wl / plan.count * 100) + '%';
+        for (var w = 1; w <= plan.wl; w++) wlLane.appendChild(pipButton(w <= S.warlockLeft, lv, w, true));
+        lanes.appendChild(sorcLane);
+        lanes.appendChild(wlLane);
+        pips.appendChild(lanes);
+      } else {
+        for (var j = 1; j <= max; j++) pips.appendChild(pipButton(j <= left, lv, j, false));
       }
       col.appendChild(pips);
+
+      var bolt = document.createElement('button');
+      bolt.type = 'button';
+      bolt.className = 'bolt';
+      bolt.dataset.bolt = String(lv);
+      bolt.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">' +
+        '<path d="M13.6 2L4.2 13.4h5.4L9.6 22 19.4 10.2H14L13.6 2z"/></svg>';
+      var hasSlot = S.left[lv] > 0 || (lv === WARLOCK_LEVEL && S.warlockLeft > 0);
+      var why = lv === 0
+        ? 'Cantrips have no slots to turn'
+        : (S.sp >= S.spMax
+            ? 'Your sorcery points are full'
+            : (!hasSlot ? 'No level ' + lv + ' slot left' : ''));
+      bolt.setAttribute('aria-label', lv === 0
+        ? 'Cantrips have no slots to turn'
+        : 'Turn a level ' + lv + ' slot into ' + lv + ' sorcery points' + (why ? ', ' + why : ''));
+      bolt.title = why || ('Turn a level ' + lv + ' slot into ' + lv + ' sorcery points');
+      bolt.disabled = !!why;
+      col.appendChild(bolt);
 
       var edit = document.createElement('span');
       edit.className = 'edit';
@@ -8196,9 +8223,10 @@ input[type=range]::-moz-range-thumb{
     var bolt = ev.target.closest('.bolt');
     if (bolt) {
       var blv = Number(bolt.dataset.bolt);
-      var moved = R.convertSlot({ sp: S.sp, spMax: S.spMax, left: S.left }, blv);
+      var moved = R.convertSlot({ sp: S.sp, spMax: S.spMax, left: S.left, warlockLeft: S.warlockLeft }, blv);
       if (moved) {
         S.left[blv] = moved.left;
+        S.warlockLeft = moved.warlockLeft;
         S.sp = moved.sp;
         commit();
         el.spValue.classList.remove('bump');
