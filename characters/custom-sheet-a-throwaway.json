@@ -1,0 +1,16 @@
+{
+  "kind": "custom-sheet-character",
+  "version": 1,
+  "name": "A Throwaway",
+  "record": {
+    "char": {
+      "name": "A Throwaway"
+    },
+    "spells": {},
+    "volley": {},
+    "pages": [
+      "spells"
+    ]
+  },
+  "pages": []
+}
