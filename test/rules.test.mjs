@@ -223,8 +223,8 @@ console.log('the character sheet');
     const hero = {
       level: 9,
       abilities: { str: 10, dex: 14, con: 16, int: 8, wis: 12, cha: 20 },
-      saves: { str: false, dex: false, con: true, int: false, wis: false, cha: true },
-      skills: { athletics: true, perception: true }
+      saves: { str: 0, dex: 0, con: 1, int: 0, wis: 0, cha: 1 },
+      skills: { athletics: 1, perception: 1 }
     };
     check('a proficient save takes the proficiency', C.saveMod(hero, 'cha'), 9);
     check('a plain save does not', C.saveMod(hero, 'str'), 0);
@@ -234,6 +234,16 @@ console.log('the character sheet');
     check('the save DC is eight plus both', C.spellDC(hero), 17);
     check('the attack agrees with the volley', C.spellAttack(hero), R.ATTACK_MOD);
     check('the DC agrees with the spell tab', C.spellDC(hero), 17);
+
+    check('the proficiency cycles to proficient', C.nextProf(0), 1);
+    check('the proficiency cycles to expertise', C.nextProf(1), 2);
+    check('the proficiency cycles back to none', C.nextProf(2), 0);
+    check('a row starts without proficiency', C.profLabel(0), 'not proficient');
+    check('one is proficient', C.profLabel(1), 'proficient');
+    check('two is expertise', C.profLabel(2), 'expertise');
+    check('expertise takes the saving throw proficiency twice', C.saveMod({ level: hero.level, abilities: hero.abilities, saves: { cha: 2 } }, 'cha'), 13);
+    check('expertise takes the skill proficiency twice', C.skillMod({ level: hero.level, abilities: hero.abilities, skills: { athletics: 2 } }, 'athletics'), 8);
+    check('no proficiency leaves the ability alone', C.skillMod({ level: hero.level, abilities: hero.abilities, skills: { athletics: 0 } }, 'athletics'), 0);
 
     check('hit points stop at zero', C.hpApply(3, 10, -5), 0);
     check('hit points stop at the maximum', C.hpApply(9, 10, 4), 10);

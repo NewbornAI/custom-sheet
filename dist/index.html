@@ -526,6 +526,7 @@ input[type=range]::-moz-range-thumb{
   background:rgba(255,255,255,.03);
 }
 .ctile .ck{font-size:9px;letter-spacing:.16em;color:var(--muted)}
+.ctile .cinput{text-align:center}
 .cinput{
   width:100%;
   min-width:0;
@@ -577,6 +578,7 @@ input[type=range]::-moz-range-thumb{
 .cshead .rule{flex:1 1 auto;height:1px;background:var(--edge)}
 
 .abgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;flex:0 0 auto}
+.abcol{display:flex;flex-direction:column;gap:3px}
 .ab{
   display:flex;
   flex-direction:column;
@@ -612,12 +614,16 @@ input[type=range]::-moz-range-thumb{
 }
 .prow .dot{width:6px;height:6px;flex:0 0 auto;border-radius:50%;border:1px solid #453f63}
 .prow.prof .dot{background:var(--gold);border-color:var(--gold);box-shadow:0 0 6px rgba(255,196,77,.45)}
+.prow.exp .dot{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 2px rgba(255,196,77,.4),0 0 8px rgba(255,196,77,.45)}
 .prow .nm{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:#b9b3d6}
+.prow .nm.dim{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#6f6a8d}
 .prow .abk{flex:0 0 auto;font-size:8.5px;letter-spacing:.08em;color:#5c5778}
 .prow .vl{flex:0 0 auto;min-width:2.4em;text-align:right;font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
 .prow.prof .vl{color:var(--gold)}
+.prow.exp .vl{color:#ffe0a0}
 .charbody.editing .prow{border-color:var(--edge);cursor:pointer}
 .charbody.editing .prow.prof{border-color:rgba(255,196,77,.35);background:rgba(255,196,77,.06)}
+.charbody.editing .prow.exp{border-color:rgba(255,196,77,.55);background:rgba(255,196,77,.12)}
 
 .charfoot{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;padding-top:2px}
 .charfoot .note{margin:0;min-height:13px}
@@ -1006,9 +1012,6 @@ input[type=range]::-moz-range-thumb{
       <div class="cshead"><span>Abilities</span><span class="rule"></span></div>
       <div class="abgrid" id="charAbilities"></div>
       <div class="derived" id="charDerived"></div>
-
-      <div class="cshead"><span>Saving throws</span><span class="rule"></span></div>
-      <div class="sgrid" id="charSaves"></div>
 
       <div class="cshead"><span>Skills</span><span class="rule"></span></div>
       <div class="sgrid" id="charSkills"></div>
@@ -7709,20 +7712,32 @@ input[type=range]::-moz-range-thumb{
     return v >= 0 ? '+' + v : String(v);
   }
 
-  /* A saving throw: its ability, plus the proficiency when the character has it. */
+  /* A saving throw: its ability, plus the proficiency the character has in it.
+     Expertise takes the proficiency twice. */
   function saveMod(c, key) {
     var m = abilityMod(c.abilities[key]);
-    if (c.saves[key]) m += profBonus(c.level);
+    m += (Number(c.saves[key]) || 0) * profBonus(c.level);
     return m;
   }
 
-  /* A skill: its ability, plus the proficiency when the character has it. */
+  /* A skill: its ability, plus the proficiency the character has in it.
+     Expertise takes the proficiency twice. */
   function skillMod(c, key) {
     var skill = SKILL_BY_KEY[key];
     if (!skill) return 0;
     var m = abilityMod(c.abilities[skill.ab]);
-    if (c.skills[key]) m += profBonus(c.level);
+    m += (Number(c.skills[key]) || 0) * profBonus(c.level);
     return m;
+  }
+
+  /* The proficiency of a row cycles: none, then proficient, then expertise. */
+  function nextProf(value) {
+    return ((Number(value) || 0) + 1) % 3;
+  }
+
+  function profLabel(value) {
+    var v = Number(value) || 0;
+    return v === 1 ? 'proficient' : (v === 2 ? 'expertise' : 'not proficient');
   }
 
   /* The spell attack and the save DC both lean on charisma and the proficiency. */
@@ -7759,6 +7774,8 @@ input[type=range]::-moz-range-thumb{
     sign: sign,
     saveMod: saveMod,
     skillMod: skillMod,
+    nextProf: nextProf,
+    profLabel: profLabel,
     spellAttack: spellAttack,
     spellDC: spellDC,
     hpApply: hpApply,
@@ -7832,14 +7849,14 @@ input[type=range]::-moz-range-thumb{
     name: '',
     level: 9,
     abilities: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 20 },
-    saves: { str: false, dex: false, con: true, int: false, wis: false, cha: true },
+    saves: { str: 0, dex: 0, con: 1, int: 0, wis: 0, cha: 1 },
     skills: {},
     init: 0,
     ac: null,
     hp: { current: 0, max: 0 },
     hpHistory: []
   };
-  SKILLS.forEach(function (s) { CHAR_DEFAULTS.skills[s.key] = false; });
+  SKILLS.forEach(function (s) { CHAR_DEFAULTS.skills[s.key] = 0; });
 
   var SPELL_SEED = (SPELLBOOK.seed || []).map(function (s) { return s.name; });
 
@@ -7924,7 +7941,6 @@ input[type=range]::-moz-range-thumb{
     charHpRewind: document.getElementById('charHpRewind'),
     charAbilities: document.getElementById('charAbilities'),
     charDerived: document.getElementById('charDerived'),
-    charSaves: document.getElementById('charSaves'),
     charSkills: document.getElementById('charSkills'),
     restShort: document.getElementById('restShort'),
     restLong: document.getElementById('restLong'),
@@ -7978,6 +7994,18 @@ input[type=range]::-moz-range-thumb{
     return s;
   }
 
+  /* A proficiency is a number: 0 none, 1 proficient, 2 expertise. The state
+     saved before the three states existed held a boolean, so it comes back
+     as a plain proficiency. */
+  function profValue(value) {
+    if (value === true) return 1;
+    if (value === false || value === undefined || value === null) return 0;
+    var n = Number(value) || 0;
+    if (n < 0) return 0;
+    if (n > 2) return 2;
+    return Math.floor(n);
+  }
+
   /* The character, with the saved values over the defaults. */
   function seedChar(saved) {
     var c = {
@@ -8005,10 +8033,10 @@ input[type=range]::-moz-range-thumb{
         if (saved.abilities && saved.abilities[a.key] !== undefined && saved.abilities[a.key] !== null) {
           c.abilities[a.key] = Math.max(0, Math.min(30, Number(saved.abilities[a.key]) || 0));
         }
-        if (saved.saves && saved.saves[a.key] !== undefined) c.saves[a.key] = !!saved.saves[a.key];
+        if (saved.saves && saved.saves[a.key] !== undefined) c.saves[a.key] = profValue(saved.saves[a.key]);
       });
       SKILLS.forEach(function (s) {
-        if (saved.skills && saved.skills[s.key] !== undefined) c.skills[s.key] = !!saved.skills[s.key];
+        if (saved.skills && saved.skills[s.key] !== undefined) c.skills[s.key] = profValue(saved.skills[s.key]);
       });
       if (saved.hp) {
         c.hp.current = Math.max(0, Number(saved.hp.current) || 0);
@@ -8623,22 +8651,26 @@ input[type=range]::-moz-range-thumb{
      the player is typing in. */
   function buildChar() {
     ABILITIES.forEach(function (a) {
+      var col = document.createElement('div');
+      col.className = 'abcol';
+
       var tile = document.createElement('div');
       tile.className = 'ab';
       tile.innerHTML = '<span class="an">' + a.name + '</span>' +
         '<input class="cinput" type="number" inputmode="numeric" min="0" max="30" data-ab="' + a.key + '" aria-label="' + a.long + ' score">' +
         '<span class="am" data-mod="' + a.key + '">+0</span>';
-      el.charAbilities.appendChild(tile);
-    });
+      col.appendChild(tile);
 
-    ABILITIES.forEach(function (a) {
-      var row = document.createElement('div');
-      row.className = 'prow';
-      row.dataset.kind = 'save';
-      row.dataset.key = a.key;
-      row.innerHTML = '<span class="dot"></span><span class="nm">' + a.name + '</span>' +
+      /* The saving throw rides under the ability it comes from. */
+      var save = document.createElement('div');
+      save.className = 'prow';
+      save.dataset.kind = 'save';
+      save.dataset.key = a.key;
+      save.innerHTML = '<span class="dot"></span><span class="nm dim">save</span>' +
         '<span class="vl">+0</span>';
-      el.charSaves.appendChild(row);
+      col.appendChild(save);
+
+      el.charAbilities.appendChild(col);
     });
 
     SKILLS.forEach(function (s) {
@@ -8684,17 +8716,23 @@ input[type=range]::-moz-range-thumb{
     });
 
     ABILITIES.forEach(function (a) {
-      var row = el.charSaves.querySelector('[data-key="' + a.key + '"]');
+      var row = el.charAbilities.querySelector('[data-kind="save"][data-key="' + a.key + '"]');
       if (!row) return;
-      row.classList.toggle('prof', !!C.saves[a.key]);
+      var v = Number(C.saves[a.key]) || 0;
+      row.classList.toggle('prof', v === 1);
+      row.classList.toggle('exp', v === 2);
       row.querySelector('.vl').textContent = SR.sign(SR.saveMod(C, a.key));
+      row.title = a.long + ' saving throw, ' + SR.profLabel(v);
     });
 
     SKILLS.forEach(function (s) {
       var row = el.charSkills.querySelector('[data-key="' + s.key + '"]');
       if (!row) return;
-      row.classList.toggle('prof', !!C.skills[s.key]);
+      var v = Number(C.skills[s.key]) || 0;
+      row.classList.toggle('prof', v === 1);
+      row.classList.toggle('exp', v === 2);
       row.querySelector('.vl').textContent = SR.sign(SR.skillMod(C, s.key));
+      row.title = s.name + ', ' + SR.profLabel(v);
     });
 
     el.charDerived.innerHTML =
@@ -8810,8 +8848,8 @@ input[type=range]::-moz-range-thumb{
     var row = ev.target.closest('.prow');
     if (!row) return;
     var C = state.char;
-    if (row.dataset.kind === 'save') C.saves[row.dataset.key] = !C.saves[row.dataset.key];
-    else if (row.dataset.kind === 'skill') C.skills[row.dataset.key] = !C.skills[row.dataset.key];
+    if (row.dataset.kind === 'save') C.saves[row.dataset.key] = SR.nextProf(C.saves[row.dataset.key]);
+    else if (row.dataset.kind === 'skill') C.skills[row.dataset.key] = SR.nextProf(C.skills[row.dataset.key]);
     else return;
     commitChar();
   });

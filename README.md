@@ -48,10 +48,10 @@ The list is seeded from the character's own sheet in `data/spell-sheet.csv`, one
 
 The front of the character sheet, for the numbers you look up mid turn.
 
-- **The top row** holds the armor class, the initiative modifier and the level, all three editable. The level gives the proficiency bonus, so raising it moves every saving throw and every skill at once.
+- **The top row** holds the armor class, the initiative modifier and the level, all three editable and read in the middle. The level gives the proficiency bonus, so raising it moves every saving throw and every skill at once.
 - **The hit points** sit under them, the current over the maximum. The minus takes a point, the plus gives one back, and the field itself takes a number, so a wound of seventeen goes in as seventeen. The round arrow rewinds the last change, and keeps rewinding as far back as the tracker went.
-- **The abilities** are six tiles: the score, with the modifier under it. Type a score and everything that leans on it moves.
-- **The saving throws and the skills** list every one of them with its modifier. A gold dot means the character is proficient, and the modifier carries the proficiency.
+- **The abilities** are six tiles: the score, with the modifier under it. Type a score and everything that leans on it moves. The saving throw of the ability sits right under its own tile.
+- **The saving throws and the skills** carry a marker and a modifier. An empty dot means the character has nothing in it, a gold dot means proficient, and a dot with a ring around it means expertise, which takes the proficiency twice. In the edit mode a tap cycles a row from none to proficient to expertise and back.
 - **The derived line** under the abilities reads the proficiency bonus, the spell attack, the save DC and the passive perception, all of them computed from the scores above.
 - **The wrench** in the top right turns on the edit mode, where the proficiencies move and the name of the character can be set. Outside it a stray tap never changes a modifier.
 
