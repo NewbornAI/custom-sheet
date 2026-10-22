@@ -178,7 +178,7 @@ input[type=range]::-moz-range-thumb{
 
 /* ---- toggle chips ---- */
 
-.chips{display:flex;gap:6px;flex:0 0 auto;overflow:hidden}
+.chips{display:flex;gap:6px;row-gap:6px;flex:0 0 auto;flex-wrap:wrap}
 
 .chip{
   flex:0 1 auto;
@@ -832,6 +832,22 @@ input[type=range]::-moz-range-thumb{
   animation:rise .22s ease-out both;
   animation-delay:calc(var(--i,0) * 45ms);
 }
+.grid.quick{grid-template-rows:1fr auto 1fr}
+.rowsep{
+  grid-column:1 / -1;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:1px 0;
+  color:var(--muted);
+  font-size:8.5px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.rowsep::before,.rowsep::after{content:'';flex:1 1 auto;height:1px;background:var(--edge)}
+
+/* the quickened row wears the colour of the chip that called it */
+.cell.quick{border-color:rgba(92,214,220,.30)}
 .cell.crit{
   border-color:rgba(255,196,77,.55);
   box-shadow:0 0 0 1px rgba(255,196,77,.14),0 8px 20px rgba(255,170,40,.10);
@@ -912,7 +928,7 @@ input[type=range]::-moz-range-thumb{
 .g .lbl{font-size:10px;line-height:1.1;color:var(--muted);font-variant-numeric:tabular-nums}
 .g .roll{font-size:11.5px;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}
 .g .roll.tight{font-size:10px}
-.g.flat .lbl{color:var(--muted)}
+.g.flat{opacity:.85}
 
 /* ---- tally ---- */
 
@@ -1180,6 +1196,10 @@ input[type=range]::-moz-range-thumb{
   var CURSE_BONUS = 4;
   var ADVANTAGE_DICE = 3;
 
+  /* Quicken casts the spell a second time, so a second row of three
+     eldritch blasts comes with it. */
+  var QUICKEN_ATTACKS = 3;
+
   var POWERS = [
     { id: 'eb',  name: 'Eldritch blast',  short: 'EB',  attacks: 3, dice: [{ n: 1, s: 10, type: 'force' }], flat: 5 },
     { id: 'sr2', name: 'Scorching ray 2', short: 'SR2', attacks: 3, dice: [{ n: 2, s: 6, type: 'fire' }],   flat: 0 },
@@ -1220,6 +1240,26 @@ input[type=range]::-moz-range-thumb{
     return POWERS[0];
   }
 
+  /* The type the spell's own damage carries. A flat bonus added to the roll
+     is damage of that type. */
+  function primaryType(power) {
+    var p = power || POWERS[0];
+    return (p.dice && p.dice[0]) ? p.dice[0].type : 'force';
+  }
+
+  /* True when the volley is quickened: the spell is cast a second time, so
+     a second row of three eldritch blasts. */
+  function quickened(state) {
+    state = state || {};
+    return !!state.quicken && powerOf(state.power).id === 'eb';
+  }
+
+  /* How many beams the board shows. */
+  function beamCount(state) {
+    var p = powerOf(state.power);
+    return p.attacks + (quickened(state) ? QUICKEN_ATTACKS : 0);
+  }
+
   /* Rolls one volley: every attack, its damage, and the totals. */
   function rollVolley(state, rng) {
     rng = rng || Math.random;
@@ -1229,51 +1269,73 @@ input[type=range]::-moz-range-thumb{
     var critFloor = state.curse ? CURSE_CRIT : NATURAL_CRIT;
     var flat = power.flat + (state.curse ? CURSE_BONUS : 0);
     var hasAc = state.ac !== null && state.ac !== undefined && state.ac !== '';
-    var beams = [], i, j, k;
+    var quick = quickened(state);
+    var beams = [], i;
+
+    /* The damage the spell deals, with the extra dice the toggles add. */
+    var sources = power.dice.slice();
+    if (state.hex) sources = sources.concat(EXTRAS.hex.dice);
+    if (state.elem) sources = sources.concat(state.elemPlus ? EXTRAS.elemPlus.dice : EXTRAS.elem.dice);
 
     for (i = 0; i < power.attacks; i++) {
-      var rolls = state.advantage ? dice(rng, ADVANTAGE_DICE, 20) : dice(rng, 1, 20);
-      var kept = Math.max.apply(null, rolls);
-      var total = kept + ATTACK_MOD;
-      var crit = kept >= critFloor;
-      var mult = crit ? 2 : 1;
-      var groups = [];
-
-      var sources = power.dice.slice();
-      if (state.hex) sources = sources.concat(EXTRAS.hex.dice);
-      if (state.elem) sources = sources.concat(state.elemPlus ? EXTRAS.elemPlus.dice : EXTRAS.elem.dice);
-
-      for (j = 0; j < sources.length; j++) {
-        var count = sources[j].n * mult;
-        groups.push({
-          label: count + 'd' + sources[j].s,
-          type: sources[j].type,
-          rolls: dice(rng, count, sources[j].s)
-        });
+      beams.push(rollBeam(rng, state, sources, flat, critFloor, hasAc, i, false));
+    }
+    /* the quickened cast is a second row of the same beams */
+    if (quick) {
+      for (i = 0; i < QUICKEN_ATTACKS; i++) {
+        beams.push(rollBeam(rng, state, sources, flat, critFloor, hasAc, power.attacks + i, true));
       }
+    }
 
-      var rolled = 0;
-      for (k = 0; k < groups.length; k++) rolled += sum(groups[k].rolls);
+    return {
+      power: power,
+      beams: beams,
+      flat: flat,
+      flatType: primaryType(power),
+      quick: quick
+    };
+  }
 
-      beams.push({
-        index: i,
-        rolls: rolls,
-        kept: kept,
-        total: total,
-        crit: crit,
-        hit: hasAc ? total >= Number(state.ac) : null,
-        groups: groups,
-        flat: flat,
-        damage: rolled + flat
+  /* One beam: the attack roll, and the damage that follows it. */
+  function rollBeam(rng, state, sources, flat, critFloor, hasAc, index, quick) {
+    var rolls = state.advantage ? dice(rng, ADVANTAGE_DICE, 20) : dice(rng, 1, 20);
+    var kept = Math.max.apply(null, rolls);
+    var total = kept + ATTACK_MOD;
+    var crit = kept >= critFloor;
+    var mult = crit ? 2 : 1;
+    var groups = [], j, k;
+
+    for (j = 0; j < sources.length; j++) {
+      var count = sources[j].n * mult;
+      groups.push({
+        label: count + 'd' + sources[j].s,
+        type: sources[j].type,
+        rolls: dice(rng, count, sources[j].s)
       });
     }
 
-    return { power: power, beams: beams, flat: flat };
+    var rolled = 0;
+    for (k = 0; k < groups.length; k++) rolled += sum(groups[k].rolls);
+
+    return {
+      index: index,
+      quick: !!quick,
+      rolls: rolls,
+      kept: kept,
+      total: total,
+      crit: crit,
+      hit: hasAc ? total >= Number(state.ac) : null,
+      groups: groups,
+      flat: flat,
+      damage: rolled + flat
+    };
   }
 
-  /* Damage summed by type over the beams that count. */
+  /* Damage summed by type over the beams that count. The flat bonus is
+     damage of the spell's own type, so it sits in that type's pile. */
   function tally(volley, ac) {
     var byType = {}, order = [], total = 0, flatTotal = 0, hits = 0, crits = 0, i, j, g;
+    var flatType = volley.flatType || primaryType(volley.power);
     for (i = 0; i < volley.beams.length; i++) {
       var beam = volley.beams[i];
       if (beam.hit === false) continue;
@@ -1286,8 +1348,21 @@ input[type=range]::-moz-range-thumb{
         if (!(g.type in byType)) { byType[g.type] = 0; order.push(g.type); }
         byType[g.type] += sum(g.rolls);
       }
+      if (beam.flat) {
+        if (!(flatType in byType)) { byType[flatType] = 0; order.push(flatType); }
+        byType[flatType] += beam.flat;
+      }
     }
-    return { total: total, byType: byType, order: order, hits: hits, crits: crits, flat: flatTotal, ac: ac };
+    return {
+      total: total,
+      byType: byType,
+      order: order,
+      hits: hits,
+      crits: crits,
+      flat: flatTotal,
+      flatType: flatType,
+      ac: ac
+    };
   }
 
   /* The dice a surge effect asks for, so the app can roll them as well. */
@@ -1347,6 +1422,9 @@ input[type=range]::-moz-range-thumb{
     LEVELS: LEVELS,
     WARLOCK_LEVEL: WARLOCK_LEVEL,
     powerOf: powerOf,
+    primaryType: primaryType,
+    quickened: quickened,
+    beamCount: beamCount,
     rollVolley: rollVolley,
     tally: tally,
     diceIn: diceIn,
@@ -1617,6 +1695,7 @@ input[type=range]::-moz-range-thumb{
     curse: false,
     elem: false,
     elemPlus: false,
+    quicken: false,
     ac: null
   };
 
@@ -1625,7 +1704,8 @@ input[type=range]::-moz-range-thumb{
     { key: 'hex',       label: 'Hex',      rgb: '122,216,111' },
     { key: 'curse',     label: 'Curse',    rgb: '255,111,168' },
     { key: 'elem',      label: 'Elem',     rgb: '255,212,71' },
-    { key: 'elemPlus',  label: '+3d8',     rgb: '255,176,59', needs: 'elem' }
+    { key: 'elemPlus',  label: '+3d8',     rgb: '255,176,59', needs: 'elem' },
+    { key: 'quicken',   label: 'Quicken',  rgb: '92,214,220', only: 'eb' }
   ];
 
   var volley = null;
@@ -1834,6 +1914,7 @@ input[type=range]::-moz-range-thumb{
     else merged.ac = Number(merged.ac);
     if (!R.powerOf || merged.power !== R.powerOf(merged.power).id) merged.power = DEFAULTS.power;
     if (!merged.elem) merged.elemPlus = false;
+    if (merged.power !== 'eb') merged.quicken = false;
     return merged;
   }
 
@@ -1981,6 +2062,7 @@ input[type=range]::-moz-range-thumb{
   function setState(patch) {
     Object.keys(patch).forEach(function (k) { state[k] = patch[k]; });
     if (!state.elem) state.elemPlus = false;
+    if (state.power !== 'eb') state.quicken = false;
     volley = null;
     save();
     render();
@@ -2134,6 +2216,7 @@ input[type=range]::-moz-range-thumb{
       var chip = CHIPS.filter(function (c) { return c.key === key; })[0];
       b.setAttribute('aria-pressed', state[key] ? 'true' : 'false');
       if (key === 'elem') b.textContent = elemLabel();
+      if (chip.only) b.hidden = state.power !== chip.only;
       if (chip.needs) b.hidden = !state[chip.needs];
     });
 
@@ -2156,13 +2239,23 @@ input[type=range]::-moz-range-thumb{
   function renderBoard(animate) {
     var power = R.powerOf(state.power);
     var n = power.attacks;
+    var count = R.beamCount(state);
+    var quick = R.quickened(state);
     el.grid.style.setProperty('--cols', n === 4 ? '2' : '3');
+    el.grid.classList.toggle('quick', quick);
     el.grid.innerHTML = '';
 
-    for (var i = 0; i < n; i++) {
+    for (var i = 0; i < count; i++) {
+      /* the quickened cast starts a second row */
+      if (quick && i === n) {
+        var sep = document.createElement('div');
+        sep.className = 'rowsep';
+        sep.innerHTML = '<span>Quickened</span>';
+        el.grid.appendChild(sep);
+      }
       var beam = volley ? volley.beams[i] : null;
       var cell = document.createElement('article');
-      cell.className = 'cell';
+      cell.className = 'cell' + (beam && beam.quick ? ' quick' : '');
       var preview = beam ? beam.groups : previewGroups();
       cell.style.setProperty('--beam', TYPE_RGB[preview[0] ? preview[0].type : 'force'] || '155,123,255');
       if (!animate) cell.style.animation = 'none';
@@ -2187,25 +2280,29 @@ input[type=range]::-moz-range-thumb{
 
   function renderSummary() {
     var power = R.powerOf(state.power);
-    var beams = power.attacks + ' beam' + (power.attacks === 1 ? '' : 's');
+    var count = R.beamCount(state);
+    /* The flat bonus is damage of the spell's own type, the curse one too. */
+    var flat = power.flat + (state.curse ? 4 : 0);
+    var beams = count + ' beam' + (count === 1 ? '' : 's');
     var attack = state.advantage
       ? 'attack 3d20+' + R.ATTACK_MOD + ' keep best'
       : 'attack d20+' + R.ATTACK_MOD;
     var crit = state.curse ? 'crit on 19-20' : 'crit on 20';
+    var head = beams + (R.quickened(state) ? ' &middot; quickened' : '') +
+      ' &middot; ' + attack + ' &middot; ' + crit;
 
     var bits = [];
     power.dice.forEach(function (d, i) {
-      bits.push(d.n + 'd' + d.s + (i === 0 && power.flat ? '+' + power.flat : '') +
+      bits.push(d.n + 'd' + d.s + (i === 0 && flat ? '+' + flat : '') +
         ' <em class="' + d.type + '">' + d.type + '</em>');
     });
     if (state.hex) bits.push('1d6 <em class="necrotic">necrotic</em>');
     var light = 0;
     if (state.elem) light = state.elemPlus ? 3 : 2;
     if (light) bits.push(light + 'd8 <em class="lightning">lightning</em>');
-    if (state.curse) bits.push('+4');
 
     el.summary.innerHTML =
-      '<span>' + beams + ' &middot; ' + attack + ' &middot; ' + crit + '</span>' +
+      '<span>' + head + '</span>' +
       '<span>damage ' + bits.join(' + ') + '</span>';
   }
 
@@ -2223,7 +2320,9 @@ input[type=range]::-moz-range-thumb{
       var groups = previewGroups();
       var types = [];
       groups.forEach(function (g) { if (types.indexOf(g.type) === -1) types.push(g.type); });
-      var flat = R.powerOf(state.power).flat + (state.curse ? 4 : 0);
+      var power = R.powerOf(state.power);
+      var flat = power.flat + (state.curse ? 4 : 0);
+      var flatType = R.primaryType(power);
       var out = '<div class="atk"><span class="at ghostnum">d20</span><span class="am">+' + R.ATTACK_MOD + '</span></div>';
       out += '<div class="d20"><span class="ghostroll">--</span></div>';
       out += '<div class="beam"></div>';
@@ -2234,7 +2333,7 @@ input[type=range]::-moz-range-thumb{
         out += '<span class="g"><span class="lbl ' + g.type + '">' + g.label + '</span>';
         out += '<span class="roll ghostroll">--</span></span>';
       });
-      if (flat) out += '<span class="g flat"><span class="lbl">+' + flat + '</span></span>';
+      if (flat) out += '<span class="g flat"><span class="lbl ' + flatType + '">+' + flat + '</span></span>';
       out += '</div></div>';
       return out;
     }
@@ -2258,6 +2357,8 @@ input[type=range]::-moz-range-thumb{
     for (i = 0; i < beam.groups.length; i++) {
       if (types.indexOf(beam.groups[i].type) === -1) types.push(beam.groups[i].type);
     }
+    /* the flat bonus is damage of the spell's own type */
+    var flatType = R.primaryType(R.powerOf(state.power));
 
     out += '<div class="dmg"><div class="dtop"><span class="dt">' + beam.damage + '</span><span class="kinds">';
     types.forEach(function (t) { out += '<em class="' + t + '">' + t + '</em>'; });
@@ -2268,7 +2369,7 @@ input[type=range]::-moz-range-thumb{
       out += '<span class="g"><span class="lbl ' + g.type + '">' + g.label + '</span>';
       out += '<span class="roll' + (g.rolls.length > 3 ? ' tight' : '') + '">' + g.rolls.join(',') + '</span></span>';
     });
-    if (beam.flat) out += '<span class="g flat"><span class="lbl">+' + beam.flat + '</span></span>';
+    if (beam.flat) out += '<span class="g flat"><span class="lbl ' + flatType + '">+' + beam.flat + '</span></span>';
     out += '</div></div>';
 
     return out;
@@ -2288,10 +2389,10 @@ input[type=range]::-moz-range-thumb{
       if (t.crits) out += ' &middot; ' + t.crits + ' crit' + (t.crits === 1 ? '' : 's');
       out += '</span>';
     }
+    /* the flat bonus sits in its own type, so the tally shows it there */
     t.order.forEach(function (type) {
       out += '<em class="' + type + '">&middot; ' + t.byType[type] + ' ' + type + '</em>';
     });
-    if (t.flat) out += '<em>&middot; ' + t.flat + ' flat</em>';
     el.tally.innerHTML = out;
   }
 

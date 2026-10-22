@@ -118,6 +118,46 @@ console.log('target AC');
 }
 
 
+console.log('the flat bonus');
+{
+  const v = R.rollVolley({ power: 'eb' }, minRoll);
+  check('the flat is force damage', v.flatType, 'force');
+  check('the primary type of eldritch blast', R.primaryType(R.powerOf('eb')), 'force');
+  const t = R.tally(v, null);
+  check('the flat sits in the force pile', t.byType.force, 18);
+  check('and it is not a pile of its own', t.order, ['force']);
+  check('the total is the same', t.total, 18);
+  const c = R.tally(R.rollVolley({ power: 'eb', curse: true }, minRoll), null);
+  check('the curse flat is force too', c.byType.force, 30);
+  const s = R.tally(R.rollVolley({ power: 'sr2', curse: true }, minRoll), null);
+  check('on a scorching ray the flat is fire', s.byType.fire, 18);
+  check('and no force there', s.byType.force, undefined);
+  const crit = R.tally(R.rollVolley({ power: 'eb' }, maxRoll), null);
+  check('a critical doubles the dice, not the flat', crit.byType.force, 75);
+}
+
+console.log('quicken');
+{
+  check('off by default', R.quickened({ power: 'eb' }), false);
+  check('on for eldritch blast', R.quickened({ power: 'eb', quicken: true }), true);
+  check('not for a scorching ray', R.quickened({ power: 'sr3', quicken: true }), false);
+  check('the board shows three beams', R.beamCount({ power: 'eb' }), 3);
+  check('and six when quickened', R.beamCount({ power: 'eb', quicken: true }), 6);
+  check('a scorching ray keeps its own count', R.beamCount({ power: 'sr3', quicken: true }), 4);
+  const v = R.rollVolley({ power: 'eb', quicken: true }, minRoll);
+  check('six beams are rolled', v.beams.length, 6);
+  check('the second row is marked', v.beams.slice(3).every((b) => b.quick), true);
+  check('the first row is not', v.beams.slice(0, 3).some((b) => b.quick), false);
+  check('every beam rolls its own attack', v.beams[3].total, 10);
+  const t = R.tally(v, null);
+  check('the tally counts both rows', t.total, 36);
+  check('and the force pile holds all of it', t.byType.force, 36);
+  const h = R.rollVolley({ power: 'eb', quicken: true, hex: true }, minRoll);
+  check('the quickened row carries the hex too', h.beams[3].groups.length, 2);
+  const q = R.rollVolley({ power: 'sr3', quicken: true }, minRoll);
+  check('a quickened scorching ray stays at four beams', q.beams.length, 4);
+}
+
 console.log('wild magic surge');
 {
   const surge = JSON.parse(readFileSync(resolve(root, 'data', 'wild-magic-surge-xphb.json'), 'utf8'));
