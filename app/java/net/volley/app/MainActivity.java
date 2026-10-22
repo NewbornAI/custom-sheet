@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -13,6 +14,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -54,6 +56,11 @@ public class MainActivity extends Activity {
         view.setVerticalScrollBarEnabled(false);
         view.setHorizontalScrollBarEnabled(false);
         view.setWebViewClient(new ShellClient(this));
+        /* The page asks the shell for a file that sits in the assets: a page
+           cannot read one by itself, and the network is not there to fetch
+           it. */
+        view.addJavascriptInterface(new AssetBridge(this), "DndShell");
+        view.addJavascriptInterface(new FetchBridge(this), "DndNet");
 
         setContentView(view);
         view.loadUrl(ORIGIN + "index.html");
@@ -65,6 +72,73 @@ public class MainActivity extends Activity {
             view.goBack();
         } else {
             super.onBackPressed();
+        }
+    }
+
+    /* Reads a file out of the assets for the page. */
+    private static class AssetBridge {
+
+        private final Activity host;
+
+        AssetBridge(Activity host) {
+            this.host = host;
+        }
+
+        @JavascriptInterface
+        public String read(String name) {
+            if (name == null) return null;
+            String path = name.replace("\\", "/");
+            while (path.startsWith("/")) path = path.substring(1);
+            path = path.replace("..", "");
+            try {
+                InputStream in = host.getAssets().open(path);
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                byte[] chunk = new byte[8192];
+                int n;
+                while ((n = in.read(chunk)) > 0) out.write(chunk, 0, n);
+                in.close();
+                return out.toString("UTF-8");
+            } catch (IOException e) {
+                return null;
+            }
+        }
+    }
+
+    /* Asks the machine that serves the app whether a newer build is there.
+       The page cannot fetch it: the page is on its own origin and the
+       answer comes from another one. */
+    private static class FetchBridge {
+
+        private final Activity host;
+
+        FetchBridge(Activity host) {
+            this.host = host;
+        }
+
+        @JavascriptInterface
+        public String fetchUrl(String url) {
+            if (url == null) return null;
+            try {
+                java.net.HttpURLConnection c = (java.net.HttpURLConnection) new java.net.URL(url).openConnection();
+                c.setConnectTimeout(4000);
+                c.setReadTimeout(8000);
+                c.setRequestMethod("GET");
+                int code = c.getResponseCode();
+                if (code < 200 || code > 299) {
+                    c.disconnect();
+                    return "error " + code;
+                }
+                InputStream in = c.getInputStream();
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                byte[] chunk = new byte[8192];
+                int n;
+                while ((n = in.read(chunk)) > 0) out.write(chunk, 0, n);
+                in.close();
+                c.disconnect();
+                return out.toString("UTF-8");
+            } catch (Exception e) {
+                return "error " + e.getClass().getSimpleName();
+            }
         }
     }
 

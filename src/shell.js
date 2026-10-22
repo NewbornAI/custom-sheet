@@ -34,6 +34,7 @@
 
   var SURGE = readJson('surge-data');
   var SEEDS = readJson('seed-data');
+  var VERSION = (readJson('version-data') || {}).version || '';
   var PRESETS = readJson('character-data').presets || [];
 
   /* ---- the data on disk ---- */
@@ -48,11 +49,61 @@
   var SPELL_BY_NAME = {};
   var FEATURE_BY_KEY = {};
   var LOADING = {};
+  var DATA_ERROR = {};
+
+  /* The shell reads a file out of the app when it is there, and a page on
+     the web fetches it. Either way the file is read when a page asks. */
+  function readFile(file) {
+    if (window.DndShell && window.DndShell.read) {
+      try {
+        var answer = window.DndShell.read(file);
+        if (answer && typeof answer.then === 'function') {
+          return answer.then(function (text) {
+            if (text) return text;
+            throw new Error('the app could not read ' + file);
+          });
+        }
+        if (answer) return Promise.resolve(answer);
+        return Promise.reject(new Error('the app could not read ' + file));
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    }
+    return fetch(file).then(function (r) {
+      if (!r.ok) throw new Error(file + ': ' + r.status);
+      return r.text();
+    });
+  }
+
+  /* An answer from another origin comes through the shell, because the
+     page cannot fetch it and the other origin cannot answer it. */
+  function readUrl(url) {
+    if (window.DndNet && window.DndNet.fetchUrl) {
+      try {
+        var answer = window.DndNet.fetchUrl(url);
+        if (answer && typeof answer.then === 'function') {
+          return answer.then(function (text) {
+            if (text && text.indexOf('error ') !== 0) return text;
+            throw new Error(text || 'no answer');
+          });
+        }
+        if (answer && answer.indexOf('error ') !== 0) return Promise.resolve(answer);
+        return Promise.reject(new Error(answer || 'no answer'));
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    }
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw new Error(url + ': ' + r.status);
+      return r.text();
+    });
+  }
 
   function data(name) {
     if (LOADING[name]) return LOADING[name];
-    LOADING[name] = fetch('data/' + name + '.json')
-      .then(function (r) { return r.ok ? r.json() : {}; })
+    var file = 'data/' + name + '.json';
+    LOADING[name] = readFile(file)
+      .then(function (text) { return JSON.parse(text); })
       .then(function (value) {
         if (name === 'spellbook') {
           BOOK.spells = value.spells || [];
@@ -67,7 +118,9 @@
         if (current) refresh();
         return true;
       })
-      .catch(function () {
+      .catch(function (e) {
+        DATA_ERROR[name] = String((e && e.message) || e);
+        delete LOADING[name];          /* so a later try reads it again */
         if (current) refresh();
         return false;
       });
@@ -395,6 +448,9 @@
     featureByKey: FEATURE_BY_KEY,
     seeds: SEEDS,
     data: data,
+    dataError: DATA_ERROR,
+    version: VERSION,
+    readUrl: readUrl,
     plugFeature: plugFeature,
     esc: esc,
     markup: markup,

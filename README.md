@@ -88,7 +88,9 @@ The list of what the character can do, and what is left of it.
 
 - **The characters are one tap from the head.** Two people beside the wrench open the list of the characters, the one being played marked, and a way to add one or to take one away.
 
-**The data is read when a page asks for it.** The book, the library of features and the classes are files beside the page, so a launch carries the character and nothing else. A page asks for its file as it opens and repaints when it lands, which means the app needs to be served rather than opened from disk, and the Android shell serves it.
+**The data is read when a page asks for it.** The book, the library of features and the classes are files beside the page, so a launch carries the character and nothing else. A page asks for its file as it opens and repaints when it lands. The Android shell reads the files out of the app for the page, and the settings page lists which of them are here, with a button to read one that did not arrive.
+
+**The app can update itself.** The build stamps a version into the page and writes the same one beside it. The settings page asks the machine that serves the app whether a newer build is there, and opens it in the browser of the phone when there is one.
 
 **A feature of the library starts with no counter.** The data holds every class and subclass feature of the twelve classes and their newest archetypes, 1017 of them with their text, and a character names the ones it holds. A library feature carries its class, its level and its text, and its uses are for the player to set in the edit mode.
 - **The active features** are the ones with uses: innate sorcery, metamagic, tides of chaos, sorcerous rest, bend luck, magical cunning, the hexblade curse and the two elven lineages. Each row shows the source, the uses left and when they come back, "2 / long" meaning two uses that a long rest gives back. Tapping the count spends a use, and at zero it gives one back. Bend luck costs a sorcery point rather than a use, so its count spends a point from the spell tab.

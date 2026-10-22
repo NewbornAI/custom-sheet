@@ -39,8 +39,9 @@
       var row = document.createElement('div');
       row.className = 'srow';
       var on = r.got > 0;
+      var why = C.dataError[r.what === 'spells' ? 'spellbook' : r.what];
       row.innerHTML = '<span class="t">' + C.esc(r.name) + '</span>' +
-        '<span class="d">' + (on ? r.got + ' ' + r.what + ' ready' : 'not here yet') + '</span>';
+        '<span class="d">' + C.esc(on ? r.got + ' ' + r.what + ' ready' : (why ? why : 'not here yet')) + '</span>';
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'stog' + (on ? ' on' : '');
@@ -50,6 +51,74 @@
       row.appendChild(b);
       E.files.appendChild(row);
     });
+  }
+
+  /* The update route: the app asks the machine that serves it whether a
+     newer build is there, and offers it. */
+  function server() {
+    var ui = api.state.ui || {};
+    return ui.server || 'http://192.168.0.125:8123';
+  }
+
+  function update() {
+    E.update.innerHTML = '';
+
+    var row = document.createElement('div');
+    row.className = 'srow';
+    row.innerHTML = '<span class="t">This build</span><span class="d">' +
+      C.esc((C.version || '').replace('T', ' ').slice(0, 19)) + '</span>';
+    E.update.appendChild(row);
+
+    var field = document.createElement('div');
+    field.className = 'srow';
+    var input = document.createElement('input');
+    input.className = 'cinput';
+    input.type = 'url';
+    input.value = server();
+    input.setAttribute('aria-label', 'The address of the machine that serves the app');
+    input.addEventListener('input', function () {
+      api.state.ui = api.state.ui || {};
+      api.state.ui.server = input.value;
+      api.save();
+    });
+    field.appendChild(input);
+    E.update.appendChild(field);
+
+    var line = document.createElement('div');
+    line.className = 'srow';
+    line.innerHTML = '<span class="t">The machine</span><span class="d">checking</span>';
+    E.update.appendChild(line);
+
+    var check = document.createElement('button');
+    check.type = 'button';
+    check.className = 'stog';
+    check.textContent = 'Look';
+    check.setAttribute('aria-label', 'Look for a newer build');
+    check.addEventListener('click', function () {
+      var address = server().replace(/\/$/, '');
+      line.querySelector('.d').textContent = 'checking';
+      C.readUrl(address + '/version.json')
+        .then(function (text) { return JSON.parse(text); })
+        .then(function (v) {
+          if (!v || !v.version) { line.querySelector('.d').textContent = 'no answer'; return; }
+          if (v.version === C.version) { line.querySelector('.d').textContent = 'this is the newest'; return; }
+          line.querySelector('.d').textContent = 'a newer build is there';
+          var get = document.createElement('button');
+          get.type = 'button';
+          get.className = 'stog on';
+          get.textContent = 'Get it';
+          get.setAttribute('aria-label', 'Open the newer build');
+          get.addEventListener('click', function () {
+            window.open(address + '/' + (v.apk || 'dnd-sheet.apk'), '_blank');
+          });
+          line.appendChild(get);
+        })
+        .catch(function () { line.querySelector('.d').textContent = 'no answer'; });
+    });
+    var holder = document.createElement('div');
+    holder.className = 'srow';
+    holder.appendChild(check);
+    E.update.appendChild(holder);
   }
 
   Volley.page({
@@ -66,6 +135,9 @@
       '  <div class="cshead"><span>The files</span><span class="rule"></span></div>',
       '  <div class="fcards" id="settingsFiles"></div>',
       '  <p class="note">The book, the library of features and the classes sit beside the app and are read when a page asks for one.</p>',
+      '  <div class="cshead"><span>Update</span><span class="rule"></span></div>',
+      '  <div class="fcards" id="settingsUpdate"></div>',
+      '  <p class="note">The app is served from the machine that holds it. Give that address here and the app will tell you when a newer build is there.</p>',
       '</div>'
     ].join('\n'),
 
@@ -74,7 +146,8 @@
       E = {
         body: root.querySelector('#settingsBody'),
         list: root.querySelector('#settingsList'),
-        files: root.querySelector('#settingsFiles')
+        files: root.querySelector('#settingsFiles'),
+        update: root.querySelector('#settingsUpdate')
       };
     },
 
@@ -82,6 +155,7 @@
       api = a;
       E.list.innerHTML = '';
       files();
+      update();
       api.pages.forEach(function (p) {
         if (p.hidden) return;
         var on = p.home || pages().indexOf(p.id) >= 0;
