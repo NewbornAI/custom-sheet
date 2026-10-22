@@ -377,9 +377,8 @@ console.log('the shapes of the dice');
   check('the d8 is a diamond', points(8), 4);
   check('the d10 is a kite', points(10), 5);
   check('the d12 is a pentagon', points(12), 5);
-  check('the d20 is a hexagon', points(20), 6);
-  check('every die has a shape', [4, 6, 8, 10, 12, 20].every((k) => !!C.DIE_SHAPES[k]), true);
-  check('every die has a place for its number', [4, 6, 8, 10, 12, 20].every((k) => !!C.DIE_LABEL[k]), true);
+  check('every die has a shape', [4, 6, 8, 10, 12].every((k) => !!C.DIE_SHAPES[k]), true);
+  check('every die has a place for its number', [4, 6, 8, 10, 12].every((k) => !!C.DIE_LABEL[k]), true);
   check('the d6 is square, not round', C.DIE_SHAPES[6].indexOf('19,19') >= 0, true);
   check('the d10 has a point at the bottom', C.DIE_SHAPES[10].indexOf('12,21') >= 0, true);
 }

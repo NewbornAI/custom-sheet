@@ -295,10 +295,11 @@ input[type=range]::-moz-range-thumb{
   cursor:pointer;
 }
 .tog[aria-pressed="true"]{border-color:rgba(255,196,77,.5);background:rgba(255,196,77,.10);color:var(--gold)}
-.d20{width:34px;height:34px;padding:0;border:1px solid var(--edge);border-radius:8px;background:rgba(255,255,255,.03);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
-.d20 svg{width:25px;height:25px;display:block}
-.d20.mid{color:#7ad86f;border-color:rgba(122,216,111,.45);background:rgba(122,216,111,.08)}
-.d20.hit{color:#ff6b6b;border-color:rgba(255,107,107,.55);background:rgba(255,107,107,.12)}
+.tog.wild{color:var(--arcane);border-color:rgba(155,123,255,.35)}
+.tog.wild:active{background:rgba(155,123,255,.14);color:var(--arcane)}
+.surgelarge{display:block;width:100%;border:0;background:none;padding:4px 0 12px;cursor:pointer}
+.surged100{font-family:var(--display);font-weight:700;font-size:52px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums;text-shadow:0 0 26px rgba(155,123,255,.35)}
+.surgelarge:active .surged100{color:var(--arcane)}
 .tog:disabled{opacity:.4;cursor:default}
 
 .sbody{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:7px}
@@ -1046,12 +1047,7 @@ input[type=range]::-moz-range-thumb{
       </div>
       <button class="tog" id="cunning" type="button" aria-pressed="false" title="Restores 1 warlock slot">Cunning</button>
       <button class="tog" id="sorcRest" type="button" aria-pressed="false" title="Restores half your sorcerer level in sorcery points">Sorc rest</button>
-      <button class="d20" id="surgeD20" type="button" aria-label="Roll the wild magic surge d20" title="The wild magic surge d20">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <polygon points="" fill="none" stroke="currentColor" stroke-width="1.4"/>
-          <text class="d20num" x="12" y="15.8" text-anchor="middle" font-size="9" fill="currentColor" font-family="Cinzel, Georgia, serif">20</text>
-        </svg>
-      </button>
+      <button class="tog wild" id="wildSurge" type="button" title="The wild magic surge">Wild</button>
     </div>
 
     <div class="sbody">
@@ -16156,8 +16152,7 @@ input[type=range]::-moz-range-thumb{
     6: '5,5 19,5 19,19 5,19',
     8: '12,4 18,12 12,20 6,12',
     10: '6,5 18,5 19,10 12,21 5,10',
-    12: '4,6 20,6 17,15 12,21 7,15',
-    20: '12,3 19,7 19,15 12,21 5,15 5,7'
+    12: '4,6 20,6 17,15 12,21 7,15'
   };
 
   var DIE_LABEL = {
@@ -16165,8 +16160,7 @@ input[type=range]::-moz-range-thumb{
     6: { y: 15.4, size: 9 },
     8: { y: 15, size: 9 },
     10: { y: 13.4, size: 8 },
-    12: { y: 14.6, size: 8 },
-    20: { y: 15.4, size: 9 }
+    12: { y: 14.6, size: 8 }
   };
 
   /* The rewind brings back the state before the last change. */
@@ -16279,7 +16273,6 @@ input[type=range]::-moz-range-thumb{
     lists: {},
     classes: {},
     levelFilter: true,
-    surgeRoll: 0,
     surge: null
   };
 
@@ -16411,7 +16404,7 @@ input[type=range]::-moz-range-thumb{
     restLong: document.getElementById('restLong'),
     charNote: document.getElementById('charNote'),
     diceBox: document.getElementById('diceBox'),
-    surgeD20: document.getElementById('surgeD20'),
+    wildSurge: document.getElementById('wildSurge'),
     spentToast: document.getElementById('spentToast')
   };
 
@@ -16664,49 +16657,52 @@ input[type=range]::-moz-range-thumb{
 
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
 
-  /* The wild magic surge: a d20 in the spell tab. An ordinary roll leaves it
-     green, a 20 turns it red and brings up the table. */
-  function castSurge() {
-    if (!SURGE.rows || !SURGE.rows.length) {
-      note('The surge table did not load.');
-      return;
-    }
-    var roll = 1 + Math.floor(Math.random() * 20);
-    state.spell.surgeRoll = roll;
-    if (roll === 20) {
-      var result = R.rollSurge(SURGE.rows);
-      state.spell.surge = { from: result.from, to: result.to, text: result.text, dice: result.dice };
-      save();
-      renderSpells();
-      openSurge(result);
-      if (navigator.vibrate) navigator.vibrate([14, 45, 14]);
-      return;
-    }
-    save();
-    renderSpells();
-    if (navigator.vibrate) navigator.vibrate(16);
-  }
-
-  function openSurge(result) {
+  /* The wild magic surge: a d100 on the table, and the row it lands on. */
+  function openSurge() {
+    var s = state.spell.surge;
     sheetMode = 'surge';
     sheetParent = '';
     el.sheetTitle.textContent = 'Wild magic surge';
     el.sheetMeta.className = 'sheet-meta';
-    el.sheetMeta.innerHTML = field('Range', pad2(result.from) + '-' + pad2(result.to)) + field('Roll', 'd20: 20');
-    var html = '<p>' + esc(result.text) + '</p>';
-    if (result.dice && result.dice.length) {
-      html += '<p>' + result.dice.map(function (d) {
-        return esc(d.label) + ': ' + d.values.join(' + ') + ' = ' + d.total;
-      }).join('<br>') + '</p>';
+    el.sheetMeta.innerHTML = s
+      ? field('Range', pad2(s.from) + '-' + pad2(s.to)) + field('Roll', 'd100: ' + s.roll)
+      : field('Roll', 'd100');
+
+    var html = '<button class="surgelarge" type="button" id="surgeRoll" aria-label="Roll the wild magic surge">' +
+      '<span class="surged100">' + (s ? s.roll : '--') + '</span></button>';
+    if (s) {
+      html += '<p>' + markup(s.text) + '</p>';
+      if (s.dice && s.dice.length) {
+        html += '<p>' + s.dice.map(function (d) {
+          return esc(d.label) + ': ' + d.values.join(' + ') + ' = ' + d.total;
+        }).join('<br>') + '</p>';
+      }
+    } else {
+      html += '<p>Roll the surge to see what the wild magic does.</p>';
     }
     el.sheetText.innerHTML = html;
+    el.sheetActions.innerHTML = '<button id="rollSurge">Roll the surge</button>';
     el.condTip.hidden = true;
     el.grimoireLevel.hidden = true;
     el.sheetSearch.hidden = true;
     el.sheetList.innerHTML = '';
     el.sheetList.hidden = true;
-    el.sheetActions.innerHTML = '';
     el.sheet.hidden = false;
+
+    el.sheetText.querySelector('#surgeRoll').addEventListener('click', rollSurge);
+    el.sheetActions.querySelector('#rollSurge').addEventListener('click', rollSurge);
+  }
+
+  function rollSurge() {
+    if (!SURGE.rows || !SURGE.rows.length) {
+      note('The surge table did not load.');
+      return;
+    }
+    var result = R.rollSurge(SURGE.rows);
+    state.spell.surge = { roll: result.roll, from: result.from, to: result.to, text: result.text, dice: result.dice };
+    save();
+    openSurge();
+    if (navigator.vibrate) navigator.vibrate(result.dice.length ? [14, 45, 14] : 16);
   }
 
   function render() {
@@ -17085,13 +17081,6 @@ input[type=range]::-moz-range-thumb{
     var S = state.spell;
     el.dcValue.textContent = S.dc;
     el.spValue.textContent = S.sp + '/' + S.spMax;
-    var roll = Number(S.surgeRoll) || 0;
-    el.surgeD20.classList.toggle('hit', roll === 20);
-    el.surgeD20.classList.toggle('mid', roll > 0 && roll !== 20);
-    el.surgeD20.querySelector('.d20num').textContent = roll ? String(roll) : '20';
-    el.surgeD20.setAttribute('aria-label', roll
-      ? 'The wild magic surge d20, the last roll was ' + roll
-      : 'Roll the wild magic surge d20');
     el.cunning.setAttribute('aria-pressed', S.cunning ? 'true' : 'false');
     el.sorcRest.setAttribute('aria-pressed', S.sorcRest ? 'true' : 'false');
     el.sorcRest.title = 'Restores ' + Math.floor(S.sorcererLevel / 2) + ' sorcery points';
@@ -18047,7 +18036,7 @@ input[type=range]::-moz-range-thumb{
     commit();
   });
 
-  el.surgeD20.addEventListener('click', function () { castSurge(); });
+  el.wildSurge.addEventListener('click', function () { openSurge(); });
 
   el.cunning.addEventListener('click', function () {
     var S = state.spell;
@@ -18243,8 +18232,6 @@ input[type=range]::-moz-range-thumb{
 
   buildChar();
   buildFeatureCards();
-  /* the shape of the surge die */
-  el.surgeD20.querySelector('polygon').setAttribute('points', SR.DIE_SHAPES[20]);
   render();
 })();
 </script>

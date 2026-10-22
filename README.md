@@ -82,7 +82,7 @@ The list is Mandal's own table of 2026-10-22: the short text, the uses and the r
 
 ## The wild magic surge
 
-The surge moved into the spell tab, as a d20 at the end of the top bar, right of the sorcerer rest. An ordinary roll leaves it green, a 20 turns it red and brings up the table with the range, the effect and the dice it names. The table is the one from the 2024 Player's Handbook, the same one 5e.tools serves under its XPHB source.
+The surge lives in the spell tab, under a Wild label at the end of the top bar, right of the sorcerer rest. It opens a popup with the old interface: the d100 in the middle, the range it landed on, the effect and the dice it names. Tap the number or the button to roll again, and the last result stays on the phone. The table is the one from the 2024 Player's Handbook, the same one 5e.tools serves under its XPHB source.
 
 The table is never typed by hand. `tools/fetch-5e-data.mjs` pulls it out of the 5e.tools class data, parses it into `data/wild-magic-surge-xphb.json`, and refuses to write a table that does not cover 1 to 100 exactly once. The build inlines that JSON into the page, and the test suite checks the inlined copy against the file.
 
