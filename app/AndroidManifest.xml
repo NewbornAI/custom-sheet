@@ -27,5 +27,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name=".ApkProvider"
+            android:authorities="net.volley.app.apk"
+            android:exported="false"
+            android:grantUriPermissions="true" />
     </application>
 </manifest>

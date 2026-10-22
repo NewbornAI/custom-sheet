@@ -39,7 +39,10 @@ Write-Output "4. compiling java"
 $classes = Join-Path $out 'classes'
 if (Test-Path $classes) { Remove-Item $classes -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $classes | Out-Null
-$src = "$app\java\net\volley\app\MainActivity.java"
+$src = @(
+  "$app\java\net\volley\app\MainActivity.java"
+  "$app\java\net\volley\app\ApkProvider.java"
+)
 & "$javaHome\bin\javac.exe" --release 11 -cp $androidJar -d $classes $src
 if ($LASTEXITCODE -ne 0) {
   Write-Output "retrying javac with source and target 11"

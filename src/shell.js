@@ -99,6 +99,29 @@
     });
   }
 
+  /* The app updates itself: the shell fetches the new build and hands it
+     to the installer of the phone. A page on the web has no shell, so it
+     opens the build in the browser instead. */
+  function installUpdate(url) {
+    if (window.DndNet && window.DndNet.download && window.DndNet.install) {
+      try {
+        var answer = window.DndNet.download(url);
+        if (answer && typeof answer.then === 'function') {
+          return answer.then(function (text) {
+            if (!text || text.indexOf('error ') === 0) return text;
+            return window.DndNet.install();
+          });
+        }
+        if (!answer || answer.indexOf('error ') === 0) return Promise.resolve(answer);
+        return Promise.resolve(window.DndNet.install());
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    }
+    window.open(url, '_blank');
+    return Promise.resolve('the browser has it');
+  }
+
   function data(name) {
     if (LOADING[name]) return LOADING[name];
     var file = 'data/' + name + '.json';
@@ -451,6 +474,7 @@
     dataError: DATA_ERROR,
     version: VERSION,
     readUrl: readUrl,
+    installUpdate: installUpdate,
     plugFeature: plugFeature,
     esc: esc,
     markup: markup,

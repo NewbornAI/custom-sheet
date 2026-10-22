@@ -109,7 +109,13 @@
           get.textContent = 'Get it';
           get.setAttribute('aria-label', 'Open the newer build');
           get.addEventListener('click', function () {
-            window.open(address + '/' + (v.apk || 'dnd-sheet.apk'), '_blank');
+            var apk = address + '/' + (v.apk || 'dnd-sheet.apk');
+            line.querySelector('.d').textContent = 'downloading';
+            C.installUpdate(apk).then(function (answer) {
+              line.querySelector('.d').textContent = answer === 'ok' ? 'the installer is open' : answer;
+            }).catch(function (e) {
+              line.querySelector('.d').textContent = String((e && e.message) || e);
+            });
           });
           line.appendChild(get);
         })

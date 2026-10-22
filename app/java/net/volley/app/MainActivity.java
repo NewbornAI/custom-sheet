@@ -125,6 +125,54 @@ public class MainActivity extends Activity {
             this.host = host;
         }
 
+        /* The app updates itself: the build is fetched into the private
+           storage of the app and the installer of the phone is handed it. */
+        @JavascriptInterface
+        public String download(String url) {
+            if (url == null) return null;
+            try {
+                java.net.HttpURLConnection c = (java.net.HttpURLConnection) new java.net.URL(url).openConnection();
+                c.setConnectTimeout(5000);
+                c.setReadTimeout(60000);
+                c.setRequestMethod("GET");
+                int code = c.getResponseCode();
+                if (code < 200 || code > 299) {
+                    c.disconnect();
+                    return "error " + code;
+                }
+                java.io.File file = new java.io.File(host.getFilesDir(), "update.apk");
+                java.io.FileOutputStream out = new java.io.FileOutputStream(file);
+                InputStream in = c.getInputStream();
+                byte[] chunk = new byte[16384];
+                int n;
+                while ((n = in.read(chunk)) > 0) out.write(chunk, 0, n);
+                in.close();
+                out.close();
+                c.disconnect();
+                return String.valueOf(file.length());
+            } catch (Exception e) {
+                return "error " + e.getClass().getSimpleName();
+            }
+        }
+
+        /* Hands the downloaded build to the installer of the phone, which
+           always asks the player before it puts anything in place. */
+        @JavascriptInterface
+        public String install() {
+            try {
+                java.io.File file = new java.io.File(host.getFilesDir(), "update.apk");
+                if (!file.exists() || file.length() == 0) return "error nothing downloaded";
+                Uri uri = ApkProvider.uriFor(host);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(uri, "application/vnd.android.package-archive");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                host.startActivity(intent);
+                return "ok";
+            } catch (Exception e) {
+                return "error " + e.getClass().getSimpleName();
+            }
+        }
+
         @JavascriptInterface
         public String fetchUrl(String url) {
             if (url == null) return null;
