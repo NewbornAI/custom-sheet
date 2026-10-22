@@ -51,9 +51,9 @@
   /* A new character is given the features of the app's own character. The
      ones that belong to a ready-made character say so in the data and wait
      for it. */
-  var FEATURE_SEED = (C.features.features || []).filter(function (f) {
-    return f.seed;
-  }).map(featureRow);
+  /* The features a fresh character starts with travel in the page; the rest
+     of the library is a file the app reads when a page asks for it. */
+  var FEATURE_SEED = (C.seeds.features || []).map(featureRow);
 
   var CHAR_DEFAULTS = {
     name: '',
@@ -85,8 +85,15 @@
   /* Every feature the app knows, by key, so a character can name the ones
      it was given. */
   var FEATURE_BY_KEY = {};
-  (C.features.features || []).forEach(function (f) { FEATURE_BY_KEY[f.key] = featureRow(f); });
+  (C.seeds.features || []).forEach(function (f) { FEATURE_BY_KEY[f.key] = featureRow(f); });
   CHAR_DEFAULTS.features.forEach(function (f) { FEATURE_BY_KEY[f.key] = f; });
+
+  /* A key of the library resolves once the library is in, which is what the
+     ready-made characters and the agent read. */
+  function rowForKey(key) {
+    if (FEATURE_BY_KEY[key]) return copyRow(FEATURE_BY_KEY[key]);
+    return C.featureByKey[key] ? featureRow(C.featureByKey[key]) : null;
+  }
 
   function commitChar() { api.save(); api.refresh(); }
 
@@ -126,7 +133,7 @@
       saves: {},
       skills: {},
       features: own ? [] : (keys || []).map(function (k) {
-        return FEATURE_BY_KEY[k] ? copyRow(FEATURE_BY_KEY[k]) : null;
+        return rowForKey(k);
       }).filter(Boolean),
       init: CHAR_DEFAULTS.init,
       ac: CHAR_DEFAULTS.ac,
@@ -688,6 +695,7 @@
     seed: seed,
 
     mount: function (root, a) {
+    a.core.data('classes');
       api = a;
       CH = a.character().char;
       E = {

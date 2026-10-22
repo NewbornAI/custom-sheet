@@ -6,18 +6,26 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.webkit.WebResourceRequest;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * The whole app is one page loaded from the assets, so this shell only has to
- * give it a window, a dark background and a storage area for the saved state.
+ * The page and the data travel in the assets. This shell gives them a window,
+ * a dark background, a storage area for the saved state, and a local origin:
+ * a page cannot read a file next to it, so the shell answers for the assets
+ * itself. The library of spells and features is read when the app asks for
+ * it, so a launch only pays for the character being played.
  */
 public class MainActivity extends Activity {
 
-    private static final String PAGE = "file:///android_asset/index.html";
+    private static final String ORIGIN = "https://dnd.local/";
     private static final int VOID = 0xff08070f;
 
     private WebView view;
@@ -45,12 +53,10 @@ public class MainActivity extends Activity {
         view.setOverScrollMode(View.OVER_SCROLL_NEVER);
         view.setVerticalScrollBarEnabled(false);
         view.setHorizontalScrollBarEnabled(false);
-        /* The page is local, so a link to the web opens in the browser of
-           the phone and the app stays where it is. */
-        view.setWebViewClient(new LinkClient(this));
+        view.setWebViewClient(new ShellClient(this));
 
         setContentView(view);
-        view.loadUrl(PAGE);
+        view.loadUrl(ORIGIN + "index.html");
     }
 
     @Override
@@ -62,21 +68,51 @@ public class MainActivity extends Activity {
         }
     }
 
-    /* Sends the links to the web out of the app. */
-    private static class LinkClient extends WebViewClient {
+    /* Serves the assets from the local origin, and sends a link to the web
+       out of the app. */
+    private static class ShellClient extends WebViewClient {
 
         private final Activity host;
 
-        LinkClient(Activity host) {
+        ShellClient(Activity host) {
             this.host = host;
+        }
+
+        private static String mimeOf(String path) {
+            if (path.endsWith(".html")) return "text/html";
+            if (path.endsWith(".json")) return "application/json";
+            if (path.endsWith(".js")) return "text/javascript";
+            if (path.endsWith(".css")) return "text/css";
+            if (path.endsWith(".svg")) return "image/svg+xml";
+            if (path.endsWith(".png")) return "image/png";
+            if (path.endsWith(".woff2")) return "font/woff2";
+            return "application/octet-stream";
+        }
+
+        @Override
+        public WebResourceResponse shouldInterceptRequest(WebView v, WebResourceRequest request) {
+            Uri uri = request.getUrl();
+            if (uri == null) return null;
+            String where = uri.getScheme() + "://" + uri.getHost();
+            if (!ORIGIN.startsWith(where)) return null;
+            String path = uri.getPath();
+            if (path == null || path.equals("/") || path.isEmpty()) path = "/index.html";
+            while (path.startsWith("/")) path = path.substring(1);
+            path = path.replace("..", "");
+            try {
+                InputStream in = host.getAssets().open(path);
+                return new WebResourceResponse(mimeOf(path), "utf-8", in);
+            } catch (IOException e) {
+                byte[] none = new byte[0];
+                return new WebResourceResponse("text/plain", "utf-8", new ByteArrayInputStream(none));
+            }
         }
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest request) {
             Uri uri = request.getUrl();
             if (uri == null) return false;
-            String scheme = uri.getScheme();
-            if (scheme == null || "file".equals(scheme)) return false;
+            if (ORIGIN.startsWith(uri.getScheme() + "://" + uri.getHost())) return false;
             try {
                 host.startActivity(new Intent(Intent.ACTION_VIEW, uri));
             } catch (Exception e) {

@@ -33,10 +33,46 @@
   }
 
   var SURGE = readJson('surge-data');
-  var BOOK = readJson('spell-data');
-  var FEATUREDATA = readJson('feature-data');
+  var SEEDS = readJson('seed-data');
   var PRESETS = readJson('character-data').presets || [];
-  var CLASSDATA = readJson('class-data').classes || [];
+
+  /* ---- the data on disk ---- */
+
+  /* The book, the library of features and the classes live in files beside
+     the page and are read when a page asks for one, so a launch only pays
+     for the character. Each has a live shape filled in place, so a page that
+     took its reference at load sees the data arrive. */
+  var BOOK = { spells: [], seed: [] };
+  var FEATURES = { features: [] };
+  var CLASSDATA = [];
+  var SPELL_BY_NAME = {};
+  var FEATURE_BY_KEY = {};
+  var LOADING = {};
+
+  function data(name) {
+    if (LOADING[name]) return LOADING[name];
+    LOADING[name] = fetch('data/' + name + '.json')
+      .then(function (r) { return r.ok ? r.json() : {}; })
+      .then(function (value) {
+        if (name === 'spellbook') {
+          BOOK.spells = value.spells || [];
+          BOOK.seed = value.seed || [];
+          BOOK.spells.forEach(function (spell) { SPELL_BY_NAME[spell.name] = spell; });
+        } else if (name === 'features') {
+          FEATURES.features = value.features || [];
+          FEATURES.features.forEach(function (f) { FEATURE_BY_KEY[f.key] = f; });
+        } else if (name === 'classes') {
+          (value.classes || []).forEach(function (c) { CLASSDATA.push(c); });
+        }
+        if (current) refresh();
+        return true;
+      })
+      .catch(function () {
+        if (current) refresh();
+        return false;
+      });
+    return LOADING[name];
+  }
 
   /* ---- the style of a character ---- */
 
@@ -160,9 +196,6 @@
     else document.body.removeAttribute('data-theme');
     if (el.sigil) el.sigil.innerHTML = ICONS[iconOf(rec)].svg;
   }
-
-  var SPELL_BY_NAME = {};
-  (BOOK.spells || []).forEach(function (s) { SPELL_BY_NAME[s.name] = s; });
 
   /* ---- the shared helpers ---- */
 
@@ -323,6 +356,31 @@
     el.classList.add('bump');
   }
 
+  /* Drops a feature of the library into the character being played and
+     repaints, the way the agent will. */
+  function plugFeature(key) {
+    var rec = state.characters[state.current];
+    if (!rec || !rec.char || !FEATURE_BY_KEY[key]) return false;
+    if (rec.char.features.some(function (f) { return f.key === key; })) return true;
+    var f = FEATURE_BY_KEY[key];
+    rec.char.features.push({
+      key: f.key,
+      name: f.name,
+      source: f.source || '',
+      active: !!f.active,
+      recovery: f.recovery || 'passive',
+      bind: f.bind || null,
+      max: Number(f.uses) || 0,
+      left: Number(f.uses) || 0,
+      cost: f.cost || '',
+      short: f.short === undefined ? null : f.short,
+      hidden: !!f.hidden
+    });
+    save();
+    refresh();
+    return true;
+  }
+
   var core = {
     R: R,
     SR: SR,
@@ -333,7 +391,11 @@
     surge: SURGE,
     book: BOOK,
     bookByName: SPELL_BY_NAME,
-    features: FEATUREDATA,
+    features: FEATURES,
+    featureByKey: FEATURE_BY_KEY,
+    seeds: SEEDS,
+    data: data,
+    plugFeature: plugFeature,
     esc: esc,
     markup: markup,
     field: field,

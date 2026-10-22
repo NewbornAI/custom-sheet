@@ -14,8 +14,9 @@
   var dragged = false;
   var built = null;   /* the character the cards were built for */
 
-  var FEATURE_BY_KEY = {};
-  (C.features.features || []).forEach(function (f) { FEATURE_BY_KEY[f.key] = f; });
+  /* The library lands after the page does, and the shell repaints when it
+     does, so the map is the one the shell fills. */
+  var FEATURE_BY_KEY = C.featureByKey;
 
   var NEW_TYPES = [
     { id: 'short', label: 'short rest' },
@@ -267,6 +268,7 @@
     ].join('\n'),
 
     mount: function (root, a) {
+    a.core.data('features');
       api = a;
       E = {
         featureBody: root.querySelector('#featureBody'),
@@ -276,7 +278,7 @@
       };
 
       buildFeatureCards();
-      built = a.state.current;
+      built = a.state.current + '|' + features().map(function (f) { return f.key; }).join(',');
 
       E.featureBody.addEventListener('input', function (ev) {
         var roleEl = ev.target.closest ? ev.target.closest('[data-role]') : null;
@@ -413,11 +415,13 @@
 
     render: function (a) {
       api = a;
-      /* The cards are built for one character. Playing another one builds
-         its own list, so the first character's cards never stay on screen,
-         and coming back does not stack a second set. */
-      if (built !== a.state.current) {
-        built = a.state.current;
+      /* The cards are built for one character and for the features it
+         holds. Playing another one builds its own list, so the first
+         character's cards never stay on screen, and a feature plugged into
+         the character while it is on screen gets a card of its own. */
+      var signature = a.state.current + '|' + features().map(function (f) { return f.key; }).join(',');
+      if (built !== signature) {
+        built = signature;
         buildFeatureCards();
       }
       if (E.wrench) E.wrench.setAttribute('aria-pressed', editingFeatures ? 'true' : 'false');

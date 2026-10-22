@@ -19,25 +19,30 @@ if (!surgeTag.test(html)) throw new Error('surge data tag not found in src/index
 let built = html.replace(marker, `url('data:font/woff2;base64,${font}')`);
 built = built.replace(surgeTag, (m, open, close) => open + surge + close);
 
-const spells = readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8').trim();
-const spellTag = /(<script id="spell-data" type="application\/json">)[\s\S]*?(<\/script>)/;
-if (!spellTag.test(html)) throw new Error('spell data tag not found in src/index.html');
-built = built.replace(spellTag, (m, open, close) => open + spells + close);
+/* The book, the library of features and the classes travel beside the page
+   and are read when a page asks for them, so the page the phone opens at
+   launch carries only the character. */
+const bookJson = JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8'));
+const featuresJson = JSON.parse(readFileSync(resolve(root, 'data', 'features.json'), 'utf8'));
+mkdirSync(resolve(out, 'data'), { recursive: true });
+writeFileSync(resolve(out, 'data', 'spellbook.json'), JSON.stringify(bookJson) + '\n', 'utf8');
+writeFileSync(resolve(out, 'data', 'features.json'), JSON.stringify(featuresJson) + '\n', 'utf8');
+writeFileSync(resolve(out, 'data', 'classes.json'), readFileSync(resolve(root, 'data', 'classes.json'), 'utf8'), 'utf8');
 
-const features = readFileSync(resolve(root, 'data', 'features.json'), 'utf8').trim();
-const featureTag = /(<script id="feature-data" type="application\/json">)[\s\S]*?(<\/script>)/;
-if (!featureTag.test(html)) throw new Error('feature data tag not found in src/index.html');
-built = built.replace(featureTag, (m, open, close) => open + features + close);
+/* What a character needs at the start: the features it is seeded with, and
+   the spells of the app's own sheet. */
+const seeds = {
+  features: (featuresJson.features || []).filter((f) => f.seed),
+  spells: ((bookJson.seed || [])).map((s) => ({ name: s.name, level: s.level }))
+};
+built = built.replace(/(<script id="seed-data" type="application\/json">)[\s\S]*?(<\/script>)/, (m, open, close) => open + JSON.stringify(seeds) + close);
 
 const characters = readFileSync(resolve(root, 'data', 'characters.json'), 'utf8').trim();
 const characterTag = /(<script id="character-data" type="application\/json">)[\s\S]*?(<\/script>)/;
 if (!characterTag.test(html)) throw new Error('character data tag not found in src/index.html');
 built = built.replace(characterTag, (m, open, close) => open + characters + close);
 
-const classData = readFileSync(resolve(root, 'data', 'classes.json'), 'utf8').trim();
-const classTag = /(<script id="class-data" type="application\/json">)[\s\S]*?(<\/script>)/;
-if (!classTag.test(html)) throw new Error('class data tag not found in src/index.html');
-built = built.replace(classTag, (m, open, close) => open + classData + close);
+
 /* The pages and the shell are separate files, and the built page holds
    them inside, so the phone needs one file and nothing else. */
 const scripts = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)];

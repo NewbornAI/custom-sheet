@@ -556,9 +556,16 @@ console.log('seeding a character from the data');
     R: R, SR: C, ABILITIES: C.ABILITIES, SKILLS: C.SKILLS,
     LEVELS: R.LEVELS, WARLOCK_LEVEL: R.WARLOCK_LEVEL,
     features: features, book: book, bookByName: {},
+    featureByKey: {},
+    seeds: {
+      features: features.features.filter((f) => f.seed),
+      spells: (book.seed || []).map((s) => ({ name: s.name, level: s.level }))
+    },
+    data: () => Promise.resolve(true),
     canonSource: (s) => s
   };
   book.spells.forEach((s) => { core.bookByName[s.name] = s; });
+  features.features.forEach((f) => { core.featureByKey[f.key] = f; });
   const ctx = vm.createContext({ Volley: { core: core, page: (spec) => { taken[spec.id] = spec; } } });
   ['character', 'spells'].forEach((f) => {
     vm.runInContext(readFileSync(resolve(root, 'src', 'pages', f + '.js'), 'utf8'), ctx);
@@ -595,7 +602,7 @@ console.log('seeding a character from the data');
   check('and the rest keeps the app\'s spells', kept.lists[0].length, 10);
 }
 
-console.log('the built page carries the data');
+console.log('the page the phone opens at launch');
 {
   const built = readFileSync(resolve(root, 'dist', 'index.html'), 'utf8');
   const block = built.match(/<script id="surge-data" type="application\/json">([\s\S]*?)<\/script>/);
@@ -607,22 +614,29 @@ console.log('the built page carries the data');
   }
   const sheetBlock = built.match(/<script id="sheet-rules">([\s\S]*?)<\/script>/);
   check('the sheet rules travel with the page', !!sheetBlock, true);
-  const featureBlock = built.match(/<script id="feature-data" type="application\/json">([\s\S]*?)<\/script>/);
-  check('the features travel with the page', !!featureBlock, true);
-  if (featureBlock) {
-    const parsedFeatures = JSON.parse(featureBlock[1]);
-    check('the features are inlined', parsedFeatures.features.length, 1017);
+  /* The library, the book and the classes are files beside the page, read
+     when a page asks for one, so a launch only pays for the character. */
+  const seedBlock = built.match(/<script id="seed-data" type="application\/json">([\s\S]*?)<\/script>/);
+  check('the seeds travel with the page', !!seedBlock, true);
+  if (seedBlock) {
+    const seeds = JSON.parse(seedBlock[1]);
+    check('the eighteen features a fresh character starts with', seeds.features.length, 18);
+    check('and the spells of the sheet', seeds.spells.length > 20, true);
+    check('each with the level it sits at', seeds.spells.every((s) => s.name && s.level >= 0), true);
   }
+  check('the page carries no library', built.indexOf('"key": "wizard-1-arcane-recovery"') < 0, true);
+  const distFeatures = JSON.parse(readFileSync(resolve(root, 'dist', 'data', 'features.json'), 'utf8'));
+  check('the library sits beside the page', distFeatures.features.length, 1017);
+  check('and matches the data file', distFeatures.features.length, JSON.parse(readFileSync(resolve(root, 'data', 'features.json'), 'utf8')).features.length);
+  const distClasses = JSON.parse(readFileSync(resolve(root, 'dist', 'data', 'classes.json'), 'utf8'));
+  check('the classes sit beside it too', distClasses.classes.length, 12);
+  check('the page is small without them', built.length < 400000, true);
   const charBlock = built.match(/<script id="character-data" type="application\/json">([\s\S]*?)<\/script>/);
   if (!charBlock) { check('the ready-made characters travel', false, true); }
   else check('the ready-made characters travel', JSON.parse(charBlock[1]).presets.length, 1);
-  const bookBlock = built.match(/<script id="spell-data" type="application\/json">([\s\S]*?)<\/script>/);
-  if (!bookBlock) { check('the spell book is inlined', false, true); }
-  else {
-    const parsedBook = JSON.parse(bookBlock[1]);
-    check('the spell book is inlined', parsedBook.spells.length > 100, true);
-    check('the inlined book matches the data file', parsedBook.spells[0].name, JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8')).spells[0].name);
-  }
+  const distBook = JSON.parse(readFileSync(resolve(root, 'dist', 'data', 'spellbook.json'), 'utf8'));
+  check('the book sits beside the page', distBook.spells.length > 100, true);
+  check('and matches the data file', distBook.spells[0].name, JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8')).spells[0].name);
 }
 
 console.log(failures === 0 ? '\nall rules checks pass' : '\n' + failures + ' check(s) failed');

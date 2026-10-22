@@ -16,8 +16,10 @@ New-Item -ItemType Directory -Force -Path $out | Out-Null
 
 Write-Output "1. the page travels with the app"
 $assets = Join-Path $app 'assets'
+if (Test-Path $assets) { Remove-Item $assets -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $assets | Out-Null
 Copy-Item (Join-Path $root 'dist\index.html') (Join-Path $assets 'index.html') -Force
+Copy-Item (Join-Path $root 'dist\data') (Join-Path $assets 'data') -Recurse -Force
 
 Write-Output "2. compiling resources"
 $resZip = Join-Path $out 'res.zip'

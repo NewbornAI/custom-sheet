@@ -40,7 +40,9 @@
     surge: null
   };
 
-  var SPELL_SEED = (C.book.seed || []).map(function (s) { return s.name; });
+  /* The spells of the app's own sheet travel in the page; the book itself is
+     a file the app reads when the spells page opens. */
+  var SPELL_SEED = C.seeds.spells || [];
 
   function commit() { api.save(); api.refresh(); }
 
@@ -88,14 +90,12 @@
     LEVELS.forEach(function (lv) {
       var own = (saved && saved.lists && saved.lists[lv]) || null;
       if (own) {
-        lists[lv] = own.filter(function (n) { return C.bookByName[n]; });
+        /* Until the book is in there is nothing to check a name against. */
+        lists[lv] = C.book.spells.length ? own.filter(function (n) { return C.bookByName[n]; }) : own.slice();
         return;
       }
       if (fresh) { lists[lv] = []; return; }
-      lists[lv] = SPELL_SEED.filter(function (n) {
-        var sp = C.bookByName[n];
-        return sp && sp.level === lv;
-      });
+      lists[lv] = SPELL_SEED.filter(function (sp) { return sp.level === lv; }).map(function (sp) { return sp.name; });
     });
     s.lists = lists;
     /* The slots of a character that holds classes come from the multiclass
@@ -677,6 +677,7 @@
     seed: seed,
 
     mount: function (root, a) {
+    a.core.data('spellbook');
       api = a;
       S = a.character().spells;
       E = {
