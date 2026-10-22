@@ -181,6 +181,11 @@ console.log('the spell book');
   check('magic missile does not', book.spells.find((s) => s.name === 'Magic Missile').concentration, false);
   check('durations read in the plural', book.spells.find((s) => s.name === 'Detect Magic').duration, '10 minutes');
   check('the sheet seeded the level 2 spells', book.seed.filter((s) => s.level === 2).length, 11);
+  const fireball = book.spells.find((s) => s.name === 'Fireball');
+  check('the damage is marked', fireball.blocks[0].text.indexOf('[[d:8d6 Fire damage]]') >= 0, true);
+  check('the saving throw is marked', fireball.blocks[0].text.indexOf('[[s:Dexterity saving throw]]') >= 0, true);
+  const hold = book.spells.find((s) => s.name === 'Hold Person');
+  check('the condition is marked', hold.blocks[0].text.indexOf('[[c:Paralyzed]]') >= 0, true);
 }
 
 console.log('the classes of the book');

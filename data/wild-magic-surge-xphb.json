@@ -52,7 +52,7 @@
     {
       "from": 37,
       "to": 40,
-      "text": "You turn into a potted plant until the start of your next turn. While you're a plant, you have the Incapacitated condition and have Vulnerability to all damage. If you drop to 0 Hit Points, your pot breaks, and your form reverts."
+      "text": "You turn into a potted plant until the start of your next turn. While you're a plant, you have the [[c:Incapacitated]] condition and have Vulnerability to all damage. If you drop to 0 Hit Points, your pot breaks, and your form reverts."
     },
     {
       "from": 41,
@@ -62,7 +62,7 @@
     {
       "from": 45,
       "to": 48,
-      "text": "You and up to three creatures you choose within 30 feet of you have the Invisible condition for 1 minute. This invisibility ends on a creature immediately after it makes an attack roll, deals damage, or casts a spell."
+      "text": "You and up to three creatures you choose within 30 feet of you have the [[c:Invisible]] condition for 1 minute. This invisibility ends on a creature immediately after it makes an attack roll, deals damage, or casts a spell."
     },
     {
       "from": 49,
@@ -82,7 +82,7 @@
     {
       "from": 61,
       "to": 64,
-      "text": "For the next minute, any flammable, nonmagical object you touch that isn't being worn or carried by another creature bursts into flame, takes 1d4 Fire damage, and is burning."
+      "text": "For the next minute, any flammable, nonmagical object you touch that isn't being worn or carried by another creature bursts into flame, takes [[d:1d4 Fire damage]], and is burning."
     },
     {
       "from": 65,
@@ -92,7 +92,7 @@
     {
       "from": 69,
       "to": 72,
-      "text": "You have the Frightened condition until the end of your next turn. The DM determines the source of your fear."
+      "text": "You have the [[c:Frightened]] condition until the end of your next turn. The DM determines the source of your fear."
     },
     {
       "from": 73,
@@ -102,22 +102,22 @@
     {
       "from": 77,
       "to": 80,
-      "text": "A random creature within 60 feet of you has the Poisoned condition for 1d4 hours."
+      "text": "A random creature within 60 feet of you has the [[c:Poisoned]] condition for 1d4 hours."
     },
     {
       "from": 81,
       "to": 84,
-      "text": "You radiate Bright Light in a 30-foot radius for the next minute. Any creature that ends its turn within 5 feet of you has the Blinded condition until the end of its next turn."
+      "text": "You radiate Bright Light in a 30-foot radius for the next minute. Any creature that ends its turn within 5 feet of you has the [[c:Blinded]] condition until the end of its next turn."
     },
     {
       "from": 85,
       "to": 88,
-      "text": "Up to three creatures of your choice that you can see within 30 feet of you take 1d10 Necrotic damage. You regain Hit Points equal to the sum of the Necrotic damage dealt."
+      "text": "Up to three creatures of your choice that you can see within 30 feet of you take [[d:1d10 Necrotic damage]]. You regain Hit Points equal to the sum of the Necrotic damage dealt."
     },
     {
       "from": 89,
       "to": 92,
-      "text": "Up to three creatures of your choice that you can see within 30 feet of you take 4d10 Lightning damage."
+      "text": "Up to three creatures of your choice that you can see within 30 feet of you take [[d:4d10 Lightning damage]]."
     },
     {
       "from": 93,

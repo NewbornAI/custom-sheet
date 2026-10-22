@@ -452,6 +452,10 @@ input[type=range]::-moz-range-thumb{
 .sheet-meta .src.izzet{color:#dde4ff;border-color:rgba(140,160,255,.45);background:linear-gradient(90deg,rgba(110,155,255,.20) 0 50%,rgba(255,111,168,.20) 50% 100%)}
 .sheet-meta .src.elf{color:#8fe084;border-color:rgba(122,216,111,.45);background:rgba(122,216,111,.10)}
 .sheet-text{font-size:13px;line-height:1.6;color:#d9d5ec}
+.sheet-text .dmg{color:#ff6b6b}
+.sheet-text .sav{color:#6e9bff}
+.sheet-text .cond{border-bottom:1px dotted rgba(255,196,77,.6);cursor:pointer}
+.sheet-text .cond:active{color:var(--gold)}
 .sheet-text p{margin:0 0 9px}
 .sheet-text h3{font-family:var(--display);font-size:14px;font-weight:700;color:var(--arcane);margin:14px 0 5px}
 .sheet-text ul{margin:0 0 9px;padding-left:18px}
@@ -520,6 +524,21 @@ input[type=range]::-moz-range-thumb{
   outline:none;
 }
 .sheet-search:focus{border-color:rgba(155,123,255,.6)}
+.condtip{
+  position:absolute;
+  left:12px;right:12px;bottom:12px;
+  z-index:6;
+  padding:10px 12px;
+  border:1px solid var(--edge);
+  border-radius:8px;
+  background:rgba(18,16,30,.97);
+  box-shadow:0 10px 30px rgba(0,0,0,.6);
+}
+.condtip[hidden]{display:none}
+.condtip .cthead{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.condtip .ctname{font-family:var(--display);font-size:14px;color:var(--gold)}
+.condtip .ctx{margin-left:auto;border:0;background:none;color:var(--muted);font-size:18px;line-height:1;cursor:pointer;padding:0}
+.condtip .ctlink{font-size:11px;color:#9dbcff;word-break:break-all}
 
 /* ---- character sheet ---- */
 
@@ -1164,6 +1183,10 @@ input[type=range]::-moz-range-thumb{
     </div>
     <div class="sheet-text" id="sheetText"></div>
     <div class="sheet-list" id="sheetList" hidden></div>
+    <div class="condtip" id="condTip" hidden>
+      <div class="cthead"><span class="ctname" id="condName"></span><button class="ctx" id="condClose" type="button" aria-label="Close">&times;</button></div>
+      <a class="ctlink" id="condLink" href="https://5e.tools/conditionsdiseases.html">5e.tools/conditionsdiseases.html</a>
+    </div>
     <div class="sheet-actions" id="sheetActions"></div>
   </div>
 </div>
@@ -1761,6 +1784,9 @@ input[type=range]::-moz-range-thumb{
     sheetActions: document.getElementById('sheetActions'),
     sheetSearch: document.getElementById('sheetSearch'),
     grimoireLevel: document.getElementById('grimoireLevel'),
+    condTip: document.getElementById('condTip'),
+    condName: document.getElementById('condName'),
+    condClose: document.getElementById('condClose'),
     sheetClose: document.getElementById('sheetClose'),
     tabChar: document.getElementById('tab-char'),
     viewChar: document.getElementById('view-char'),
@@ -1812,6 +1838,16 @@ input[type=range]::-moz-range-thumb{
   function esc(text) {
     return String(text === undefined || text === null ? '' : text)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  /* The marked pieces of a spell text: the damage in red, the saving
+     throws in blue, and the conditions, which carry the reference. */
+  function markup(text) {
+    var out = esc(text);
+    out = out.replace(/\[\[d:([^\]]*)\]\]/g, '<span class="dmg">$1</span>');
+    out = out.replace(/\[\[s:([^\]]*)\]\]/g, '<span class="sav">$1</span>');
+    out = out.replace(/\[\[c:([^\]]*)\]\]/g, '<span class="cond" data-cond="$1" title="https://5e.tools/conditionsdiseases.html">$1</span>');
+    return out;
   }
 
   function seedSpells(saved) {
@@ -2440,6 +2476,7 @@ input[type=range]::-moz-range-thumb{
   var sheetParent = '';
 
   function closeSheet() {
+    el.condTip.hidden = true;
     /* A spell read from the grimoire gives the grimoire back, it does not
        close the overlay. */
     if (sheetParent === 'grimoire') {
@@ -2463,10 +2500,10 @@ input[type=range]::-moz-range-thumb{
   function renderBlocks(blocks) {
     var html = '';
     (blocks || []).forEach(function (b) {
-      if (b.t === 'p') html += '<p>' + esc(b.text) + '</p>';
-      else if (b.t === 'h') html += '<h3>' + esc(b.text) + '</h3>';
+      if (b.t === 'p') html += '<p>' + markup(b.text) + '</p>';
+      else if (b.t === 'h') html += '<h3>' + markup(b.text) + '</h3>';
       else if (b.t === 'list') {
-        html += '<ul>' + b.items.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul>';
+        html += '<ul>' + b.items.map(function (i) { return '<li>' + markup(i) + '</li>'; }).join('') + '</ul>';
       } else if (b.t === 'table') {
         if (b.caption) html += '<div class="tcap">' + esc(b.caption) + '</div>';
         html += '<table>';
@@ -2474,7 +2511,7 @@ input[type=range]::-moz-range-thumb{
           html += '<thead><tr>' + b.head.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join('') + '</tr></thead>';
         }
         html += '<tbody>' + b.rows.map(function (r) {
-          return '<tr>' + r.map(function (c) { return '<td>' + esc(c) + '</td>'; }).join('') + '</tr>';
+          return '<tr>' + r.map(function (c) { return '<td>' + markup(c) + '</td>'; }).join('') + '</tr>';
         }).join('') + '</tbody></table>';
       }
     });
@@ -2519,6 +2556,7 @@ input[type=range]::-moz-range-thumb{
     el.sheetSearch.hidden = true;
     el.sheetList.innerHTML = '';
     el.sheetList.hidden = true;
+    el.condTip.hidden = true;
     el.sheetActions.innerHTML = '<button class="danger" type="button" id="dropSpell">Remove from level ' + state.spell.selected + '</button>';
     el.sheet.hidden = false;
     el.sheetActions.querySelector('#dropSpell').addEventListener('click', function () {
@@ -3457,6 +3495,16 @@ input[type=range]::-moz-range-thumb{
 
   el.sheetClose.addEventListener('click', closeSheet);
   el.sheet.addEventListener('click', function (ev) { if (ev.target === el.sheet) closeSheet(); });
+  /* A condition opens the reference to it. */
+  el.sheetText.addEventListener('click', function (ev) {
+    var cond = ev.target.closest('.cond');
+    if (!cond) return;
+    el.condName.textContent = cond.dataset.cond;
+    el.condTip.hidden = false;
+  });
+
+  el.condClose.addEventListener('click', function () { el.condTip.hidden = true; });
+
   el.sheetSearch.addEventListener('input', function () { renderGrimoire(state.spell.selected); });
 
   el.grimoireLevel.addEventListener('click', function () {

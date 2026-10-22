@@ -74,12 +74,19 @@ function clean(text) {
   if (typeof text !== 'string') return '';
   let out = text;
   out = out.replace(/\{@filter ([^}]*)}/g, '');
+  /* The damage takes the type that follows it: "8d6 Fire damage". */
+  out = out.replace(/\{@damage ([^}]+)\}(\s+([A-Z][a-z]+)( damage)?)?/g, (m, dice, gap, type, dmg) =>
+    '[[d:' + dice + (gap ? ' ' + type + (dmg || '') : '') + ']]');
+  /* The conditions keep their name, the page shows them as a reference. */
+  out = out.replace(/\{@condition ([^}|]+)(?:\|[^}]*)?}/g, (m, name) => '[[c:' + name.trim() + ']]');
   out = out.replace(/\{@([a-zA-Z]+)\s+([^}|]*)(?:\|[^}]*)?}/g, (m, tag, body) => {
     const b = body.trim();
     if (tag === 'actSave') {
       const abil = b.split(',').map((a) => ABILITIES[a.trim()] || a.trim()).join(' or ');
       return abil + ' saving throw';
     }
+    if (tag === 'damage' || tag === 'scaledamage') return '[[d:' + b + ']]';
+    if (tag === 'condition') return '[[c:' + b + ']]';
     if (tag === 'hit') return 'on a hit, ' + b;
     if (tag === 'recharge') return 'recharges on a ' + b;
     if (tag === 'atk') return b.replace(/^(\w)(\w*)/, (x, a, r) => a.toUpperCase() + r) + ' attack';
@@ -89,6 +96,8 @@ function clean(text) {
     return b;
   });
   out = out.replace(/\{@[a-zA-Z]+\s*}/g, '');
+  /* The saving throws, in blue. */
+  out = out.replace(/\b(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma) saving throw/g, '[[s:$1 saving throw]]');
   return out.replace(/\s+/g, ' ').trim();
 }
 
