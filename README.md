@@ -57,6 +57,7 @@ The front of the character sheet, for the numbers you look up mid turn.
 - **The abilities** are six tiles: the score, with the modifier under it. Type a score and everything that leans on it moves. The saving throw of the ability sits right under its own tile.
 - **The saving throws and the skills** carry a marker and a modifier. An empty dot means the character has nothing in it, a gold dot means proficient, and a dot with a ring around it means expertise, which takes the proficiency twice. In the edit mode a tap cycles a row from none to proficient to expertise and back.
 - **The derived line** under the abilities reads the proficiency bonus, the spell attack, the save DC and the passive perception, all of them computed from the scores above.
+- **The hit dice** sit under the hit points, one icon per die, drawn with as many sides as the die has, so a d6 is a hexagon and a d10 has ten. Tapping one spends it and tapping it again gives it back, because some effects spend a die without a roll, and the points are rolled by hand. A long rest gives every die back. The wrench turns the box into a picker for how many dice of each type, from d12 to d6.
 - **The features** have their own tab, the one below. The rests here still restore them, and the note says which ones came back.
 - **The short rest** gives back the features marked as recovering on a short rest, and nothing else: the warlock spell slots and one use of the hexblade curse. The **long rest** gives back the hit points, every spell slot, the sorcery points and every use of every feature.
 - **The rewind** undoes the last change of any kind: a point of hit points, a use of a feature, or a whole rest. Hit it after a rest you did not mean, and the hit points, the slots and the features come back as they were.
@@ -78,9 +79,9 @@ The list of what the character can do, and what is left of it.
 
 The list is Mandal's own table of 2026-10-22: the short text, the uses and the recovery are his words, and the long text is pulled from 5e.tools by `tools/fetch-5e-data.mjs` into `data/features.json`.
 
-## The wild magic surge page
+## The wild magic surge
 
-The second tab rolls on the Wild Magic Surge table from the 2024 Player's Handbook, the same one 5e.tools serves under its XPHB source. It rolls d100, shows the range it landed on and the effect text, and rolls any dice the effect names: eight of the twenty five rows ask for dice, so the app rolls them and shows the values and the total.
+The surge moved into the spell tab, as a d20 at the end of the top bar, right of the sorcerer rest. An ordinary roll leaves it green, a 20 turns it red and brings up the table with the range, the effect and the dice it names. The table is the one from the 2024 Player's Handbook, the same one 5e.tools serves under its XPHB source.
 
 The table is never typed by hand. `tools/fetch-5e-data.mjs` pulls it out of the 5e.tools class data, parses it into `data/wild-magic-surge-xphb.json`, and refuses to write a table that does not cover 1 to 100 exactly once. The build inlines that JSON into the page, and the test suite checks the inlined copy against the file.
 

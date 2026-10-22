@@ -340,6 +340,22 @@ console.log('the rests');
   check('a rewind of one snapshot brings that one back', C.rewind([snap]).current.hp, 12);
 }
 
+console.log('the hit dice');
+{
+  const hero = {
+    hp: { current: 12, max: 38 },
+    dice: [{ type: 6, spent: true }, { type: 6, spent: false }, { type: 10, spent: true }],
+    features: []
+  };
+  const spell = { left: {}, max: {}, warlockMax: 0, warlockLeft: 0, sp: 0, spMax: 8, cunning: false, sorcRest: false };
+  const long = C.longRest(hero, spell);
+  check('a long rest gives every die back', long.dice.map((d) => d.spent), [false, false, false]);
+  const short = C.shortRest(hero, spell);
+  check('a short rest leaves the dice alone', short.dice.map((d) => d.spent), [true, false, true]);
+  const snap = C.snapshot(hero, spell);
+  check('a snapshot holds the dice', snap.dice.map((d) => d.spent), [true, false, true]);
+}
+
 console.log('the features');
 {
   const data = JSON.parse(readFileSync(resolve(root, 'data', 'features.json'), 'utf8'));
