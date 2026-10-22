@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  var C = Volley.core;
+  var C = Sheet.core;
   var R = C.R;
 
   var api = null;   /* the shell gives it at mount */
@@ -213,7 +213,7 @@
 
   /* ---- the page ---- */
 
-  Volley.page({
+  Sheet.page({
     id: 'volley',
     title: 'Volley',
     order: 1,

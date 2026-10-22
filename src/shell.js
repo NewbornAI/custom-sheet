@@ -5,10 +5,11 @@
 
   var R = window.Rules;
   var SR = window.SheetRules;
-  var STORE = 'dndsheet.state.v3';
-  /* The stores of the two first versions, read once and moved into the
-     characters. */
-  var OLD_STORES = ['volley.state.v1', 'volley.state.v2'];
+  var STORE = 'customsheet.state.v3';
+  /* The stores of the first names, read once and moved on. The first held the
+     slices of the volley and one character, the second held the same three
+     slices, and the third is this one under the name the app had before. */
+  var OLD_STORES = ['dndsheet.state.v3', 'volley.state.v1', 'volley.state.v2'];
 
   /* ---- the registry ---- */
 
@@ -67,9 +68,9 @@
   /* The shell reads a file out of the app when it is there, and a page on
      the web fetches it. Either way the file is read when a page asks. */
   function readFile(file) {
-    if (window.DndShell && window.DndShell.read) {
+    if (window.SheetShell && window.SheetShell.read) {
       try {
-        var answer = window.DndShell.read(file);
+        var answer = window.SheetShell.read(file);
         if (answer && typeof answer.then === 'function') {
           return answer.then(function (text) {
             if (text) return text;
@@ -91,9 +92,9 @@
   /* An answer from another origin comes through the shell, because the
      page cannot fetch it and the other origin cannot answer it. */
   function readUrl(url) {
-    if (window.DndNet && window.DndNet.fetchUrl) {
+    if (window.SheetNet && window.SheetNet.fetchUrl) {
       try {
-        var answer = window.DndNet.fetchUrl(url);
+        var answer = window.SheetNet.fetchUrl(url);
         if (answer && typeof answer.then === 'function') {
           return answer.then(function (text) {
             if (text && text.indexOf('error ') !== 0) return text;
@@ -116,17 +117,17 @@
      to the installer of the phone. A page on the web has no shell, so it
      opens the build in the browser instead. */
   function installUpdate(url) {
-    if (window.DndNet && window.DndNet.download && window.DndNet.install) {
+    if (window.SheetNet && window.SheetNet.download && window.SheetNet.install) {
       try {
-        var answer = window.DndNet.download(url);
+        var answer = window.SheetNet.download(url);
         if (answer && typeof answer.then === 'function') {
           return answer.then(function (text) {
             if (!text || text.indexOf('error ') === 0) return text;
-            return window.DndNet.install();
+            return window.SheetNet.install();
           });
         }
         if (!answer || answer.indexOf('error ') === 0) return Promise.resolve(answer);
-        return Promise.resolve(window.DndNet.install());
+        return Promise.resolve(window.SheetNet.install());
       } catch (e) {
         return Promise.reject(e);
       }
@@ -489,11 +490,16 @@
     readUrl: readUrl,
     exportCharacter: exportCharacter,
     importPackage: importPackage,
+    importUrl: importUrl,
+    importAny: importAny,
+    importLink: importLink,
+    linkOf: linkOf,
+    shareLink: shareLink,
+    packageOf: packageOf,
+    shelfRepo: shelfRepo,
+    shelfCharacters: shelfCharacters,
+    shelfBranches: shelfBranches,
     pickFile: pickFile,
-    repoList: repoList,
-    repoPut: repoPut,
-    repoGet: repoGet,
-    repository: repository,
     toast: toast,
     installUpdate: installUpdate,
     plugFeature: plugFeature,
@@ -802,7 +808,7 @@
      pages it carries are registered with the app. */
   function packageOf(rec) {
     return {
-      kind: 'dnd-sheet-character',
+      kind: 'custom-sheet-character',
       version: 1,
       name: (rec.char && rec.char.name) || 'Unnamed character',
       record: {
@@ -820,7 +826,7 @@
   function packageName(rec) {
     var name = ((rec.char && rec.char.name) || 'character').toLowerCase()
       .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'character';
-    return 'dnd-sheet-' + name + '.json';
+    return 'custom-sheet-' + name + '.json';
   }
 
   /* A name that is taken does not stop the import: the new one is called
@@ -883,7 +889,7 @@
   function importPackage(text) {
     var pkg = null;
     try { pkg = JSON.parse(text); } catch (e) { return { ok: false, why: 'that file is not a character' }; }
-    if (!pkg || pkg.kind !== 'dnd-sheet-character' || !pkg.record) {
+    if (!pkg || (pkg.kind !== 'custom-sheet-character' && pkg.kind !== 'dnd-sheet-character') || !pkg.record) {
       return { ok: false, why: 'that file is not a character' };
     }
     var rec = seedCharacter(JSON.parse(JSON.stringify(pkg.record)), false);
@@ -909,9 +915,9 @@
     if (!rec) return { ok: false, why: 'no character' };
     var name = packageName(rec);
     var text = JSON.stringify(packageOf(rec), null, 2);
-    if (window.DndShell && window.DndShell.share) {
+    if (window.SheetShell && window.SheetShell.share) {
       try {
-        var answer = window.DndShell.share(name, text);
+        var answer = window.SheetShell.share(name, text);
         if (answer && answer.indexOf('error ') === 0) return { ok: false, why: answer };
         return { ok: true, name: name };
       } catch (e) {
@@ -932,63 +938,170 @@
     }
   }
 
-  /* ---- the repository ---- */
+  /* ---- the exchange ---- */
 
-  /* The repository holds the characters that are shared. Its address and its
-     token are the player's, so it can be a temporary one that goes away. */
-  function repository() {
-    var ui = state.ui || {};
-    return { address: String(ui.repo || ''), token: String(ui.token || '') };
+  /* A character leaves the app as a package, and there are three ways for it
+     to arrive: a file, a link, and the shelf. None of them asks the player
+     to type a secret. */
+
+  /* A link carries the character itself. The package is packed, squeezed
+     and written into the link, so the two ends need nothing in common but
+     the link. The character rides in the fragment of the link, and a
+     fragment never reaches a server. */
+  function toBase64Url(bytes) {
+    var s = '';
+    for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+    return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
 
-  function repoCall(command) {
-    var r = repository();
-    if (!r.address || !r.token) return Promise.reject(new Error('the repository has no address yet'));
-    var url = r.address.replace(/\/$/, '') + '/pipeline';
-    var body = JSON.stringify([command]);
-    if (window.DndNet && window.DndNet.postUrl) {
+  function fromBase64Url(text) {
+    var s = String(text || '').replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    var raw = atob(s);
+    var out = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+    return out;
+  }
+
+  function squeeze(text) {
+    if (typeof CompressionStream === 'undefined') return Promise.resolve(null);
+    try {
+      var stream = new CompressionStream('gzip');
+      var writer = stream.writable.getWriter();
+      writer.write(new TextEncoder().encode(text));
+      writer.close();
+      return new Response(stream.readable).arrayBuffer().then(function (buf) {
+        return new Uint8Array(buf);
+      });
+    } catch (e) {
+      return Promise.resolve(null);
+    }
+  }
+
+  function unsqueeze(bytes) {
+    var stream = new DecompressionStream('gzip');
+    var writer = stream.writable.getWriter();
+    writer.write(bytes);
+    writer.close();
+    return new Response(stream.readable).text();
+  }
+
+  /* The link a character travels in. It opens the repository of the app,
+     which is a harmless place for it to point. */
+  var LINK_BASE = 'https://github.com/NewbornAI/custom-sheet#';
+
+  function linkOf(pkg) {
+    var json = JSON.stringify(pkg);
+    return squeeze(json).then(function (packed) {
+      if (!packed) return LINK_BASE + 'p=0' + toBase64Url(new TextEncoder().encode(json));
+      return LINK_BASE + 'p=1' + toBase64Url(packed);
+    });
+  }
+
+  /* A link that carries a character comes back in. */
+  function importLink(text) {
+    var m = String(text || '').match(/[#&]p=([^&]+)/);
+    if (!m) return Promise.resolve({ ok: false, why: 'that link carries no character' });
+    var packed = m[1];
+    var flag = packed.charAt(0);
+    try {
+      var bytes = fromBase64Url(packed.slice(1));
+      if (flag === '1') {
+        return unsqueeze(bytes).then(function (body) { return importPackage(body); });
+      }
+      return Promise.resolve(importPackage(new TextDecoder().decode(bytes)));
+    } catch (e) {
+      return Promise.resolve({ ok: false, why: 'that link carries no character' });
+    }
+  }
+
+  /* A link leaves the app: the phone offers it to send, the web puts it in
+     the clipboard. */
+  function shareLink(url) {
+    if (window.SheetShell && window.SheetShell.shareText) {
       try {
-        var answer = window.DndNet.postUrl(url, body, r.token);
-        if (answer && typeof answer.then === 'function') {
-          return answer.then(function (text) { return JSON.parse(text); });
-        }
-        return Promise.resolve(JSON.parse(answer));
+        var answer = window.SheetShell.shareText(url);
+        if (answer && answer.indexOf('error ') === 0) return answer;
+        return 'ok';
       } catch (e) {
-        return Promise.reject(e);
+        return String((e && e.message) || e);
       }
     }
-    return fetch(url, {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + r.token, 'Content-Type': 'application/json' },
-      body: body
-    }).then(function (res) { return res.json(); });
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url);
+        return 'copied';
+      }
+    } catch (e) {}
+    return 'the link is in the field';
   }
 
-  function repoList() {
-    return repoCall(['KEYS', 'dnd-sheet:*']).then(function (out) {
-      var rows = (out && out[0] && out[0].result) || [];
-      return rows.map(function (key) { return String(key).replace(/^dnd-sheet:/, ''); });
+  /* ---- the shelf ---- */
+
+  /* The shelf is a folder in the repository of the app. The repository is
+     public, so the app reads it with no secret at all, and anybody may
+     open a branch and drop a character there. */
+  function shelfRepo() {
+    var ui = state.ui || {};
+    return String(ui.shelf || 'NewbornAI/custom-sheet');
+  }
+
+  function shelfApi(path) {
+    return 'https://api.github.com/repos/' + shelfRepo() + path;
+  }
+
+  /* The characters of a branch: the files of the folder, one package each. */
+  function shelfCharacters(ref) {
+    var where = shelfApi('/contents/characters' + (ref ? '?ref=' + encodeURIComponent(ref) : ''));
+    return readUrl(where).then(function (text) {
+      var rows = JSON.parse(text);
+      if (!Array.isArray(rows)) return [];
+      return rows.filter(function (f) {
+        return f && f.type === 'file' && /\.json$/.test(f.name);
+      }).map(function (f) {
+        return { name: f.name, url: f.download_url, ref: ref || '' };
+      });
+    }).catch(function (e) {
+      /* the folder of the shelf may not be there yet */
+      var why = String((e && e.message) || e);
+      if (why.indexOf('404') >= 0) return [];
+      throw e;
     });
   }
 
-  function repoPut(pkg) {
-    var key = 'dnd-sheet:' + (pkg.name || 'character');
-    return repoCall(['SET', key, JSON.stringify(pkg)]).then(function (out) {
-      return !!(out && out[0] && out[0].result === 'OK');
+  /* The branches are the shelves of the players: anybody may open one. */
+  function shelfBranches() {
+    return readUrl(shelfApi('/branches')).then(function (text) {
+      var rows = JSON.parse(text);
+      if (!Array.isArray(rows)) return [];
+      return rows.map(function (b) { return b.name; });
     });
   }
 
-  function repoGet(name) {
-    return repoCall(['GET', 'dnd-sheet:' + name]).then(function (out) {
-      var raw = out && out[0] && out[0].result;
-      if (!raw) return null;
-      try { return JSON.parse(raw); } catch (e) { return null; }
+  /* A package that comes in by a link, or by the address of a file that
+     holds one. */
+  function importAny(text) {
+    var where = String(text || '').trim();
+    if (!where) return Promise.resolve({ ok: false, why: 'nothing to fetch' });
+    if (/[#&]p=/.test(where)) return importLink(where);
+    return importUrl(where);
+  }
+
+  /* A package that comes in by a link: the machine that holds the file
+     answers, and the package lands the way one from a file lands. */
+  function importUrl(url) {
+    var where = String(url || '').trim();
+    if (!where) return Promise.resolve({ ok: false, why: 'no link' });
+    return readUrl(where).then(function (text) {
+      return importPackage(text);
+    }).catch(function (e) {
+      return { ok: false, why: String((e && e.message) || e) };
     });
   }
 
   /* The file the player picked comes back to the page. */
-  window.__dndPicked = function (name) {
-    var text = (window.DndShell && window.DndShell.pickedText) ? window.DndShell.pickedText() : '';
+  window.__sheetPicked = function (name) {
+    var text = (window.SheetShell && window.SheetShell.pickedText) ? window.SheetShell.pickedText() : '';
     if (!text) return;
     var answer = importPackage(text);
     if (answer && answer.ok) toast(answer.name + ' is here.');
@@ -996,9 +1109,9 @@
   };
 
   function pickFile() {
-    if (window.DndShell && window.DndShell.pick) {
+    if (window.SheetShell && window.SheetShell.pick) {
       try {
-        var answer = window.DndShell.pick();
+        var answer = window.SheetShell.pick();
         if (answer && answer.indexOf('error ') === 0) toast(answer);
         return true;
       } catch (e) {
@@ -1382,7 +1495,7 @@ wireHead();
     show(home ? home.id : (enabled()[0] || PAGES[0]).id);
   }
 
-  window.Volley = { page: page, core: core, show: show };
+  window.Sheet = { page: page, core: core, show: show };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);

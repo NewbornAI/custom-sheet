@@ -572,7 +572,7 @@ console.log('seeding a character from the data');
   };
   book.spells.forEach((s) => { core.bookByName[s.name] = s; });
   features.features.forEach((f) => { core.featureByKey[f.key] = f; });
-  const ctx = vm.createContext({ Volley: { core: core, page: (spec) => { taken[spec.id] = spec; } } });
+  const ctx = vm.createContext({ Sheet: { core: core, page: (spec) => { taken[spec.id] = spec; } } });
   ['character', 'spells'].forEach((f) => {
     vm.runInContext(readFileSync(resolve(root, 'src', 'pages', f + '.js'), 'utf8'), ctx);
   });

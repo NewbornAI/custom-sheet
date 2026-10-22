@@ -3,7 +3,7 @@
 (function () {
   'use strict';
 
-  var C = Volley.core;
+  var C = Sheet.core;
   var SR = C.SR;
   var ABILITIES = C.ABILITIES;
   var SKILLS = C.SKILLS;
@@ -672,7 +672,7 @@
 
   /* ---- the page ---- */
 
-  Volley.page({
+  Sheet.page({
     id: 'character',
     title: function (a) {
       var c = a.character().char || {};

@@ -3,7 +3,7 @@
 (function () {
   'use strict';
 
-  var C = Volley.core;
+  var C = Sheet.core;
   var SR = C.SR;
 
   var api = null;   /* the shell gives it at mount */
@@ -253,7 +253,7 @@
 
   /* ---- the page ---- */
 
-  Volley.page({
+  Sheet.page({
     id: 'features',
     title: 'Features',
     order: 3,

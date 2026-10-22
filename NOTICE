@@ -1,0 +1,27 @@
+# NOTICE
+
+custom-sheet
+Copyright (c) 2026 Newborn AI
+
+This project includes material taken from the System Reference Document 5.2 by
+Wizards of the Coast LLC and available at https://www.dndbeyond.com/srd. The
+SRD 5.2 is licensed under the Creative Commons Attribution 4.0 International
+License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+
+The text was taken from 5e.tools, a fan site whose data is the System
+Reference Document, and it was laid out by this project.
+
+The files under data/ carry that text: the spells, the classes, the
+archetypes, the features and the wild magic surge table. Most of it is SRD
+5.2. A few archetypes come from the 2014 books and are in SRD 5.1, which
+Wizards also published under Creative Commons.
+
+The code, the layout and the pages of this project are not part of the System
+Reference Document. They are under the MIT licence that sits in the LICENSE
+file.
+
+Dungeons & Dragons, D&D and the D20 logo are trademarks of Wizards of the
+Coast LLC. This project is not affiliated with, endorsed by or sponsored by
+Wizards of the Coast.
+
+The font Cinzel is under the SIL Open Font Licence 1.1.

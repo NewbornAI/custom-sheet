@@ -36,7 +36,7 @@ const hitDice = {};
 (classJson.classes || []).forEach((c) => { hitDice[c.name] = Number(c.hd) || 6; });
 const version = new Date().toISOString();
 built = built.replace(/(<script id="version-data" type="application\/json">)[\s\S]*?(<\/script>)/, (m, open, close) => open + JSON.stringify({ version: version }) + close);
-writeFileSync(resolve(out, 'version.json'), JSON.stringify({ version: version, apk: 'dnd-sheet.apk' }) + '\n', 'utf8');
+writeFileSync(resolve(out, 'version.json'), JSON.stringify({ version: version, apk: 'custom-sheet.apk' }) + '\n', 'utf8');
 
 const seeds = {
   features: (featuresJson.features || []).filter((f) => f.seed),

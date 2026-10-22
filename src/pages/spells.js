@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  var C = Volley.core;
+  var C = Sheet.core;
   var R = C.R;
   var SR = C.SR;
   var LEVELS = C.LEVELS;
@@ -651,7 +651,7 @@
 
   /* ---- the page ---- */
 
-  Volley.page({
+  Sheet.page({
     id: 'spells',
     title: 'Spells',
     order: 2,

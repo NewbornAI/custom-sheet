@@ -2,3 +2,7 @@ build/
 .stg/
 app/assets/
 tools/.5e-cache/
+
+# the signing key stays on the machine that builds: a published key would let
+# anybody sign an update of the app
+keys/*.keystore

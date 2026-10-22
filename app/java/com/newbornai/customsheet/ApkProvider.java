@@ -1,4 +1,4 @@
-package net.volley.app;
+package com.newbornai.customsheet;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -18,7 +18,7 @@ import java.io.FileNotFoundException;
  */
 public class ApkProvider extends ContentProvider {
 
-    public static final String AUTHORITY = "net.volley.app.apk";
+    public static final String AUTHORITY = "com.newbornai.customsheet.apk";
 
     public static Uri uriFor(Context context, String name) {
         return new Uri.Builder().scheme("content").authority(AUTHORITY).path(name).build();

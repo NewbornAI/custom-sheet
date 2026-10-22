@@ -1,4 +1,4 @@
-package net.volley.app;
+package com.newbornai.customsheet;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,7 +27,7 @@ import java.io.InputStream;
  */
 public class MainActivity extends Activity {
 
-    private static final String ORIGIN = "https://dnd.local/";
+    private static final String ORIGIN = "https://sheet.local/";
     private static final int PICK = 41;
     private static final int VOID = 0xff08070f;
 
@@ -66,8 +66,8 @@ public class MainActivity extends Activity {
         /* The page asks the shell for a file that sits in the assets: a page
            cannot read one by itself, and the network is not there to fetch
            it. */
-        view.addJavascriptInterface(new AssetBridge(this), "DndShell");
-        view.addJavascriptInterface(new FetchBridge(this), "DndNet");
+        view.addJavascriptInterface(new AssetBridge(this), "SheetShell");
+        view.addJavascriptInterface(new FetchBridge(this), "SheetNet");
 
         setContentView(view);
         view.loadUrl(ORIGIN + "index.html");
@@ -88,7 +88,7 @@ public class MainActivity extends Activity {
             while ((n = in.read(chunk)) > 0) out.write(chunk, 0, n);
             in.close();
             pickedText = out.toString("UTF-8");
-            view.evaluateJavascript("window.__dndPicked && window.__dndPicked('package.json')", null);
+            view.evaluateJavascript("window.__sheetPicked && window.__sheetPicked('package.json')", null);
         } catch (Exception e) {
             pickedText = "";
         }
@@ -237,6 +237,23 @@ public class MainActivity extends Activity {
                 intent.putExtra(Intent.EXTRA_STREAM, uri);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 Intent chooser = Intent.createChooser(intent, "Send the character");
+                chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                host.startActivity(chooser);
+                return "ok";
+            } catch (Exception e) {
+                return "error " + e.getClass().getSimpleName();
+            }
+        }
+
+        /* Offers a piece of text to the phone, so a link can be sent to
+           somebody. */
+        @JavascriptInterface
+        public String shareText(String text) {
+            try {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, text);
+                Intent chooser = Intent.createChooser(intent, "Send the link");
                 chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 host.startActivity(chooser);
                 return "ok";

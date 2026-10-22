@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.volley.app"
+    package="com.newbornai.customsheet"
     android:versionCode="1"
     android:versionName="1.0">
 
@@ -18,7 +18,7 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name="net.volley.app.MainActivity"
+            android:name="com.newbornai.customsheet.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|uiMode|density"
@@ -31,7 +31,7 @@
 
         <provider
             android:name=".ApkProvider"
-            android:authorities="net.volley.app.apk"
+            android:authorities="com.newbornai.customsheet.apk"
             android:exported="false"
             android:grantUriPermissions="true" />
     </application>

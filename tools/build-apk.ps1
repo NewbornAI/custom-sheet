@@ -40,8 +40,8 @@ $classes = Join-Path $out 'classes'
 if (Test-Path $classes) { Remove-Item $classes -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $classes | Out-Null
 $src = @(
-  "$app\java\net\volley\app\MainActivity.java"
-  "$app\java\net\volley\app\ApkProvider.java"
+  "$app\java\com\newbornai\customsheet\MainActivity.java"
+  "$app\java\com\newbornai\customsheet\ApkProvider.java"
 )
 & "$javaHome\bin\javac.exe" --release 11 -cp $androidJar -d $classes $src
 if ($LASTEXITCODE -ne 0) {
@@ -77,18 +77,18 @@ if (Test-Path $aligned) { Remove-Item $aligned -Force }
 if ($LASTEXITCODE -ne 0) { throw "zipalign failed" }
 
 Write-Output "8. signing"
-$keystore = Join-Path $root 'keys\volley.keystore'
+$keystore = Join-Path $root 'keys\custom-sheet.keystore'
 New-Item -ItemType Directory -Force -Path (Split-Path $keystore) | Out-Null
 if (-not (Test-Path $keystore)) {
-  & "$javaHome\bin\keytool.exe" -genkeypair -v -keystore $keystore -alias volley -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Volley, OU=Table, O=Volley, L=, S=, C=FR"
+  & "$javaHome\bin\keytool.exe" -genkeypair -v -keystore $keystore -alias sheet -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=custom-sheet, O=Newborn AI, C=FR"
   if ($LASTEXITCODE -ne 0) { throw "keytool failed" }
 }
-$signed = Join-Path $root 'dist\dnd-sheet.apk'
+$signed = Join-Path $root 'dist\custom-sheet.apk'
 if (Test-Path $signed) { Remove-Item $signed -Force }
 & "$bt\apksigner.bat" sign --ks $keystore --ks-pass pass:android --key-pass pass:android --min-sdk-version 24 --out $signed $aligned
 if ($LASTEXITCODE -ne 0) { throw "apksigner failed" }
 
 Write-Output "9. verifying"
 & "$bt\apksigner.bat" verify --print-certs $signed
-Copy-Item $signed (Join-Path $out 'dnd-sheet.apk') -Force
+Copy-Item $signed (Join-Path $out 'custom-sheet.apk') -Force
 Write-Output ("APK ready: " + (Get-Item $signed).Length + " bytes at " + $signed)

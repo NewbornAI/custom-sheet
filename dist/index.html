@@ -7,9 +7,9 @@
 <meta name="description" content="A character sheet and a dice roller for a table of one.">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="DND-sheet">
+<meta name="apple-mobile-web-app-title" content="custom-sheet">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>DND-sheet</title>
+<title>custom-sheet</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2308070f'/%3E%3Cpath d='M16 5l11 11-11 11L5 16z' fill='none' stroke='%239b7bff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='2.4' fill='%239b7bff'/%3E%3C/svg%3E">
 <style>
 @font-face{
@@ -1598,7 +1598,7 @@ input[type=range]::-moz-range-thumb{
   ]
 }</script>
 
-<script id="version-data" type="application/json">{"version":"2026-10-22T19:20:24.951Z"}</script>
+<script id="version-data" type="application/json">{"version":"2026-10-22T20:03:37.004Z"}</script>
 
 <script id="seed-data" type="application/json">{"features":[{"key":"innateSorcery","name":"Innate sorcery","source":"Sorcerer","active":true,"uses":2,"recovery":"long","cost":"","hidden":false,"action":"B","duration":"1 min","desc":"DC +1, advantage attack w/ spells sorcerer","blocks":[{"t":"p","text":"An event in your past left an indelible mark on you, infusing you with simmering magic. As a Bonus Action, you can unleash that magic for 1 minute, during which you gain the following benefits:"},{"t":"list","items":["The spell save DC of your Sorcerer spells increases by 1.","You have Advantage on the attack rolls of Sorcerer spells you cast."]},{"t":"p","text":"You can use this feature twice, and you regain all expended uses of it when you finish a Long Rest."}],"seed":true},{"key":"metamagic","name":"Metamagic","source":"Sorcerer","active":true,"uses":8,"recovery":"long","cost":"","hidden":true,"action":"","duration":"","desc":"Heighten + quicken","blocks":[{"t":"p","text":"Because your magic flows from within, you can alter your spells to suit your needs; you gain two Metamagic options of your choice from \"\" later in this class's description. You use the chosen options to temporarily modify spells you cast. To use an option, you must spend the number of Sorcery Points that it costs."},{"t":"p","text":"You can use only one Metamagic option on a spell when you cast it unless otherwise noted in one of those options."},{"t":"p","text":"Whenever you gain a Sorcerer level, you can replace one of your Metamagic options with one you don't know. You gain two more options at Sorcerer level 10 and two more at Sorcerer level 17."}],"seed":true},{"key":"tidesOfChaos","name":"Tides of chaos","source":"Wild Magic","active":true,"uses":1,"recovery":"long","cost":"","hidden":false,"action":"","duration":"","desc":"Advantage, on spell slot: roll surge to refund","blocks":[{"t":"p","text":"You can manipulate chaos itself to give yourself Advantage on one D20 Test before you roll the d20. Once you do so, you must cast a Sorcerer spell with a spell slot or finish a Long Rest before you can use this feature again."},{"t":"p","text":"If you do cast a Sorcerer spell with a spell slot before you finish a Long Rest, you automatically roll on the Wild Magic Surge table."}],"seed":true},{"key":"sorcerousRest","name":"Sorcerous rest","source":"Sorcerer","active":true,"uses":1,"recovery":"long","cost":"","hidden":true,"action":"","duration":"","desc":"Regain 1/2 sorc level SP","blocks":[{"t":"p","text":"When you finish a Short Rest, you can regain expended Sorcery Points, but no more than a number equal to half your Sorcerer level (round down). Once you use this feature, you can't do so again until you finish a Long Rest."}],"seed":true},{"key":"bendLuck","name":"Bend luck","source":"Wild Magic","active":true,"uses":0,"recovery":"special","cost":"sp","hidden":false,"action":"R","duration":"","desc":"Creature I can see rolls D20: +/-1d4","blocks":[{"t":"p","text":"You have the ability to twist fate using your wild magic. Immediately after another creature you can see rolls the d20 for a D20 Test, you can take a Reaction and spend 1 Sorcery Point to roll 1d4 and apply the number rolled as a bonus or penalty (your choice) to the d20 roll."}],"seed":true},{"key":"magicalCunning","name":"Magical Cunning","source":"Warlock","active":true,"uses":1,"recovery":"long","cost":"","hidden":true,"action":"","duration":"1 min","desc":"Regain 1 spell slot","blocks":[{"t":"p","text":"You can perform an esoteric rite for 1 minute. At the end of it, you regain expended Pact Magic spell slots but no more than a number equal to half your maximum (round up). Once you use this feature, you can't do so again until you finish a Long Rest."}],"seed":true},{"key":"hexCurse","name":"Hexblade curse","source":"Hexblade","active":true,"uses":1,"recovery":"short","cost":"","hidden":false,"action":"B","duration":"1 min","desc":"+PRO damage, crit 19+, regain CHA+lvl hp","blocks":[{"t":"p","text":"Starting at 1st level, you gain the ability to place a baleful curse on someone. As a bonus action, choose one creature you can see within 30 feet of you. The target is cursed for 1 minute. The curse ends early if the target dies, you die, or you are [[c:incapacitated]]. Until the curse ends, you gain the following benefits:"},{"t":"list","items":["You gain a bonus to damage rolls against the cursed target. The bonus equals your proficiency bonus.","Any attack roll you make against the cursed target is a critical hit on a roll of 19 or 20 on the d20.","If the cursed target dies, you regain hit points equal to your warlock level + your Charisma modifier (minimum of 1 hit point)."]},{"t":"p","text":"You can't use this feature again until you finish a short or long rest."}],"seed":true},{"key":"elvenLineageI","name":"Elven Lineage I","source":"High Elf","active":true,"uses":1,"recovery":"long","cost":"","hidden":false,"action":"","duration":"","desc":"Detect Magic for free","blocks":[{"t":"p","text":"You are part of a lineage that grants you supernatural abilities. Choose a lineage from the Elven Lineages table. You gain the level 1 benefit of that lineage."},{"t":"p","text":"When you reach character levels 3 and 5, you learn a higher-level spell, as shown on the table. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level."},{"t":"p","text":"Intelligence, Wisdom, or Charisma is your spellcasting ability for the spells you cast with this trait (choose the ability when you select the lineage)."},{"t":"table","caption":"Elven Lineages","head":["Lineage","Level 1","Level 3","Level 5"],"rows":[["Drow","The range of your Darkvision increases to 120 feet. You also know the Dancing Lights cantrip.","Faerie Fire","Darkness"],["High Elf","You know the Prestidigitation cantrip. Whenever you finish a Long Rest, you can replace that cantrip with a different .","Detect Magic","Misty Step"],["Wood Elf","Your Speed increases to 35 feet. You also know the Druidcraft cantrip.","Longstrider","Pass without Trace"]]}],"seed":true},{"key":"elvenLineageII","name":"Elven Lineage II","source":"High Elf","active":true,"uses":1,"recovery":"long","cost":"","hidden":false,"action":"","duration":"","desc":"Misty Step for free","blocks":[{"t":"p","text":"You are part of a lineage that grants you supernatural abilities. Choose a lineage from the Elven Lineages table. You gain the level 1 benefit of that lineage."},{"t":"p","text":"When you reach character levels 3 and 5, you learn a higher-level spell, as shown on the table. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level."},{"t":"p","text":"Intelligence, Wisdom, or Charisma is your spellcasting ability for the spells you cast with this trait (choose the ability when you select the lineage)."},{"t":"table","caption":"Elven Lineages","head":["Lineage","Level 1","Level 3","Level 5"],"rows":[["Drow","The range of your Darkvision increases to 120 feet. You also know the Dancing Lights cantrip.","Faerie Fire","Darkness"],["High Elf","You know the Prestidigitation cantrip. Whenever you finish a Long Rest, you can replace that cantrip with a different .","Detect Magic","Misty Step"],["Wood Elf","Your Speed increases to 35 feet. You also know the Druidcraft cantrip.","Longstrider","Pass without Trace"]]}],"seed":true},{"key":"sorceryIncarnate","name":"Sorc incarnate","source":"Sorcerer","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Spend 2 SP: regain innate sorcery","blocks":[{"t":"p","text":"If you have no uses of Innate Sorcery left, you can use it if you spend 2 Sorcery Points when you take the Bonus Action to activate it."},{"t":"p","text":"In addition, while your Innate Sorcery feature is active, you can use up to two of your on each spell you cast."}],"seed":true},{"key":"devilsSight","name":"Devil's sight","source":"Warlock","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Darkvision 120 ft, see darkness","blocks":[{"t":"p","text":"You can see normally in darkness, both magical and nonmagical, to a distance of 120 feet."}],"seed":true},{"key":"repellingBlast","name":"Repelling blast","source":"Warlock","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Hit: push 10 feet straight away from you","blocks":[{"t":"p","text":"When you hit a creature with eldritch blast, you can push the creature up to 10 feet away from you in a straight line."}],"seed":true},{"key":"agonisingBlast","name":"Agonising blast","source":"Warlock","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"+CHA damage","blocks":[{"t":"p","text":"When you cast eldritch blast, add your Charisma modifier to the damage it deals on a hit."}],"seed":true},{"key":"wildSurge","name":"Wild surge","source":"Wild Magic","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Every spell slot: roll d20, 20 = roll surge","blocks":[{"t":"p","text":"Your spellcasting can unleash surges of untamed magic. Once per turn, you can roll 1d20 immediately after you cast a Sorcerer spell with a spell slot. If you roll a 20, roll on the Wild Magic Surge table to create a magical effect."},{"t":"p","text":"If the magical effect is a spell, it is too wild to be affected by your Metamagic."},{"t":"table","caption":"Wild Magic Surge","head":["1d100","Effect"],"rows":[["01–04","Roll on this table at the start of each of your turns for the next minute, ignoring this result on subsequent rolls."],["05–08","A creature that is Friendly toward you appears in a random unoccupied space within 60 feet of you. The creature is under the DM's control and disappears 1 minute later. Roll 1d4 to determine the creature: on a 1, a Modron Duodrone appears; on a 2, a Flumph appears; on a 3, a Modron Monodrone appears; on a 4, a Unicorn appears. See the Monster Manual for the creature's stat block."],["09–12","For the next minute, you regain 5 Hit Points at the start of each of your turns."],["13–16","Creatures have Disadvantage on saving throws against the next spell you cast in the next minute that involves a saving throw."],["17–20","You are subjected to an effect that lasts for 1 minute unless its description says otherwise. Roll 1d8 to determine the effect: on a 1, you're surrounded by faint, ethereal music only you and creatures within 5 feet of you can hear; on a 2, your size increases by one size category; on a 3, you grow a long beard made of feathers that remains until you sneeze, at which point the feathers explode from your face and vanish; on a 4, you must shout when you speak; on a 5, illusory butterflies flutter in the air within 10 feet of you; on a 6, an eye appears on your forehead, granting you Advantage on Wisdom (Perception) checks; on a 7, pink bubbles float out of your mouth whenever you speak; on an 8, your skin turns a vibrant shade of blue for 24 hours or until the effect is ended by a Remove Curse spell."],["21–24","For the next minute, all your spells with a casting time of an action have a casting time of a Bonus Action."],["25–28","You are transported to the Astral Plane until the end of your next turn. You then return to the space you previously occupied or the nearest unoccupied space if that space is occupied."],["29–32","The next time you cast a spell that deals damage within the next minute, don't roll the spell's damage dice for the damage. Instead use the highest number possible for each damage die."],["33–36","You have Resistance to all damage for the next minute."],["37–40","You turn into a potted plant until the start of your next turn. While you're a plant, you have the [[c:Incapacitated]] condition and have Vulnerability to all damage. If you drop to 0 Hit Points, your pot breaks, and your form reverts."],["41–44","For the next minute, you can teleport up to 20 feet as a Bonus Action on each of your turns."],["45–48","You and up to three creatures you choose within 30 feet of you have the [[c:Invisible]] condition for 1 minute. This invisibility ends on a creature immediately after it makes an attack roll, deals damage, or casts a spell."],["49–52","A spectral shield hovers near you for the next minute, granting you a +2 bonus to AC and immunity to Magic Missile."],["53–56","You can take one extra action on this turn."],["57–60","You cast a random spell. If the spell normally requires Concentration, it doesn't require Concentration in this case; the spell lasts for its full duration. Roll 1d10 to determine the spell: on a 1, Confusion; on a 2, Fireball; on a 3, Fog Cloud; on a 4, Fly (cast on a random creature within 60 feet of you), on a 5, Grease; on a 6, Levitate (cast on yourself); on a 7, Magic Missile (cast as a level 5 spell); on an 8, Mirror Image; on a 9, Polymorph (cast on yourself), and if you fail the saving throw, you turn into a Goat (see appendix B); on a 10, See Invisibility."],["61–64","For the next minute, any flammable, nonmagical object you touch that isn't being worn or carried by another creature bursts into flame, takes [[d:1d4 Fire damage]], and is burning."],["65–68","If you die within the next hour, you immediately revive as if by the Reincarnate spell."],["69–72","You have the [[c:Frightened]] condition until the end of your next turn. The DM determines the source of your fear."],["73–76","You teleport up to 60 feet to an unoccupied space you can see."],["77–80","A random creature within 60 feet of you has the [[c:Poisoned]] condition for 1d4 hours."],["81–84","You radiate Bright Light in a 30-foot radius for the next minute. Any creature that ends its turn within 5 feet of you has the [[c:Blinded]] condition until the end of its next turn."],["85–88","Up to three creatures of your choice that you can see within 30 feet of you take [[d:1d10 Necrotic damage]]. You regain Hit Points equal to the sum of the Necrotic damage dealt."],["89–92","Up to three creatures of your choice that you can see within 30 feet of you take [[d:4d10 Lightning damage]]."],["93–96","You and all creatures within 30 feet of you have Vulnerability to Piercing damage for the next minute."],["97–00","Roll 1d6. On a 1, you regain 2d10 Hit Points; on a 2, one ally of your choice within 300 feet of you regains 2d10 Hit Points; on a 3, you regain your lowest-level expended spell slot; on a 4, one ally of your choice within 300 feet of you regains their lowest-level expended spell slot; on a 5, you regain all your expended Sorcery Points; on a 6, all the effects of row 17–20 affect you simultaneously."]]}],"seed":true},{"key":"hexWarrior","name":"Hex Warrior","source":"Hexblade","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Linked weapon attacks with CHA","blocks":[{"t":"p","text":"At 1st level, you acquire the training necessary to effectively arm yourself for battle. You gain proficiency with medium armor, shields, and martial weapons."},{"t":"p","text":"The influence of your patron also allows you to mystically channel your will through a particular weapon. Whenever you finish a long rest, you can touch one weapon that you are proficient with and that lacks the two-handed property. When you attack with that weapon, you can use your Charisma modifier, instead of Strength or Dexterity, for the attack and damage rolls. This benefit lasts until you finish a long rest. If you later gain the Pact of the Blade feature, this benefit extends to every pact weapon you conjure with that feature, no matter the weapon's type."}],"seed":true},{"key":"trance","name":"Trance","source":"Elf","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Sleep 4h, conscious","blocks":[{"t":"p","text":"You don't need to sleep, and magic can't put you to sleep. You can finish a Long Rest in 4 hours if you spend those hours in a trancelike meditation, during which you retain consciousness."}],"seed":true},{"key":"feyAncestry","name":"Fey Ancestry","source":"Elf","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Advantage vs Charm","blocks":[{"t":"p","text":"You have Advantage on saving throws you make to avoid or end the [[c:Charmed]] condition."}],"seed":true},{"key":"elvenAccuracy","name":"Elven Accuracy","source":"Feat","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Attacks roll 3d20 on advantage","blocks":[{"t":"p","text":"The accuracy of elves is legendary, especially that of elf archers and spellcasters. You have uncanny aim with attacks that rely on precision rather than brute force. You gain the following benefits:"},{"t":"list","items":["Whenever you have advantage on an attack roll using Dexterity, Intelligence, Wisdom, or Charisma, you can reroll one of the dice once."]}],"seed":true}],"spells":[{"name":"Produce Flame","level":0},{"name":"Shocking Grasp","level":0},{"name":"Blade Ward","level":0},{"name":"Eldritch Blast","level":0},{"name":"Mage Hand","level":0},{"name":"Message","level":0},{"name":"Prestidigitation","level":0},{"name":"Minor Illusion","level":0},{"name":"Mending","level":0},{"name":"Thunderclap","level":0},{"name":"Chaos Bolt","level":1},{"name":"Create or Destroy Water","level":1},{"name":"Unseen Servant","level":1},{"name":"Shield","level":1},{"name":"Wrathful Smite","level":1},{"name":"Detect Magic","level":1},{"name":"Hex","level":1},{"name":"Armor of Agathys","level":1},{"name":"Hellish Rebuke","level":1},{"name":"Tasha's Hideous Laughter","level":1},{"name":"Absorb Elements","level":1},{"name":"Jump","level":1},{"name":"Silvery Barbs","level":1},{"name":"Heat Metal","level":2},{"name":"Rope Trick","level":2},{"name":"Blur","level":2},{"name":"Branding Smite","level":2},{"name":"Misty Step","level":2},{"name":"Blindness/Deafness","level":2},{"name":"Battle Familiar","level":2},{"name":"Mirror Image","level":2},{"name":"Darkness","level":2},{"name":"Scorching Ray","level":2},{"name":"Hold Person","level":2},{"name":"Call Lightning","level":3},{"name":"Elemental Weapon","level":3},{"name":"Glyph of Warding","level":3},{"name":"Fireball","level":3},{"name":"Water Breathing","level":3},{"name":"Catnap","level":3},{"name":"Conjure Minor Elementals","level":4},{"name":"Divination","level":4},{"name":"Otiluke's Resilient Sphere","level":4},{"name":"Animate Objects","level":5},{"name":"Conjure Elemental","level":5},{"name":"Hold Monster","level":5},{"name":"Dominate Person","level":5}],"dice":{"Barbarian":12,"Bard":8,"Cleric":8,"Druid":8,"Fighter":10,"Monk":8,"Paladin":10,"Ranger":10,"Rogue":8,"Sorcerer":6,"Warlock":8,"Wizard":6}}</script>
 
@@ -2216,10 +2216,11 @@ input[type=range]::-moz-range-thumb{
 
   var R = window.Rules;
   var SR = window.SheetRules;
-  var STORE = 'dndsheet.state.v3';
-  /* The stores of the two first versions, read once and moved into the
-     characters. */
-  var OLD_STORES = ['volley.state.v1', 'volley.state.v2'];
+  var STORE = 'customsheet.state.v3';
+  /* The stores of the first names, read once and moved on. The first held the
+     slices of the volley and one character, the second held the same three
+     slices, and the third is this one under the name the app had before. */
+  var OLD_STORES = ['dndsheet.state.v3', 'volley.state.v1', 'volley.state.v2'];
 
   /* ---- the registry ---- */
 
@@ -2278,9 +2279,9 @@ input[type=range]::-moz-range-thumb{
   /* The shell reads a file out of the app when it is there, and a page on
      the web fetches it. Either way the file is read when a page asks. */
   function readFile(file) {
-    if (window.DndShell && window.DndShell.read) {
+    if (window.SheetShell && window.SheetShell.read) {
       try {
-        var answer = window.DndShell.read(file);
+        var answer = window.SheetShell.read(file);
         if (answer && typeof answer.then === 'function') {
           return answer.then(function (text) {
             if (text) return text;
@@ -2302,9 +2303,9 @@ input[type=range]::-moz-range-thumb{
   /* An answer from another origin comes through the shell, because the
      page cannot fetch it and the other origin cannot answer it. */
   function readUrl(url) {
-    if (window.DndNet && window.DndNet.fetchUrl) {
+    if (window.SheetNet && window.SheetNet.fetchUrl) {
       try {
-        var answer = window.DndNet.fetchUrl(url);
+        var answer = window.SheetNet.fetchUrl(url);
         if (answer && typeof answer.then === 'function') {
           return answer.then(function (text) {
             if (text && text.indexOf('error ') !== 0) return text;
@@ -2327,17 +2328,17 @@ input[type=range]::-moz-range-thumb{
      to the installer of the phone. A page on the web has no shell, so it
      opens the build in the browser instead. */
   function installUpdate(url) {
-    if (window.DndNet && window.DndNet.download && window.DndNet.install) {
+    if (window.SheetNet && window.SheetNet.download && window.SheetNet.install) {
       try {
-        var answer = window.DndNet.download(url);
+        var answer = window.SheetNet.download(url);
         if (answer && typeof answer.then === 'function') {
           return answer.then(function (text) {
             if (!text || text.indexOf('error ') === 0) return text;
-            return window.DndNet.install();
+            return window.SheetNet.install();
           });
         }
         if (!answer || answer.indexOf('error ') === 0) return Promise.resolve(answer);
-        return Promise.resolve(window.DndNet.install());
+        return Promise.resolve(window.SheetNet.install());
       } catch (e) {
         return Promise.reject(e);
       }
@@ -2700,11 +2701,16 @@ input[type=range]::-moz-range-thumb{
     readUrl: readUrl,
     exportCharacter: exportCharacter,
     importPackage: importPackage,
+    importUrl: importUrl,
+    importAny: importAny,
+    importLink: importLink,
+    linkOf: linkOf,
+    shareLink: shareLink,
+    packageOf: packageOf,
+    shelfRepo: shelfRepo,
+    shelfCharacters: shelfCharacters,
+    shelfBranches: shelfBranches,
     pickFile: pickFile,
-    repoList: repoList,
-    repoPut: repoPut,
-    repoGet: repoGet,
-    repository: repository,
     toast: toast,
     installUpdate: installUpdate,
     plugFeature: plugFeature,
@@ -3013,7 +3019,7 @@ input[type=range]::-moz-range-thumb{
      pages it carries are registered with the app. */
   function packageOf(rec) {
     return {
-      kind: 'dnd-sheet-character',
+      kind: 'custom-sheet-character',
       version: 1,
       name: (rec.char && rec.char.name) || 'Unnamed character',
       record: {
@@ -3031,7 +3037,7 @@ input[type=range]::-moz-range-thumb{
   function packageName(rec) {
     var name = ((rec.char && rec.char.name) || 'character').toLowerCase()
       .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'character';
-    return 'dnd-sheet-' + name + '.json';
+    return 'custom-sheet-' + name + '.json';
   }
 
   /* A name that is taken does not stop the import: the new one is called
@@ -3094,7 +3100,7 @@ input[type=range]::-moz-range-thumb{
   function importPackage(text) {
     var pkg = null;
     try { pkg = JSON.parse(text); } catch (e) { return { ok: false, why: 'that file is not a character' }; }
-    if (!pkg || pkg.kind !== 'dnd-sheet-character' || !pkg.record) {
+    if (!pkg || (pkg.kind !== 'custom-sheet-character' && pkg.kind !== 'dnd-sheet-character') || !pkg.record) {
       return { ok: false, why: 'that file is not a character' };
     }
     var rec = seedCharacter(JSON.parse(JSON.stringify(pkg.record)), false);
@@ -3120,9 +3126,9 @@ input[type=range]::-moz-range-thumb{
     if (!rec) return { ok: false, why: 'no character' };
     var name = packageName(rec);
     var text = JSON.stringify(packageOf(rec), null, 2);
-    if (window.DndShell && window.DndShell.share) {
+    if (window.SheetShell && window.SheetShell.share) {
       try {
-        var answer = window.DndShell.share(name, text);
+        var answer = window.SheetShell.share(name, text);
         if (answer && answer.indexOf('error ') === 0) return { ok: false, why: answer };
         return { ok: true, name: name };
       } catch (e) {
@@ -3143,63 +3149,170 @@ input[type=range]::-moz-range-thumb{
     }
   }
 
-  /* ---- the repository ---- */
+  /* ---- the exchange ---- */
 
-  /* The repository holds the characters that are shared. Its address and its
-     token are the player's, so it can be a temporary one that goes away. */
-  function repository() {
-    var ui = state.ui || {};
-    return { address: String(ui.repo || ''), token: String(ui.token || '') };
+  /* A character leaves the app as a package, and there are three ways for it
+     to arrive: a file, a link, and the shelf. None of them asks the player
+     to type a secret. */
+
+  /* A link carries the character itself. The package is packed, squeezed
+     and written into the link, so the two ends need nothing in common but
+     the link. The character rides in the fragment of the link, and a
+     fragment never reaches a server. */
+  function toBase64Url(bytes) {
+    var s = '';
+    for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+    return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
 
-  function repoCall(command) {
-    var r = repository();
-    if (!r.address || !r.token) return Promise.reject(new Error('the repository has no address yet'));
-    var url = r.address.replace(/\/$/, '') + '/pipeline';
-    var body = JSON.stringify([command]);
-    if (window.DndNet && window.DndNet.postUrl) {
+  function fromBase64Url(text) {
+    var s = String(text || '').replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    var raw = atob(s);
+    var out = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+    return out;
+  }
+
+  function squeeze(text) {
+    if (typeof CompressionStream === 'undefined') return Promise.resolve(null);
+    try {
+      var stream = new CompressionStream('gzip');
+      var writer = stream.writable.getWriter();
+      writer.write(new TextEncoder().encode(text));
+      writer.close();
+      return new Response(stream.readable).arrayBuffer().then(function (buf) {
+        return new Uint8Array(buf);
+      });
+    } catch (e) {
+      return Promise.resolve(null);
+    }
+  }
+
+  function unsqueeze(bytes) {
+    var stream = new DecompressionStream('gzip');
+    var writer = stream.writable.getWriter();
+    writer.write(bytes);
+    writer.close();
+    return new Response(stream.readable).text();
+  }
+
+  /* The link a character travels in. It opens the repository of the app,
+     which is a harmless place for it to point. */
+  var LINK_BASE = 'https://github.com/NewbornAI/custom-sheet#';
+
+  function linkOf(pkg) {
+    var json = JSON.stringify(pkg);
+    return squeeze(json).then(function (packed) {
+      if (!packed) return LINK_BASE + 'p=0' + toBase64Url(new TextEncoder().encode(json));
+      return LINK_BASE + 'p=1' + toBase64Url(packed);
+    });
+  }
+
+  /* A link that carries a character comes back in. */
+  function importLink(text) {
+    var m = String(text || '').match(/[#&]p=([^&]+)/);
+    if (!m) return Promise.resolve({ ok: false, why: 'that link carries no character' });
+    var packed = m[1];
+    var flag = packed.charAt(0);
+    try {
+      var bytes = fromBase64Url(packed.slice(1));
+      if (flag === '1') {
+        return unsqueeze(bytes).then(function (body) { return importPackage(body); });
+      }
+      return Promise.resolve(importPackage(new TextDecoder().decode(bytes)));
+    } catch (e) {
+      return Promise.resolve({ ok: false, why: 'that link carries no character' });
+    }
+  }
+
+  /* A link leaves the app: the phone offers it to send, the web puts it in
+     the clipboard. */
+  function shareLink(url) {
+    if (window.SheetShell && window.SheetShell.shareText) {
       try {
-        var answer = window.DndNet.postUrl(url, body, r.token);
-        if (answer && typeof answer.then === 'function') {
-          return answer.then(function (text) { return JSON.parse(text); });
-        }
-        return Promise.resolve(JSON.parse(answer));
+        var answer = window.SheetShell.shareText(url);
+        if (answer && answer.indexOf('error ') === 0) return answer;
+        return 'ok';
       } catch (e) {
-        return Promise.reject(e);
+        return String((e && e.message) || e);
       }
     }
-    return fetch(url, {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + r.token, 'Content-Type': 'application/json' },
-      body: body
-    }).then(function (res) { return res.json(); });
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url);
+        return 'copied';
+      }
+    } catch (e) {}
+    return 'the link is in the field';
   }
 
-  function repoList() {
-    return repoCall(['KEYS', 'dnd-sheet:*']).then(function (out) {
-      var rows = (out && out[0] && out[0].result) || [];
-      return rows.map(function (key) { return String(key).replace(/^dnd-sheet:/, ''); });
+  /* ---- the shelf ---- */
+
+  /* The shelf is a folder in the repository of the app. The repository is
+     public, so the app reads it with no secret at all, and anybody may
+     open a branch and drop a character there. */
+  function shelfRepo() {
+    var ui = state.ui || {};
+    return String(ui.shelf || 'NewbornAI/custom-sheet');
+  }
+
+  function shelfApi(path) {
+    return 'https://api.github.com/repos/' + shelfRepo() + path;
+  }
+
+  /* The characters of a branch: the files of the folder, one package each. */
+  function shelfCharacters(ref) {
+    var where = shelfApi('/contents/characters' + (ref ? '?ref=' + encodeURIComponent(ref) : ''));
+    return readUrl(where).then(function (text) {
+      var rows = JSON.parse(text);
+      if (!Array.isArray(rows)) return [];
+      return rows.filter(function (f) {
+        return f && f.type === 'file' && /\.json$/.test(f.name);
+      }).map(function (f) {
+        return { name: f.name, url: f.download_url, ref: ref || '' };
+      });
+    }).catch(function (e) {
+      /* the folder of the shelf may not be there yet */
+      var why = String((e && e.message) || e);
+      if (why.indexOf('404') >= 0) return [];
+      throw e;
     });
   }
 
-  function repoPut(pkg) {
-    var key = 'dnd-sheet:' + (pkg.name || 'character');
-    return repoCall(['SET', key, JSON.stringify(pkg)]).then(function (out) {
-      return !!(out && out[0] && out[0].result === 'OK');
+  /* The branches are the shelves of the players: anybody may open one. */
+  function shelfBranches() {
+    return readUrl(shelfApi('/branches')).then(function (text) {
+      var rows = JSON.parse(text);
+      if (!Array.isArray(rows)) return [];
+      return rows.map(function (b) { return b.name; });
     });
   }
 
-  function repoGet(name) {
-    return repoCall(['GET', 'dnd-sheet:' + name]).then(function (out) {
-      var raw = out && out[0] && out[0].result;
-      if (!raw) return null;
-      try { return JSON.parse(raw); } catch (e) { return null; }
+  /* A package that comes in by a link, or by the address of a file that
+     holds one. */
+  function importAny(text) {
+    var where = String(text || '').trim();
+    if (!where) return Promise.resolve({ ok: false, why: 'nothing to fetch' });
+    if (/[#&]p=/.test(where)) return importLink(where);
+    return importUrl(where);
+  }
+
+  /* A package that comes in by a link: the machine that holds the file
+     answers, and the package lands the way one from a file lands. */
+  function importUrl(url) {
+    var where = String(url || '').trim();
+    if (!where) return Promise.resolve({ ok: false, why: 'no link' });
+    return readUrl(where).then(function (text) {
+      return importPackage(text);
+    }).catch(function (e) {
+      return { ok: false, why: String((e && e.message) || e) };
     });
   }
 
   /* The file the player picked comes back to the page. */
-  window.__dndPicked = function (name) {
-    var text = (window.DndShell && window.DndShell.pickedText) ? window.DndShell.pickedText() : '';
+  window.__sheetPicked = function (name) {
+    var text = (window.SheetShell && window.SheetShell.pickedText) ? window.SheetShell.pickedText() : '';
     if (!text) return;
     var answer = importPackage(text);
     if (answer && answer.ok) toast(answer.name + ' is here.');
@@ -3207,9 +3320,9 @@ input[type=range]::-moz-range-thumb{
   };
 
   function pickFile() {
-    if (window.DndShell && window.DndShell.pick) {
+    if (window.SheetShell && window.SheetShell.pick) {
       try {
-        var answer = window.DndShell.pick();
+        var answer = window.SheetShell.pick();
         if (answer && answer.indexOf('error ') === 0) toast(answer);
         return true;
       } catch (e) {
@@ -3593,7 +3706,7 @@ wireHead();
     show(home ? home.id : (enabled()[0] || PAGES[0]).id);
   }
 
-  window.Volley = { page: page, core: core, show: show };
+  window.Sheet = { page: page, core: core, show: show };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
@@ -3609,7 +3722,7 @@ wireHead();
 (function () {
   'use strict';
 
-  var C = Volley.core;
+  var C = Sheet.core;
   var SR = C.SR;
   var ABILITIES = C.ABILITIES;
   var SKILLS = C.SKILLS;
@@ -4278,7 +4391,7 @@ wireHead();
 
   /* ---- the page ---- */
 
-  Volley.page({
+  Sheet.page({
     id: 'character',
     title: function (a) {
       var c = a.character().char || {};
@@ -4589,7 +4702,7 @@ wireHead();
 (function () {
   'use strict';
 
-  var C = Volley.core;
+  var C = Sheet.core;
   var R = C.R;
 
   var api = null;   /* the shell gives it at mount */
@@ -4800,7 +4913,7 @@ wireHead();
 
   /* ---- the page ---- */
 
-  Volley.page({
+  Sheet.page({
     id: 'volley',
     title: 'Volley',
     order: 1,
@@ -4961,7 +5074,7 @@ wireHead();
 (function () {
   'use strict';
 
-  var C = Volley.core;
+  var C = Sheet.core;
   var R = C.R;
   var SR = C.SR;
   var LEVELS = C.LEVELS;
@@ -5610,7 +5723,7 @@ wireHead();
 
   /* ---- the page ---- */
 
-  Volley.page({
+  Sheet.page({
     id: 'spells',
     title: 'Spells',
     order: 2,
@@ -5869,7 +5982,7 @@ wireHead();
 (function () {
   'use strict';
 
-  var C = Volley.core;
+  var C = Sheet.core;
   var SR = C.SR;
 
   var api = null;   /* the shell gives it at mount */
@@ -6119,7 +6232,7 @@ wireHead();
 
   /* ---- the page ---- */
 
-  Volley.page({
+  Sheet.page({
     id: 'features',
     title: 'Features',
     order: 3,
@@ -6302,7 +6415,7 @@ wireHead();
 (function () {
   'use strict';
 
-  var C = Volley.core;
+  var C = Sheet.core;
 
   var api = null;   /* the shell gives it at mount */
   var E = {};
@@ -6409,7 +6522,7 @@ wireHead();
           get.textContent = 'Get it';
           get.setAttribute('aria-label', 'Open the newer build');
           get.addEventListener('click', function () {
-            var apk = address + '/' + (v.apk || 'dnd-sheet.apk');
+            var apk = address + '/' + (v.apk || 'custom-sheet.apk');
             line.querySelector('.d').textContent = 'downloading';
             C.installUpdate(apk).then(function (answer) {
               line.querySelector('.d').textContent = answer === 'ok' ? 'the installer is open' : answer;
@@ -6454,6 +6567,20 @@ wireHead();
       C.toast(answer.ok ? answer.name + ' is ready to send' : answer.why);
     });
     out.appendChild(send);
+    /* The link carries the character itself, so the other end needs nothing
+       but the link. */
+    var link = document.createElement('button');
+    link.type = 'button';
+    link.className = 'stog';
+    link.textContent = 'Link';
+    link.setAttribute('aria-label', 'Make a link of the character being played');
+    link.addEventListener('click', function () {
+      C.linkOf(C.packageOf(api.character())).then(function (where) {
+        var answer = C.shareLink(where);
+        C.toast(answer === 'ok' ? 'the link is ready to send' : 'the link is in the clipboard');
+      }).catch(function (e) { C.toast(String((e && e.message) || e)); });
+    });
+    out.appendChild(link);
     E.exchange.appendChild(out);
 
     var into = document.createElement('div');
@@ -6467,96 +6594,133 @@ wireHead();
     open.addEventListener('click', function () { C.pickFile(); });
     into.appendChild(open);
     E.exchange.appendChild(into);
+
+    /* A package that comes in by a link: the machine that holds the file
+       answers for it, so a phone and a desktop can swap without a cable. */
+    var link = document.createElement('div');
+    link.className = 'srow';
+    var field = document.createElement('input');
+    field.className = 'cinput';
+    field.type = 'url';
+    field.placeholder = 'the link of a package';
+    field.setAttribute('aria-label', 'The link of a package to bring in');
+    var take = document.createElement('button');
+    take.type = 'button';
+    take.className = 'stog';
+    take.textContent = 'Fetch';
+    take.setAttribute('aria-label', 'Fetch the package at that link');
+    take.addEventListener('click', function () {
+      take.disabled = true;
+      C.importAny(field.value).then(function (answer) {
+        take.disabled = false;
+        C.toast(answer && answer.ok ? answer.name + ' is here'
+          : ((answer && answer.why) || 'that link holds no character'));
+      });
+    });
+    link.appendChild(field);
+    link.appendChild(take);
+    E.exchange.appendChild(link);
   }
 
-  /* The repository: its address and its token, and the window that holds the
-     characters it keeps. */
-  function repositoryRows() {
-    E.repository.innerHTML = '';
-    var repo = C.repository();
+  /* The shelf: a folder in the public repository of the app. The app reads
+     it with no secret, and anybody may open a branch and drop a character
+     there. */
+  function shelfRows() {
+    E.shelf.innerHTML = '';
 
     var address = document.createElement('div');
     address.className = 'srow';
     var input = document.createElement('input');
     input.className = 'cinput';
-    input.type = 'url';
-    input.value = repo.address;
-    input.placeholder = 'https://....upstash.io';
-    input.setAttribute('aria-label', 'The address of the repository');
+    input.type = 'text';
+    input.value = C.shelfRepo();
+    input.placeholder = 'NewbornAI/custom-sheet';
+    input.setAttribute('aria-label', 'The repository that holds the shelf');
     input.addEventListener('input', function () {
       api.state.ui = api.state.ui || {};
-      api.state.ui.repo = input.value;
+      api.state.ui.shelf = input.value;
       api.save();
     });
     address.appendChild(input);
-    E.repository.appendChild(address);
-
-    var token = document.createElement('div');
-    token.className = 'srow';
-    var secret = document.createElement('input');
-    secret.className = 'cinput';
-    secret.type = 'password';
-    secret.value = repo.token;
-    secret.placeholder = 'the token of the repository';
-    secret.setAttribute('aria-label', 'The token of the repository');
-    secret.addEventListener('input', function () {
-      api.state.ui = api.state.ui || {};
-      api.state.ui.token = secret.value;
-      api.save();
-    });
-    token.appendChild(secret);
-    E.repository.appendChild(token);
+    E.shelf.appendChild(address);
 
     var row = document.createElement('div');
     row.className = 'srow';
-    row.innerHTML = '<span class="t">The characters</span><span class="d">the ones it holds</span>';
+    row.innerHTML = '<span class="t">The characters</span><span class="d">the ones the shelf holds</span>';
     var list = document.createElement('button');
     list.type = 'button';
     list.className = 'stog';
     list.textContent = 'Open';
-    list.setAttribute('aria-label', 'The characters the repository holds');
-    list.addEventListener('click', openRepository);
+    list.setAttribute('aria-label', 'The characters the shelf holds');
+    list.addEventListener('click', openShelf);
     row.appendChild(list);
-    E.repository.appendChild(row);
+    E.shelf.appendChild(row);
   }
 
-  /* The window of the repository: a list of the characters it holds, and the
-     two arrows. The arrow down brings one in, the arrow up leaves the
-     character being played in its place. */
-  function openRepository() {
-    C.repoList().then(function (names) {
-      var html = names.map(function (n) {
-        return '<div class="crow" data-name="' + C.esc(n) + '">' +
-          '<span class="cn">' + C.esc(n) + '</span>' +
-          '<button class="mini" type="button" data-down="' + C.esc(n) + '" aria-label="Bring ' + C.esc(n) + ' in">&darr;</button>' +
-          '<button class="mini" type="button" data-up="' + C.esc(n) + '" aria-label="Put the character being played in place of ' + C.esc(n) + '">&uarr;</button>' +
+  /* A character of the shelf comes in. */
+  function takeFrom(url) {
+    C.importUrl(url).then(function (pkg) {
+      if (!pkg) { C.toast('that one is not there'); return; }
+      var answer = C.importPackage(JSON.stringify(pkg));
+      C.toast(answer.ok ? answer.name + ' is here' : answer.why);
+    }).catch(function (e) { C.toast(String((e && e.message) || e)); });
+  }
+
+  /* The window of the shelf: the characters of the main branch, then the
+     branches, which are the shelves of the players. */
+  function openShelf() {
+    C.shelfCharacters('').then(function (chars) {
+      return C.shelfBranches().then(function (branches) {
+        var html = chars.map(function (c) {
+          return '<div class="crow">' +
+            '<span class="cn">' + C.esc(c.name) + '</span>' +
+            '<button class="mini" type="button" data-take="' + C.esc(c.url) + '" aria-label="Bring ' + C.esc(c.name) + ' in">&darr;</button>' +
+            '</div>';
+        }).join('');
+        if (!html) html = '<div class="empty">The shelf is empty.</div>';
+        html += '<div class="crow"><span class="cn">The branches</span></div>';
+        html += branches.map(function (b) {
+          return '<div class="crow">' +
+            '<span class="cn">' + C.esc(b) + '</span>' +
+            '<button class="mini" type="button" data-open="' + C.esc(b) + '" aria-label="Open the branch ' + C.esc(b) + '">&rarr;</button>' +
+            '</div>';
+        }).join('');
+        api.sheet.open({
+          id: 'shelf',
+          title: 'The shelf',
+          metaClass: 'sheet-meta one',
+          meta: '<span>The characters of the main branch, then the branches of the players.</span>',
+          list: html,
+          onList: function (ev) {
+            var take = ev.target.closest('[data-take]');
+            if (take) { takeFrom(take.dataset.take); return; }
+            var open = ev.target.closest('[data-open]');
+            if (open) openBranch(open.dataset.open);
+          }
+        });
+      });
+    }).catch(function (e) { C.toast(String((e && e.message) || e)); });
+  }
+
+  /* The characters of one branch. */
+  function openBranch(name) {
+    C.shelfCharacters(name).then(function (rows) {
+      var html = rows.map(function (c) {
+        return '<div class="crow">' +
+          '<span class="cn">' + C.esc(c.name) + '</span>' +
+          '<button class="mini" type="button" data-take="' + C.esc(c.url) + '" aria-label="Bring ' + C.esc(c.name) + ' in">&darr;</button>' +
           '</div>';
       }).join('');
-      if (!html) html = '<div class="empty">The repository is empty.</div>';
+      if (!html) html = '<div class="empty">This branch holds no character.</div>';
       api.sheet.open({
-        id: 'repository',
-        title: 'The repository',
+        id: 'shelfbranch',
+        title: name,
         metaClass: 'sheet-meta one',
-        meta: '<span>The characters it holds. The arrow down brings one in.</span>',
+        meta: '<span>The characters of the branch.</span>',
         list: html,
         onList: function (ev) {
-          var down = ev.target.closest('[data-down]');
-          if (down) {
-            C.repoGet(down.dataset.down).then(function (pkg) {
-              if (!pkg) { C.toast('that one is not there'); return; }
-              var answer = C.importPackage(JSON.stringify(pkg));
-              C.toast(answer.ok ? answer.name + ' is here' : answer.why);
-            }).catch(function (e) { C.toast(String((e && e.message) || e)); });
-            return;
-          }
-          var up = ev.target.closest('[data-up]');
-          if (up) {
-            var rec = api.character();
-            var pkg = { kind: 'dnd-sheet-character', version: 1, name: up.dataset.up, saved: new Date().toISOString(), record: { char: rec.char, spells: rec.spells, volley: rec.volley, pages: rec.pages, theme: rec.theme, icon: rec.icon } };
-            C.repoPut(pkg).then(function (ok) {
-              C.toast(ok ? up.dataset.up + ' is in the repository' : 'the repository said no');
-            }).catch(function (e) { C.toast(String((e && e.message) || e)); });
-          }
+          var take = ev.target.closest('[data-take]');
+          if (take) takeFrom(take.dataset.take);
         }
       });
     }).catch(function (e) { C.toast(String((e && e.message) || e)); });
@@ -6570,7 +6734,8 @@ wireHead();
     var rows = [
       { t: 'The rules', d: 'The spells, the classes, the archetypes and the surge table come from the System Reference Document 5.2 by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd, under the Creative Commons Attribution 4.0 International Licence, https://creativecommons.org/licenses/by/4.0/legalcode. The text was taken from 5e.tools and laid out by this app; the app itself is not part of the SRD and is not under that licence.' },
       { t: 'The name', d: 'Dungeons & Dragons, D&D and the D20 logo are trademarks of Wizards of the Coast LLC. This app is not affiliated with, endorsed by or sponsored by Wizards of the Coast.' },
-      { t: 'The font', d: 'Cinzel is under the SIL Open Font Licence 1.1.' }
+      { t: 'The font', d: 'Cinzel is under the SIL Open Font Licence 1.1.' },
+      { t: 'The licence', d: 'The app is under the MIT licence. The text of the rules in the data files is under the Creative Commons Attribution 4.0 International Licence, and the NOTICE file of the repository says where it comes from.' }
     ];
     rows.forEach(function (r) {
       var row = document.createElement('div');
@@ -6580,7 +6745,7 @@ wireHead();
     });
   }
 
-  Volley.page({
+  Sheet.page({
     id: 'settings',
     title: 'Settings',
     order: 4,
@@ -6596,9 +6761,10 @@ wireHead();
       '  <p class="note">The book, the library of features and the classes sit beside the app and are read when a page asks for one.</p>',
       '  <div class="cshead"><span>Exchange</span><span class="rule"></span></div>',
       '  <div class="fcards" id="settingsExchange"></div>',
-      '  <p class="note">A character is a package: the data in JSON. It can leave the phone as a file, or sit in a repository that the players share.</p>',
-      '  <div class="cshead"><span>The repository</span><span class="rule"></span></div>',
-      '  <div class="fcards" id="settingsRepository"></div>',
+      '  <p class="note">A character is a package: the data in JSON. It can leave as a file or as a link, and come back in by either. Nothing has to be typed.</p>',
+      '  <div class="cshead"><span>The shelf</span><span class="rule"></span></div>',
+      '  <div class="fcards" id="settingsShelf"></div>',
+      '  <p class="note">The shelf is a folder in the public repository of the app. The app reads it with no secret, and anybody may open a branch and drop a character there.</p>',
       '  <div class="cshead"><span>Credits</span><span class="rule"></span></div>',
       '  <div class="fcards" id="settingsCredits"></div>',
       '  <div class="cshead"><span>Update</span><span class="rule"></span></div>',
@@ -6614,7 +6780,7 @@ wireHead();
         list: root.querySelector('#settingsList'),
         files: root.querySelector('#settingsFiles'),
         exchange: root.querySelector('#settingsExchange'),
-        repository: root.querySelector('#settingsRepository'),
+        shelf: root.querySelector('#settingsShelf'),
         credits: root.querySelector('#settingsCredits'),
         update: root.querySelector('#settingsUpdate')
       };
@@ -6626,7 +6792,7 @@ wireHead();
       files();
       update();
       exchange();
-      repositoryRows();
+      shelfRows();
       credits();
       api.pages.forEach(function (p) {
         if (p.hidden) return;

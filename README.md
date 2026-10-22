@@ -1,171 +1,188 @@
-# DND-sheet
+# custom-sheet
 
-*A character sheet and a dice roller for a table, built to fit a phone screen.*
+*Open source character sheet tracker designed for agents. The goal: character tracker fully customizable via natural language.*
 
-## Picking this up
+A character sheet and a dice roller for one table, on a phone. The sheet is a
+single web page, and the same page ships as an Android app that works with no
+network at all.
 
-```
-node build.mjs                                  # src to dist, inlines the font and the data
-node test\rules.test.mjs                        # the rules engine and the data
-node tools\fetch-5e-data.mjs                    # refetch the surge table, the spell book and the features
-powershell -ExecutionPolicy Bypass -File tools\build-apk.ps1
-```
+The rules text comes from the SRD. The characters are yours. The shape of the
+app is a set of pages, and any of them can be added, taken away or rewritten,
+by hand or by an agent.
 
-The vault note `notes/dnd-sheet-handoff.md` has the working procedure, the data pipeline and the traps.
+![The character sheet of Yngwie, the bard](shots/custom-sheet-character.png)
+
+## What is in the app
+
+**The character.** The numbers you look up mid turn: the armour class, the
+initiative, the level, the hit points, the six abilities, the saving throws,
+the skills, the hit dice and the rests. A short rest gives back the features
+that come back on a short rest and nothing else, a long rest gives back
+everything, and the rewind takes back a rest you did not mean.
+
+**The spells.** The slots, counted level by level, and the list of the spells,
+each card labelled with the class or the feature that granted it. A tap spends
+a slot, the lightning above a level turns a slot into sorcery points, and the
+grimoire holds every spell the classes can learn with the classes that can
+learn each one.
+
+**The features.** What the character can do, and what is left of it. The
+active features carry their uses and say when they come back, the passive ones
+always work, and every one opens its full text.
+
+**The volley.** The roll: the attack, the damage, the advantage, the hex, the
+curse and the elemental. Give it an armour class and it marks the hits and
+the misses.
+
+**The settings.** The pages that are on, the files that have arrived, the
+exchange, the shelf, the credits and the update.
 
 ## The characters
 
-The name at the top of the sheet opens the list: the characters top down, the one being played marked, a cross to remove one, and a way to add one. Every character keeps its own sheet, its own spell slots, its own spell lists, its own features and its own set of pages, so a bard plays without the volley a warlock plays.
+A character is added ready-made or from nothing.
 
-A character is added ready-made or from nothing. The ready-made ones live in `data/characters.json`, each one a record in the shape the store keeps: its pages, the features it names, its slots and its spells. The bard is the first, from the sheet of 2026-10-22: Yngwie, level 11, the college of creation, high elf, the musician and the two adept feats, the scores eight, fourteen, fourteen, ten, twelve and nineteen, eleven d8 hit dice, the slots of a level 11 bard at 4/3/3/3/2/1, the ten spells the two adept feats always prepare, and the grimoire open on the bard list. His hit points, his armour class and his skills wait to be typed on the phone.
+A ready-made one comes from `data/characters.json`. Yngwie is there: the bard
+11 of the college of creation, high elf, the musician, the two adept feats,
+the scores eight, fourteen, fourteen, ten, twelve and nineteen, the eleven
+hit dice and the ten spells the feats prepare.
 
-**A character wears its own colours and its own icon.** Everything the app paints comes from a few CSS variables, so a theme is one block of them and nothing else. The icon is a small registry in the shell, the rune the app came with and an electric guitar. The record of the character names both, the head of the app paints the one it names, and the edit mode of the character page grows a gallery to change them, eight colours as swatches and fourteen icons, each one a tap away and applied live. Yngwie plays blue and red with a guitar, the warlock keeps the violet and the rune.
+The others are built from a class, a level and a subclass, and the app fills in
+what it can: the features the class grants, the saving throws, the spell slots
+and the hit dice. The rest waits for you or for the agent: the scores, the hit
+points, the armour class and the skills.
 
-**The hit dice come from the classes.** A sorcerer rolls a d6 and a warlock a d8, so the dice of a character are the dice of its classes, one counter for each kind of die, the shape of the die, what is left of it, and a button to spend one or to take one back.
+**A character wears its own colours and its own icon.** The colours are a
+block of CSS variables, so a theme is that block and nothing else, and there
+are eight of them. The icon is a small registry of fourteen, from the rune the
+app came with to an electric guitar.
 
-**A character can hold several classes.** The record keeps a list of classes, each with a level and a subclass, and the level is their sum. The edit mode of the character page carries the editor, a picker of the twelve classes, a picker of the subclasses, a stepper and a cross. The spell slots come from the multiclass table of the rules, and the pact slots from the warlock level, so a sorcerer 8 with a warlock 3 reads the slots of a caster of eight and two pact slots at level two. The save DC is one for the character, read from the class that carries the most levels.
+**A character can hold several classes.** The record keeps a list of them, each
+with a level and a subclass, and the level is their sum. The spell slots come
+from the multiclass table of the rules and the pact slots from the warlock
+level. The save DC is one for the character, read from the class that carries
+the most levels.
 
-**The initiative follows the dexterity** until you type one of your own, which then stays.
+**The hit dice come from the classes.** A sorcerer rolls a d6 and a warlock a
+d8, so the dice of a character are the dice of its classes, one counter for
+each kind of die.
 
-The gear at the head of the app opens the settings page, which lists the pages of the character being played. A page that is off keeps its numbers, and turning it back on brings them back. The character page is the home, so it is always on.
+## The exchange
 
-## What it rolls
+A character is a package: JSON, with a name, a kind and a version. There are
+three ways for one to travel, and none of them asks you to type a secret.
 
-Default: attack d20+9, critical on a natural 20, which doubles every damage die. Damage is 1d10+5 force. One tap rolls the whole volley and every die lands on screen.
+**As a file.** The app writes the package and the phone offers it to send, or
+the explorer of the phone opens one that comes back.
 
-| Control | Effect |
+**As a link.** The app packs the character into the link itself, squeezed and
+encoded, and the other end reads it out of the link. The character rides in
+the fragment of the link, and a fragment never reaches a server, so nothing of
+it is left behind anywhere. It is the shortest way to hand a character to the
+player across the table.
+
+**The shelf.** A folder in this repository, read by every app with no secret
+at all. Drop a character in `characters/` and commit it, and every app brings
+it in with one tap. Open a branch and the branch is a shelf of your own, and
+the app lists the branches too.
+
+## Install it
+
+### On a phone
+
+The build is an APK, and it carries the page in its assets, so it works
+offline and keeps its characters between launches.
+
+```
+https://raw.githubusercontent.com/NewbornAI/custom-sheet/main/dist/custom-sheet.apk
+```
+
+Open that on the phone, allow the install when the phone asks, and the icon
+lands on the home screen. The signing key is not in this repository, on
+purpose, so an APK that you build yourself cannot update that one in place:
+uninstall the old one first, then install yours.
+
+### On a desktop
+
+The page is one file and the data sits beside it, so serve the folder and open
+the page.
+
+```
+python -m http.server 8123 --directory dist
+```
+
+Then open `http://127.0.0.1:8123/index.html`. The book, the library of
+features and the classes are read when a page asks for them, and the settings
+page says which of them have arrived.
+
+## Build it
+
+```
+node build.mjs                                  # src to dist, the font and the data inlined
+node test/rules.test.mjs                        # the rules engine and the data
+node tools/fetch-5e-data.mjs                    # refetch the data from 5e.tools
+powershell -ExecutionPolicy Bypass -File tools/build-apk.ps1
+```
+
+The Android shell needs the command line tools, android-34 and build-tools;
+`tools/install-android-sdk.ps1` puts them in place.
+
+## The data
+
+The text of the rules is the System Reference Document, and it is fetched into
+the files under `data/`.
+
+| File | What it holds |
 |---|---|
-| Adv | the attack rolls 3d20 and keeps the highest |
-| Hex | adds 1d6 necrotic |
-| Curse | adds 4 flat damage, critical on 19 or 20 |
-| Elem | adds 2d8 lightning, and brings the +3d8 chip out |
-| +3d8 | upgrades the lightning from 2d8 to 3d8 |
+| `classes.json` | the twelve classes of the 2024 handbook and their 123 archetypes, the newest printing of each |
+| `features.json` | 1017 features of those classes and archetypes, with their text |
+| `spellbook.json` | 397 spells, with the classes that can learn each one |
+| `wild-magic-surge-xphb.json` | the surge table of the 2024 handbook |
+| `characters.json` | the ready-made characters |
+| `spell-sheet.csv` | the spells of the sheet of the table, one line each |
 
-The power slider swaps the spell. Eldritch blast fires 3 beams of 1d10+5 force. Scorching ray at levels 2 to 5 fires 3 to 6 beams of 2d6 fire.
+`tools/fetch-5e-data.mjs` pulls them from 5e.tools, and the build writes the
+data files beside the page so the page itself stays small.
 
-The AC field is optional. Leave it empty and the app shows the damage of every beam. Set the target armor class and each beam is marked hit or miss, a miss shows no damage, and the total counts only the hits.
+## For agents
 
-![A critical roll with hex and elementals](shots/final-crit.png)
+The README is the human entry point. `AGENTS.md` is the agent one: where the
+seams are, how a page is written, how the data is read, and the shape of the
+package.
 
-## The spell tab
+Three things an agent leans on:
 
-A tracker for the character's slots and spell list, built for one hand at the table.
+- **The library.** The data holds every class feature of the twelve classes
+  and their archetypes. `plugFeature(key)` drops one into the character being
+  played, and the feature page picks it up.
+- **The pages.** A page is a file of its own, and the settings page turns the
+  pages on and off per character. A page that comes in a package brings its
+  own markup, its own style and its own rules.
+- **The package.** A character leaves as JSON and comes back the same way, so
+  an agent can write a character, a page, or both, and hand them over as one
+  file.
 
-- **The top bar** holds the DC and the sorcery points, and two toggles: Cunning restores one warlock slot, and a sorcerer rest restores half your sorcerer level in sorcery points. The sorcery points have their own minus and plus; the DC only grows buttons in the edit mode.
-- **The slot strip** runs across the top: every level from cantrips to ninth left to right, and under each one its slots stacked as pips. A filled pip means you still have it, and tapping one spends it, so tapping the last one empties the level. Tapping an empty pip resets that level up to it. A level holds up to nine slots, and the columns share the width in proportion to what they hold, so the slots widen into ellipses when a level holds more of them. At level 2 the warlock slots sit under the sorcerer ones, in teal.
-- **The lightning** above a level turns one of that level's slots into sorcery points, one point for each level of the slot, so a second level slot gives two points. The warlock slots go first, they are the scarcer ones. The bolt stays dim while the points are full or the level has no slot left, and level 0 has none, since a cantrip is not a slot.
-- **The arrow** under a level opens the spell list of that level.
-- **The spell list** shows one card per spell with labelled fields: casting time, range, duration, components, concentration and ritual. The same fields sit in the same place on every card, so the labels line up down the list. The label at the end of the title is the source the character declares: the class that granted the spell, the feature that granted it, or nothing when nothing is declared. It is red for the sorcerer, blue for the warlock and the hexblade, half blue half red for the Izzet engineer and green for the elf. The grimoire opens with a SOURCE row to declare it, and the page of a spell carries the same row to change it later. Tap a card for the full page, tables and the Using a Higher-Level Spell Slot section included, and hold and drag a card to reorder the list. The plus at the head of the list opens the grimoire for that level.
-- **The grimoire** is where new spells come from. It holds every spell the classes can learn, 397 of them, and each one carries the classes that can learn it. The search answers a class name as well as a spell name, so typing bard finds the spells of the bard. Under every spell sits a button for each of those classes, grey or green, and a tap turns that class on for the whole list. With every class grey the list shows everything, and with one class green it shows only the spells of that class. The classes are the eight of the 2024 handbook, plus the hexblade, the izzet engineer and the elf, the three his own sheet names.
-- **The toggle** at the head of the grimoire keeps it on the level you are looking at, and turns it off to show the spells of every level at once. Tapping a spell opens its full page and the close brings the grimoire back. A plus learns a spell and a check unlearns it.
-- **A spell with a trigger** keeps it for the full page and not for the card: Shield reads "Reaction" on the card and "1 reaction, which you take when you are hit by an attack roll or targeted by the Magic Missile spell" on the page, and the smites do the same.
-- **The text of a spell is marked up.** The damage stands in red, "8d6 Fire damage" as one piece, the saving throws in blue, and the conditions carry a dotted line, because tapping one opens the reference to conditions and diseases on 5e.tools.
-- **The sheet of a spell** holds the level, the casting time, the range, the duration, the components, the concentration, the ritual and the source in two columns of a readable size, and the casting time takes the whole width when it carries a trigger.
-- **The wrench** in the top right turns on the edit mode, where each level grows minus and plus buttons for the maximum number of slots, and the sorcerer level can be changed. A level with no slots is dimmed, which is how level 5 and the levels above it start out until you unlock them.
+## The licence
 
-The list is seeded from the character's own sheet in `data/spell-sheet.csv`, one line per spell with the class that granted it. Everything else comes from the grimoire.
+The code is under the MIT licence, in `LICENSE`.
 
-## The character tab
+The text of the rules in the data files is under the Creative Commons
+Attribution 4.0 International Licence, and `NOTICE` says where it came from,
+names the licence and links it. The data was taken from 5e.tools and laid out
+by this project.
 
-The front of the character sheet, for the numbers you look up mid turn.
+Dungeons & Dragons, D&D and the D20 logo are trademarks of Wizards of the
+Coast LLC. This project is not affiliated with, endorsed by or sponsored by
+Wizards of the Coast. The font Cinzel is under the SIL Open Font Licence 1.1.
 
-- **The top row** holds the armor class, the initiative modifier and the level, all three editable and read in the middle. The level gives the proficiency bonus, so raising it moves every saving throw and every skill at once.
-- **The hit points** sit under them, the current over the maximum. The minus takes a point, the plus gives one back, and the field itself takes a number, so a wound of seventeen goes in as seventeen.
-- **The abilities** are six tiles: the score, with the modifier under it. Type a score and everything that leans on it moves. The saving throw of the ability sits right under its own tile.
-- **The saving throws and the skills** carry a marker and a modifier. An empty dot means the character has nothing in it, a gold dot means proficient, and a dot with a ring around it means expertise, which takes the proficiency twice. In the edit mode a tap cycles a row from none to proficient to expertise and back.
-- **The derived line** under the abilities reads the proficiency bonus, the spell attack, the save DC and the passive perception, all of them computed from the scores above.
-- **The hit dice** sit under the hit points, one icon per die, drawn in the shape of the die itself: a d6 is a square, a d8 a diamond, a d10 a kite, a d12 a pentagon and a d20 a hexagon. Tapping one spends it and tapping it again gives it back, because some effects spend a die without a roll, and the points are rolled by hand. A long rest gives every die back. The wrench turns the box into a picker for how many dice of each type, from d12 to d6.
-- **The features** have their own tab, the one below. The rests here still restore them, and the note says which ones came back.
-- **The short rest** gives back the features marked as recovering on a short rest, and nothing else: the warlock spell slots and one use of the hexblade curse. The **long rest** gives back the hit points, every spell slot, the sorcery points and every use of every feature.
-- **The rewind** undoes the last change of any kind: a point of hit points, a use of a feature, or a whole rest. Hit it after a rest you did not mean, and the hit points, the slots and the features come back as they were.
-- **The wrench** in the top right turns on the edit mode, where the proficiencies move and the name of the character can be set. Outside it a stray tap never changes a modifier.
-
-The sheet starts from what the rest of the app already assumes: charisma 20 and a level 9, which give the attack of +9 and the save DC of 17, with constitution and charisma proficient in the saving throws. The other numbers wait for the player.
-
-## The features tab
-
-The list of what the character can do, and what is left of it.
-
-- **The characters are one tap from the head.** Two people beside the wrench open the list of the characters, the one being played marked, and a way to add one or to take one away.
-
-**The data is read when a page asks for it.** The book, the library of features and the classes are files beside the page, so a launch carries the character and nothing else. A page asks for its file as it opens and repaints when it lands. The Android shell reads the files out of the app for the page, and the settings page lists which of them are here, with a button to read one that did not arrive.
-
-**A character is a package.** The record in JSON, with a name, a kind and a version. It can leave the app as a file, which the phone offers to send, and come back in through the explorer of the phone. A repository holds the shared ones: its address and its token sit in the settings, and a window lists the characters it keeps, an arrow down to bring one in and an arrow up to leave the character being played in its place. An import never replaces a character that is already there.
-
-**The app can update itself.** The build stamps a version into the page and writes the same one beside it. The settings page asks the machine that serves the app whether a newer build is there, and the app then fetches that build and hands it to the installer of the phone, which asks the player before it puts anything in place. On the web, the build opens in the browser instead.
-
-**A feature of the library starts with no counter.** The data holds every class and subclass feature of the twelve classes and their newest archetypes, 1017 of them with their text, and a character names the ones it holds. A library feature carries its class, its level and its text, and its uses are for the player to set in the edit mode.
-- **The active features** are the ones with uses: innate sorcery, metamagic, tides of chaos, sorcerous rest, bend luck, magical cunning, the hexblade curse and the two elven lineages. Each row shows the source, the uses left and when they come back, "2 / long" meaning two uses that a long rest gives back. Tapping the count spends a use, and at zero it gives one back. Bend luck costs a sorcery point rather than a use, so its count spends a point from the spell tab.
-- **The passive features** are the ones that always work: sorcery incarnate, the three warlock invocations, the wild surge, hex warrior, trance, fey ancestry and elven accuracy.
-- **Tapping a name** opens the full description, the text 5e.tools holds, with the action and the duration.
-- **The wrench** turns on the edit mode of the tab. The hidden rows come back, the warlock spell slots and the three the spell tab already tracks, metamagic, sorcerous rest and magical cunning, and the eye on a row hides it again. The count becomes a field there, so the number of uses left can be set, and so can the maximum, which is what a rest gives back. Each row grows a red button that removes the feature, after it asks.
-- **The plus** at the head of the section opens a form that asks for the name and the recovery type: short rest, long rest, special or passive. A passive feature has no uses at all.
-- **The cards can be dragged** to reorder them, the way the spell list does. A press that turns into a move carries the card, a press that ends at once is a tap.
-- **Spending a sorcery point** leaves a mark: a gold toast says how many points are left, and it lingers for three seconds.
-
-The list is Mandal's own table of 2026-10-22: the short text, the uses and the recovery are his words, and the long text is pulled from 5e.tools by `tools/fetch-5e-data.mjs` into `data/features.json`. The file holds the features of both characters, the eighteen the app's own character starts with and the twelve the bard brings, and a feature that belongs to one of them says so. A character that names its features keeps exactly those, and once it exists its own list is the truth.
-
-## The wild magic surge
-
-The surge lives in the spell tab, under a Wild label at the end of the top bar, right of the sorcerer rest. It opens a popup with the old interface: the d100 in the middle, the range it landed on, the effect and the dice it names. Tap the number or the button to roll again, and the last result stays on the phone. The table is the one from the 2024 Player's Handbook, the same one 5e.tools serves under its XPHB source.
-
-The table is never typed by hand. `tools/fetch-5e-data.mjs` pulls it out of the 5e.tools class data, parses it into `data/wild-magic-surge-xphb.json`, and refuses to write a table that does not cover 1 to 100 exactly once. The build inlines that JSON into the page, and the test suite checks the inlined copy against the file.
-
-The same script pulls the spell book: every spell the classes can learn, plus the spells on the character's sheet, with their casting time, range, duration, components, full text and the classes that can learn each one, into `data/spellbook.json`. The entries keep their structure, so the tables and the Using a Higher-Level Spell Slot sections survive, and the casting time keeps the trigger a reaction waits for.
+## The layout
 
 ```
-node tools/fetch-5e-data.mjs
+src/index.html       the shell, the styles and the two rules blocks
+src/shell.js         the registry, the store, the overlay, the packages, the shelf
+src/pages/*.js       one file per page
+data/*.json          the rules data
+app/                 the Android shell that wraps the same page
+tools/               the build, the data fetch, the icon maker
+test/rules.test.mjs  the rules engine and the data
+characters/          the shelf: one package per file
 ```
-
-The 2014 table is a different file with the same shape, so swapping editions means pointing the build at it.
-
-## Run it
-
-`dist/index.html` is the whole app: one file, no server, no network, 761 KB with the font, the spell book and the features inlined. Copy it to the phone, open it in Chrome, then Add to home screen for a full screen launcher.
-
-To serve it to a phone on the same wifi:
-
-```
-python -m http.server 8123 --directory dist
-```
-
-## The Android app
-
-The same page ships as an installed app, with no browser and no server. The APK lives at `dist/dnd-sheet.apk` and carries the page in its assets, so it works offline and keeps its state between launches.
-
-```
-tools\install-android-sdk.ps1   # once: command line tools, android-34, build-tools
-tools\build-apk.ps1             # resources, dex, sign
-```
-
-`app/` holds the shell: one activity, a WebView on `file:///android_asset/index.html`, portrait locked, dark background, vibration allowed so the roll still buzzes.
-
-The signing key is `keys/volley.keystore` and it is in git on purpose: the phone only accepts an update signed with the same key, so losing it means reinstalling from scratch.
-
-To put it on the phone, serve the folder and open the file there:
-
-```
-python -m http.server 8123 --directory dist
-```
-
-Then on the phone open `http://<this machine>:8123/dnd-sheet.apk`. Chrome says the file can harm the device, tap Download anyway, and allow installs from that source when it asks. The DND-sheet icon lands on the home screen and opens full screen, offline.
-
-## Build
-
-`src/index.html` is the source. The only difference from `dist/index.html` is that the display font is inlined as base64.
-
-```
-node build.mjs
-node test/rules.test.mjs
-```
-
-The rules engine lives in a `<script id="rules">` block that touches no DOM, and the character sheet rules live in a `<script id="sheet-rules">` block of the same kind. The test suite extracts both and checks the maths: crit thresholds, doubled dice, each toggle, each power, the tally against an AC, the ability modifiers, the saving throws, the skills and the hit point tracker.
-
-## Choices worth knowing
-
-- Minor element and its plus chip are one choice, not two layers: 2d8 lightning, or 3d8 once the chip is on. The `EXTRAS` table in the rules block is the single place to change that.
-- Scorching ray carries no flat bonus, only Eldritch blast does. The `flat` field of each power says so.
-- Advantage rolls 3d20 and keeps the highest, as specified, where the rules book rolls 2.
-- A critical doubles the dice of every damage group, of any type, and never the flat bonuses.
-- The concentration flag comes from the duration in the 2024 data, not from a field of its own. The fetcher reads both, so a spell that holds concentration says so.
-- Turning a slot into sorcery points is one rule, `Rules.convertSlot`, so the test suite can check it without a browser.
