@@ -40,6 +40,8 @@ A tracker for the character's slots and spell list, built for one hand at the ta
 - **The lightning** above a level turns one of that level's slots into sorcery points, one point for each level of the slot, so a second level slot gives two points. The warlock slots go first, they are the scarcer ones. The bolt stays dim while the points are full or the level has no slot left, and level 0 has none, since a cantrip is not a slot.
 - **The arrow** under a level opens the spell list of that level.
 - **The spell list** shows one card per spell with labelled fields: casting time, range, duration, components, concentration and ritual. The same fields sit in the same place on every card, so the labels line up down the list. The class that granted the spell sits at the end of the title, red for the sorcerer, blue for the warlock and the hexblade, half blue half red for the Izzet engineer, and green for the elf. Tap a card for the full page, tables and the Using a Higher-Level Spell Slot section included, and hold and drag a card to reorder the list. The plus at the head of the list opens the grimoire for that level.
+- **The grimoire** is where new spells come from. It holds every spell the classes can learn, 397 of them, and each one carries the classes that can learn it. Under every spell sits a button for each of those classes, grey or green, and a tap turns that class on for the whole list. With every class grey the list shows everything, and with one class green it shows only the spells of that class. The classes are the eight of the 2024 handbook, plus the hexblade, the izzet engineer and the elf, the three his own sheet names.
+- **A spell with a trigger** keeps it for the full page and not for the card: Shield reads "Reaction" on the card and "1 reaction, which you take when you are hit by an attack roll or targeted by the Magic Missile spell" on the page, and the smites do the same.
 - **The wrench** in the top right turns on the edit mode, where each level grows minus and plus buttons for the maximum number of slots, and the sorcerer level can be changed. A level with no slots is dimmed, which is how level 5 and the levels above it start out until you unlock them.
 
 The list is seeded from the character's own sheet in `data/spell-sheet.csv`, one line per spell with the class that granted it. Everything else comes from the grimoire.
@@ -66,7 +68,7 @@ The second tab rolls on the Wild Magic Surge table from the 2024 Player's Handbo
 
 The table is never typed by hand. `tools/fetch-5e-data.mjs` pulls it out of the 5e.tools class data, parses it into `data/wild-magic-surge-xphb.json`, and refuses to write a table that does not cover 1 to 100 exactly once. The build inlines that JSON into the page, and the test suite checks the inlined copy against the file.
 
-The same script pulls the spell book: the spells on the character's sheet, plus the sorcerer and warlock lists, with their casting time, range, duration, components and full text, into `data/spellbook.json`. The entries keep their structure, so the tables and the Using a Higher-Level Spell Slot sections survive.
+The same script pulls the spell book: every spell the classes can learn, plus the spells on the character's sheet, with their casting time, range, duration, components, full text and the classes that can learn each one, into `data/spellbook.json`. The entries keep their structure, so the tables and the Using a Higher-Level Spell Slot sections survive, and the casting time keeps the trigger a reaction waits for.
 
 ```
 node tools/fetch-5e-data.mjs
@@ -76,7 +78,7 @@ The 2014 table is a different file with the same shape, so swapping editions mea
 
 ## Run it
 
-`dist/index.html` is the whole app: one file, no server, no network, 350 KB with the font and the spell book inlined. Copy it to the phone, open it in Chrome, then Add to home screen for a full screen launcher.
+`dist/index.html` is the whole app: one file, no server, no network, 655 KB with the font and the spell book inlined. Copy it to the phone, open it in Chrome, then Add to home screen for a full screen launcher.
 
 To serve it to a phone on the same wifi:
 

@@ -443,6 +443,7 @@ input[type=range]::-moz-range-thumb{
 .sheet h2{font-family:var(--display);font-size:20px;font-weight:700;margin:0;padding-right:34px}
 .sheet-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:12px;row-gap:4px;margin-top:2px}
 .sheet-meta .f{font-size:10.5px;grid-template-columns:4.2em minmax(0,1fr)}
+.sheet-meta .f.wide{grid-column:1 / -1}
 .sheet-meta .src{color:var(--muted);border:1px solid var(--edge);border-radius:3px;padding:0 4px;white-space:nowrap;justify-self:start}
 .sheet-meta .src.sorc{color:#ff8fb0;border-color:rgba(255,111,168,.45);background:rgba(255,111,168,.10)}
 .sheet-meta .src.warlock{color:#9dbcff;border-color:rgba(110,155,255,.45);background:rgba(110,155,255,.10)}
@@ -459,9 +460,14 @@ input[type=range]::-moz-range-thumb{
 .tcap{font-size:10.5px;color:var(--muted);margin-bottom:3px}
 .sheet-list{display:flex;flex-direction:column;gap:4px}
 .sheet-list[hidden]{display:none}
-.sheet-list .row{display:flex;align-items:center;gap:8px;border:1px solid var(--edge);border-radius:5px;padding:7px 8px;font-size:12px;color:var(--ink);background:rgba(255,255,255,.02)}
-.sheet-list .row .lv2{font-size:10px;color:var(--muted);margin-left:auto}
-.sheet-list .row button{width:26px;height:26px;border-radius:6px;border:1px solid var(--edge);background:rgba(255,255,255,.03);color:var(--arcane);font-size:15px;line-height:1;cursor:pointer;flex:0 0 auto}
+.sheet-list .row{display:flex;flex-direction:column;align-items:stretch;gap:4px;border:1px solid var(--edge);border-radius:5px;padding:6px 8px;background:rgba(255,255,255,.02)}
+.sheet-list .row .g1{display:flex;align-items:center;gap:8px;min-width:0}
+.sheet-list .row .gn{flex:1 1 auto;min-width:0;font-size:12.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sheet-list .row .gadd{width:24px;height:24px;border-radius:6px;border:1px solid var(--edge);background:rgba(255,255,255,.03);color:var(--arcane);font-size:15px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0}
+.sheet-list .row .g2{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.sheet-list .row .gcls{border:1px solid var(--edge);border-radius:3px;background:none;color:#6f6a8d;font-family:var(--sans);font-size:8.5px;letter-spacing:.06em;line-height:1;padding:3px 4px;cursor:pointer}
+.sheet-list .row .gcls.on{border-color:rgba(122,216,111,.5);background:rgba(122,216,111,.13);color:#8fe084}
+.sheet-list .row .gs{font-size:9.5px;color:var(--muted);margin-left:auto;white-space:nowrap}
 .sheet-actions{display:flex;gap:8px}
 .sheet-actions button{
   border:1px solid var(--edge);
@@ -1534,7 +1540,8 @@ input[type=range]::-moz-range-thumb{
     warlockMax: 2,
     warlockLeft: 2,
     selected: 1,
-    lists: {}
+    lists: {},
+    classes: {}
   };
 
   /* The character on the sheet. What can be derived is derived: charisma 20
@@ -1559,6 +1566,17 @@ input[type=range]::-moz-range-thumb{
 
   var SPELL_SEED = (SPELLBOOK.seed || []).map(function (s) { return s.name; });
 
+  /* The classes of the book, and the short name each button carries. */
+  var CLASS_SHORT = {
+    'Sorcerer': 'Sor', 'Warlock': 'War', 'Wizard': 'Wiz', 'Bard': 'Bar',
+    'Cleric': 'Cle', 'Druid': 'Dru', 'Ranger': 'Ran', 'Paladin': 'Pal',
+    'Hexblade': 'Hex', 'Izzet engineer': 'Izz', 'elf': 'Elf'
+  };
+
+  function classShort(name) {
+    return CLASS_SHORT[name] || String(name || '').slice(0, 3);
+  }
+
   /* The class a spell came from, as the app colours it. */
   var SOURCE_CLASS = {
     'sorcerer': 'sorc',
@@ -1576,9 +1594,9 @@ input[type=range]::-moz-range-thumb{
   }
 
   /* One labelled field of the spell summary. */
-  function field(label, value, cls) {
+  function field(label, value, cls, wide) {
     var text = value ? String(value) : '-';
-    return '<span class="f"><span class="k">' + esc(label) + '</span>' +
+    return '<span class="f' + (wide ? ' wide' : '') + '"><span class="k">' + esc(label) + '</span>' +
       '<span class="v' + (cls ? ' ' + cls : '') + '">' + esc(text) + '</span></span>';
   }
 
@@ -1679,6 +1697,7 @@ input[type=range]::-moz-range-thumb{
       Object.keys(SPELL_DEFAULTS).forEach(function (k) {
         if (saved[k] !== undefined && saved[k] !== null && typeof saved[k] === typeof SPELL_DEFAULTS[k]) s[k] = saved[k];
       });
+      if (saved.classes) { s.classes = {}; Object.keys(saved.classes).forEach(function (k) { s.classes[k] = !!saved.classes[k]; }); }
       if (saved.max) { s.max = {}; Object.keys(SPELL_DEFAULTS.max).forEach(function (k) { s.max[k] = Number(saved.max[k]) || 0; }); }
       if (saved.left) { s.left = {}; Object.keys(SPELL_DEFAULTS.left).forEach(function (k) { s.left[k] = Number(saved.left[k]) || 0; }); }
     }
@@ -2216,9 +2235,11 @@ input[type=range]::-moz-range-thumb{
 
   /* The summary of a spell: the same fields, in the same order, on every
      card, so the labels line up down the list. */
-  function spellFields(spell) {
+  function spellFields(spell, full) {
     var comps = spell.components ? spell.components.split('').join(' ') : '-';
-    return field('Cast', spell.time) +
+    var time = full ? (spell.timeFull || spell.time) : spell.time;
+    var hasTrigger = !!(full && spell.timeFull && spell.timeFull !== spell.time);
+    return field('Cast', time, '', hasTrigger) +
       field('Range', spell.range) +
       field('Duration', spell.duration) +
       field('Comps', comps, 'cmp') +
@@ -2296,7 +2317,7 @@ input[type=range]::-moz-range-thumb{
     var spell = SPELL_BY_NAME[name];
     if (!spell) return;
     el.sheetTitle.textContent = spell.name;
-    el.sheetMeta.innerHTML = field('Level', spell.level) + spellFields(spell) + sourceTag(spell.source);
+    el.sheetMeta.innerHTML = field('Level', spell.level) + spellFields(spell, true) + sourceTag(spell.source);
     el.sheetText.innerHTML = renderBlocks(spell.blocks);
     el.sheetSearch.hidden = true;
     el.sheetList.innerHTML = '';
@@ -2315,13 +2336,22 @@ input[type=range]::-moz-range-thumb{
   function renderGrimoire(lv) {
     var q = (el.sheetSearch.value || '').trim().toLowerCase();
     var have = state.spell.lists[lv] || [];
+    var on = state.spell.classes || {};
+    var active = Object.keys(on).filter(function (c) { return on[c]; });
+    el.sheetTitle.textContent = 'Grimoire, level ' + lv + (active.length ? ' \u00b7 ' + active.join(', ') : '');
+
     var rows = (SPELLBOOK.spells || []).filter(function (s) { return s.level === lv; })
+      .filter(function (s) {
+        if (!active.length) return true;
+        return (s.classes || []).some(function (c) { return active.indexOf(c) >= 0; });
+      })
       .filter(function (s) { return !q || s.name.toLowerCase().indexOf(q) >= 0; });
+
     el.sheetList.innerHTML = '';
     if (!rows.length) {
       var none = document.createElement('div');
       none.className = 'empty';
-      none.textContent = 'Nothing matches.';
+      none.textContent = active.length ? 'No spell of ' + active.join(', ') + ' at this level.' : 'Nothing matches.';
       el.sheetList.appendChild(none);
       return;
     }
@@ -2329,13 +2359,15 @@ input[type=range]::-moz-range-thumb{
       var row = document.createElement('div');
       row.className = 'row';
       var added = have.indexOf(s.name) >= 0;
+
+      var head = document.createElement('div');
+      head.className = 'g1';
       var name = document.createElement('span');
+      name.className = 'gn';
       name.textContent = s.name;
-      var side = document.createElement('span');
-      side.className = 'lv2';
-      side.textContent = added ? 'in the list' : s.time;
       var b = document.createElement('button');
       b.type = 'button';
+      b.className = 'gadd';
       b.textContent = added ? '\u2713' : '+';
       b.disabled = added;
       b.setAttribute('aria-label', added ? 'Already in the list' : 'Add ' + s.name);
@@ -2346,17 +2378,45 @@ input[type=range]::-moz-range-thumb{
         renderSpellList();
         save();
       });
-      row.appendChild(name);
-      row.appendChild(side);
-      row.appendChild(b);
+      head.appendChild(name);
+      head.appendChild(b);
+
+      /* One button per class that can learn the spell. A tap turns that
+         class on for the whole list, and the list then shows only the
+         spells of the classes that are on. */
+      var foot = document.createElement('div');
+      foot.className = 'g2';
+      (s.classes || []).forEach(function (c) {
+        var chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'gcls' + (on[c] ? ' on' : '');
+        chip.textContent = classShort(c);
+        chip.title = c;
+        chip.setAttribute('aria-label', c + (on[c] ? ', on' : ', off'));
+        chip.addEventListener('click', function () {
+          state.spell.classes[c] = !on[c];
+          renderGrimoire(lv);
+          save();
+        });
+        foot.appendChild(chip);
+      });
+      var side = document.createElement('span');
+      side.className = 'gs';
+      side.textContent = added ? 'in the list' : s.time;
+      foot.appendChild(side);
+
+      row.appendChild(head);
+      row.appendChild(foot);
       el.sheetList.appendChild(row);
     });
   }
 
   function openGrimoire(lv) {
     state.spell.selected = lv;
-    el.sheetTitle.textContent = 'Grimoire, level ' + lv;
-    el.sheetMeta.innerHTML = '<span>Tap + to add a spell to level ' + lv + '</span>';
+    var on = state.spell.classes || {};
+    var active = Object.keys(on).filter(function (c) { return on[c]; });
+    el.sheetTitle.textContent = 'Grimoire, level ' + lv + (active.length ? ' · ' + active.join(', ') : '');
+    el.sheetMeta.innerHTML = '<span>Tap a class to filter the list, + to add a spell to level ' + lv + '</span>';
     el.sheetText.textContent = '';
     el.sheetSearch.hidden = false;
     el.sheetSearch.value = '';

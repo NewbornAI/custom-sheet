@@ -170,19 +170,42 @@ function blocksFrom(entries) {
 
 /* ---------- formatters ---------- */
 
+const TIME_UNITS = {
+  action: ['action', 'actions'],
+  bonus: ['bonus action', 'bonus actions'],
+  reaction: ['reaction', 'reactions'],
+  minute: ['minute', 'minutes'],
+  hour: ['hour', 'hours'],
+  day: ['day', 'days'],
+  second: ['second', 'seconds'],
+  round: ['round', 'rounds']
+};
+
+function unitWords(unit, n) {
+  const pair = TIME_UNITS[unit];
+  if (!pair) return unit;
+  return n > 1 ? pair[1] : pair[0];
+}
+
+/* The casting time, short for the card and whole for the full page: a
+   reaction carries the trigger it waits for. */
 function formatTime(time) {
-  if (!Array.isArray(time)) return '';
-  return time.map((t) => {
+  if (!Array.isArray(time)) return { short: '', full: '' };
+  const short = time.map((t) => {
     const unit = String(t.unit || '');
     const n = t.number || 1;
-    if (unit === 'action') return n > 1 ? n + ' Actions' : 'Action';
-    if (unit === 'bonus') return n > 1 ? n + ' Bonus Actions' : 'Bonus Action';
-    if (unit === 'reaction') return n > 1 ? n + ' Reactions' : 'Reaction';
-    if (unit === 'minute') return n + (n > 1 ? ' minutes' : ' minute');
-    if (unit === 'hour') return n + (n > 1 ? ' hours' : ' hour');
-    if (unit === 'day') return n + (n > 1 ? ' days' : ' day');
-    return (n > 1 ? n + ' ' : '') + unit;
+    if (unit === 'action') return n > 1 ? n + ' actions' : 'Action';
+    if (unit === 'bonus') return n > 1 ? n + ' bonus actions' : 'Bonus Action';
+    if (unit === 'reaction') return n > 1 ? n + ' reactions' : 'Reaction';
+    return n + ' ' + unitWords(unit, n);
   }).join(' or ');
+  const full = time.map((t) => {
+    const unit = String(t.unit || '');
+    const n = t.number || 1;
+    const one = n + ' ' + unitWords(unit, n);
+    return t.condition ? one + ', ' + clean(t.condition) : one;
+  }).join(' or ');
+  return { short: short, full: full };
 }
 
 function formatRange(range) {
@@ -277,6 +300,33 @@ for (const src of SOURCES) {
 
 const lookup = JSON.parse(readFileSync(download(BASE + 'generated/gendata-spell-source-lookup.json', 'gendata-spell-source-lookup.json'), 'utf8'));
 
+/* The classes the app knows: the eight of the 2024 handbook, and the
+   hexblade, the warlock subclass the character plays. */
+const CLASSES = ['Sorcerer', 'Warlock', 'Wizard', 'Bard', 'Cleric', 'Druid', 'Ranger', 'Paladin'];
+const SUBCLASSES = ['Hexblade'];
+
+/* Who can learn a spell: the classes that have it, and the subclasses that
+   add it. */
+function sourcesFor(name) {
+  const entry = lookup.xphb[String(name).toLowerCase()];
+  const out = [];
+  if (!entry) return out;
+  if (entry.class && entry.class.XPHB) {
+    for (const c of CLASSES) if (entry.class.XPHB[c]) out.push(c);
+  }
+  if (entry.subclass && entry.subclass.XPHB) {
+    for (const cls of Object.keys(entry.subclass.XPHB)) {
+      const bySource = entry.subclass.XPHB[cls];
+      for (const src of Object.keys(bySource)) {
+        for (const sub of Object.keys(bySource[src])) {
+          if (SUBCLASSES.indexOf(sub) >= 0 && out.indexOf(sub) < 0) out.push(sub);
+        }
+      }
+    }
+  }
+  return out;
+}
+
 function norm(name) { return String(name).toLowerCase().replace(/[^a-z0-9]/g, ''); }
 
 const index = {};
@@ -289,11 +339,13 @@ for (const src of SOURCES) {
 }
 
 function spellRecord(spell, sourceTag) {
+  const time = formatTime(spell.time);
   return {
     name: spell.name,
     level: spell.level,
     school: spell.school || '',
-    time: formatTime(spell.time),
+    time: time.short,
+    timeFull: time.full,
     range: formatRange(spell.range),
     duration: formatDuration(spell.duration),
     components: ['v', 's', 'm'].filter((k) => spell.components && spell.components[k]).map((k) => k.toUpperCase()).join(''),
@@ -301,6 +353,7 @@ function spellRecord(spell, sourceTag) {
     /* In the 2024 data the concentration flag sits on the duration. */
     concentration: !!(spell.concentration || (Array.isArray(spell.duration) && spell.duration.some((d) => d && d.concentration))),
     source: sourceTag || '',
+    classes: [],
     blocks: blocksFrom(spell.entries).concat(blocksFrom(spell.entriesHigherLevel))
   };
 }
@@ -318,19 +371,36 @@ for (const row of sheet) {
   if (!book.has(pick.name)) book.set(pick.name, spellRecord(pick, row.source));
 }
 
-/* the class lists, so the grimoire can offer more */
-const classLookup = lookup.xphb || {};
+/* every spell the classes can learn, and the classes of each one */
 for (const spell of bySource.XPHB) {
-  const entry = classLookup[spell.name.toLowerCase()];
-  if (!entry || !entry.class || !entry.class.XPHB) continue;
-  const classes = Object.keys(entry.class.XPHB).filter((c) => entry.class.XPHB[c] && (c === 'Sorcerer' || c === 'Warlock'));
+  const classes = sourcesFor(spell.name);
   if (!classes.length) continue;
   if (book.has(spell.name)) {
     const rec = book.get(spell.name);
+    rec.classes = classes;
     if (!rec.source) rec.source = classes[0];
     continue;
   }
-  book.set(spell.name, spellRecord(spell, classes[0]));
+  const rec = spellRecord(spell, classes[0]);
+  rec.classes = classes;
+  book.set(spell.name, rec);
+}
+
+/* The same class, written two ways on the sheet: the hexblade's second
+   level list is written "hex", and the izzet engineer is written both
+   ways. */
+const SOURCE_ALIAS = { 'izzet': 'Izzet engineer', 'high elf': 'elf', 'hex': 'Hexblade' };
+function canonSource(source) {
+  const name = String(source || '').trim();
+  return SOURCE_ALIAS[name.toLowerCase()] || name;
+}
+
+/* the source the sheet gave a spell joins the classes that can learn it */
+for (const row of seed) {
+  const rec = book.get(row.name);
+  if (!rec) continue;
+  const source = canonSource(row.source);
+  if (rec.classes.indexOf(source) < 0) rec.classes.push(source);
 }
 
 const spells = [...book.values()].sort((a, b) => a.level - b.level || a.name.localeCompare(b.name));
@@ -338,7 +408,7 @@ const spells = [...book.values()].sort((a, b) => a.level - b.level || a.name.loc
 writeFileSync(
   resolve(root, 'data', 'spellbook.json'),
   JSON.stringify({
-    edition: "2024 Player's Handbook, the character's own sheet plus the sorcerer and warlock lists",
+    edition: "2024 Player's Handbook, every spell the classes can learn, plus the character's own sheet",
     source: 'https://5e.tools/spells.html',
     fetched: new Date().toISOString().slice(0, 10),
     sheet: 'data/spell-sheet.csv',

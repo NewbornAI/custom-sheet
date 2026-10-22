@@ -183,6 +183,35 @@ console.log('the spell book');
   check('the sheet seeded the level 2 spells', book.seed.filter((s) => s.level === 2).length, 11);
 }
 
+console.log('the classes of the book');
+{
+  const book = JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8'));
+  check('the book holds every spell of the classes', book.spells.length > 350, true);
+  check('every spell names a class', book.spells.every((s) => s.classes && s.classes.length > 0), true);
+
+  const shield = book.spells.find((s) => s.name === 'Shield');
+  check('shield keeps the sorcerer', shield.classes.indexOf('Sorcerer') >= 0, true);
+  check('shield keeps the wizard', shield.classes.indexOf('Wizard') >= 0, true);
+  check('shield keeps the hexblade', shield.classes.indexOf('Hexblade') >= 0, true);
+  check('the card shows the short casting time', shield.time, 'Reaction');
+  check('the full page keeps the trigger', shield.timeFull, '1 reaction, which you take when you are hit by an attack roll or targeted by the Magic Missile spell');
+
+  const smite = book.spells.find((s) => s.name === 'Searing Smite');
+  check('a smite keeps its trigger', /^1 bonus action, which you take/.test(smite.timeFull), true);
+
+  const eb = book.spells.find((s) => s.name === 'Eldritch Blast');
+  check('a spell without a trigger has no clause', !/which/.test(eb.timeFull), true);
+  check('the whole time still reads', eb.timeFull, '1 action');
+
+  const sorcerer = book.spells.filter((s) => s.classes.indexOf('Sorcerer') >= 0);
+  check('the sorcerer has spells in the book', sorcerer.length > 100, true);
+  const hexblade = book.spells.filter((s) => s.classes.indexOf('Hexblade') >= 0);
+  check('the hexblade brings his expanded list', hexblade.length >= 10, true);
+  check('the hexblade brings blur', hexblade.some((s) => s.name === 'Blur'), true);
+  check('the hex spelling of a source becomes the hexblade', book.spells.find((s) => s.name === 'Blur').classes.indexOf('Hexblade') >= 0, true);
+  check('the sheet sources are in the classes', book.spells.find((s) => s.name === 'Produce Flame').classes.indexOf('Izzet engineer') >= 0, true);
+}
+
 console.log('the spell levels');
 {
   check('cantrip to ninth', R.LEVELS.join(','), '0,1,2,3,4,5,6,7,8,9');
