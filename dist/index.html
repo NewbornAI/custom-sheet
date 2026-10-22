@@ -395,6 +395,7 @@ input[type=range]::-moz-range-thumb{
 .card .src.sorc{color:#ff8fb0;border-color:rgba(255,111,168,.45);background:rgba(255,111,168,.10)}
 .card .src.warlock{color:#9dbcff;border-color:rgba(110,155,255,.45);background:rgba(110,155,255,.10)}
 .card .src.izzet{color:#e6ebff;border-color:rgba(140,160,255,.5);background:linear-gradient(90deg,rgba(110,155,255,.26) 0 50%,rgba(255,111,168,.26) 50% 100%)}
+.card .src.elf{color:#8fe084;border-color:rgba(122,216,111,.45);background:rgba(122,216,111,.10)}
 .card.dragging{opacity:.95;border-color:var(--arcane);box-shadow:0 10px 24px rgba(0,0,0,.55)}
 .card.ghost{opacity:.25}
 .empty{font-size:11px;color:#615c7d;padding:8px 2px;line-height:1.5}
@@ -427,6 +428,7 @@ input[type=range]::-moz-range-thumb{
 .sheet-meta .src.sorc{color:#ff8fb0;border-color:rgba(255,111,168,.45);background:rgba(255,111,168,.10)}
 .sheet-meta .src.warlock{color:#9dbcff;border-color:rgba(110,155,255,.45);background:rgba(110,155,255,.10)}
 .sheet-meta .src.izzet{color:#dde4ff;border-color:rgba(140,160,255,.45);background:linear-gradient(90deg,rgba(110,155,255,.20) 0 50%,rgba(255,111,168,.20) 50% 100%)}
+.sheet-meta .src.elf{color:#8fe084;border-color:rgba(122,216,111,.45);background:rgba(122,216,111,.10)}
 .sheet-text{font-size:13px;line-height:1.6;color:#d9d5ec}
 .sheet-text p{margin:0 0 9px}
 .sheet-text h3{font-family:var(--display);font-size:14px;font-weight:700;color:var(--arcane);margin:14px 0 5px}
@@ -437,6 +439,7 @@ input[type=range]::-moz-range-thumb{
 .sheet-text th{color:var(--muted);font-weight:600}
 .tcap{font-size:10.5px;color:var(--muted);margin-bottom:3px}
 .sheet-list{display:flex;flex-direction:column;gap:4px}
+.sheet-list[hidden]{display:none}
 .sheet-list .row{display:flex;align-items:center;gap:8px;border:1px solid var(--edge);border-radius:5px;padding:7px 8px;font-size:12px;color:var(--ink);background:rgba(255,255,255,.02)}
 .sheet-list .row .lv2{font-size:10px;color:var(--muted);margin-left:auto}
 .sheet-list .row button{width:26px;height:26px;border-radius:6px;border:1px solid var(--edge);background:rgba(255,255,255,.03);color:var(--arcane);font-size:15px;line-height:1;cursor:pointer;flex:0 0 auto}
@@ -7478,7 +7481,9 @@ input[type=range]::-moz-range-thumb{
     'hexblade': 'warlock',
     'hex': 'warlock',
     'izzet': 'izzet',
-    'izzet engineer': 'izzet'
+    'izzet engineer': 'izzet',
+    'elf': 'elf',
+    'high elf': 'elf'
   };
 
   function sourceClass(source) {
@@ -8086,6 +8091,7 @@ input[type=range]::-moz-range-thumb{
     el.sheetMeta.innerHTML = field('Level', spell.level) + spellFields(spell) + sourceTag(spell.source);
     el.sheetText.innerHTML = renderBlocks(spell.blocks);
     el.sheetSearch.hidden = true;
+    el.sheetList.innerHTML = '';
     el.sheetList.hidden = true;
     el.sheetActions.innerHTML = '<button class="danger" type="button" id="dropSpell">Remove from level ' + state.spell.selected + '</button>';
     el.sheet.hidden = false;
