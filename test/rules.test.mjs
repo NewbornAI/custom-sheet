@@ -316,6 +316,20 @@ console.log('the rests');
   check('a short rest leaves a long rest feature alone', short.features[2].left, 0);
   check('a short rest keeps the cunning', short.cunning, true);
 
+  const withCost = {
+    hp: { current: 12, max: 38 },
+    features: [
+      { key: 'bendLuck', name: 'Bend luck', source: 'Wild Magic', active: true, recovery: 'special', cost: 'sp', max: 0, left: 0, short: null, hidden: false },
+      { key: 'trance', name: 'Trance', source: 'Elf', active: false, recovery: 'passive', max: 0, left: 0, short: null, hidden: false }
+    ]
+  };
+  const rested = C.longRest(withCost, spell);
+  check('a rest keeps the cost of a use', rested.features[0].cost, 'sp');
+  check('a rest keeps the kind of recovery', rested.features[0].recovery, 'special');
+  check('a rest keeps the source', rested.features[0].source, 'Wild Magic');
+  check('a rest keeps a passive feature passive', rested.features[1].active, false);
+  check('a rest keeps the recovery of a passive feature', rested.features[1].recovery, 'passive');
+
   const long = C.longRest(hero, spell);
   check('a long rest fills the hit points', long.hp, 38);
   check('a long rest fills the spell slots', long.left, { 1: 4, 2: 3, 3: 3, 4: 2 });
@@ -354,6 +368,20 @@ console.log('the hit dice');
   check('a short rest leaves the dice alone', short.dice.map((d) => d.spent), [true, false, true]);
   const snap = C.snapshot(hero, spell);
   check('a snapshot holds the dice', snap.dice.map((d) => d.spent), [true, false, true]);
+}
+
+console.log('the shapes of the dice');
+{
+  const points = (k) => C.DIE_SHAPES[k].split(' ').length;
+  check('the d6 is a square', points(6), 4);
+  check('the d8 is a diamond', points(8), 4);
+  check('the d10 is a kite', points(10), 5);
+  check('the d12 is a pentagon', points(12), 5);
+  check('the d20 is a hexagon', points(20), 6);
+  check('every die has a shape', [4, 6, 8, 10, 12, 20].every((k) => !!C.DIE_SHAPES[k]), true);
+  check('every die has a place for its number', [4, 6, 8, 10, 12, 20].every((k) => !!C.DIE_LABEL[k]), true);
+  check('the d6 is square, not round', C.DIE_SHAPES[6].indexOf('19,19') >= 0, true);
+  check('the d10 has a point at the bottom', C.DIE_SHAPES[10].indexOf('12,21') >= 0, true);
 }
 
 console.log('the features');
