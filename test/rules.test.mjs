@@ -439,13 +439,13 @@ console.log('the shapes of the dice');
 console.log('the features');
 {
   const data = JSON.parse(readFileSync(resolve(root, 'data', 'features.json'), 'utf8'));
-  check('the list of features', data.features.length, 30);
+  check("the library and the character's own table", data.features.length, 1017);
   const active = data.features.filter((f) => f.active);
   const passive = data.features.filter((f) => !f.active);
   check('the active ones', active.length, 14);
-  check('the passive ones', passive.length, 16);
+  check('the passive ones', passive.length, 1003);
   check('every feature says where it comes from', data.features.every((f) => !!f.source), true);
-  check('every feature has a summary', data.features.every((f) => !!f.desc), true);
+  check('the curated ones have a summary', data.features.filter((f) => f.seed || f.preset).every((f) => !!f.desc), true);
   check('every feature has the long text', data.features.every((f) => f.blocks && f.blocks.length > 0), true);
   const innate = data.features.find((f) => f.key === 'innateSorcery');
   check('innate sorcery has two uses', innate.uses, 2);
@@ -460,6 +460,14 @@ console.log('the features');
   check('the hexblade curse is the 2014 one', curse.blocks[0].text.indexOf('baleful curse') >= 0, true);
   check('the features the spell tab tracks start hidden', data.features.filter((f) => f.hidden).map((f) => f.key).join(','), 'metamagic,sorcerousRest,magicalCunning');
   check('the wild surge is the 2024 one', data.features.find((f) => f.key === 'wildSurge').blocks[0].text.indexOf('1d20') >= 0, true);
+  const library = data.features.filter((f) => !f.seed && !f.preset);
+  const perClass = {};
+  library.forEach((f) => { perClass[f.class] = (perClass[f.class] || 0) + 1; });
+  check('the library holds all twelve classes', Object.keys(perClass).length, 12);
+  check('every feature of the library names its class and its level', library.every((f) => !!f.class && f.level >= 1), true);
+  check('and carries its text', library.every((f) => f.blocks.length > 0), true);
+  check('the wizard of level two has its features', library.filter((f) => f.class === 'Wizard' && f.level <= 2).length >= 4, true);
+  check('the lore of the bard arrives at three', library.filter((f) => f.subclass === 'Lore' && f.level === 3).length >= 2, true);
 }
 
 console.log('the classes and the multiclass rules');
@@ -513,7 +521,7 @@ console.log('seeding a character from the data');
   const known = features.features.map((f) => f.key);
   check('every feature it names is known', bard.rec.char.featureKeys.every((k) => known.indexOf(k) >= 0), true);
   check('the twelve it brings are its own', features.features.filter((f) => f.preset === 'bard').length, 12);
-  check('the eighteen of the app wait for a new character', features.features.filter((f) => !f.preset).length, 18);
+  check('the eighteen of the app wait for a new character', features.features.filter((f) => f.seed).length, 18);
   check('the level of the sheet', bard.rec.char.level, 11);
   check('the class of the sheet', JSON.stringify(bard.rec.char.classes), '[{"name":"Bard","level":11,"subclass":"College of Creation"}]');
   check('the name of the sheet', bard.name + '/' + bard.rec.char.name, 'Yngwie/Yngwie');
@@ -603,7 +611,7 @@ console.log('the built page carries the data');
   check('the features travel with the page', !!featureBlock, true);
   if (featureBlock) {
     const parsedFeatures = JSON.parse(featureBlock[1]);
-    check('the features are inlined', parsedFeatures.features.length, 30);
+    check('the features are inlined', parsedFeatures.features.length, 1017);
   }
   const charBlock = built.match(/<script id="character-data" type="application\/json">([\s\S]*?)<\/script>/);
   if (!charBlock) { check('the ready-made characters travel', false, true); }

@@ -531,6 +531,7 @@ for (const spec of FEATURE_SPECS) {
   /* A feature that belongs to a ready-made character says which one it
      waits for; the rest seed a new character. */
   if (spec.preset) feature.preset = spec.preset;
+  else feature.seed = true;
   featureList.push(feature);
 }
 
@@ -611,6 +612,76 @@ writeFileSync(
   'utf8'
 );
 console.log('wrote ' + classes.length + ' classes and ' + classes.reduce((n, c) => n + c.subclasses.length, 0) + ' subclasses');
+
+/* ---------- the library of features ---------- */
+
+/* Every class and subclass feature of the twelve classes and their newest
+   archetypes: the blocks a skeleton is built from. The curated table above
+   keeps its own keys and its own words, and a feature it already names is
+   not added a second time. */
+
+function slug(text) {
+  return String(text || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+const SKIP = /^(ability score improvement|subclass feature|epic boon|.* versatility)$/;
+const curatedNames = {};
+featureList.forEach((f) => { curatedNames[slug(f.name)] = true; });
+const takenKeys = {};
+featureList.forEach((f) => { takenKeys[f.key] = true; });
+
+const library = [];
+for (const c of classes) {
+  const data = JSON.parse(readFileSync(resolve(cache, 'class-' + c.name.toLowerCase() + '.json'), 'utf8'));
+  const add = (name, sub, level, entries) => {
+    const clean = String(name || '').trim();
+    if (!clean || SKIP.test(clean.toLowerCase())) return;
+    if (curatedNames[slug(clean)]) return;
+    const blocks = blocksFrom(entries);
+    if (!blocks.length) return;                 /* a reference with no text of its own */
+    const key = slug(c.name) + (sub ? '-' + slug(sub) : '') + '-' + (level || 0) + '-' + slug(clean);
+    if (takenKeys[key]) return;
+    takenKeys[key] = true;
+    library.push({
+      key: key,
+      name: clean,
+      source: sub || c.name,
+      class: c.name,
+      subclass: sub || '',
+      level: Number(level) || 0,
+      active: false,
+      uses: 0,
+      recovery: 'passive',
+      cost: '',
+      hidden: false,
+      action: '',
+      duration: '',
+      desc: '',
+      blocks: blocks
+    });
+  };
+  (data.classFeature || [])
+    .filter((f) => f.className === c.name && f.classSource === 'XPHB' && f.source === 'XPHB')
+    .forEach((f) => add(f.name, '', f.level, f.entries));
+  c.subclasses.forEach((s) => {
+    (data.subclassFeature || [])
+      .filter((f) => f.subclassShortName === s.short && f.subclassSource === s.source)
+      .forEach((f) => add(f.name, s.short, f.level, f.entries));
+  });
+}
+featureList.push.apply(featureList, library);
+
+writeFileSync(
+  resolve(root, 'data', 'features.json'),
+  JSON.stringify({
+    edition: "The character's own table of 2026-10-22, then every feature of the 2024 classes and their newest archetypes, the long text from 5e.tools",
+    source: 'https://5e.tools',
+    fetched: new Date().toISOString().slice(0, 10),
+    features: featureList
+  }, null, 2) + '\n',
+  'utf8'
+);
+console.log('wrote ' + featureList.length + ' features (the library adds ' + library.length + ')');
 
 const byLevel = {};
 for (const s of seed) (byLevel[s.level] = byLevel[s.level] || []).push(s.name + ' (' + s.source + ')');

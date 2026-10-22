@@ -52,7 +52,7 @@
      ones that belong to a ready-made character say so in the data and wait
      for it. */
   var FEATURE_SEED = (C.features.features || []).filter(function (f) {
-    return !f.preset;
+    return f.seed;
   }).map(featureRow);
 
   var CHAR_DEFAULTS = {

@@ -116,13 +116,15 @@
       uses.classList.toggle('sp', f.recovery === 'sp');
       uses.setAttribute('aria-label', f.name + ': ' + text);
 
+      /* A feature of the library starts with no counter, so the two fields
+         are there in the edit mode for the player to give it one. */
       var input = card.querySelector('[data-role="usesin"]');
       if (input && document.activeElement !== input) input.value = String(f.left || 0);
-      input.hidden = !f.max;
+      input.hidden = !f.max && !editingFeatures;
 
       var maxInput = card.querySelector('[data-role="maxin"]');
       if (maxInput && document.activeElement !== maxInput) maxInput.value = String(f.max || 0);
-      maxInput.hidden = !f.max;
+      maxInput.hidden = !f.max && !editingFeatures;
 
       var rec = card.querySelector('.frec');
       rec.textContent = editingFeatures ? (recoveryWord(f) ? ' ' + recoveryWord(f) : '') : '';

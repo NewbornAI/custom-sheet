@@ -84,6 +84,7 @@ The sheet starts from what the rest of the app already assumes: charisma 20 and 
 
 The list of what the character can do, and what is left of it.
 
+- **A feature of the library starts with no counter.** The data holds every class and subclass feature of the twelve classes and their newest archetypes, 1017 of them with their text, and a character names the ones it holds. A library feature carries its class, its level and its text, and its uses are for the player to set in the edit mode.
 - **The active features** are the ones with uses: innate sorcery, metamagic, tides of chaos, sorcerous rest, bend luck, magical cunning, the hexblade curse and the two elven lineages. Each row shows the source, the uses left and when they come back, "2 / long" meaning two uses that a long rest gives back. Tapping the count spends a use, and at zero it gives one back. Bend luck costs a sorcery point rather than a use, so its count spends a point from the spell tab.
 - **The passive features** are the ones that always work: sorcery incarnate, the three warlock invocations, the wild surge, hex warrior, trance, fey ancestry and elven accuracy.
 - **Tapping a name** opens the full description, the text 5e.tools holds, with the action and the duration.
