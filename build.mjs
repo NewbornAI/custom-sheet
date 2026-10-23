@@ -24,10 +24,12 @@ built = built.replace(surgeTag, (m, open, close) => open + surge + close);
    launch carries only the character. */
 const bookJson = JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8'));
 const featuresJson = JSON.parse(readFileSync(resolve(root, 'data', 'features.json'), 'utf8'));
+const bestiaryJson = JSON.parse(readFileSync(resolve(root, 'data', 'bestiary.json'), 'utf8'));
 mkdirSync(resolve(out, 'data'), { recursive: true });
 writeFileSync(resolve(out, 'data', 'spellbook.json'), JSON.stringify(bookJson) + '\n', 'utf8');
 writeFileSync(resolve(out, 'data', 'features.json'), JSON.stringify(featuresJson) + '\n', 'utf8');
 writeFileSync(resolve(out, 'data', 'classes.json'), readFileSync(resolve(root, 'data', 'classes.json'), 'utf8'), 'utf8');
+writeFileSync(resolve(out, 'data', 'bestiary.json'), JSON.stringify(bestiaryJson) + '\n', 'utf8');
 
 /* What a character needs at the start: the features it is seeded with, and
    the spells of the app's own sheet. */

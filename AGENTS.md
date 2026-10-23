@@ -32,6 +32,7 @@ node test/rules.test.mjs                        # the rules engine and the data
 node test/github.test.mjs                       # the sign in and the calls to GitHub
 node test/address.test.mjs                      # the address of a file on GitHub
 node tools/fetch-5e-data.mjs                    # refetch the data from 5e.tools
+node tools/serve.mjs                              # serve the build and the whole bestiary
 powershell -ExecutionPolicy Bypass -File tools/build-apk.ps1
 ```
 
@@ -56,9 +57,10 @@ Sheet.page({
 ```
 
 A page may also carry `hidden` (no tab of its own, the gear opens it), `home`
-(the page the app opens on), `slice` (the key it owns in the record of a
-character), `seed(saved, fresh, rec)` (what a new character starts from) and
-`css` (its own styles).
+(the page the app opens on), `always` (a tab every character has, whatever the
+character chose), `slice` (the key it owns in the record of a character),
+`seed(saved, fresh, rec)` (what a new character starts from) and `css` (its own
+styles).
 
 The page gets `a` at mount and at render:
 
@@ -91,10 +93,11 @@ touches the DOM: `window.Rules` for the rolls and `window.SheetRules` for
 the character. The test suite pulls both out and checks them, so a change to
 a rule is a change to the test.
 
-**The data.** The loader reads `data/features.json`, `data/spellbook.json` and
-`data/classes.json` when a page asks, and fills the live shapes in place:
-`C.featureByKey`, `C.bookByName`, `C.classData`. A page that took its
-reference at load still sees the data arrive, because the shell repaints.
+**The data.** The loader reads `data/features.json`, `data/spellbook.json`,
+`data/classes.json` and `data/bestiary.json` when a page asks, and fills the
+live shapes in place: `C.featureByKey`, `C.bookByName`, `C.classData`,
+`C.bestiary`. A page that took its reference at load still sees the data
+arrive, because the shell repaints.
 
 ## The package
 

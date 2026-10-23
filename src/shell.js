@@ -74,6 +74,7 @@
   var BOOK = { spells: [], seed: [] };
   var FEATURES = { features: [] };
   var CLASSDATA = [];
+  var BESTIARY = { creatures: {} };
   var SPELL_BY_NAME = {};
   var FEATURE_BY_KEY = {};
   var LOADING = {};
@@ -160,6 +161,14 @@
     return Promise.resolve('the browser has it');
   }
 
+  /* The address of the machine that serves the app. The update route asks
+     it for a newer build, and the summons tab asks it for the creatures the
+     app does not carry. */
+  function server() {
+    var ui = state.ui || {};
+    return ui.server || 'http://192.168.0.125:8123';
+  }
+
   function data(name) {
     if (LOADING[name]) return LOADING[name];
     var file = 'data/' + name + '.json';
@@ -175,6 +184,8 @@
           FEATURES.features.forEach(function (f) { FEATURE_BY_KEY[f.key] = f; });
         } else if (name === 'classes') {
           (value.classes || []).forEach(function (c) { CLASSDATA.push(c); });
+        } else if (name === 'bestiary') {
+          BESTIARY.creatures = value.creatures || {};
         }
         if (current) refresh();
         return true;
@@ -513,6 +524,8 @@
     bookByName: SPELL_BY_NAME,
     features: FEATURES,
     featureByKey: FEATURE_BY_KEY,
+    bestiary: BESTIARY,
+    server: server,
     seeds: SEEDS,
     data: data,
     dataError: DATA_ERROR,
@@ -581,7 +594,7 @@
 
   /* ---- the store ---- */
 
-  var DEFAULT_PAGES = ['volley', 'spells', 'features'];
+  var DEFAULT_PAGES = ['volley', 'spells', 'features', 'summons'];
 
   var state = load();
 
@@ -1780,7 +1793,9 @@
     var on = pagesOf();
     return PAGES.filter(function (p) {
       if (p.hidden) return false;
-      if (p.home) return true;
+      /* The page the app opens on, and the page every character has, are on
+         whatever the character chose. */
+      if (p.home || p.always) return true;
       return on.indexOf(p.id) >= 0;
     }).sort(function (a, b) { return a.order - b.order; });
   }

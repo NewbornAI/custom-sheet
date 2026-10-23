@@ -1,7 +1,7 @@
 {
   "edition": "2024 Player's Handbook, every spell the classes can learn, plus the character's own sheet",
   "source": "https://5e.tools/spells.html",
-  "fetched": "2026-10-22",
+  "fetched": "2026-10-23",
   "sheet": "data/spell-sheet.csv",
   "seed": [
     {
@@ -257,6 +257,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -291,6 +293,8 @@
         "Bard",
         "Elf"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -315,6 +319,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -347,6 +353,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -373,6 +381,8 @@
       "classes": [
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -427,6 +437,8 @@
       "classes": [
         "Warlock"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -459,6 +471,8 @@
         "Wizard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -522,6 +536,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -555,6 +571,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -582,6 +600,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -607,6 +627,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -636,6 +658,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -674,6 +698,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -703,6 +729,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -731,6 +759,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -764,6 +794,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -809,6 +841,8 @@
         "Wizard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -842,6 +876,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -913,6 +949,8 @@
         "Druid",
         "Izzet engineer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -948,6 +986,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -979,6 +1019,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1001,6 +1043,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1031,6 +1075,8 @@
       "classes": [
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1067,6 +1113,8 @@
         "Wizard",
         "Izzet engineer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1097,6 +1145,8 @@
       "classes": [
         "Sorcerer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1132,6 +1182,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1163,6 +1215,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1193,6 +1247,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1263,6 +1319,8 @@
       "classes": [
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1297,6 +1355,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1329,6 +1389,8 @@
         "Wizard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1362,6 +1424,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1392,6 +1456,8 @@
       "classes": [
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1422,6 +1488,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1452,6 +1520,8 @@
       "classes": [
         "Sorcerer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1483,6 +1553,8 @@
         "Wizard",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1514,6 +1586,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1544,6 +1618,8 @@
       "classes": [
         "Warlock"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1574,6 +1650,8 @@
       "classes": [
         "Warlock"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1606,6 +1684,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1637,6 +1717,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1668,6 +1750,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1702,6 +1786,8 @@
       "classes": [
         "Izzet engineer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1786,6 +1872,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1817,6 +1905,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1853,6 +1943,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1877,6 +1969,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1917,6 +2011,8 @@
       "classes": [
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1946,6 +2042,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -1970,6 +2068,8 @@
         "Druid",
         "Izzet engineer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2011,6 +2111,8 @@
         "Ranger",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2042,6 +2144,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2076,6 +2180,8 @@
         "Paladin",
         "Elf"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2105,6 +2211,8 @@
         "Ranger",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2133,6 +2241,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2163,6 +2273,8 @@
       "classes": [
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2193,6 +2305,8 @@
       "classes": [
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2215,6 +2329,8 @@
       "classes": [
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2245,6 +2361,8 @@
       "classes": [
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2280,6 +2398,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2308,6 +2428,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2331,6 +2453,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2358,6 +2482,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2390,6 +2516,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2411,6 +2539,20 @@
       "source": "Wizard",
       "classes": [
         "Wizard"
+      ],
+      "summons": true,
+      "creatures": [
+        "Bat",
+        "Cat",
+        "Frog",
+        "Hawk",
+        "Lizard",
+        "Octopus",
+        "Owl",
+        "Rat",
+        "Raven",
+        "Spider",
+        "Weasel"
       ],
       "blocks": [
         {
@@ -2473,6 +2615,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2504,6 +2648,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2531,6 +2677,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2557,6 +2705,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2587,6 +2737,8 @@
       "classes": [
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2619,6 +2771,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2649,6 +2803,8 @@
       "classes": [
         "Warlock"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2680,6 +2836,8 @@
         "Bard",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2710,6 +2868,8 @@
       "classes": [
         "Warlock"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2744,6 +2904,8 @@
       "classes": [
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2780,6 +2942,8 @@
         "Wizard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2811,6 +2975,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2839,6 +3005,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2869,6 +3037,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2902,6 +3072,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2935,6 +3107,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2966,6 +3140,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -2989,6 +3165,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3023,6 +3201,8 @@
         "Druid",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3047,6 +3227,8 @@
         "Druid",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3070,6 +3252,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3100,6 +3284,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3126,6 +3312,8 @@
       "classes": [
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3158,6 +3346,8 @@
         "Wizard",
         "Hexblade"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3181,6 +3371,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3205,6 +3397,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3235,6 +3429,8 @@
       "classes": [
         "Sorcerer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3263,6 +3459,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3292,6 +3490,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3321,6 +3521,8 @@
         "Bard",
         "Sorcerer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3355,6 +3557,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3385,6 +3589,8 @@
       "classes": [
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3418,6 +3624,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3455,6 +3663,8 @@
         "Bard",
         "Izzet engineer"
       ],
+      "summons": true,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3487,6 +3697,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3526,6 +3738,8 @@
         "Paladin",
         "Hexblade"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3560,6 +3774,8 @@
         "Ranger",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3591,6 +3807,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3639,6 +3857,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3673,6 +3893,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3696,6 +3918,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3728,6 +3952,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3785,6 +4011,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3806,6 +4034,10 @@
       "source": "Warlock",
       "classes": [
         "Warlock"
+      ],
+      "summons": true,
+      "creatures": [
+        "Battle Familiar"
       ],
       "blocks": [
         {
@@ -3866,6 +4098,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3891,6 +4125,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3923,6 +4159,8 @@
         "Wizard",
         "Hexblade"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3945,6 +4183,8 @@
       "classes": [
         "Hexblade"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -3976,6 +4216,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4008,6 +4250,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4044,6 +4288,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4066,6 +4312,8 @@
       "classes": [
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4103,6 +4351,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4135,6 +4385,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4168,6 +4420,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4192,6 +4446,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4239,6 +4495,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4274,6 +4532,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4307,6 +4567,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4350,6 +4612,8 @@
         "Warlock",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4371,6 +4635,10 @@
       "source": "Paladin",
       "classes": [
         "Paladin"
+      ],
+      "summons": true,
+      "creatures": [
+        "Otherworldly Steed"
       ],
       "blocks": [
         {
@@ -4424,6 +4692,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4451,6 +4721,8 @@
         "Sorcerer",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4491,6 +4763,8 @@
         "Wizard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4531,6 +4805,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4560,6 +4836,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4596,6 +4874,8 @@
         "Druid",
         "Izzet engineer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4635,6 +4915,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4668,6 +4950,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4700,6 +4984,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4738,6 +5024,8 @@
         "Ranger",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4761,6 +5049,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4793,6 +5083,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4820,6 +5112,8 @@
         "Ranger",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4851,6 +5145,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4884,6 +5180,8 @@
         "Ranger",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4914,6 +5212,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4946,6 +5246,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -4979,6 +5281,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5012,6 +5316,8 @@
         "Wizard",
         "Elf"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5034,6 +5340,8 @@
       "classes": [
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5068,6 +5376,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5107,6 +5417,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5131,6 +5443,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5166,6 +5480,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5199,6 +5515,8 @@
         "Ranger",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5222,6 +5540,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5249,6 +5569,8 @@
         "Wizard",
         "Izzet engineer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5276,6 +5598,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5308,6 +5632,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5332,6 +5658,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5367,6 +5695,8 @@
         "Paladin",
         "Hexblade"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5399,6 +5729,8 @@
         "Cleric",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5423,6 +5755,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5454,6 +5788,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5480,6 +5816,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5517,6 +5855,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5543,6 +5883,10 @@
       "classes": [
         "Druid",
         "Ranger"
+      ],
+      "summons": true,
+      "creatures": [
+        "Bestial Spirit"
       ],
       "blocks": [
         {
@@ -5579,6 +5923,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5606,6 +5952,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5646,6 +5994,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5672,6 +6022,11 @@
       "classes": [
         "Wizard",
         "Cleric"
+      ],
+      "summons": true,
+      "creatures": [
+        "Skeleton",
+        "Zombie"
       ],
       "blocks": [
         {
@@ -5713,6 +6068,8 @@
         "Druid",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5735,6 +6092,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5759,6 +6118,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5798,6 +6159,8 @@
       "classes": [
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5830,6 +6193,8 @@
         "Wizard",
         "Hexblade"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5857,6 +6222,8 @@
         "Druid",
         "Izzet engineer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5899,6 +6266,8 @@
       "classes": [
         "Sorcerer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5932,6 +6301,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -5963,6 +6334,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": true,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6001,6 +6374,8 @@
       "classes": [
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6033,6 +6408,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6056,6 +6433,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6078,6 +6457,8 @@
       "classes": [
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6104,6 +6485,8 @@
         "Ranger",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6141,6 +6524,8 @@
         "Ranger",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6175,6 +6560,8 @@
         "Hexblade",
         "Izzet engineer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6208,6 +6595,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6237,6 +6626,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6268,6 +6659,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6304,6 +6697,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6336,6 +6731,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6377,6 +6774,8 @@
         "Cleric",
         "Izzet engineer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6448,6 +6847,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6474,6 +6875,8 @@
       "classes": [
         "Warlock"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6511,6 +6914,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6538,6 +6943,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6572,6 +6979,8 @@
       "classes": [
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6607,6 +7016,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6640,6 +7051,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6689,6 +7102,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6728,6 +7143,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6760,6 +7177,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6792,6 +7211,8 @@
         "Bard",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6813,6 +7234,10 @@
       "source": "Wizard",
       "classes": [
         "Wizard"
+      ],
+      "summons": true,
+      "creatures": [
+        "Riding Horse"
       ],
       "blocks": [
         {
@@ -6842,6 +7267,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6884,6 +7311,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6909,6 +7338,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6934,6 +7365,8 @@
         "Ranger",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6958,6 +7391,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -6990,6 +7425,8 @@
         "Wizard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7018,6 +7455,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7050,6 +7489,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7078,6 +7519,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7112,6 +7555,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7148,6 +7593,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7176,6 +7623,10 @@
         "Wizard",
         "Druid",
         "Ranger"
+      ],
+      "summons": true,
+      "creatures": [
+        "Fey Spirit"
       ],
       "blocks": [
         {
@@ -7211,6 +7662,10 @@
       "classes": [
         "Warlock",
         "Wizard"
+      ],
+      "summons": true,
+      "creatures": [
+        "Undead Spirit"
       ],
       "blocks": [
         {
@@ -7250,6 +7705,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7274,6 +7731,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7311,6 +7770,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7336,6 +7797,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7363,6 +7826,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7393,6 +7858,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7420,6 +7887,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7443,6 +7912,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7469,6 +7940,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7506,6 +7979,8 @@
         "Wizard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7544,6 +8019,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7574,6 +8051,8 @@
       "classes": [
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7603,6 +8082,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7665,6 +8146,8 @@
         "Druid",
         "Izzet engineer"
       ],
+      "summons": true,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7700,6 +8183,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": true,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7736,6 +8221,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7795,6 +8282,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7824,6 +8313,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7857,6 +8348,8 @@
         "Druid",
         "Izzet engineer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7885,6 +8378,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7923,6 +8418,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7953,6 +8450,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -7985,6 +8484,8 @@
         "Wizard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8016,6 +8517,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8049,6 +8552,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8082,6 +8587,10 @@
       "source": "Druid",
       "classes": [
         "Druid"
+      ],
+      "summons": true,
+      "creatures": [
+        "Giant Insect"
       ],
       "blocks": [
         {
@@ -8118,6 +8627,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8158,6 +8669,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8180,6 +8693,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8209,6 +8724,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8237,6 +8754,8 @@
         "Wizard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8271,6 +8790,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8306,6 +8827,8 @@
         "Ranger",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8336,6 +8859,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8370,6 +8895,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8420,6 +8947,8 @@
         "Wizard",
         "Izzet engineer"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8456,6 +8985,8 @@
         "Bard",
         "Hexblade"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8493,6 +9024,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8528,6 +9061,8 @@
         "Paladin",
         "Hexblade"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8560,6 +9095,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8585,6 +9122,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8607,6 +9146,10 @@
       "classes": [
         "Warlock",
         "Wizard"
+      ],
+      "summons": true,
+      "creatures": [
+        "Aberrant Spirit"
       ],
       "blocks": [
         {
@@ -8641,6 +9184,10 @@
       "source": "Wizard",
       "classes": [
         "Wizard"
+      ],
+      "summons": true,
+      "creatures": [
+        "Construct Spirit"
       ],
       "blocks": [
         {
@@ -8678,6 +9225,10 @@
         "Druid",
         "Ranger"
       ],
+      "summons": true,
+      "creatures": [
+        "Elemental Spirit"
+      ],
       "blocks": [
         {
           "t": "p",
@@ -8713,6 +9264,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8745,6 +9298,8 @@
         "Wizard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8786,6 +9341,10 @@
         "Bard",
         "Izzet engineer"
       ],
+      "summons": true,
+      "creatures": [
+        "Animated Object"
+      ],
       "blocks": [
         {
           "t": "p",
@@ -8824,6 +9383,8 @@
       "classes": [
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8850,6 +9411,11 @@
       "classes": [
         "Bard",
         "Druid"
+      ],
+      "summons": true,
+      "creatures": [
+        "Awakened Shrub",
+        "Awakened Tree"
       ],
       "blocks": [
         {
@@ -8878,6 +9444,8 @@
         "Paladin",
         "Hexblade"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8901,6 +9469,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8950,6 +9520,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -8973,6 +9545,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9011,6 +9585,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9042,6 +9618,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9085,6 +9663,8 @@
         "Druid",
         "Hexblade"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9117,6 +9697,8 @@
         "Druid",
         "Izzet engineer"
       ],
+      "summons": true,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9151,6 +9733,8 @@
       "classes": [
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9174,6 +9758,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9201,6 +9787,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9232,6 +9820,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9296,6 +9886,8 @@
       "classes": [
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9319,6 +9911,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9359,6 +9953,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9399,6 +9995,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9433,6 +10031,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9467,6 +10067,8 @@
         "Druid",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9513,6 +10115,8 @@
         "Ranger",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9545,6 +10149,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9601,6 +10207,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9633,6 +10241,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9668,6 +10278,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9704,6 +10316,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9736,6 +10350,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9768,6 +10384,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9799,6 +10417,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9845,6 +10465,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9875,6 +10497,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": true,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9911,6 +10535,8 @@
         "Cleric",
         "Paladin"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9946,6 +10572,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -9972,6 +10600,8 @@
       "classes": [
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10052,6 +10682,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10132,6 +10764,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10167,6 +10801,8 @@
         "Wizard",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10193,6 +10829,10 @@
       "classes": [
         "Cleric",
         "Paladin"
+      ],
+      "summons": true,
+      "creatures": [
+        "Celestial Spirit"
       ],
       "blocks": [
         {
@@ -10228,6 +10868,10 @@
       "classes": [
         "Wizard"
       ],
+      "summons": true,
+      "creatures": [
+        "Draconic Spirit"
+      ],
       "blocks": [
         {
           "t": "p",
@@ -10262,6 +10906,8 @@
       "classes": [
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10287,6 +10933,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10314,6 +10962,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10363,6 +11013,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10398,6 +11050,8 @@
         "Druid",
         "Ranger"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10424,6 +11078,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10452,6 +11108,8 @@
         "Wizard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10495,6 +11153,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10519,6 +11179,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10549,6 +11211,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10576,6 +11240,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10612,6 +11278,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10642,6 +11310,8 @@
       "classes": [
         "Druid"
       ],
+      "summons": true,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10676,6 +11346,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10707,6 +11379,13 @@
         "Warlock",
         "Wizard",
         "Cleric"
+      ],
+      "summons": true,
+      "creatures": [
+        "Ghoul",
+        "Ghast",
+        "Wight",
+        "Mummy"
       ],
       "blocks": [
         {
@@ -10747,6 +11426,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10785,6 +11466,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10818,6 +11501,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10870,6 +11555,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10898,6 +11585,8 @@
         "Wizard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10928,6 +11617,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10963,6 +11654,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -10998,6 +11691,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11070,6 +11765,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11093,6 +11790,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11125,6 +11824,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11151,6 +11852,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11199,6 +11902,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11235,6 +11940,8 @@
         "Wizard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11270,6 +11977,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11309,6 +12018,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11335,6 +12046,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": true,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11374,6 +12087,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11408,6 +12123,10 @@
       "classes": [
         "Warlock",
         "Wizard"
+      ],
+      "summons": true,
+      "creatures": [
+        "Fiendish Spirit"
       ],
       "blocks": [
         {
@@ -11446,6 +12165,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11477,6 +12198,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11507,6 +12230,8 @@
       "classes": [
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11533,6 +12258,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11555,6 +12282,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11597,6 +12326,8 @@
       "classes": [
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11635,6 +12366,8 @@
       "classes": [
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11661,6 +12394,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11687,6 +12422,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": true,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11733,6 +12470,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11775,6 +12514,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11827,6 +12568,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11871,6 +12614,10 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": true,
+      "creatures": [
+        "Zombie"
+      ],
       "blocks": [
         {
           "t": "p",
@@ -11899,6 +12646,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11927,6 +12676,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -11967,6 +12718,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12002,6 +12755,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12041,6 +12796,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12075,6 +12832,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12102,6 +12861,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12126,6 +12887,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12191,6 +12954,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12223,6 +12988,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12246,6 +13013,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12282,6 +13051,8 @@
         "Wizard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12308,6 +13079,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12338,6 +13111,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12375,6 +13150,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12471,6 +13248,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12603,6 +13382,8 @@
       "classes": [
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12634,6 +13415,8 @@
         "Wizard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12670,6 +13453,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12710,6 +13495,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12740,6 +13527,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12768,6 +13557,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12894,6 +13685,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12927,6 +13720,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -12967,6 +13762,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13018,6 +13815,8 @@
         "Warlock",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13040,6 +13839,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13064,6 +13865,8 @@
         "Wizard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13094,6 +13897,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13125,6 +13930,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13150,6 +13957,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13179,6 +13988,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13209,6 +14020,8 @@
       "classes": [
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13235,6 +14048,8 @@
       "classes": [
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13271,6 +14086,8 @@
         "Wizard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13312,6 +14129,8 @@
         "Bard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13337,6 +14156,8 @@
         "Wizard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13372,6 +14193,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13420,6 +14243,8 @@
       "classes": [
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13443,6 +14268,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13470,6 +14297,8 @@
         "Bard",
         "Cleric"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13495,6 +14324,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13518,6 +14349,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13591,6 +14424,8 @@
         "Wizard",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13625,6 +14460,8 @@
       "classes": [
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13684,6 +14521,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13712,6 +14551,8 @@
         "Wizard",
         "Bard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13779,6 +14620,8 @@
         "Cleric",
         "Druid"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13810,6 +14653,8 @@
         "Warlock",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",
@@ -13837,6 +14682,8 @@
         "Sorcerer",
         "Wizard"
       ],
+      "summons": false,
+      "creatures": [],
       "blocks": [
         {
           "t": "p",

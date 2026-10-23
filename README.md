@@ -30,6 +30,8 @@ learn each one.
 active features carry their uses and say when they come back, the passive ones
 always work, and every one opens its full text.
 
+**The summons.** The creatures you have called to the table. A summon carries a name you can change, the armour class, the hit points, the attacks with their bonus and their damage, and the slot that paid for it. The stat blocks come from the same place as the spell book, and the app carries the ones it names. The machine that serves the app holds the rest of the bestiary, so a creature you need and the app does not have can be fetched from there.
+
 **The volley.** The roll: the attack, the damage, the advantage, the hex, the
 curse and the elemental. Give it an armour class and it marks the hits and
 the misses.
@@ -123,12 +125,14 @@ The page is one file and the data sits beside it, so serve the folder and open
 the page.
 
 ```
-python -m http.server 8123 --directory dist
+node tools/serve.mjs 8123
 ```
 
 Then open `http://127.0.0.1:8123/index.html`. The book, the library of
-features and the classes are read when a page asks for them, and the settings
-page says which of them have arrived.
+features, the classes and the bestiary are read when a page asks for them, and
+the settings page says which of them have arrived. That server also holds the
+whole bestiary, and the summons tab fetches a creature from it when the app
+does not carry the one you need.
 
 ## Build it
 
@@ -138,6 +142,7 @@ node test/rules.test.mjs                        # the rules engine and the data
 node test/github.test.mjs                       # the sign in and the calls to GitHub
 node test/address.test.mjs                      # the address of a file on GitHub
 node tools/fetch-5e-data.mjs                    # refetch the data from 5e.tools
+node tools/serve.mjs                              # serve the build and the whole bestiary
 powershell -ExecutionPolicy Bypass -File tools/build-apk.ps1
 ```
 
@@ -154,6 +159,7 @@ the files under `data/`.
 | `classes.json` | the twelve classes of the 2024 handbook and their 123 archetypes, the newest printing of each |
 | `features.json` | 1017 features of those classes and archetypes, with their text |
 | `spellbook.json` | 397 spells, with the classes that can learn each one |
+| `bestiary.json` | the stat blocks the spells and the features name, with their actions |
 | `wild-magic-surge-xphb.json` | the surge table of the 2024 handbook |
 | `spell-sheet.csv` | the spells of the sheet of the table, one line each |
 
@@ -200,7 +206,7 @@ src/github.js        the sign in and the calls to GitHub
 src/pages/*.js       one file per page
 data/*.json          the rules data
 app/                 the Android shell that wraps the same page
-tools/               the build, the data fetch, the icon maker
+tools/               the build, the data fetch, the server, the icon maker
 test/rules.test.mjs  the rules engine and the data
 characters/          the shelf: one package per file
 ```

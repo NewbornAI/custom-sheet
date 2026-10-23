@@ -12,6 +12,8 @@ import { spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { clean, textOf, cellText, blocksFrom, references } from './markup.mjs';
+import { BOOKS, loadBestiary, resolveCreature, creatureRecord } from './bestiary.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const cache = resolve(root, 'tools', '.5e-cache');
@@ -68,114 +70,9 @@ function parseSheet(csv) {
 
 /* ---------- 5e.tools markup ---------- */
 
-const ABILITIES = { DEX: 'Dexterity', STR: 'Strength', CON: 'Constitution', INT: 'Intelligence', WIS: 'Wisdom', CHA: 'Charisma' };
-
-function clean(text) {
-  if (typeof text !== 'string') return '';
-  let out = text;
-  out = out.replace(/\{@filter ([^}]*)}/g, '');
-  /* The damage takes the type that follows it: "8d6 Fire damage". */
-  out = out.replace(/\{@damage ([^}]+)\}(\s+([A-Z][a-z]+)( damage)?)?/g, (m, dice, gap, type, dmg) =>
-    '[[d:' + dice + (gap ? ' ' + type + (dmg || '') : '') + ']]');
-  /* The conditions keep their name, the page shows them as a reference. */
-  out = out.replace(/\{@condition ([^}|]+)(?:\|[^}]*)?}/g, (m, name) => '[[c:' + name.trim() + ']]');
-  out = out.replace(/\{@([a-zA-Z]+)\s+([^}|]*)(?:\|[^}]*)?}/g, (m, tag, body) => {
-    const b = body.trim();
-    if (tag === 'actSave') {
-      const abil = b.split(',').map((a) => ABILITIES[a.trim()] || a.trim()).join(' or ');
-      return abil + ' saving throw';
-    }
-    if (tag === 'damage' || tag === 'scaledamage') return '[[d:' + b + ']]';
-    if (tag === 'condition') return '[[c:' + b + ']]';
-    if (tag === 'hit') return 'on a hit, ' + b;
-    if (tag === 'recharge') return 'recharges on a ' + b;
-    if (tag === 'atk') return b.replace(/^(\w)(\w*)/, (x, a, r) => a.toUpperCase() + r) + ' attack';
-    if (tag === 'dc') return 'DC ' + b;
-    if (tag === 'note') return 'Note: ' + b;
-    if (tag === 'i' || tag === 'b' || tag === 'highlight') return b;
-    return b;
-  });
-  out = out.replace(/\{@[a-zA-Z]+\s*}/g, '');
-  /* The saving throws, in blue. */
-  out = out.replace(/\b(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma) saving throw/g, '[[s:$1 saving throw]]');
-  return out.replace(/\s+/g, ' ').trim();
-}
-
-function textOf(entries) {
-  if (typeof entries === 'string') return clean(entries);
-  if (Array.isArray(entries)) return entries.map(textOf).filter(Boolean).join(' ');
-  if (entries && typeof entries === 'object') {
-    if (entries.entries) return textOf(entries.entries);
-    if (entries.text) return clean(entries.text);
-    if (entries.name) return clean(entries.name);
-  }
-  return '';
-}
-
-/* A table cell can be a die roll rather than a word. */
-function cellText(cell) {
-  if (typeof cell === 'string') return clean(cell);
-  if (!cell || typeof cell !== 'object') return '';
-  if (cell.type === 'cell' && cell.roll) {
-    const r = cell.roll;
-    if (r.exact !== undefined) return String(r.exact);
-    if (r.min !== undefined && r.max !== undefined) return r.min + '-' + r.max;
-    if (r.dice) return clean(String(r.dice) + (r.faces ? 'd' + r.faces : ''));
-    if (r.note) return clean(r.note);
-  }
-  return textOf(cell);
-}
-
-function blocksFrom(entries) {
-  const out = [];
-  for (const e of entries || []) {
-    if (typeof e === 'string') {
-      const t = clean(e);
-      if (t) out.push({ t: 'p', text: t });
-      continue;
-    }
-    if (!e || typeof e !== 'object') continue;
-    if (e.type === 'entries' || e.type === 'section' || e.type === 'subsection') {
-      if (e.name) out.push({ t: 'h', text: clean(e.name) });
-      out.push(...blocksFrom(e.entries));
-      continue;
-    }
-    if (e.type === 'table') {
-      out.push({
-        t: 'table',
-        caption: clean(e.caption || ''),
-        head: (e.colLabels || []).map((h) => clean(h)),
-        rows: (e.rows || []).map((r) => (Array.isArray(r) ? r : [r]).map(cellText))
-      });
-      continue;
-    }
-    if (e.type === 'list') {
-      const items = (e.items || []).map((i) => (typeof i === 'string' ? clean(i) : textOf(i))).filter(Boolean);
-      if (items.length) out.push({ t: 'list', items });
-      continue;
-    }
-    if (e.type === 'inset') {
-      const t = clean(e.title || 'Read aloud') + ': ' + textOf(e.entries);
-      if (t) out.push({ t: 'p', text: t });
-      continue;
-    }
-    if (e.type && e.type.startsWith('ability')) {
-      const attrs = (e.attributes || []).map((a) => clean(a)).join(' or ');
-      const bits = [];
-      if (attrs) bits.push(attrs + ' saving throw');
-      if (e.action) bits.push(clean(e.action));
-      if (e.dc) bits.push('DC ' + e.dc);
-      if (e.atk) bits.push('attack');
-      const t = bits.join(', ');
-      if (t) out.push({ t: 'p', text: t });
-      continue;
-    }
-    if (e.entries) { out.push(...blocksFrom(e.entries)); continue; }
-    if (e.text) { out.push({ t: 'p', text: clean(e.text) }); continue; }
-    if (e.name) { out.push({ t: 'h', text: clean(e.name) }); }
-  }
-  return out;
-}
+/* The cleaning of the upstream markup, the tags that name a creature and
+   the blocks they lead to live in markup.mjs, so the fetcher and the
+   bestiary read the same text the same way. */
 
 /* ---------- formatters ---------- */
 
@@ -347,8 +244,40 @@ for (const src of SOURCES) {
   }
 }
 
+/* The creatures a piece of upstream text names, and the book each
+   block is in, which the bestiary needs to find it. */
+const creatureSources = {};
+function creatureNames(node) {
+  const names = [];
+  references(node).forEach((r) => {
+    if (names.indexOf(r.name) < 0) names.push(r.name);
+    if (!creatureSources[r.name]) creatureSources[r.name] = r.source;
+  });
+  return names;
+}
+
+/* A spell calls a creature when its text names one, when its tags say so,
+   or when it is a conjure that brings a being. The 2024 handbook writes
+   conjure where the old one wrote summon, and the tag is not on those, so
+   the sentence that calls it says what it calls. A conjure of weapons is
+   not a creature, and a polymorph changes one. */
+const BEING = /\b(spirit|familiar|beast|elemental|steed|animal|creature|undead|fey|celestial|devil|demon|fiend|dragon|aberration|construct|object|ally|entity|weed|plant|guard|homunculus|sprite|wight|ghoul|ghast|mummy|skeleton|zombie|companion)\w*/i;
+const TRANSFORM = /\b(transform|shape-?shift|polymorph)/i;
+
+function callsCreature(spell, names) {
+  if (names && names.length) return true;
+  const text = JSON.stringify(spell.entries || []);
+  if (TRANSFORM.test(text)) return false;
+  if ((spell.miscTags || []).includes('SMN')) return true;
+  if (!/^(conjure|summon)/i.test(String(spell.name || ''))) return false;
+  const long = (spell.entries || []).filter((e) => typeof e === 'string' && e.length > 40);
+  const sentence = String(long[0] || '').split(/(?<=\.)\s+/)[0];
+  return BEING.test(sentence);
+}
+
 function spellRecord(spell, sourceTag) {
   const time = formatTime(spell.time);
+  const creatures = creatureNames([spell.entries, spell.entriesHigherLevel]);
   return {
     name: spell.name,
     level: spell.level,
@@ -363,6 +292,10 @@ function spellRecord(spell, sourceTag) {
     concentration: !!(spell.concentration || (Array.isArray(spell.duration) && spell.duration.some((d) => d && d.concentration))),
     source: sourceTag || '',
     classes: [],
+    /* A spell summons when it calls a creature, and the creatures it names
+       are the blocks the player can call. */
+    summons: callsCreature(spell, creatures),
+    creatures: creatures,
     blocks: blocksFrom(spell.entries).concat(blocksFrom(spell.entriesHigherLevel))
   };
 }
@@ -526,8 +459,11 @@ for (const spec of FEATURE_SPECS) {
     action: spec.action || '',
     duration: spec.duration || '',
     desc: spec.desc || '',
+    /* A feature that names a creature brings it to the table. */
+    creatures: creatureNames(entries),
     blocks: blocksFrom(entries)
   };
+  feature.summons = feature.creatures.length > 0;
   /* A feature that belongs to a ready-made character says which one it
      waits for; the rest seed a new character. */
   if (spec.preset) feature.preset = spec.preset;
@@ -657,8 +593,11 @@ for (const c of classes) {
       action: '',
       duration: '',
       desc: '',
+      /* A feature that names a creature brings it to the table. */
+      creatures: creatureNames(entries),
       blocks: blocks
     });
+    library[library.length - 1].summons = library[library.length - 1].creatures.length > 0;
   };
   (data.classFeature || [])
     .filter((f) => f.className === c.name && f.classSource === 'XPHB' && f.source === 'XPHB')
@@ -687,3 +626,43 @@ const byLevel = {};
 for (const s of seed) (byLevel[s.level] = byLevel[s.level] || []).push(s.name + ' (' + s.source + ')');
 for (const lv of Object.keys(byLevel).sort((a, b) => a - b)) console.log('level ' + lv + ': ' + byLevel[lv].join(', '));
 console.log('wrote ' + spells.length + ' spells, ' + seed.length + ' of them on the sheet');
+
+/* ---------- the bestiary ---------- */
+
+/* The books of monsters come down with the rest of the data. The app only
+   carries the blocks its own text names, and the machine that serves it
+   holds the rest. */
+for (const book of BOOKS) download(BASE + 'bestiary/bestiary-' + book + '.json', 'bestiary-' + book + '.json');
+
+const all = loadBestiary(cache);
+
+/* Every creature the app names: the spells of the book and the features of
+   the library. */
+const wanted = {};
+const wantedBy = (name) => {
+  const key = String(name).toLowerCase();
+  if (!wanted[key]) wanted[key] = { name: name, source: creatureSources[name] || '' };
+};
+spells.forEach((s) => (s.creatures || []).forEach(wantedBy));
+featureList.forEach((f) => (f.creatures || []).forEach(wantedBy));
+
+const creatures = {};
+const missing = [];
+Object.keys(wanted).forEach((key) => {
+  const want = wanted[key];
+  const item = resolveCreature(all, want.name, want.source);
+  if (!item) { missing.push(want.name); return; }
+  creatures[key] = creatureRecord(item);
+});
+
+writeFileSync(
+  resolve(root, 'data', 'bestiary.json'),
+  JSON.stringify({
+    edition: "The stat blocks the app names, from the bestiary of 5e.tools",
+    source: 'https://5e.tools/bestiary.html',
+    fetched: new Date().toISOString().slice(0, 10),
+    creatures: creatures
+  }, null, 2) + '\n',
+  'utf8'
+);
+console.log('wrote ' + Object.keys(creatures).length + ' creatures' + (missing.length ? ', and missed ' + missing.join(', ') : ''));

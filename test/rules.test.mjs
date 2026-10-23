@@ -539,16 +539,21 @@ console.log('seeding a character from the data');
   Object.keys(bard.rec.spells.lists).forEach((lv) => bard.rec.spells.lists[lv].forEach((n) => listed.push(lv + ':' + n)));
   check('every spell it holds is in the book', listed.every((x) => levelOf[x.split(':')[1]] !== undefined), true);
   check('every spell sits at its own level', listed.every((x) => levelOf[x.split(':')[1]] === Number(x.split(':')[0])), true);
-  check('the ten spells of the two adept feats', listed.length, 10);
+  check('the fifteen spells of the character', listed.length, 15);
   const declared = bard.rec.spells.sources;
-  check('every spell of the preset names its source', Object.keys(declared).length, 10);
+  check('every spell of the preset names its source', Object.keys(declared).length, 15);
   check('five come from the conjuration adept', Object.keys(declared).filter((n) => declared[n] === 'Conjuration adept').length, 5);
   check('shield comes from the abjuration adept', declared.Shield, 'Abjuration adept');
-  check('each source is the feature that grants it', Object.keys(declared).every((n) => {
+  /* The five the class and the elf bring name a class and a race, and no
+     feature of the library carries that name, so the check of the feat
+     reaches the ten that come from one. */
+  const fromFeat = Object.keys(declared).filter((n) => features.features.some((f) => f.name === declared[n]));
+  check('the ten of the feats name a feature', fromFeat.length, 10);
+  check('and each one is the feature that grants it', fromFeat.every((n) => {
     const feat = features.features.filter((f) => f.name === declared[n])[0];
-    return !!feat && JSON.stringify(feat.blocks).indexOf('"' + n + '"') >= 0;
+    return JSON.stringify(feat.blocks).indexOf('"' + n + '"') >= 0;
   }), true);
-  check('the grimoire opens on the bard list', JSON.stringify(bard.rec.spells.classes), '{"Bard":true}');
+  check('the grimoire opens on the bard and the wizard', JSON.stringify(bard.rec.spells.classes), '{"Bard":true,"Wizard":true}');
 
   /* The two pages that hold a character read their own slice, so the way
      from the ready-made record to the sheet is checked here. */
@@ -597,7 +602,7 @@ console.log('seeding a character from the data');
   check('and the scores of the floor', blank.abilities.cha, 10);
   const spell = taken.spells.seed(bard.rec.spells, true);
   check('the ready-made spells travel', spell.lists[1].join(','), 'Entangle,Shield');
-  check('a level it left empty stays empty', spell.lists[0].length, 0);
+  check('a level it left empty stays empty', spell.lists[6].length, 0);
   check('the slots travel too', [spell.max[1], spell.max[5]].join('/'), '4/2');
   check('the source of a spell is the character\'s own', spell.sources.Shield, 'Abjuration adept');
   const old = taken.spells.seed({ lists: { 1: ['Shield'] } }, false);
@@ -646,5 +651,125 @@ console.log('the page the phone opens at launch');
   check('and matches the data file', distBook.spells[0].name, JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8')).spells[0].name);
 }
 
+
+console.log('the bestiary');
+{
+  const bestiary = JSON.parse(readFileSync(resolve(root, 'data', 'bestiary.json'), 'utf8'));
+  const creatures = bestiary.creatures || {};
+  const keys = Object.keys(creatures);
+  check('the bestiary travels with the app', keys.length > 20, true);
+  check('the battle familiar is one of them', !!creatures['battle familiar'], true);
+  check('and the dancing item of the bard', !!creatures['dancing item'], true);
+  check('a block whose armour class is a formula says so', creatures['battle familiar'].acText, "11 + the spell's level + 2 (Brute only)");
+  check('and holds no number for it', creatures['battle familiar'].ac, 0);
+  check('a block with numbers holds them', creatures['skeleton'].ac, 14);
+  check('and its hit points', creatures['skeleton'].hp, 13);
+  check('an attack carries its bonus', creatures['skeleton'].actions[0].bonus, '5');
+  check('and its damage', creatures['skeleton'].actions[0].damage, '1d6 + 3');
+  check('the type of a creature is its kind', creatures['skeleton'].type, 'undead');
+
+  const book = JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8'));
+  const summoning = book.spells.filter((s) => s.summons);
+  check('the spells that call a creature are marked', summoning.length, 28);
+  check('the find familiar is one of them', summoning.some((s) => s.name === 'Find Familiar'), true);
+  check('the conjure animals is one too', summoning.some((s) => s.name === 'Conjure Animals'), true);
+  check('and the conjure elemental', summoning.some((s) => s.name === 'Conjure Elemental'), true);
+  check('a spell that calls nothing is not marked', summoning.some((s) => s.name === "Bigby's Hand"), false);
+  check('nor a conjure of weapons', summoning.some((s) => s.name === 'Conjure Volley'), false);
+  check('nor a polymorph', summoning.some((s) => s.name === 'True Polymorph'), false);
+  check('the familiar names the beasts it brings', (book.spells.filter((s) => s.name === 'Find Familiar')[0].creatures || []).length, 11);
+  check('the conjure animals names none, the player chooses', (book.spells.filter((s) => s.name === 'Conjure Animals')[0].creatures || []).length, 0);
+
+  const features = JSON.parse(readFileSync(resolve(root, 'data', 'features.json'), 'utf8')).features;
+  const classes = JSON.parse(readFileSync(resolve(root, 'data', 'classes.json'), 'utf8')).classes;
+  check('a feature that brings a creature names it', (features.filter((f) => f.key === 'animatingPerformance')[0].creatures || []).indexOf('Dancing Item') >= 0, true);
+  check('and it says it summons', features.filter((f) => f.key === 'animatingPerformance')[0].summons, true);
+  check('a feature that brings nothing does not', features.filter((f) => f.key === 'countercharm')[0].summons, false);
+
+  /* What the character holds is the seed of the tab: the summons it can
+     already call, the three of the bard and the five of the sorcerer. */
+  const libraryOf = (rec) => {
+    const out = [];
+    const lists = rec.spells.lists || {};
+    Object.keys(lists).forEach((lv) => (lists[lv] || []).forEach((n) => {
+      const spell = book.spells.filter((x) => x.name === n)[0];
+      if (spell && spell.summons) out.push(spell.name);
+    }));
+    (rec.char.features || []).forEach((f) => {
+      const data = features.filter((x) => x.key === f.key)[0];
+      if (data && data.creatures && data.creatures.length) out.push(data.name);
+    });
+    return out;
+  };
+  const bardRec = JSON.parse(readFileSync(resolve(root, 'characters', 'yngwie.json'), 'utf8')).record;
+  const wendyRec = JSON.parse(readFileSync(resolve(root, 'characters', 'wendy.json'), 'utf8')).record;
+  check('the bard calls three', libraryOf(bardRec).length, 3);
+  check('the animals, the elemental and the dancing item', libraryOf(bardRec).join(', '), 'Conjure Animals, Conjure Elemental, Animating performance');
+  check('the sorcerer calls five', libraryOf(wendyRec).length, 5);
+  check('the servant, the familiar, the objects and the elementals', libraryOf(wendyRec).join(', '), 'Unseen Servant, Battle Familiar, Conjure Minor Elementals, Animate Objects, Conjure Elemental');
+
+  /* The page reads the same things, so it is run here with a character and
+     a shell that answer, and what it offers is what the data says. */
+  const core = {
+    R: R, SR: C, ABILITIES: C.ABILITIES, SKILLS: C.SKILLS,
+    LEVELS: R.LEVELS, WARLOCK_LEVEL: R.WARLOCK_LEVEL,
+    features: features, book: book, bookByName: {},
+    featureByKey: {},
+    bestiary: { creatures: creatures },
+    server: () => 'http://127.0.0.1:8123',
+    readUrl: () => Promise.reject(new Error('no machine')),
+    esc: (t) => String(t === undefined || t === null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'),
+    markup: (t) => String(t === undefined || t === null ? '' : t),
+    field: () => '',
+    renderBlocks: () => '',
+    sourceTag: () => '',
+    primaryAbility: () => 'cha',
+    data: () => Promise.resolve(true),
+    classInfo: (name) => classes.filter((c) => c.name === name)[0] || null,
+    classRows: (ch) => (ch.classes || []).map((k) => {
+      const info = classes.filter((c) => c.name === k.name)[0] || {};
+      return { name: k.name, level: k.level, subclass: k.subclass || '', ability: info.ability, caster: info.caster, hd: info.hd };
+    }),
+    canonSource: (s) => s
+  };
+  book.spells.forEach((s) => { core.bookByName[s.name] = s; });
+  features.forEach((f) => { core.featureByKey[f.key] = f; });
+  const taken = {};
+  const ctx = vm.createContext({ Sheet: { core: core, page: (spec) => { taken[spec.id] = spec; } } });
+  vm.runInContext(readFileSync(resolve(root, 'src', 'pages', 'summons.js'), 'utf8'), ctx);
+
+  const fakeEl = () => {
+    const el = {
+      innerHTML: '', textContent: '', value: '', hidden: false, dataset: {},
+      listeners: {}, children: [],
+      addEventListener: (kind, fn) => { el.listeners[kind] = fn; },
+      querySelector: () => fakeEl(),
+      querySelectorAll: () => [],
+      closest: () => null,
+      appendChild: (c) => { el.children.push(c); },
+      click: () => { if (el.listeners.click) el.listeners.click({ target: el }); }
+    };
+    return el;
+  };
+  const page = fakeEl();
+  const opened = [];
+  const api = {
+    character: () => bardRec,
+    characters: () => ({ c1: bardRec }),
+    state: { current: 'c1', ui: {} },
+    save: () => {}, refresh: () => {}, toast: () => {},
+    sheet: { open: (layer) => { opened.push(layer); }, search: () => '', close: () => {}, closeAll: () => {} },
+    core: core
+  };
+  page.querySelector = (sel) => (sel === '#callSummon' ? page.call : fakeEl());
+  page.call = fakeEl();
+  taken.summons.mount(page, api);
+  page.call.click();
+  const rows = (opened[0] && opened[0].list ? opened[0].list.match(/data-src=/g) || [] : []).length;
+  check('the page offers the three of the bard', rows, 3);
+  check('and they are the same three', (opened[0].list.match(/data-src="([^"]+)"/g) || []).join(','), 'data-src="spell:Conjure Animals",data-src="spell:Conjure Elemental",data-src="feature:animatingPerformance"');
+  const seeded = taken.summons.seed({}, true);
+  check('a new character holds no creature', seeded.list.length, 0);
+}
 console.log(failures === 0 ? '\nall rules checks pass' : '\n' + failures + ' check(s) failed');
 process.exit(failures === 0 ? 0 : 1);
