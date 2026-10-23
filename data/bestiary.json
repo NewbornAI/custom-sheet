@@ -7,6 +7,7 @@
       "name": "Bat",
       "source": "XMM",
       "cr": "0",
+      "xp": 10,
       "speed": "walk 5 ft., fly 30 ft.",
       "size": "Tiny",
       "type": "beast",
@@ -82,6 +83,7 @@
       "name": "Cat",
       "source": "XMM",
       "cr": "0",
+      "xp": 10,
       "speed": "walk 40 ft., climb 40 ft.",
       "size": "Tiny",
       "type": "beast",
@@ -136,6 +138,7 @@
       ],
       "saves": [
         {
+          "key": "dex",
           "name": "Dexterity",
           "value": "+4"
         }
@@ -176,6 +179,7 @@
       "name": "Frog",
       "source": "XMM",
       "cr": "0",
+      "xp": 10,
       "speed": "walk 20 ft., swim 20 ft.",
       "size": "Tiny",
       "type": "beast",
@@ -269,6 +273,7 @@
       "name": "Hawk",
       "source": "XMM",
       "cr": "0",
+      "xp": 10,
       "speed": "walk 10 ft., fly 60 ft.",
       "size": "Tiny",
       "type": "beast",
@@ -340,6 +345,7 @@
       "name": "Lizard",
       "source": "XMM",
       "cr": "0",
+      "xp": 10,
       "speed": "walk 20 ft., climb 20 ft.",
       "size": "Tiny",
       "type": "beast",
@@ -420,6 +426,7 @@
       "name": "Octopus",
       "source": "XMM",
       "cr": "0",
+      "xp": 10,
       "speed": "walk 5 ft., swim 30 ft.",
       "size": "Small",
       "type": "beast",
@@ -526,6 +533,7 @@
       "name": "Owl",
       "source": "XMM",
       "cr": "0",
+      "xp": 10,
       "speed": "walk 5 ft., fly 60 ft.",
       "size": "Tiny",
       "type": "beast",
@@ -615,6 +623,7 @@
       "name": "Rat",
       "source": "XMM",
       "cr": "0",
+      "xp": 10,
       "speed": "walk 20 ft., climb 20 ft.",
       "size": "Tiny",
       "type": "beast",
@@ -700,6 +709,7 @@
       "name": "Raven",
       "source": "XMM",
       "cr": "0",
+      "xp": 10,
       "speed": "walk 10 ft., fly 50 ft.",
       "size": "Tiny",
       "type": "beast",
@@ -776,6 +786,7 @@
       "name": "Spider",
       "source": "XMM",
       "cr": "0",
+      "xp": 10,
       "speed": "walk 20 ft., climb 20 ft.",
       "size": "Tiny",
       "type": "beast",
@@ -871,6 +882,7 @@
       "name": "Weasel",
       "source": "XMM",
       "cr": "0",
+      "xp": 10,
       "speed": "walk 30 ft., climb 30 ft.",
       "size": "Tiny",
       "type": "beast",
@@ -959,6 +971,7 @@
       "name": "Battle Familiar",
       "source": "AU",
       "cr": "",
+      "xp": 0,
       "speed": "walk 40 ft., fly 30 ft. (hover; Flyer only), swim 30 ft.",
       "size": "Medium",
       "type": "",
@@ -1350,6 +1363,7 @@
       "name": "Otherworldly Steed",
       "source": "XPHB",
       "cr": "",
+      "xp": 0,
       "speed": "walk 60 ft., fly 60 ft. (requires level 4+ spell)",
       "size": "Large",
       "type": "",
@@ -1810,6 +1824,7 @@
       "name": "Bestial Spirit",
       "source": "XPHB",
       "cr": "",
+      "xp": 0,
       "speed": "walk 30 ft., climb 30 ft. (Land only), fly 60 ft. (Air only), swim 30 ft. (Water only)",
       "size": "Small",
       "type": "beast",
@@ -2186,6 +2201,7 @@
       "name": "Skeleton",
       "source": "XMM",
       "cr": "1/4",
+      "xp": 50,
       "speed": "walk 30 ft.",
       "size": "Medium",
       "type": "undead",
@@ -2308,6 +2324,7 @@
       "name": "Zombie",
       "source": "XMM",
       "cr": "1/4",
+      "xp": 50,
       "speed": "walk 20 ft.",
       "size": "Medium",
       "type": "undead",
@@ -2372,6 +2389,7 @@
       ],
       "saves": [
         {
+          "key": "wis",
           "name": "Wisdom",
           "value": "+0"
         }
@@ -2417,6 +2435,7 @@
       "name": "Riding Horse",
       "source": "XMM",
       "cr": "1/4",
+      "xp": 50,
       "speed": "walk 60 ft.",
       "size": "Large",
       "type": "beast",
@@ -2493,6 +2512,7 @@
       "name": "Fey Spirit",
       "source": "XPHB",
       "cr": "",
+      "xp": 0,
       "speed": "walk 30 ft., fly 30 ft.",
       "size": "Small",
       "type": "fey",
@@ -2895,6 +2915,7 @@
       "name": "Undead Spirit",
       "source": "XPHB",
       "cr": "",
+      "xp": 0,
       "speed": "walk 30 ft., fly 40 ft. (hover; Ghostly only)",
       "size": "Medium",
       "type": "undead",
@@ -3335,6 +3356,7 @@
       "name": "Giant Insect",
       "source": "XPHB",
       "cr": "",
+      "xp": 0,
       "speed": "walk 40 ft., climb 40 ft., fly 40 ft. (Wasp only)",
       "size": "Large",
       "type": "beast",
@@ -3794,6 +3816,7 @@
       "name": "Aberrant Spirit",
       "source": "XPHB",
       "cr": "",
+      "xp": 0,
       "speed": "walk 30 ft., fly 30 ft. (hover; Beholderkin only)",
       "size": "Medium",
       "type": "aberration",
@@ -4229,6 +4252,7 @@
       "name": "Construct Spirit",
       "source": "XPHB",
       "cr": "",
+      "xp": 0,
       "speed": "walk 30 ft.",
       "size": "Medium",
       "type": "construct",
@@ -4680,6 +4704,7 @@
       "name": "Elemental Spirit",
       "source": "XPHB",
       "cr": "",
+      "xp": 0,
       "speed": "walk 40 ft., burrow 40 ft. (Earth only), fly 40 ft. (hover; Air only), swim 40 ft. (Water only)",
       "size": "Medium",
       "type": "elemental",
@@ -5180,6 +5205,7 @@
       "name": "Animated Object",
       "source": "XPHB",
       "cr": "",
+      "xp": 0,
       "speed": "walk 30 ft.",
       "size": "Tiny or Small or Medium or Large or Huge",
       "type": "construct",
@@ -5396,6 +5422,7 @@
       "name": "Awakened Shrub",
       "source": "XMM",
       "cr": "0",
+      "xp": 10,
       "speed": "walk 20 ft.",
       "size": "Small",
       "type": "plant",
@@ -5472,6 +5499,7 @@
       "name": "Awakened Tree",
       "source": "XMM",
       "cr": "2",
+      "xp": 450,
       "speed": "walk 20 ft.",
       "size": "Huge",
       "type": "plant",
@@ -5562,6 +5590,7 @@
       "name": "Celestial Spirit",
       "source": "XPHB",
       "cr": "",
+      "xp": 0,
       "speed": "walk 30 ft., fly 40 ft.",
       "size": "Large",
       "type": "celestial",
@@ -5938,6 +5967,7 @@
       "name": "Draconic Spirit",
       "source": "XPHB",
       "cr": "",
+      "xp": 0,
       "speed": "walk 30 ft., fly 60 ft., swim 30 ft.",
       "size": "Large",
       "type": "dragon",
@@ -6216,6 +6246,7 @@
       "name": "Ghoul",
       "source": "XMM",
       "cr": "1",
+      "xp": 200,
       "speed": "walk 30 ft.",
       "size": "Medium",
       "type": "undead",
@@ -6345,6 +6376,7 @@
       "name": "Ghast",
       "source": "XMM",
       "cr": "2",
+      "xp": 450,
       "speed": "walk 30 ft.",
       "size": "Medium",
       "type": "undead",
@@ -6427,6 +6459,7 @@
       ],
       "saves": [
         {
+          "key": "wis",
           "name": "Wisdom",
           "value": "+2"
         }
@@ -6481,6 +6514,7 @@
       "name": "Wight",
       "source": "XMM",
       "cr": "3",
+      "xp": 700,
       "speed": "walk 30 ft.",
       "size": "Medium",
       "type": "undead",
@@ -6643,6 +6677,7 @@
       "name": "Mummy",
       "source": "XMM",
       "cr": "3",
+      "xp": 700,
       "speed": "walk 20 ft.",
       "size": "Small or Medium",
       "type": "undead",
@@ -6718,6 +6753,7 @@
       ],
       "saves": [
         {
+          "key": "wis",
           "name": "Wisdom",
           "value": "+3"
         }
@@ -6784,6 +6820,7 @@
       "name": "Fiendish Spirit",
       "source": "XPHB",
       "cr": "",
+      "xp": 0,
       "speed": "walk 40 ft., climb 40 ft. (Demon only), fly 60 ft. (Devil only)",
       "size": "Large",
       "type": "fiend",
@@ -7221,6 +7258,7 @@
       "name": "Dancing Item",
       "source": "TCE",
       "cr": "",
+      "xp": 0,
       "speed": "walk 30 ft., fly 30 ft. (hover)",
       "size": "Large",
       "type": "construct",
@@ -7357,6 +7395,7 @@
       "name": "Wolf",
       "source": "XMM",
       "cr": "1/4",
+      "xp": 50,
       "speed": "walk 40 ft.",
       "size": "Medium",
       "type": "beast",
@@ -7456,6 +7495,7 @@
       "name": "Wildfire Spirit",
       "source": "TCE",
       "cr": "",
+      "xp": 0,
       "speed": "walk 30 ft., fly 30 ft. (hover)",
       "size": "Small",
       "type": "elemental",
@@ -7601,6 +7641,7 @@
       "name": "Beast of the Land",
       "source": "XPHB",
       "cr": "",
+      "xp": 0,
       "speed": "walk 40 ft., climb 40 ft.",
       "size": "Medium",
       "type": "beast",
@@ -7722,6 +7763,7 @@
       "name": "Beast of the Sea",
       "source": "XPHB",
       "cr": "",
+      "xp": 0,
       "speed": "walk 5 ft., swim 60 ft.",
       "size": "Medium",
       "type": "beast",
@@ -7847,6 +7889,7 @@
       "name": "Beast of the Sky",
       "source": "XPHB",
       "cr": "",
+      "xp": 0,
       "speed": "walk 10 ft., fly 60 ft.",
       "size": "Small",
       "type": "beast",
@@ -7972,6 +8015,7 @@
       "name": "Drake Companion",
       "source": "FTD",
       "cr": "",
+      "xp": 0,
       "speed": "walk 40 ft.",
       "size": "Small",
       "type": "dragon",
@@ -8077,10 +8121,12 @@
       ],
       "saves": [
         {
+          "key": "dex",
           "name": "Dexterity",
           "value": "+1 + PB"
         },
         {
+          "key": "wis",
           "name": "Wisdom",
           "value": "+2 + PB"
         }
@@ -8117,6 +8163,7 @@
       "name": "Yeti",
       "source": "XMM",
       "cr": "3",
+      "xp": 700,
       "speed": "walk 40 ft., climb 40 ft.",
       "size": "Large",
       "type": "monstrosity",
@@ -8261,6 +8308,7 @@
       "name": "Crag Cat",
       "source": "SKT",
       "cr": "1",
+      "xp": 200,
       "speed": "walk 40 ft., climb 30 ft.",
       "size": "Large",
       "type": "monstrosity",
@@ -8386,6 +8434,7 @@
       "name": "Dao",
       "source": "XMM",
       "cr": "11",
+      "xp": 7200,
       "speed": "walk 30 ft., burrow 30 ft., fly 30 ft. (hover)",
       "size": "Large",
       "type": "elemental",
@@ -8488,10 +8537,12 @@
       ],
       "saves": [
         {
+          "key": "dex",
           "name": "Dexterity",
           "value": "+5"
         },
         {
+          "key": "wis",
           "name": "Wisdom",
           "value": "+5"
         }
@@ -8534,6 +8585,7 @@
       "name": "Djinni",
       "source": "XMM",
       "cr": "11",
+      "xp": 7200,
       "speed": "walk 30 ft., fly 90 ft. (hover)",
       "size": "Large",
       "type": "elemental",
@@ -8642,10 +8694,12 @@
       ],
       "saves": [
         {
+          "key": "dex",
           "name": "Dexterity",
           "value": "+6"
         },
         {
+          "key": "wis",
           "name": "Wisdom",
           "value": "+7"
         }
@@ -8692,6 +8746,7 @@
       "name": "Efreeti",
       "source": "XMM",
       "cr": "11",
+      "xp": 7200,
       "speed": "walk 40 ft., fly 60 ft. (hover)",
       "size": "Large",
       "type": "elemental",
@@ -8786,10 +8841,12 @@
       ],
       "saves": [
         {
+          "key": "wis",
           "name": "Wisdom",
           "value": "+6"
         },
         {
+          "key": "cha",
           "name": "Charisma",
           "value": "+8"
         }
@@ -8832,6 +8889,7 @@
       "name": "Marid",
       "source": "XMM",
       "cr": "11",
+      "xp": 7200,
       "speed": "walk 30 ft., fly 60 ft., swim 90 ft.",
       "size": "Large",
       "type": "elemental",
@@ -8926,10 +8984,12 @@
       ],
       "saves": [
         {
+          "key": "dex",
           "name": "Dexterity",
           "value": "+5"
         },
         {
+          "key": "cha",
           "name": "Charisma",
           "value": "+8"
         }
@@ -8989,6 +9049,7 @@
       "name": "Specter",
       "source": "XMM",
       "cr": "1",
+      "xp": 200,
       "speed": "walk 30 ft., fly 50 ft. (hover)",
       "size": "Medium",
       "type": "undead",
@@ -9158,6 +9219,7 @@
       "name": "Vestige Companion",
       "source": "AU",
       "cr": "",
+      "xp": 0,
       "speed": "walk 5 ft., fly 30 ft. (hover)",
       "size": "Small",
       "type": "",

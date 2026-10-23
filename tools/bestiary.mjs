@@ -219,7 +219,7 @@ function savesOf(entry) {
   if (!save || typeof save !== 'object') return null;
   const out = [];
   Object.keys(save).forEach((k) => {
-    out.push({ name: ABILITY_NAMES[k] || skillName(k), value: String(save[k]) });
+    out.push({ key: k, name: ABILITY_NAMES[k] || skillName(k), value: String(save[k]) });
   });
   return out.length ? out : null;
 }
@@ -350,6 +350,21 @@ function speedOf(entry) {
   return bits.join(', ');
 }
 
+/* The experience a challenge is worth. The 2024 table, which is the one
+   the books of the app are written in. */
+const XP = {
+  '0': 10, '1/8': 25, '1/4': 50, '1/2': 100, 1: 200, 2: 450, 3: 700, 4: 1100,
+  5: 1800, 6: 2300, 7: 2900, 8: 3900, 9: 5000, 10: 5900, 11: 7200, 12: 8400,
+  13: 10000, 14: 11500, 15: 13000, 16: 15000, 17: 18000, 18: 20000, 19: 22000,
+  20: 25000, 21: 33000, 22: 41000, 23: 50000, 24: 62000, 25: 75000, 26: 90000,
+  27: 105000, 28: 120000, 29: 135000, 30: 155000
+};
+
+function xpOf(cr) {
+  const key = String(cr || '').trim();
+  return XP[key] !== undefined ? XP[key] : 0;
+}
+
 /* The kind of creature, as the book says it. */
 function typeOf(entry) {
   const t = entry.type;
@@ -475,6 +490,7 @@ export function creatureRecord(item) {
     name: entry.name || item.name || '',
     source: entry.source || item.source || '',
     cr: entry.cr || item.cr || '',
+    xp: xpOf(entry.cr || item.cr || ''),
     speed: speedOf(entry),
     size: sizeOf(entry),
     type: typeOf(entry),

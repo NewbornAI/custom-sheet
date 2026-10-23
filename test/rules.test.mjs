@@ -714,6 +714,9 @@ console.log('the bestiary');
   check('and the size in words', creatures['celestial spirit'].size, 'Large');
   check('and the alignment', creatures['celestial spirit'].alignment, 'Neutral');
   check('and the traits of a monster', creatures['cat'].traits[0].name, 'Jumper');
+  check('and the experience of the challenge', creatures['ghast'].xp, 450);
+  check('and the saving throws with their key', creatures['ghast'].saves[0].key, 'wis');
+  check('and the bonus the book writes for them', creatures['ghast'].saves[0].value, '+2');
 
   const book = JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8'));
   const summoning = book.spells.filter((s) => s.summons);

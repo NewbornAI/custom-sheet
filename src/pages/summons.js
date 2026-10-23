@@ -276,19 +276,77 @@
     }).join(', ');
   }
 
-  /* The abilities, at the top of the block: the names above the scores, the
-     way a stat block writes them. */
-  function abilityRow(list) {
-    if (!list || !list.length) return '';
-    var short = { Strength: 'Str', Dexterity: 'Dex', Constitution: 'Con', Intelligence: 'Int', Wisdom: 'Wis', Charisma: 'Cha' };
-    var names = '', values = '';
-    list.forEach(function (a) {
-      names += '<span>' + C.esc(short[a.name] || a.name) + '</span>';
-      var mod = C.SR && C.SR.abilityMod ? C.SR.abilityMod(a.score) : Math.floor((a.score - 10) / 2);
-      values += '<span>' + a.score + '<em>' + (mod >= 0 ? '+' + mod : String(mod)) + '</em></span>';
+  /* The proficiency of the caster, which the creatures of a summon are
+     bound to. */
+  function profOf() {
+    var rec = api.character() || {};
+    var ch = rec.char || {};
+    return (C.SR && C.SR.profBonus && ch.level) ? C.SR.profBonus(ch.level) : 0;
+  }
+
+  /* A number with its sign, the way the app writes them. */
+  function sign(n) {
+    n = Number(n) || 0;
+    return (n > 0 ? '+' : '') + n;
+  }
+
+  /* The key of an ability, from the name the book writes. */
+  function shortKey(name) {
+    var key = String(name || '').toLowerCase();
+    var found = '';
+    (C.ABILITIES || []).forEach(function (a) { if (a.long.toLowerCase() === key) found = a.key; });
+    return found || key;
+  }
+
+  /* The saving throw the book writes, with the words of the caster put
+     right: a bonus that rides on the proficiency of the caster. */
+  function saveValue(text) {
+    var raw = String(text || '').replace(/PB/i, String(profOf()));
+    var bits = raw.match(/[+-]?\d+/g);
+    if (!bits) return null;
+    var total = 0;
+    bits.forEach(function (x) { total += Number(x); });
+    return total;
+  }
+
+  /* The saving throw of an ability: the modifier of the ability, and
+     whether the creature is proficient in it. The book decides to begin
+     with, and the player can say otherwise. */
+  function saveState(card, block, key, mod) {
+    var book = null;
+    (block.saves || []).forEach(function (s) { if (s.key === key) book = s; });
+    var on = card.saves && card.saves[key] !== undefined ? !!card.saves[key] : !!book;
+    var value = mod;
+    if (on) {
+      value = book ? saveValue(book.value) : mod + profOf();
+    }
+    if (value === null || !isFinite(value)) value = mod;
+    return { on: on, value: value };
+  }
+
+  /* The abilities, at the top of the block: the names above the scores and
+     the saving throws under them, the way a stat block writes them. The
+     dot is a proficiency, the way it is on the sheet of a character. */
+  function abilityRow(card, block) {
+    var scores = {};
+    (block.ability || []).forEach(function (a) { scores[shortKey(a.name)] = a.score; });
+    var names = '', values = '', saves = '';
+    (C.ABILITIES || []).forEach(function (a) {
+      var score = scores[a.key];
+      if (score === undefined) return;
+      var mod = C.SR && C.SR.abilityMod ? C.SR.abilityMod(score) : Math.floor((score - 10) / 2);
+      var save = saveState(card, block, a.key, mod);
+      names += '<span>' + C.esc(a.name) + '</span>';
+      values += '<span>' + score + '<em>' + sign(mod) + '</em></span>';
+      saves += '<span class="sabsave' + (save.on ? ' on' : '') + '"><button type="button" class="savetog' + (save.on ? ' on' : '') + '" ' +
+        'data-save="' + a.key + '" aria-label="Proficient in the ' + a.long + ' saving throw"></button>' +
+        sign(save.value) + '</span>';
     });
-    return '<div class="sabil"><div class="sab-h">' + names + '</div>' +
-      '<div class="sab-v">' + values + '</div></div>';
+    if (!names) return '';
+    return '<div class="sabil">' +
+      '<div class="sabrow sab-h">' + names + '</div>' +
+      '<div class="sabrow sab-v">' + values + '</div>' +
+      '<div class="sabrow sab-s">' + saves + '</div></div>';
   }
 
   /* One named thing of the block: its name and what it says. */
@@ -306,21 +364,29 @@
     var hp = out && out.hpMax !== null && out.hpMax !== undefined ? out.hpMax : (form && form.hp ? form.hp : block.hp);
     var acText = form && form.acText ? form.acText : block.acText;
     var hpText = form && form.hpText ? form.hpText : block.hpText;
-    return abilityRow(block.ability) +
-      C.field('CR', block.cr) +
-      C.field('Type', (block.size ? block.size + ' ' : '') + block.type) +
-      C.field('Align', block.alignment) +
+    /* The initiative of a creature is its dexterity. */
+    var dex = 0;
+    (block.ability || []).forEach(function (a) {
+      if (shortKey(a.name) === 'dex') dex = C.SR && C.SR.abilityMod ? C.SR.abilityMod(a.score) : Math.floor((a.score - 10) / 2);
+    });
+    var cr = block.cr ? block.cr + ' (' + (block.xp || 0) + ' XP)' : 'None (XP 0)';
+    return abilityRow(card, block) +
       C.field('Speed', block.speed) +
-      C.field('AC', acText ? ac + ' (' + acText + ')' : String(ac || '')) +
-      C.field('HP', hpText ? hp + ' (' + hpText + ')' : String(hp || '')) +
-      C.field('Saves', listText(block.saves)) +
-      C.field('Skills', listText(block.skills)) +
       C.field('Resist', listText(block.resist)) +
       C.field('Immune', listText(block.immune)) +
-      C.field('Vuln.', listText(block.vulnerable)) +
-      C.field('Cond.Imm', listText(block.conditionImmune)) +
       C.field('Senses', listText(block.senses)) +
-      C.field('Lang.', block.languages);
+      '<div class="sspace"></div>' +
+      C.field('AC', acText ? ac + ' (' + acText + ')' : String(ac || '')) +
+      C.field('HP', hpText ? hp + ' (' + hpText + ')' : String(hp || '')) +
+      C.field('Initiative', sign(dex)) +
+      '<div class="sspace"></div>' +
+      C.field('Lang.', block.languages) +
+      C.field('CR', cr) +
+      C.field('Type', (block.size ? block.size + ' ' : '') + block.type) +
+      C.field('Align', block.alignment) +
+      C.field('Skills', listText(block.skills)) +
+      C.field('Vuln.', listText(block.vulnerable)) +
+      C.field('Cond.Imm', listText(block.conditionImmune));
   }
 
   /* The text of the block: the traits, the actions and the rest. */
@@ -368,7 +434,22 @@
       id: 'stat:' + card.key,
       title: block.name,
       meta: statFields(block, out, card),
-      text: statText(block, out, card)
+      text: statText(block, out, card),
+      onPaint: function (root) {
+        /* The dot of a saving throw says the creature is proficient in it, and
+           the book decides to begin with. */
+        var dots = root.querySelectorAll('[data-save]');
+        Array.prototype.forEach.call(dots, function (dot) {
+          dot.addEventListener('click', function () {
+            var key = dot.dataset.save;
+            var on = saveState(card, block, key, 0).on;
+            if (!card.saves) card.saves = {};
+            card.saves[key] = !on;
+            api.save();
+            openStat(card);
+          });
+        });
+      }
     });
   }
   /* ---- the cards ---- */
@@ -1032,10 +1113,15 @@
       '.smod{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}',
       '.sghost{color:#6f6a8d}',
       '.sabil{grid-column:1 / -1;display:flex;flex-direction:column;gap:2px;margin:0 0 3px}',
-      '.sab-h,.sab-v{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}',
+      '.sabrow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}',
       '.sab-h span{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:#635e7e;text-align:center}',
       '.sab-v span{font-family:var(--display);font-size:15px;line-height:1.1;color:var(--ink);text-align:center;font-variant-numeric:tabular-nums}',
       '.sab-v em{font-style:normal;font-family:var(--sans);font-size:9px;color:var(--muted);margin-left:2px}',
+      '.sab-s span{display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}',
+      '.sabsave.on{color:var(--gold)}',
+      '.savetog{width:7px;height:7px;flex:0 0 auto;border-radius:50%;border:1px solid #453f63;background:none;padding:0;cursor:pointer}',
+      '.savetog.on{background:var(--gold);border-color:var(--gold);box-shadow:0 0 6px rgba(var(--gold-rgb),.45)}',
+      '.sspace{grid-column:1 / -1;height:3px}',
       '.sother{font-size:10.5px;color:#6f6a8d;font-variant-numeric:tabular-nums}',
       '.suses{border:1px solid var(--edge);border-radius:999px;background:none;color:var(--ink);font:inherit;font-size:10.5px;line-height:1.4;padding:1px 9px;cursor:pointer;font-variant-numeric:tabular-nums}',
       '.suses.out{color:#6f6a8d}',
