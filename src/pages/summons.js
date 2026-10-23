@@ -364,15 +364,19 @@
     var hp = out && out.hpMax !== null && out.hpMax !== undefined ? out.hpMax : (form && form.hp ? form.hp : block.hp);
     var acText = form && form.acText ? form.acText : block.acText;
     var hpText = form && form.hpText ? form.hpText : block.hpText;
-    /* The initiative of a creature is its dexterity. */
+    /* The initiative is the dexterity of the creature, unless the book says
+       otherwise: a monster may be proficient in initiative, or expert in
+       it, and some have advantage on it. */
     var dex = 0;
     (block.ability || []).forEach(function (a) {
       if (shortKey(a.name) === 'dex') dex = C.SR && C.SR.abilityMod ? C.SR.abilityMod(a.score) : Math.floor((a.score - 10) / 2);
     });
+    var init = block.initiative;
+    var initText = sign(init ? init.value : dex) + (init && init.advantage ? ' (adv)' : '');
     var cr = block.cr ? block.cr + ' (' + (block.xp || 0) + ' XP)' : 'None (XP 0)';
     return abilityRow(card, block) +
       C.field('Speed', block.speed) +
-      C.field('Initiative', sign(dex)) +
+      C.field('Initiative', initText) +
       C.field('Resistance', listText(block.resist)) +
       C.field('Vuln.', listText(block.vulnerable)) +
       C.field('Immune', listText(block.immune)) +

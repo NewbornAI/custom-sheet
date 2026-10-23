@@ -365,6 +365,51 @@ function xpOf(cr) {
   return XP[key] !== undefined ? XP[key] : 0;
 }
 
+/* The challenge of a creature: the text of it, and the experience it is
+   worth. A challenge may come with the numbers of its lair beside it. */
+function challengeOf(entry) {
+  const cr = entry.cr;
+  if (!cr) return { cr: '', xp: 0 };
+  if (typeof cr === 'object') {
+    const text = String(cr.cr || '');
+    return { cr: text, xp: Number(cr.xp) || xpOf(text) };
+  }
+  const text = String(cr);
+  return { cr: text, xp: xpOf(text) };
+}
+
+/* The proficiency bonus of a challenge. */
+function profOf(cr) {
+  const text = String(cr || '').trim();
+  if (!text) return 0;
+  let n = Number(text);
+  if (text.indexOf('/') >= 0) {
+    const bits = text.split('/');
+    n = Number(bits[0]) / Number(bits[1]);
+  }
+  if (!isFinite(n) || n <= 0) return 0;
+  return 2 + Math.floor(n / 4);
+}
+
+/* The initiative of a creature: the dexterity modifier, and what the book
+   adds to it. A monster may be proficient in initiative, or expert in it,
+   and some have advantage on it. */
+function initiativeOf(entry, cr) {
+  const init = entry.initiative;
+  if (!init || typeof init !== 'object') return null;
+  const dex = typeof entry.dex === 'number' ? Math.floor((entry.dex - 10) / 2) : 0;
+  if (init.dex !== undefined) {
+    const n = Number(String(init.dex).replace(/[^0-9+-]/g, ''));
+    if (isFinite(n)) return { value: n, advantage: false };
+  }
+  if (init.proficiency !== undefined) {
+    const times = Number(init.proficiency) || 1;
+    return { value: dex + times * profOf(cr), advantage: false, proficiency: times };
+  }
+  if (init.advantageMode === 'adv') return { value: dex, advantage: true };
+  return null;
+}
+
 /* The kind of creature, as the book says it. */
 function typeOf(entry) {
   const t = entry.type;
@@ -486,11 +531,13 @@ export function creatureRecord(item) {
   const entry = item.entry || item;
   const ac = armourClass(entry);
   const hp = hitPoints(entry);
+  const challenge = challengeOf(entry);
   const out = {
     name: entry.name || item.name || '',
     source: entry.source || item.source || '',
-    cr: entry.cr || item.cr || '',
-    xp: xpOf(entry.cr || item.cr || ''),
+    cr: challenge.cr,
+    xp: challenge.xp,
+    initiative: initiativeOf(entry, challenge.cr),
     speed: speedOf(entry),
     size: sizeOf(entry),
     type: typeOf(entry),

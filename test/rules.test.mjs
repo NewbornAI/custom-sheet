@@ -717,6 +717,12 @@ console.log('the bestiary');
   check('and the experience of the challenge', creatures['ghast'].xp, 450);
   check('and the saving throws with their key', creatures['ghast'].saves[0].key, 'wis');
   check('and the bonus the book writes for them', creatures['ghast'].saves[0].value, '+2');
+  /* The initiative of a monster is the dexterity, unless the book says
+     otherwise: a monster may be proficient in initiative. */
+  check('a creature with no initiative keeps the dexterity', creatures['ghast'].initiative, null);
+  check('and one that is proficient carries it', creatures['wight'].initiative.proficiency, 1);
+  check('the initiative is the dexterity and the proficiency', creatures['wight'].initiative.value, 4);
+  check('the challenge of a monster is its text', creatures['ghast'].cr, '2');
 
   const book = JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8'));
   const summoning = book.spells.filter((s) => s.summons);
