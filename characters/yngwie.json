@@ -2273,7 +2273,7 @@
       "warlockLeft": 0,
       "warlockLevel": 1,
       "slotsTouched": true,
-      "selected": 4,
+      "selected": 2,
       "lists": {
         "0": [
           "Mage Hand",
@@ -2358,7 +2358,8 @@
     },
     "pages": [
       "spells",
-      "features"
+      "features",
+      "summons"
     ],
     "theme": "blueRed",
     "icon": "guitar"
