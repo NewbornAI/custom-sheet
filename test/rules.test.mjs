@@ -579,7 +579,7 @@ console.log('seeding a character from the data');
       const info = classes.filter((c) => c.name === k.name)[0] || {};
       return { name: k.name, level: k.level, subclass: k.subclass || '', ability: info.ability, caster: info.caster, hd: info.hd };
     }),
-    canonSource: (s) => s
+    canonSource: (s) => s,
   };
   book.spells.forEach((s) => { core.bookByName[s.name] = s; });
   features.features.forEach((f) => { core.featureByKey[f.key] = f; });
@@ -789,7 +789,19 @@ console.log('the bestiary');
       const info = classes.filter((c) => c.name === k.name)[0] || {};
       return { name: k.name, level: k.level, subclass: k.subclass || '', ability: info.ability, caster: info.caster, hd: info.hd };
     }),
-    canonSource: (s) => s
+    canonSource: (s) => s,
+    dieIcon: (sides) => {
+      const pts = C.DIE_SHAPES[sides] || '';
+      return '<svg viewBox="0 0 24 24"><polygon points="' + pts + '"/></svg>';
+    },
+    dieBig: (sides, number) => {
+      const lab = C.DIE_LABEL[sides] || { y: 15, size: 9 };
+      let out = '<svg viewBox="0 0 24 24"><polygon points="' + C.DIE_SHAPES[sides] + '"/';
+      if (number !== '' && number !== null && number !== undefined) {
+        out += '<text x="12" y="' + lab.y + '" font-size="' + lab.size + '">' + number + '</text>';
+      }
+      return out + '</svg>';
+    }
   };
   book.spells.forEach((s) => { core.bookByName[s.name] = s; });
   features.forEach((f) => { core.featureByKey[f.key] = f; });

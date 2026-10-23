@@ -368,6 +368,36 @@
     return html;
   }
 
+  /* The shape of a die, the way the app draws them: a d6 is a square, a
+     d20 a hexagon. The rules hold the points and where the number sits. */
+  function diePoints(sides) {
+    var pts = (SR && SR.DIE_SHAPES) ? SR.DIE_SHAPES[sides] : '';
+    if (pts) return pts;
+    var built = [], i, a;
+    for (i = 0; i < sides; i++) {
+      a = -Math.PI / 2 + i * 2 * Math.PI / sides;
+      built.push((12 + 9.2 * Math.cos(a)).toFixed(2) + ',' + (12 + 9.2 * Math.sin(a)).toFixed(2));
+    }
+    return built.join(' ');
+  }
+
+  /* The die, with nothing in it. */
+  function dieIcon(sides) {
+    return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<polygon points="' + diePoints(sides) + '" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
+  }
+
+  /* The die, with a number in it. */
+  function dieBig(sides, number) {
+    var lab = (SR && SR.DIE_LABEL && SR.DIE_LABEL[sides]) ? SR.DIE_LABEL[sides] : { y: 15, size: 9 };
+    var out = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<polygon points="' + diePoints(sides) + '" fill="none" stroke="currentColor" stroke-width="1.5"/>';
+    if (number !== '' && number !== null && number !== undefined) {
+      out += '<text x="12" y="' + lab.y + '" text-anchor="middle" font-size="' + lab.size + '" fill="currentColor" ' +
+        'font-family="Cinzel, Georgia, serif">' + number + '</text>';
+    }
+    return out + '</svg>';
+  }
   /* The same class, written two ways on the sheet. */
   var SOURCE_CANON = {
     'izzet': 'Izzet engineer', 'high elf': 'Elf', 'elf': 'Elf', 'hex': 'Hexblade'
@@ -569,6 +599,8 @@
     installUpdate: installUpdate,
     openUrl: openUrl,
     plugFeature: plugFeature,
+    dieIcon: dieIcon,
+    dieBig: dieBig,
     esc: esc,
     markup: markup,
     field: field,

@@ -493,35 +493,6 @@
     return c ? c.join(',') : '';
   }
 
-  /* The shape of a die, the way the app draws them. */
-  function diePoints(sides) {
-    var pts = C.SR && C.SR.DIE_SHAPES ? C.SR.DIE_SHAPES[sides] : '';
-    if (pts) return pts;
-    var built = [], i, a;
-    for (i = 0; i < sides; i++) {
-      a = -Math.PI / 2 + i * 2 * Math.PI / sides;
-      built.push((12 + 9.2 * Math.cos(a)).toFixed(2) + ',' + (12 + 9.2 * Math.sin(a)).toFixed(2));
-    }
-    return built.join(' ');
-  }
-
-  /* The die, with nothing in it. */
-  function dieIcon(sides) {
-    return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
-      '<polygon points="' + diePoints(sides) + '" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
-  }
-
-  /* The die, with a number in it. */
-  function dieBig(sides, number) {
-    var out = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
-      '<polygon points="' + diePoints(sides) + '" fill="none" stroke="currentColor" stroke-width="1.5"/>';
-    if (number !== '' && number !== null && number !== undefined) {
-      out += '<text x="12" y="15.4" text-anchor="middle" font-size="9" fill="currentColor" ' +
-        'font-family="Cinzel, Georgia, serif">' + number + '</text>';
-    }
-    return out + '</svg>';
-  }
-
   /* The rolls an attack holds: one per swing of the attack. */
   function rollsOf(card, name) {
     var v = card.rolls ? card.rolls[name] : null;
@@ -566,7 +537,7 @@
   function diceShapes(groups, res, col) {
     var out = '';
     groups.forEach(function (g) {
-      out += '<span class="sgres"><span class="sdmini">' + dieIcon(sidesOf(g.label)) + '</span>' +
+      out += '<span class="sgres"><span class="sdmini">' + C.dieIcon(sidesOf(g.label)) + '</span>' +
         '<span class="snum2"' + (col ? ' style="color:' + col + '"' : '') + '>' +
         (res ? g.rolls.join(',') : '--') + '</span></span>';
     });
@@ -595,8 +566,8 @@
     out += '<div class="scell-dmg"><span class="sk">Damage</span>' +
       '<span class="sformula"' + (col ? ' style="color:' + col + '"' : '') + '>' + C.esc(compact(damage)) + '</span></div>';
     out += '<div class="scell-die"><button type="button" class="sdie" data-role="roll" data-ix="' + ix + '" ' +
-      'aria-label="Roll the ' + C.esc(a.name) + '">' + dieBig(20, res ? res.total : '') + '</button></div>';
-    out += '<div class="scell-hit"><span class="sdmini">' + dieIcon(20) + '</span>' +
+      'aria-label="Roll the ' + C.esc(a.name) + '">' + C.dieBig(20, res ? res.total : '') + '</button></div>';
+    out += '<div class="scell-hit"><span class="sdmini">' + C.dieIcon(20) + '</span>' +
       '<span class="snum2">' + (res ? res.roll : '--') + '</span>' +
       (otherRolls(res) ? '<span class="sother">' + otherRolls(res) + '</span>' : '') +
       (num !== null ? '<span class="smod">' + (num > 0 ? '+' + num : String(num)) + '</span>' : '') + '</div>';

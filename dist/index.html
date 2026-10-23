@@ -162,124 +162,13 @@ body{
   text-overflow:ellipsis;
 }
 
-.ac{
-  flex:0 0 auto;
-  display:flex;
-  align-items:center;
-  gap:5px;
-  padding:4px 9px;
-  min-height:28px;
-  border:1px solid var(--edge);
-  border-radius:999px;
-  background:rgba(255,255,255,.03);
-  font-size:10.5px;
-  letter-spacing:.08em;
-  color:var(--muted);
-  cursor:pointer;
-}
-.ac input{
-  width:26px;
-  padding:0;
-  border:0;
-  background:none;
-  color:var(--ink);
-  font:inherit;
-  font-variant-numeric:tabular-nums;
-  text-align:center;
-  outline:none;
-  appearance:textfield;
-  -moz-appearance:textfield;
-}
-.ac input::-webkit-outer-spin-button,
-.ac input::-webkit-inner-spin-button{appearance:none;-webkit-appearance:none;margin:0}
-.ac input::placeholder{color:#5c5778}
-.ac:focus-within{border-color:rgba(var(--arcane-rgb),.6);box-shadow:0 0 0 2px rgba(var(--arcane-rgb),.15)}
 
-/* ---- power slider ---- */
+/* ---- the kinds of damage ---- */
 
-.slider{flex:0 0 auto}
-
-input[type=range]{
-  -webkit-appearance:none;
-  appearance:none;
-  display:block;
-  width:100%;
-  height:28px;
-  margin:0;
-  padding:0;
-  background:transparent;
-}
-input[type=range]:focus-visible{outline:2px solid var(--arcane);outline-offset:3px;border-radius:6px}
-input[type=range]::-webkit-slider-runnable-track{
-  height:4px;
-  border-radius:2px;
-  background:linear-gradient(90deg,var(--arcane) 0 var(--fill,0%),rgba(255,255,255,.13) var(--fill,0%) 100%);
-}
-input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;
-  appearance:none;
-  width:26px;
-  height:26px;
-  margin-top:-11px;
-  border-radius:50%;
-  border:1px solid rgba(255,255,255,.42);
-  background:radial-gradient(circle at 34% 28%,#dccaff,#8a68f5 58%,#5a3fd2);
-  box-shadow:0 3px 10px rgba(0,0,0,.6);
-}
-input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:rgba(255,255,255,.13)}
-input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--arcane)}
-input[type=range]::-moz-range-thumb{
-  width:24px;height:24px;border-radius:50%;border:1px solid rgba(255,255,255,.42);
-  background:#8a68f5;box-shadow:0 3px 10px rgba(0,0,0,.6);
-}
-
-.stops{position:relative;height:15px}
-.stop{
-  position:absolute;
-  top:0;
-  transform:translateX(-50%);
-  padding:1px 2px;
-  border:0;
-  background:none;
-  color:#615c7d;
-  font-family:var(--sans);
-  font-size:10px;
-  letter-spacing:.06em;
-  cursor:pointer;
-  white-space:nowrap;
-}
-.stop.on{color:var(--arcane);font-weight:600}
-.stop:focus-visible{outline:2px solid var(--arcane);outline-offset:1px;border-radius:3px}
-
-/* ---- toggle chips ---- */
-
-.chips{display:flex;gap:6px;row-gap:6px;flex:0 0 auto;flex-wrap:wrap}
-
-.chip{
-  flex:0 1 auto;
-  min-width:0;
-  padding:6px 10px;
-  min-height:31px;
-  border:1px solid var(--edge);
-  border-radius:999px;
-  background:rgba(255,255,255,.03);
-  color:var(--muted);
-  font-family:var(--sans);
-  font-size:12px;
-  line-height:1;
-  letter-spacing:.02em;
-  white-space:nowrap;
-  cursor:pointer;
-  transition:border-color .15s,color .15s,background-color .15s;
-}
-.chip:focus-visible{outline:2px solid var(--arcane);outline-offset:2px}
-.chip[aria-pressed="true"]{
-  border-color:rgba(var(--crgb),.55);
-  background:rgba(var(--crgb),.12);
-  color:rgb(var(--crgb));
-}
-.chip[hidden]{display:none}
-
+.force{color:var(--force)}
+.fire{color:var(--fire)}
+.lightning{color:var(--lightning)}
+.necrotic{color:var(--necrotic)}
 /* ---- view tabs ---- */
 
 .tabs{
@@ -901,7 +790,7 @@ input[type=range]::-moz-range-thumb{
 
 /* A card is held and dragged, so a press on one must not start a text
    selection or the phone's own long press menu. */
-.card,.fcard,.crow,.srow,.lv,.die,.chip,.clsum{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.card,.fcard,.crow,.srow,.lv,.die,.clsum{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .clsum{font-size:10.5px;color:var(--muted);margin:-3px 0 1px;letter-spacing:.01em}
 .clsum[hidden]{display:none}
 .clrow{display:flex;align-items:center;gap:6px}
@@ -1004,223 +893,9 @@ input[type=range]::-moz-range-thumb{
 .rest:active{border-color:rgba(var(--arcane-rgb),.5);color:var(--arcane);background:rgba(var(--arcane-rgb),.12)}
 .note{flex:0 0 auto;margin:0;font-size:10.5px;color:#7d7899}
 
-/* ---- build summary ---- */
-
-.summary{
-  flex:0 0 auto;
-  display:flex;
-  flex-direction:column;
-  gap:1px;
-  font-size:10.5px;
-  line-height:1.3;
-  color:#7d7899;
-}
-.summary em{font-style:normal}
-.summary b{color:var(--ink);font-weight:600}
-.ghostnum{font-size:15px;color:#6f6a8d}
-.ghostroll{color:#6f6a8d}
-
-/* ---- result board ---- */
-
-.board{
-  flex:1 1 auto;
-  min-height:0;
-  display:flex;
-  flex-direction:column;
-  overflow-y:auto;
-  overflow-x:hidden;
-  scrollbar-width:none;
-}
-.board::-webkit-scrollbar{width:0;height:0}
-
-.grid{
-  flex:1 1 auto;
-  display:grid;
-  grid-template-columns:repeat(var(--cols,3),minmax(0,1fr));
-  gap:6px;
-  align-content:stretch;
-}
-
-.cell{
-  display:flex;
-  flex-direction:column;
-  gap:5px;
-  padding:8px 8px 9px;
-  border:1px solid var(--edge);
-  border-radius:5px;
-  background:
-    radial-gradient(120% 55% at 50% 54%,rgba(var(--beam,var(--arcane-rgb)),.22),transparent 72%),
-    linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.012));
-  min-width:0;
-  animation:rise .22s ease-out both;
-  animation-delay:calc(var(--i,0) * 45ms);
-}
-.grid.quick{grid-template-rows:1fr auto 1fr}
-.rowsep{
-  grid-column:1 / -1;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:1px 0;
-  color:var(--muted);
-  font-size:8.5px;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-}
-.rowsep::before,.rowsep::after{content:'';flex:1 1 auto;height:1px;background:var(--edge)}
-
-/* the quickened row wears the colour of the chip that called it */
-.cell.quick{border-color:rgba(92,214,220,.30)}
-.cell.crit{
-  border-color:rgba(var(--gold-rgb),.55);
-  box-shadow:0 0 0 1px rgba(var(--gold-rgb),.14),0 8px 20px rgba(var(--gold-rgb),.10);
-}
-.cell.ghost{opacity:.55;animation:none}
-
-@keyframes rise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
-
-.atk{display:flex;align-items:baseline;gap:4px}
-.at{
-  font-family:var(--display);
-  font-weight:700;
-  font-size:27px;
-  line-height:1;
-  font-variant-numeric:tabular-nums;
-}
-.am{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
-
-.badge{
-  margin-left:auto;
-  align-self:center;
-  padding:2px 5px;
-  border:1px solid;
-  border-radius:3px;
-  font-size:9px;
-  letter-spacing:.1em;
-  line-height:1.2;
-}
-.badge.crit{color:var(--gold);border-color:rgba(var(--gold-rgb),.5);background:rgba(var(--gold-rgb),.10)}
-.badge.hit{color:#a9b6d8;border-color:rgba(169,182,216,.34);background:rgba(169,182,216,.08)}
-.badge.miss{color:#d08a9c;border-color:rgba(208,138,156,.45);background:rgba(208,138,156,.10)}
-
-.d20{display:flex;gap:4px;font-size:11px;line-height:1;color:var(--muted);font-variant-numeric:tabular-nums}
-.d20 span{padding:2px 4px;border-radius:3px;background:rgba(255,255,255,.05)}
-.d20 .kept{color:var(--ink);background:rgba(var(--arcane-rgb),.20);box-shadow:inset 0 0 0 1px rgba(var(--arcane-rgb),.5)}
-
-.beam{
-  flex:1 1 auto;
-  display:flex;
-  justify-content:center;
-  min-height:10px;
-}
-.beam::before{
-  content:'';
-  width:3px;
-  border-radius:2px;
-  background:linear-gradient(180deg,rgba(var(--beam,var(--arcane-rgb)),.5),rgba(var(--beam,var(--arcane-rgb)),.14));
-  box-shadow:0 0 10px rgba(var(--beam,var(--arcane-rgb)),.35);
-}
-
-.dmg{
-  padding-top:6px;
-  border-top:1px solid var(--edge);
-  display:flex;
-  flex-direction:column;
-  gap:5px;
-}
-.cell.miss .dmg{opacity:.38}
-
-.dtop{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
-.dt{
-  font-family:var(--display);
-  font-weight:700;
-  font-size:23px;
-  line-height:1;
-  font-variant-numeric:tabular-nums;
-}
-.kinds{display:flex;gap:5px;flex-wrap:wrap}
-.kinds em{font-style:normal;font-size:9.5px;letter-spacing:.03em}
-
-.force{color:var(--force)}
-.fire{color:var(--fire)}
-.lightning{color:var(--lightning)}
-.necrotic{color:var(--necrotic)}
-
-.dice{display:flex;gap:7px;flex-wrap:wrap}
-.g{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0}
-.g .lbl{font-size:10px;line-height:1.1;color:var(--muted);font-variant-numeric:tabular-nums}
-.g .roll{font-size:11.5px;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}
-.g .roll.tight{font-size:10px}
-.g.flat{opacity:.85}
-
-/* ---- tally ---- */
-
-.tally{
-  flex:0 0 auto;
-  display:flex;
-  align-items:baseline;
-  gap:6px;
-  min-height:22px;
-  font-size:10.5px;
-  color:var(--muted);
-  overflow:hidden;
-}
-.tally .big{
-  font-family:var(--display);
-  font-weight:700;
-  font-size:20px;
-  line-height:1;
-  color:var(--ink);
-  font-variant-numeric:tabular-nums;
-}
-.tally em{font-style:normal}
-
-/* ---- cast ---- */
-
-.cast{
-  position:relative;
-  flex:0 0 auto;
-  width:100%;
-  height:92px;
-  border:1px solid rgba(255,255,255,.2);
-  border-radius:16px;
-  background:linear-gradient(180deg,#9573ff 0%,#5a39d6 100%);
-  color:#fff;
-  font-family:var(--display);
-  font-weight:700;
-  font-size:34px;
-  letter-spacing:.16em;
-  padding-left:.16em;
-  text-shadow:0 1px 10px rgba(40,20,90,.5);
-  box-shadow:0 12px 30px rgba(92,58,220,.32),inset 0 1px 0 rgba(255,255,255,.32);
-  cursor:pointer;
-  touch-action:manipulation;
-  user-select:none;
-  -webkit-user-select:none;
-  overflow:hidden;
-}
-.cast:focus-visible{outline:2px solid #fff;outline-offset:3px}
-.cast:active{transform:translateY(1px);box-shadow:0 5px 16px rgba(92,58,220,.34),inset 0 1px 0 rgba(255,255,255,.25)}
-.cast .mark{
-  position:absolute;
-  right:-14px;
-  top:50%;
-  transform:translateY(-50%);
-  width:150px;
-  height:150px;
-  color:#fff;
-  opacity:.12;
-  pointer-events:none;
-}
-
 @media (prefers-reduced-motion:reduce){
-  .cell{animation:none}
-  .cast{transition:none}
   .stat .v.bump{animation:none}
 }
-
-@media (min-height:760px){
-  .cast{height:120px}
 }
 </style>
 </head>
@@ -1415,7 +1090,7 @@ input[type=range]::-moz-range-thumb{
   ]
 }</script>
 
-<script id="version-data" type="application/json">{"version":"2026-10-23T17:22:20.084Z"}</script>
+<script id="version-data" type="application/json">{"version":"2026-10-23T19:22:54.101Z"}</script>
 
 <script id="seed-data" type="application/json">{"features":[{"key":"innateSorcery","name":"Innate sorcery","source":"Sorcerer","active":true,"uses":2,"recovery":"long","cost":"","hidden":false,"action":"B","duration":"1 min","desc":"DC +1, advantage attack w/ spells sorcerer","creatures":[],"summons":false,"blocks":[{"t":"p","text":"An event in your past left an indelible mark on you, infusing you with simmering magic. As a Bonus Action, you can unleash that magic for 1 minute, during which you gain the following benefits:"},{"t":"list","items":["The spell save DC of your Sorcerer spells increases by 1.","You have Advantage on the attack rolls of Sorcerer spells you cast."]},{"t":"p","text":"You can use this feature twice, and you regain all expended uses of it when you finish a Long Rest."}],"seed":true},{"key":"metamagic","name":"Metamagic","source":"Sorcerer","active":true,"uses":8,"recovery":"long","cost":"","hidden":true,"action":"","duration":"","desc":"Heighten + quicken","creatures":[],"summons":false,"blocks":[{"t":"p","text":"Because your magic flows from within, you can alter your spells to suit your needs; you gain two Metamagic options of your choice from \"\" later in this class's description. You use the chosen options to temporarily modify spells you cast. To use an option, you must spend the number of Sorcery Points that it costs."},{"t":"p","text":"You can use only one Metamagic option on a spell when you cast it unless otherwise noted in one of those options."},{"t":"p","text":"Whenever you gain a Sorcerer level, you can replace one of your Metamagic options with one you don't know. You gain two more options at Sorcerer level 10 and two more at Sorcerer level 17."}],"seed":true},{"key":"tidesOfChaos","name":"Tides of chaos","source":"Wild Magic","active":true,"uses":1,"recovery":"long","cost":"","hidden":false,"action":"","duration":"","desc":"Advantage, on spell slot: roll surge to refund","creatures":[],"summons":false,"blocks":[{"t":"p","text":"You can manipulate chaos itself to give yourself Advantage on one D20 Test before you roll the d20. Once you do so, you must cast a Sorcerer spell with a spell slot or finish a Long Rest before you can use this feature again."},{"t":"p","text":"If you do cast a Sorcerer spell with a spell slot before you finish a Long Rest, you automatically roll on the Wild Magic Surge table."}],"seed":true},{"key":"sorcerousRest","name":"Sorcerous rest","source":"Sorcerer","active":true,"uses":1,"recovery":"long","cost":"","hidden":true,"action":"","duration":"","desc":"Regain 1/2 sorc level SP","creatures":[],"summons":false,"blocks":[{"t":"p","text":"When you finish a Short Rest, you can regain expended Sorcery Points, but no more than a number equal to half your Sorcerer level (round down). Once you use this feature, you can't do so again until you finish a Long Rest."}],"seed":true},{"key":"bendLuck","name":"Bend luck","source":"Wild Magic","active":true,"uses":0,"recovery":"special","cost":"sp","hidden":false,"action":"R","duration":"","desc":"Creature I can see rolls D20: +/-1d4","creatures":[],"summons":false,"blocks":[{"t":"p","text":"You have the ability to twist fate using your wild magic. Immediately after another creature you can see rolls the d20 for a D20 Test, you can take a Reaction and spend 1 Sorcery Point to roll 1d4 and apply the number rolled as a bonus or penalty (your choice) to the d20 roll."}],"seed":true},{"key":"magicalCunning","name":"Magical Cunning","source":"Warlock","active":true,"uses":1,"recovery":"long","cost":"","hidden":true,"action":"","duration":"1 min","desc":"Regain 1 spell slot","creatures":[],"summons":false,"blocks":[{"t":"p","text":"You can perform an esoteric rite for 1 minute. At the end of it, you regain expended Pact Magic spell slots but no more than a number equal to half your maximum (round up). Once you use this feature, you can't do so again until you finish a Long Rest."}],"seed":true},{"key":"hexCurse","name":"Hexblade curse","source":"Hexblade","active":true,"uses":1,"recovery":"short","cost":"","hidden":false,"action":"B","duration":"1 min","desc":"+PRO damage, crit 19+, regain CHA+lvl hp","creatures":[],"summons":false,"blocks":[{"t":"p","text":"Starting at 1st level, you gain the ability to place a baleful curse on someone. As a bonus action, choose one creature you can see within 30 feet of you. The target is cursed for 1 minute. The curse ends early if the target dies, you die, or you are [[c:incapacitated]]. Until the curse ends, you gain the following benefits:"},{"t":"list","items":["You gain a bonus to damage rolls against the cursed target. The bonus equals your proficiency bonus.","Any attack roll you make against the cursed target is a critical hit on a roll of 19 or 20 on the d20.","If the cursed target dies, you regain hit points equal to your warlock level + your Charisma modifier (minimum of 1 hit point)."]},{"t":"p","text":"You can't use this feature again until you finish a short or long rest."}],"seed":true},{"key":"elvenLineageI","name":"Elven Lineage I","source":"High Elf","active":true,"uses":1,"recovery":"long","cost":"","hidden":false,"action":"","duration":"","desc":"Detect Magic for free","creatures":[],"summons":false,"blocks":[{"t":"p","text":"You are part of a lineage that grants you supernatural abilities. Choose a lineage from the Elven Lineages table. You gain the level 1 benefit of that lineage."},{"t":"p","text":"When you reach character levels 3 and 5, you learn a higher-level spell, as shown on the table. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level."},{"t":"p","text":"Intelligence, Wisdom, or Charisma is your spellcasting ability for the spells you cast with this trait (choose the ability when you select the lineage)."},{"t":"table","caption":"Elven Lineages","head":["Lineage","Level 1","Level 3","Level 5"],"rows":[["Drow","The range of your Darkvision increases to 120 feet. You also know the Dancing Lights cantrip.","Faerie Fire","Darkness"],["High Elf","You know the Prestidigitation cantrip. Whenever you finish a Long Rest, you can replace that cantrip with a different .","Detect Magic","Misty Step"],["Wood Elf","Your Speed increases to 35 feet. You also know the Druidcraft cantrip.","Longstrider","Pass without Trace"]]}],"seed":true},{"key":"elvenLineageII","name":"Elven Lineage II","source":"High Elf","active":true,"uses":1,"recovery":"long","cost":"","hidden":false,"action":"","duration":"","desc":"Misty Step for free","creatures":[],"summons":false,"blocks":[{"t":"p","text":"You are part of a lineage that grants you supernatural abilities. Choose a lineage from the Elven Lineages table. You gain the level 1 benefit of that lineage."},{"t":"p","text":"When you reach character levels 3 and 5, you learn a higher-level spell, as shown on the table. You always have that spell prepared. You can cast it once without a spell slot, and you regain the ability to cast it in that way when you finish a Long Rest. You can also cast the spell using any spell slots you have of the appropriate level."},{"t":"p","text":"Intelligence, Wisdom, or Charisma is your spellcasting ability for the spells you cast with this trait (choose the ability when you select the lineage)."},{"t":"table","caption":"Elven Lineages","head":["Lineage","Level 1","Level 3","Level 5"],"rows":[["Drow","The range of your Darkvision increases to 120 feet. You also know the Dancing Lights cantrip.","Faerie Fire","Darkness"],["High Elf","You know the Prestidigitation cantrip. Whenever you finish a Long Rest, you can replace that cantrip with a different .","Detect Magic","Misty Step"],["Wood Elf","Your Speed increases to 35 feet. You also know the Druidcraft cantrip.","Longstrider","Pass without Trace"]]}],"seed":true},{"key":"sorceryIncarnate","name":"Sorc incarnate","source":"Sorcerer","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Spend 2 SP: regain innate sorcery","creatures":[],"summons":false,"blocks":[{"t":"p","text":"If you have no uses of Innate Sorcery left, you can use it if you spend 2 Sorcery Points when you take the Bonus Action to activate it."},{"t":"p","text":"In addition, while your Innate Sorcery feature is active, you can use up to two of your on each spell you cast."}],"seed":true},{"key":"devilsSight","name":"Devil's sight","source":"Warlock","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Darkvision 120 ft, see darkness","creatures":[],"summons":false,"blocks":[{"t":"p","text":"You can see normally in darkness, both magical and nonmagical, to a distance of 120 feet."}],"seed":true},{"key":"repellingBlast","name":"Repelling blast","source":"Warlock","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Hit: push 10 feet straight away from you","creatures":[],"summons":false,"blocks":[{"t":"p","text":"When you hit a creature with eldritch blast, you can push the creature up to 10 feet away from you in a straight line."}],"seed":true},{"key":"agonisingBlast","name":"Agonising blast","source":"Warlock","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"+CHA damage","creatures":[],"summons":false,"blocks":[{"t":"p","text":"When you cast eldritch blast, add your Charisma modifier to the damage it deals on a hit."}],"seed":true},{"key":"wildSurge","name":"Wild surge","source":"Wild Magic","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Every spell slot: roll d20, 20 = roll surge","creatures":[],"summons":false,"blocks":[{"t":"p","text":"Your spellcasting can unleash surges of untamed magic. Once per turn, you can roll 1d20 immediately after you cast a Sorcerer spell with a spell slot. If you roll a 20, roll on the Wild Magic Surge table to create a magical effect."},{"t":"p","text":"If the magical effect is a spell, it is too wild to be affected by your Metamagic."},{"t":"table","caption":"Wild Magic Surge","head":["1d100","Effect"],"rows":[["01–04","Roll on this table at the start of each of your turns for the next minute, ignoring this result on subsequent rolls."],["05–08","A creature that is Friendly toward you appears in a random unoccupied space within 60 feet of you. The creature is under the DM's control and disappears 1 minute later. Roll 1d4 to determine the creature: on a 1, a Modron Duodrone appears; on a 2, a Flumph appears; on a 3, a Modron Monodrone appears; on a 4, a Unicorn appears. See the Monster Manual for the creature's stat block."],["09–12","For the next minute, you regain 5 Hit Points at the start of each of your turns."],["13–16","Creatures have Disadvantage on saving throws against the next spell you cast in the next minute that involves a saving throw."],["17–20","You are subjected to an effect that lasts for 1 minute unless its description says otherwise. Roll 1d8 to determine the effect: on a 1, you're surrounded by faint, ethereal music only you and creatures within 5 feet of you can hear; on a 2, your size increases by one size category; on a 3, you grow a long beard made of feathers that remains until you sneeze, at which point the feathers explode from your face and vanish; on a 4, you must shout when you speak; on a 5, illusory butterflies flutter in the air within 10 feet of you; on a 6, an eye appears on your forehead, granting you Advantage on Wisdom (Perception) checks; on a 7, pink bubbles float out of your mouth whenever you speak; on an 8, your skin turns a vibrant shade of blue for 24 hours or until the effect is ended by a Remove Curse spell."],["21–24","For the next minute, all your spells with a casting time of an action have a casting time of a Bonus Action."],["25–28","You are transported to the Astral Plane until the end of your next turn. You then return to the space you previously occupied or the nearest unoccupied space if that space is occupied."],["29–32","The next time you cast a spell that deals damage within the next minute, don't roll the spell's damage dice for the damage. Instead use the highest number possible for each damage die."],["33–36","You have Resistance to all damage for the next minute."],["37–40","You turn into a potted plant until the start of your next turn. While you're a plant, you have the [[c:Incapacitated]] condition and have Vulnerability to all damage. If you drop to 0 Hit Points, your pot breaks, and your form reverts."],["41–44","For the next minute, you can teleport up to 20 feet as a Bonus Action on each of your turns."],["45–48","You and up to three creatures you choose within 30 feet of you have the [[c:Invisible]] condition for 1 minute. This invisibility ends on a creature immediately after it makes an attack roll, deals damage, or casts a spell."],["49–52","A spectral shield hovers near you for the next minute, granting you a +2 bonus to AC and immunity to Magic Missile."],["53–56","You can take one extra action on this turn."],["57–60","You cast a random spell. If the spell normally requires Concentration, it doesn't require Concentration in this case; the spell lasts for its full duration. Roll 1d10 to determine the spell: on a 1, Confusion; on a 2, Fireball; on a 3, Fog Cloud; on a 4, Fly (cast on a random creature within 60 feet of you), on a 5, Grease; on a 6, Levitate (cast on yourself); on a 7, Magic Missile (cast as a level 5 spell); on an 8, Mirror Image; on a 9, Polymorph (cast on yourself), and if you fail the saving throw, you turn into a Goat (see appendix B); on a 10, See Invisibility."],["61–64","For the next minute, any flammable, nonmagical object you touch that isn't being worn or carried by another creature bursts into flame, takes [[d:1d4 Fire damage]], and is burning."],["65–68","If you die within the next hour, you immediately revive as if by the Reincarnate spell."],["69–72","You have the [[c:Frightened]] condition until the end of your next turn. The DM determines the source of your fear."],["73–76","You teleport up to 60 feet to an unoccupied space you can see."],["77–80","A random creature within 60 feet of you has the [[c:Poisoned]] condition for 1d4 hours."],["81–84","You radiate Bright Light in a 30-foot radius for the next minute. Any creature that ends its turn within 5 feet of you has the [[c:Blinded]] condition until the end of its next turn."],["85–88","Up to three creatures of your choice that you can see within 30 feet of you take [[d:1d10 Necrotic damage]]. You regain Hit Points equal to the sum of the Necrotic damage dealt."],["89–92","Up to three creatures of your choice that you can see within 30 feet of you take [[d:4d10 Lightning damage]]."],["93–96","You and all creatures within 30 feet of you have Vulnerability to Piercing damage for the next minute."],["97–00","Roll 1d6. On a 1, you regain 2d10 Hit Points; on a 2, one ally of your choice within 300 feet of you regains 2d10 Hit Points; on a 3, you regain your lowest-level expended spell slot; on a 4, one ally of your choice within 300 feet of you regains their lowest-level expended spell slot; on a 5, you regain all your expended Sorcery Points; on a 6, all the effects of row 17–20 affect you simultaneously."]]}],"seed":true},{"key":"hexWarrior","name":"Hex Warrior","source":"Hexblade","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Linked weapon attacks with CHA","creatures":[],"summons":false,"blocks":[{"t":"p","text":"At 1st level, you acquire the training necessary to effectively arm yourself for battle. You gain proficiency with medium armor, shields, and martial weapons."},{"t":"p","text":"The influence of your patron also allows you to mystically channel your will through a particular weapon. Whenever you finish a long rest, you can touch one weapon that you are proficient with and that lacks the two-handed property. When you attack with that weapon, you can use your Charisma modifier, instead of Strength or Dexterity, for the attack and damage rolls. This benefit lasts until you finish a long rest. If you later gain the Pact of the Blade feature, this benefit extends to every pact weapon you conjure with that feature, no matter the weapon's type."}],"seed":true},{"key":"trance","name":"Trance","source":"Elf","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Sleep 4h, conscious","creatures":[],"summons":false,"blocks":[{"t":"p","text":"You don't need to sleep, and magic can't put you to sleep. You can finish a Long Rest in 4 hours if you spend those hours in a trancelike meditation, during which you retain consciousness."}],"seed":true},{"key":"feyAncestry","name":"Fey Ancestry","source":"Elf","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Advantage vs Charm","creatures":[],"summons":false,"blocks":[{"t":"p","text":"You have Advantage on saving throws you make to avoid or end the [[c:Charmed]] condition."}],"seed":true},{"key":"elvenAccuracy","name":"Elven Accuracy","source":"Feat","active":false,"uses":0,"recovery":"passive","cost":"","hidden":false,"action":"","duration":"","desc":"Attacks roll 3d20 on advantage","creatures":[],"summons":false,"blocks":[{"t":"p","text":"The accuracy of elves is legendary, especially that of elf archers and spellcasters. You have uncanny aim with attacks that rely on precision rather than brute force. You gain the following benefits:"},{"t":"list","items":["Whenever you have advantage on an attack roll using Dexterity, Intelligence, Wisdom, or Charisma, you can reroll one of the dice once."]}],"seed":true}],"spells":[{"name":"Produce Flame","level":0},{"name":"Shocking Grasp","level":0},{"name":"Blade Ward","level":0},{"name":"Eldritch Blast","level":0},{"name":"Mage Hand","level":0},{"name":"Message","level":0},{"name":"Prestidigitation","level":0},{"name":"Minor Illusion","level":0},{"name":"Mending","level":0},{"name":"Thunderclap","level":0},{"name":"Chaos Bolt","level":1},{"name":"Create or Destroy Water","level":1},{"name":"Unseen Servant","level":1},{"name":"Shield","level":1},{"name":"Wrathful Smite","level":1},{"name":"Detect Magic","level":1},{"name":"Hex","level":1},{"name":"Armor of Agathys","level":1},{"name":"Hellish Rebuke","level":1},{"name":"Tasha's Hideous Laughter","level":1},{"name":"Absorb Elements","level":1},{"name":"Jump","level":1},{"name":"Silvery Barbs","level":1},{"name":"Heat Metal","level":2},{"name":"Rope Trick","level":2},{"name":"Blur","level":2},{"name":"Branding Smite","level":2},{"name":"Misty Step","level":2},{"name":"Blindness/Deafness","level":2},{"name":"Battle Familiar","level":2},{"name":"Mirror Image","level":2},{"name":"Darkness","level":2},{"name":"Scorching Ray","level":2},{"name":"Hold Person","level":2},{"name":"Call Lightning","level":3},{"name":"Elemental Weapon","level":3},{"name":"Glyph of Warding","level":3},{"name":"Fireball","level":3},{"name":"Water Breathing","level":3},{"name":"Catnap","level":3},{"name":"Conjure Minor Elementals","level":4},{"name":"Divination","level":4},{"name":"Otiluke's Resilient Sphere","level":4},{"name":"Animate Objects","level":5},{"name":"Conjure Elemental","level":5},{"name":"Hold Monster","level":5},{"name":"Dominate Person","level":5}],"dice":{"Barbarian":12,"Bard":8,"Cleric":8,"Druid":8,"Fighter":10,"Monk":8,"Paladin":10,"Ranger":10,"Rogue":8,"Sorcerer":6,"Warlock":8,"Wizard":6}}</script>
 
@@ -2691,6 +2366,36 @@ input[type=range]::-moz-range-thumb{
     return html;
   }
 
+  /* The shape of a die, the way the app draws them: a d6 is a square, a
+     d20 a hexagon. The rules hold the points and where the number sits. */
+  function diePoints(sides) {
+    var pts = (SR && SR.DIE_SHAPES) ? SR.DIE_SHAPES[sides] : '';
+    if (pts) return pts;
+    var built = [], i, a;
+    for (i = 0; i < sides; i++) {
+      a = -Math.PI / 2 + i * 2 * Math.PI / sides;
+      built.push((12 + 9.2 * Math.cos(a)).toFixed(2) + ',' + (12 + 9.2 * Math.sin(a)).toFixed(2));
+    }
+    return built.join(' ');
+  }
+
+  /* The die, with nothing in it. */
+  function dieIcon(sides) {
+    return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<polygon points="' + diePoints(sides) + '" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
+  }
+
+  /* The die, with a number in it. */
+  function dieBig(sides, number) {
+    var lab = (SR && SR.DIE_LABEL && SR.DIE_LABEL[sides]) ? SR.DIE_LABEL[sides] : { y: 15, size: 9 };
+    var out = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<polygon points="' + diePoints(sides) + '" fill="none" stroke="currentColor" stroke-width="1.5"/>';
+    if (number !== '' && number !== null && number !== undefined) {
+      out += '<text x="12" y="' + lab.y + '" text-anchor="middle" font-size="' + lab.size + '" fill="currentColor" ' +
+        'font-family="Cinzel, Georgia, serif">' + number + '</text>';
+    }
+    return out + '</svg>';
+  }
   /* The same class, written two ways on the sheet. */
   var SOURCE_CANON = {
     'izzet': 'Izzet engineer', 'high elf': 'Elf', 'elf': 'Elf', 'hex': 'Hexblade'
@@ -2892,6 +2597,8 @@ input[type=range]::-moz-range-thumb{
     installUpdate: installUpdate,
     openUrl: openUrl,
     plugFeature: plugFeature,
+    dieIcon: dieIcon,
+    dieBig: dieBig,
     esc: esc,
     markup: markup,
     field: field,
@@ -5349,61 +5056,83 @@ wireHead();
     return groups;
   }
 
+  /* The beam: the hit rides in a die, the damage rides under it. */
+  /* The beam: the hit rides in a die, the damage rides under it. */
   function cellHtml(beam) {
+    var out = '';
+    var types = [], i;
+    var power = R.powerOf(S.power);
+    var flatType = R.primaryType(power);
+
     if (!beam) {
       var groups = previewGroups();
-      var types = [];
-      groups.forEach(function (g) { if (types.indexOf(g.type) === -1) types.push(g.type); });
-      var power = R.powerOf(S.power);
+      for (i = 0; i < groups.length; i++) {
+        if (types.indexOf(groups[i].type) === -1) types.push(groups[i].type);
+      }
       var flat = FLAT + (S.curse ? 4 : 0);
-      var flatType = R.primaryType(power);
-      var out = '<div class="atk"><span class="at ghostnum">d20</span><span class="am">+' + ATK + '</span></div>';
-      out += '<div class="d20"><span class="ghostroll">--</span></div>';
-      out += '<div class="beam"></div>';
-      out += '<div class="dmg"><div class="dtop"><span class="dt ghostnum">--</span><span class="kinds">';
+      out += '<div class="vhit">';
+      out += '<span class="vdie">' + C.dieBig(20, '') + '</span>';
+      out += '<span class="vsum">';
+      out += '<span class="vmini">' + C.dieIcon(20) + '</span>';
+      out += '<span class="vroll ghost">--</span>';
+      out += '<span class="vmod">+' + ATK + '</span>';
+      out += '</span></div>';
+      out += '<div class="vbeam"></div>';
+      out += '<div class="vdmg">';
+      out += '<div class="vdt ghost">--</div>';
+      out += '<div class="vkinds">';
       types.forEach(function (t) { out += '<em class="' + t + '">' + t + '</em>'; });
-      out += '</span></div><div class="dice">';
+      out += '</div>';
+      out += '<div class="vdice">';
       groups.forEach(function (g) {
-        out += '<span class="g"><span class="lbl ' + g.type + '">' + g.label + '</span>';
-        out += '<span class="roll ghostroll">--</span></span>';
+        out += '<span class="vg"><span class="vlbl ' + g.type + '">' + g.label + '</span>';
+        out += '<span class="vroll ghost">--</span></span>';
       });
-      if (flat) out += '<span class="g flat"><span class="lbl ' + flatType + '">+' + flat + '</span></span>';
+      if (flat) out += '<span class="vg vflat"><span class="vlbl ' + flatType + '">+' + flat + '</span></span>';
       out += '</div></div>';
       return out;
     }
 
-    var out = '<div class="atk">';
-    out += '<span class="at">' + beam.total + '</span>';
-    out += '<span class="am">+' + ATK + '</span>';
-    if (beam.crit) out += '<span class="badge crit">crit</span>';
-    else if (beam.hit === true) out += '<span class="badge hit">hit</span>';
-    else if (beam.hit === false) out += '<span class="badge miss">miss</span>';
-    out += '</div>';
-
-    out += '<div class="d20">';
-    beam.rolls.forEach(function (r) {
-      out += '<span' + (r === beam.kept && beam.rolls.length > 1 ? ' class="kept"' : '') + '>' + r + '</span>';
-    });
-    out += '</div>';
-    out += '<div class="beam"></div>';
-
-    var types = [], i;
     for (i = 0; i < beam.groups.length; i++) {
       if (types.indexOf(beam.groups[i].type) === -1) types.push(beam.groups[i].type);
     }
-    /* the flat bonus is damage of the spell's own type */
-    var flatType = R.primaryType(R.powerOf(S.power));
 
-    out += '<div class="dmg"><div class="dtop"><span class="dt">' + beam.damage + '</span><span class="kinds">';
+    /* the hit: the final roll rides in a die of its own */
+    out += '<div class="vhit">';
+    out += '<span class="vdie">' + C.dieBig(20, beam.total) + '</span>';
+    out += '<span class="vsum">';
+    out += '<span class="vmini">' + C.dieIcon(20) + '</span>';
+    out += '<span class="vroll">' + beam.kept + '</span>';
+    if (beam.rolls.length > 1) {
+      /* the dice that were thrown away, the one that was kept left out */
+      var other = [], seen = false;
+      for (i = 0; i < beam.rolls.length; i++) {
+        if (!seen && beam.rolls[i] === beam.kept) { seen = true; continue; }
+        other.push(beam.rolls[i]);
+      }
+      if (other.length) out += '<span class="vother">' + other.join(' ') + '</span>';
+    }
+    out += '<span class="vmod">+' + ATK + '</span>';
+    out += '</span>';
+    if (beam.crit) out += '<span class="vbadge vcrit">crit</span>';
+    else if (beam.hit === true) out += '<span class="vbadge vhit">hit</span>';
+    else if (beam.hit === false) out += '<span class="vbadge vmiss">miss</span>';
+    out += '</div>';
+
+    out += '<div class="vbeam"></div>';
+
+    /* the damage: the total, the kinds under it, the dice that made it */
+    out += '<div class="vdmg">';
+    out += '<div class="vdt">' + beam.damage + '</div>';
+    out += '<div class="vkinds">';
     types.forEach(function (t) { out += '<em class="' + t + '">' + t + '</em>'; });
-    out += '</span></div>';
-
-    out += '<div class="dice">';
+    out += '</div>';
+    out += '<div class="vdice">';
     beam.groups.forEach(function (g) {
-      out += '<span class="g"><span class="lbl ' + g.type + '">' + g.label + '</span>';
-      out += '<span class="roll' + (g.rolls.length > 3 ? ' tight' : '') + '">' + g.rolls.join(',') + '</span></span>';
+      out += '<span class="vg"><span class="vlbl ' + g.type + '">' + g.label + '</span>';
+      out += '<span class="vroll' + (g.rolls.length > 3 ? ' tight' : '') + '">' + g.rolls.join(',') + '</span></span>';
     });
-    if (beam.flat) out += '<span class="g flat"><span class="lbl ' + flatType + '">+' + beam.flat + '</span></span>';
+    if (beam.flat) out += '<span class="vg vflat"><span class="vlbl ' + flatType + '">+' + beam.flat + '</span></span>';
     out += '</div></div>';
 
     return out;
@@ -5415,29 +5144,29 @@ wireHead();
     var count = R.beamCount(S);
     var quick = R.quickened(S);
     E.grid.style.setProperty('--cols', n === 4 ? '2' : '3');
-    E.grid.classList.toggle('quick', quick);
+    E.grid.classList.toggle('vquick', quick);
     E.grid.innerHTML = '';
 
     for (var i = 0; i < count; i++) {
       /* the quickened cast starts a second row */
       if (quick && i === n) {
         var sep = document.createElement('div');
-        sep.className = 'rowsep';
+        sep.className = 'vrowsep';
         sep.innerHTML = '<span>Quickened</span>';
         E.grid.appendChild(sep);
       }
       var beam = volley ? volley.beams[i] : null;
       var cell = document.createElement('article');
-      cell.className = 'cell' + (beam && beam.quick ? ' quick' : '');
+      cell.className = 'vcell' + (beam && beam.quick ? ' vquick' : '');
       var preview = beam ? beam.groups : previewGroups();
       cell.style.setProperty('--beam', TYPE_RGB[preview[0] ? preview[0].type : 'force'] || '155,123,255');
       if (!animate) cell.style.animation = 'none';
       cell.style.setProperty('--i', String(i));
       if (beam) {
-        if (beam.crit) cell.classList.add('crit');
-        if (beam.hit === false) cell.classList.add('miss');
+        if (beam.crit) cell.classList.add('vcrit');
+        if (beam.hit === false) cell.classList.add('vmiss');
       } else {
-        cell.classList.add('ghost');
+        cell.classList.add('vghost');
       }
       cell.innerHTML = cellHtml(beam);
       E.grid.appendChild(cell);
@@ -5472,24 +5201,29 @@ wireHead();
       '<span>damage ' + bits.join(' + ') + '</span>';
   }
 
+  /* The tally of all the rays: the total on one line, the kinds on the next. */
   function renderTally() {
     if (!volley) {
       E.tally.innerHTML = S.ac === null
-        ? '<span style="color:#615c7d">No target AC set, so damage shows for every beam</span>'
+        ? '<span class="vnote">No target AC set, so damage shows for every beam</span>'
         : '';
       return;
     }
     var t = R.tally(volley, S.ac);
-    var out = '<span class="big">' + t.total + '</span><span>damage</span>';
+    var out = '<div class="vtline">';
+    out += '<span class="vbig">' + t.total + '</span><span class="vunit">damage</span>';
     if (S.ac !== null) {
-      out += '<span>&middot; ' + t.hits + ' hit' + (t.hits === 1 ? '' : 's');
+      out += '<span class="vextra">' + t.hits + ' hit' + (t.hits === 1 ? '' : 's');
       if (t.crits) out += ' &middot; ' + t.crits + ' crit' + (t.crits === 1 ? '' : 's');
       out += '</span>';
     }
+    out += '</div>';
     /* the flat bonus sits in its own type, so the tally shows it there */
+    out += '<div class="vtline vtypes">';
     t.order.forEach(function (type) {
-      out += '<em class="' + type + '">&middot; ' + t.byType[type] + ' ' + type + '</em>';
+      out += '<em class="' + type + '">' + t.byType[type] + ' ' + type + '</em>';
     });
+    out += '</div>';
     E.tally.innerHTML = out;
   }
 
@@ -5500,20 +5234,111 @@ wireHead();
     title: 'Volley',
     order: 1,
     blurb: 'The spell slider, the toggles and the beams.',
+  css: [
+    '.vac{flex:0 0 auto;display:flex;align-items:center;gap:5px;padding:4px 9px;min-height:28px;border:1px solid var(--edge);border-radius:999px;background:rgba(255,255,255,.03);font-size:10.5px;letter-spacing:.08em;color:var(--muted);cursor:pointer}',
+    '.vac input{width:26px;padding:0;border:0;background:none;color:var(--ink);font:inherit;font-variant-numeric:tabular-nums;text-align:center;outline:none;appearance:textfield;-moz-appearance:textfield}',
+    '.vac input::-webkit-outer-spin-button,.vac input::-webkit-inner-spin-button{appearance:none;-webkit-appearance:none;margin:0}',
+    '.vac input::placeholder{color:#5c5778}',
+    '.vac:focus-within{border-color:rgba(var(--arcane-rgb),.6);box-shadow:0 0 0 2px rgba(var(--arcane-rgb),.15)}',
+    '.vslider{flex:0 0 auto}',
+    '.vslider input[type=range]{-webkit-appearance:none;appearance:none;display:block;width:100%;height:28px;margin:0;padding:0;background:transparent}',
+    '.vslider input[type=range]:focus-visible{outline:2px solid var(--arcane);outline-offset:3px;border-radius:6px}',
+    '.vslider input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--arcane) 0 var(--fill,0%),rgba(255,255,255,.13) var(--fill,0%) 100%)}',
+    '.vslider input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:26px;height:26px;margin-top:-11px;border-radius:50%;border:1px solid rgba(255,255,255,.42);background:radial-gradient(circle at 34% 28%,#dccaff,#8a68f5 58%,#5a3fd2);box-shadow:0 3px 10px rgba(0,0,0,.6)}',
+    '.vslider input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:rgba(255,255,255,.13)}',
+    '.vslider input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--arcane)}',
+    '.vslider input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;border:1px solid rgba(255,255,255,.42);background:#8a68f5;box-shadow:0 3px 10px rgba(0,0,0,.6)}',
+    '.vstops{position:relative;height:15px}',
+    '.vstop{position:absolute;top:0;transform:translateX(-50%);padding:1px 2px;border:0;background:none;color:#615c7d;font-family:var(--sans);font-size:10px;letter-spacing:.06em;cursor:pointer;white-space:nowrap}',
+    '.vstop.on{color:var(--arcane);font-weight:600}',
+    '.vstop:focus-visible{outline:2px solid var(--arcane);outline-offset:1px;border-radius:3px}',
+    '.vchips{display:flex;gap:6px;row-gap:6px;flex:0 0 auto;flex-wrap:wrap}',
+    '.vchip{flex:0 1 auto;min-width:0;padding:6px 10px;min-height:31px;border:1px solid var(--edge);border-radius:999px;background:rgba(255,255,255,.03);color:var(--muted);font-family:var(--sans);font-size:12px;line-height:1;letter-spacing:.02em;white-space:nowrap;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:border-color .15s,color .15s,background-color .15s}',
+    '.vchip:focus-visible{outline:2px solid var(--arcane);outline-offset:2px}',
+    '.vchip[aria-pressed=\"true\"]{border-color:rgba(var(--crgb),.55);background:rgba(var(--crgb),.12);color:rgb(var(--crgb))}',
+    '.vchip[hidden]{display:none}',
+    '.vsummary{flex:0 0 auto;display:flex;flex-direction:column;gap:1px;font-size:10.5px;line-height:1.3;color:#7d7899}',
+    '.vsummary em{font-style:normal}',
+    '.vsummary b{color:var(--ink);font-weight:600}',
+    '.vboard{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}',
+    '.vboard::-webkit-scrollbar{width:0;height:0}',
+    '.vgrid{flex:1 1 auto;display:grid;grid-template-columns:repeat(var(--cols,3),minmax(0,1fr));gap:6px;align-content:stretch}',
+    '.vgrid.vquick{grid-template-rows:1fr auto 1fr}',
+    '.vrowsep{grid-column:1 / -1;display:flex;align-items:center;gap:8px;padding:1px 0;color:var(--muted);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase}',
+    '.vrowsep::before,.vrowsep::after{content:\'\';flex:1 1 auto;height:1px;background:var(--edge)}',
+
+    /* the beam: everything in it is centred */
+    '.vcell{display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 5px 8px;border:1px solid var(--edge);border-radius:5px;background:radial-gradient(120% 55% at 50% 54%,rgba(var(--beam,var(--arcane-rgb)),.22),transparent 72%),linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.012));min-width:0;animation:vrise .22s ease-out both;animation-delay:calc(var(--i,0) * 45ms)}',
+    '@keyframes vrise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}',
+    '.vcell.vquick{border-color:rgba(92,214,220,.30)}',
+    '.vcell.vcrit{border-color:rgba(var(--gold-rgb),.55);box-shadow:0 0 0 1px rgba(var(--gold-rgb),.14),0 8px 20px rgba(var(--gold-rgb),.10)}',
+    '.vcell.vghost{opacity:.55;animation:none}',
+
+    /* the hit: the final roll rides in a die, the arithmetic rides under it */
+    '.vhit{display:flex;flex-direction:column;align-items:center;gap:3px;width:100%}',
+    '.vdie{width:34px;height:34px;color:var(--arcane)}',
+    '.vdie svg{width:100%;height:100%;display:block}',
+    '.vsum{display:flex;align-items:center;gap:3px;justify-content:center;font-size:11px;line-height:1;color:var(--muted);font-variant-numeric:tabular-nums}',
+    '.vmini{width:13px;height:13px;flex:0 0 auto;color:var(--muted)}',
+    '.vmini svg{width:13px;height:13px;display:block}',
+    '.vroll{color:var(--ink);font-weight:600}',
+    '.vroll.ghost{color:#6f6a8d;font-weight:400}',
+    '.vother{color:#6f6a8d;font-size:10px}',
+    '.vmod{color:var(--muted)}',
+    '.vbadge{align-self:center;padding:2px 5px;border:1px solid;border-radius:3px;font-size:8.5px;letter-spacing:.1em;line-height:1.2;text-transform:uppercase}',
+    '.vbadge.vcrit{color:var(--gold);border-color:rgba(var(--gold-rgb),.5);background:rgba(var(--gold-rgb),.10)}',
+    '.vbadge.vhit{color:#a9b6d8;border-color:rgba(169,182,216,.34);background:rgba(169,182,216,.08)}',
+    '.vbadge.vmiss{color:#d08a9c;border-color:rgba(208,138,156,.45);background:rgba(208,138,156,.10)}',
+
+    /* the beam of light between the hit and the damage */
+    '.vbeam{flex:1 1 auto;display:flex;justify-content:center;min-height:8px}',
+    '.vbeam::before{content:\'\';width:3px;border-radius:2px;background:linear-gradient(180deg,rgba(var(--beam,var(--arcane-rgb)),.5),rgba(var(--beam,var(--arcane-rgb)),.14));box-shadow:0 0 10px rgba(var(--beam,var(--arcane-rgb)),.35)}',
+
+    /* the damage: the total, the kinds under it, the dice that made it */
+    '.vdmg{width:100%;display:flex;flex-direction:column;align-items:center;gap:3px;padding-top:5px;border-top:1px solid var(--edge)}',
+    '.vdt{font-family:var(--display);font-weight:700;font-size:22px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}',
+    '.vdt.ghost{color:#6f6a8d}',
+    '.vkinds{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}',
+    '.vkinds em{font-style:normal;font-size:9.5px;letter-spacing:.03em}',
+    '.vdice{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}',
+    '.vg{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0}',
+    '.vlbl{font-size:10px;line-height:1.1;color:var(--muted);font-variant-numeric:tabular-nums}',
+    '.vroll.tight{font-size:10px}',
+    '.vg.vflat{opacity:.85}',
+
+    /* the tally of all the rays: the total, then the kinds */
+    '.vtally{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:1px;min-height:22px;font-size:10.5px;color:var(--muted)}',
+    '.vtline{display:flex;align-items:baseline;gap:6px;justify-content:center}',
+    '.vbig{font-family:var(--display);font-weight:700;font-size:20px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}',
+    '.vunit{color:var(--muted)}',
+    '.vextra{color:#7d7899}',
+    '.vtypes{gap:8px}',
+    '.vtypes em{font-style:normal}',
+    '.vnote{color:#615c7d}',
+
+    /* the cast */
+    '.vcast{position:relative;flex:0 0 auto;width:100%;height:92px;border:1px solid rgba(255,255,255,.2);border-radius:16px;background:linear-gradient(180deg,#9573ff 0%,#5a39d6 100%);color:#fff;font-family:var(--display);font-weight:700;font-size:34px;letter-spacing:.16em;padding-left:.16em;text-shadow:0 1px 10px rgba(40,20,90,.5);box-shadow:0 12px 30px rgba(92,58,220,.32),inset 0 1px 0 rgba(255,255,255,.32);cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overflow:hidden}',
+    '.vcast:focus-visible{outline:2px solid #fff;outline-offset:3px}',
+    '.vcast:active{transform:translateY(1px);box-shadow:0 5px 16px rgba(92,58,220,.34),inset 0 1px 0 rgba(255,255,255,.25)}',
+    '.vmark{position:absolute;right:-14px;top:50%;transform:translateY(-50%);width:150px;height:150px;color:#fff;opacity:.12;pointer-events:none}',
+    '@media (prefers-reduced-motion:reduce){.vcell{animation:none}.vcast{transition:none}}',
+    '@media (min-height:760px){.vcast{height:120px}}'
+  ].join('\n'),
+
     html: [
-      '<div class="slider">',
+      '<div class="vslider">',
       '  <input id="power" type="range" min="0" max="4" step="1" value="0" aria-label="Spell power">',
-      '  <div class="stops" id="stops"></div>',
+      '  <div class="vstops" id="stops"></div>',
       '</div>',
-      '<div class="chips" id="chips"></div>',
-      '<div class="summary" id="summary"></div>',
-      '<div class="board" id="board">',
-      '  <div class="grid" id="grid"></div>',
+      '<div class="vchips" id="chips"></div>',
+      '<div class="vsummary" id="summary"></div>',
+      '<div class="vboard" id="board">',
+      '  <div class="vgrid" id="grid"></div>',
       '</div>',
-      '<div class="tally" id="tally"></div>',
-      '<button class="cast" id="cast">',
+      '<div class="vtally" id="tally"></div>',
+      '<button class="vcast" id="cast">',
       '  <span id="castLabel">Cast</span>',
-      '  <svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">',
+      '  <svg class="vmark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">',
       '    <circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width=".8"/>',
       '    <path d="M12 2.2V6M12 18v3.8M2.2 12H6M18 12h3.8" stroke="currentColor" stroke-width=".8"/>',
       '    <path d="M12 6.4L17.6 12 12 17.6 6.4 12z" fill="none" stroke="currentColor" stroke-width="1"/>',
@@ -5561,7 +5386,7 @@ wireHead();
       R.POWERS.forEach(function (p, i) {
         var stop = document.createElement('button');
         stop.type = 'button';
-        stop.className = 'stop';
+        stop.className = 'vstop';
         stop.textContent = p.short;
         stop.style.left = 'calc(13px + (100% - 26px) * ' + (i / (R.POWERS.length - 1)) + ')';
         stop.addEventListener('click', function () {
@@ -5574,7 +5399,7 @@ wireHead();
       CHIPS.forEach(function (chip) {
         var b = document.createElement('button');
         b.type = 'button';
-        b.className = 'chip';
+        b.className = 'vchip';
         b.dataset.key = chip.key;
         b.textContent = chip.label;
         b.style.setProperty('--crgb', chip.rgb);
@@ -5603,7 +5428,7 @@ wireHead();
       api = a;
       S = a.character().volley;
       var wrap = document.createElement('label');
-      wrap.className = 'ac';
+      wrap.className = 'vac';
       wrap.id = 'acField';
       wrap.innerHTML = '<span>AC</span><input id="ac" type="number" inputmode="numeric" min="1" max="40" step="1" placeholder="—" aria-label="Target armor class">';
       root.appendChild(wrap);
@@ -7497,35 +7322,6 @@ wireHead();
     return c ? c.join(',') : '';
   }
 
-  /* The shape of a die, the way the app draws them. */
-  function diePoints(sides) {
-    var pts = C.SR && C.SR.DIE_SHAPES ? C.SR.DIE_SHAPES[sides] : '';
-    if (pts) return pts;
-    var built = [], i, a;
-    for (i = 0; i < sides; i++) {
-      a = -Math.PI / 2 + i * 2 * Math.PI / sides;
-      built.push((12 + 9.2 * Math.cos(a)).toFixed(2) + ',' + (12 + 9.2 * Math.sin(a)).toFixed(2));
-    }
-    return built.join(' ');
-  }
-
-  /* The die, with nothing in it. */
-  function dieIcon(sides) {
-    return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
-      '<polygon points="' + diePoints(sides) + '" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
-  }
-
-  /* The die, with a number in it. */
-  function dieBig(sides, number) {
-    var out = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
-      '<polygon points="' + diePoints(sides) + '" fill="none" stroke="currentColor" stroke-width="1.5"/>';
-    if (number !== '' && number !== null && number !== undefined) {
-      out += '<text x="12" y="15.4" text-anchor="middle" font-size="9" fill="currentColor" ' +
-        'font-family="Cinzel, Georgia, serif">' + number + '</text>';
-    }
-    return out + '</svg>';
-  }
-
   /* The rolls an attack holds: one per swing of the attack. */
   function rollsOf(card, name) {
     var v = card.rolls ? card.rolls[name] : null;
@@ -7570,7 +7366,7 @@ wireHead();
   function diceShapes(groups, res, col) {
     var out = '';
     groups.forEach(function (g) {
-      out += '<span class="sgres"><span class="sdmini">' + dieIcon(sidesOf(g.label)) + '</span>' +
+      out += '<span class="sgres"><span class="sdmini">' + C.dieIcon(sidesOf(g.label)) + '</span>' +
         '<span class="snum2"' + (col ? ' style="color:' + col + '"' : '') + '>' +
         (res ? g.rolls.join(',') : '--') + '</span></span>';
     });
@@ -7599,8 +7395,8 @@ wireHead();
     out += '<div class="scell-dmg"><span class="sk">Damage</span>' +
       '<span class="sformula"' + (col ? ' style="color:' + col + '"' : '') + '>' + C.esc(compact(damage)) + '</span></div>';
     out += '<div class="scell-die"><button type="button" class="sdie" data-role="roll" data-ix="' + ix + '" ' +
-      'aria-label="Roll the ' + C.esc(a.name) + '">' + dieBig(20, res ? res.total : '') + '</button></div>';
-    out += '<div class="scell-hit"><span class="sdmini">' + dieIcon(20) + '</span>' +
+      'aria-label="Roll the ' + C.esc(a.name) + '">' + C.dieBig(20, res ? res.total : '') + '</button></div>';
+    out += '<div class="scell-hit"><span class="sdmini">' + C.dieIcon(20) + '</span>' +
       '<span class="snum2">' + (res ? res.roll : '--') + '</span>' +
       (otherRolls(res) ? '<span class="sother">' + otherRolls(res) + '</span>' : '') +
       (num !== null ? '<span class="smod">' + (num > 0 ? '+' + num : String(num)) + '</span>' : '') + '</div>';
