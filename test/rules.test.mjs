@@ -852,6 +852,42 @@ console.log('the bestiary');
   check('the second swing holds its own roll', wizard.summons.list[0].rolls['Radiant Bow'].length, 2);
   body.listeners.click({ target: onDie('Radiant Bow', 1) });
   check('and it is rolled again, not added to', wizard.summons.list[0].rolls['Radiant Bow'].length, 2);
+
+  /* The hit points of a creature move with the buttons of the card. */
+  const onHp = (role) => ({
+    closest: (sel) => {
+      if (sel === '[data-role]') return { dataset: { role: role } };
+      if (sel === '.scard') return { dataset: { id: 's1' } };
+      return null;
+    }
+  });
+  const before = wizard.summons.list[0].hp;
+  body.listeners.click({ target: onHp('hpup') });
+  check('the hit point button moves the creature', wizard.summons.list[0].hp, before + 1);
+  body.listeners.click({ target: onHp('hpdown') });
+  check('and the other one takes it back', wizard.summons.list[0].hp, before);
+
+  /* A creature that is called comes to the table with its hit points full. */
+  wizard.summons.list.length = 0;
+  const page3 = fakeEl();
+  page3.call = fakeEl();
+  page3.querySelector = (sel) => (sel === '#callSummon' ? page3.call : fakeEl());
+  const opened3 = [];
+  const api3 = Object.assign({}, api, {
+    character: () => wizard,
+    characters: () => ({ c1: wizard }),
+    sheet: { open: (layer) => { opened3.push(layer); }, search: () => '', close: () => {}, closeAll: () => {} }
+  });
+  taken.summons.mount(page3, api3);
+  page3.call.click();
+  check('the page offers the sources of the character', opened3.length, 1);
+  const pick = (sel, data) => ({ closest: (s) => (s === sel ? { dataset: data } : null) });
+  opened3[0].onList({ target: pick('[data-src]', { src: 'spell:Summon Celestial' }) });
+  check('and the creatures of the source', opened3.length, 2);
+  opened3[1].onList({ target: pick('[data-key]', { key: 'celestial spirit' }) });
+  check('the creature is at the table', wizard.summons.list.length, 1);
+  check('and it comes with its hit points full', wizard.summons.list[0].hp, 40);
+  check('which are the hit points of the block', creatures['celestial spirit'].hpTerms.branches[0].terms[0].const, 40);
 }
 console.log(failures === 0 ? '\nall rules checks pass' : '\n' + failures + ' check(s) failed');
 process.exit(failures === 0 ? 0 : 1);

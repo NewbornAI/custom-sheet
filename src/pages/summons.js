@@ -396,8 +396,6 @@
     var groups = res ? res.groups : (C.R && C.R.diceIn ? C.R.diceIn(damage || '') : []);
     var flat = res ? res.flat : (C.R && C.R.flatIn ? C.R.flatIn(damage || '') : 0);
     var out = '<div class="sblock' + (res && res.crit ? ' crit' : '') + '" data-name="' + C.esc(a.name) + '">';
-    out += '<div class="srow"><span class="satkname">' + C.esc(a.name) + '</span>' +
-      '<span class="skind">' + C.esc(attackKind(a)) + '</span></div>';
     out += '<div class="sgrid">';
     out += '<div class="scell-atk"><span class="sk">Attack</span>' +
       '<span class="snum2">' + C.esc(bonus) + '</span>' +
@@ -426,8 +424,6 @@
     var col = colourOf(type);
     var range = attackRange(a);
     var out = '<div class="sblock" data-name="' + C.esc(a.name) + '">';
-    out += '<div class="srow"><span class="satkname">' + C.esc(a.name) + '</span>' +
-      '<span class="skind">' + C.esc(attackKind(a)) + '</span></div>';
     out += '<div class="sgrid">';
     out += '<div class="scell-atk"><span class="sk">Attack</span>' +
       '<input class="scin satkbonus" data-role="atkbonus" type="text" value="' + C.esc(bonus) + '" aria-label="Attack bonus">' +
@@ -439,6 +435,20 @@
     return out;
   }
 
+  /* All the swings of an attack, under the one name of the attack. */
+  function attackGroup(a, edit, rolls) {
+    var out = '<div class="sgroup">';
+    out += '<div class="srow"><span class="satkname">' + C.esc(a.name) + '</span>' +
+      '<span class="skind">' + C.esc(attackKind(a)) + '</span></div>';
+    if (editing) {
+      out += editBlock(a, edit);
+    } else {
+      var swings = a.multi && a.multi > 0 ? a.multi : 1;
+      for (var i = 0; i < swings; i++) out += swingBlock(a, edit, rolls[i] || null, i);
+    }
+    out += '</div>';
+    return out;
+  }
   /* The multiattack: how many attacks the creature makes. */
   function multiRow(a) {
     return '<div class="smulti"><span class="sk">' + C.esc(a.name) + '</span>' +
@@ -511,18 +521,17 @@
         '</div>';
     }
     if (actions.length) {
-      html += '<div class="sline"><span class="sk">Attacks</span></div>';
+      /* The multiattack rides the label of the attacks: how many of them
+         the creature makes. */
+      var multi = null;
+      actions.forEach(function (a) { if (a.count) multi = a; });
+      html += '<div class="sline"><span class="sk">Attacks</span>' +
+        (multi ? '<span class="ssep">-</span><span class="sk">' + C.esc(multi.name) + '</span>' +
+          '<span class="smultin">&times;' + multi.count + '</span>' : '') + '</div>';
       html += '<div class="satk">' + actions.map(function (a) {
-        if (a.count) return multiRow(a);
+        if (a.count) return '';
         if (!a.attack) return noteRow(a, edit[a.name]);
-        if (editing) return editBlock(a, edit[a.name]);
-        /* A creature that makes several attacks has a block for each of
-           them, and each block rolls on its own. */
-        var list = rollsOf(s, a.name);
-        var swings = a.multi && a.multi > 0 ? a.multi : 1;
-        var out = '';
-        for (var i = 0; i < swings; i++) out += swingBlock(a, edit[a.name], list[i] || null, i);
-        return out;
+        return attackGroup(a, edit[a.name], rollsOf(s, a.name));
       }).join('') + '</div>';
     }
     return html + '</div>';
@@ -549,6 +558,9 @@
       rolls: {}
     };
     summons().push(s);
+    /* The creature comes to the table with its hit points full. */
+    var full = derive(s);
+    if (full && full.hpMax !== null && full.hpMax !== undefined) s.hp = full.hpMax;
     commit();
     api.toast(s.name + ' comes to the table');
   }
@@ -571,7 +583,14 @@
       onList: function (ev) {
         var row = ev.target.closest('[data-form]');
         if (!row) return;
+        var before = derive(card);
         card.form = row.dataset.form;
+        /* The hit points follow the new maximum when the creature is not
+           hurt yet. */
+        var after = derive(card);
+        if (after && after.hpMax !== null && after.hpMax !== undefined) {
+          if (!before || card.hp === before.hpMax) card.hp = after.hpMax;
+        }
         api.sheet.close();
         buildCards();
         commit();
@@ -810,6 +829,7 @@
       '.sstep:active{border-color:var(--arcane);color:var(--arcane)}',
       '.sconc{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}',
       '.satk{display:flex;flex-direction:column;gap:6px}',
+      '.sgroup{display:flex;flex-direction:column;gap:4px}',
       '.sblock{border:1px solid var(--edge);border-radius:5px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));padding:6px 8px 7px;display:flex;flex-direction:column;gap:3px}',
       '.sblock.crit{border-color:rgba(var(--gold-rgb),.6);box-shadow:0 0 0 1px rgba(var(--gold-rgb),.16),0 8px 18px rgba(var(--gold-rgb),.12)}',
       '.srow{display:flex;align-items:baseline;gap:8px}',
@@ -912,6 +932,7 @@
           if (role === 'hpup' || role === 'hpdown') {
             var step = role === 'hpup' ? 1 : -1;
             s.hp = Math.max(0, Math.min(999, (Number(s.hp) || 0) + step));
+            buildCards();
             commit();
             return;
           }
