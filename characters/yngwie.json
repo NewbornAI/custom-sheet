@@ -55,9 +55,10 @@
           "name": "Bardic inspiration",
           "source": "Bard",
           "active": true,
+          "recovery": "short",
+          "bind": null,
           "max": 5,
           "left": 5,
-          "recovery": "short",
           "cost": "",
           "short": null,
           "hidden": false
@@ -67,9 +68,10 @@
           "name": "Countercharm",
           "source": "Bard",
           "active": true,
+          "recovery": "passive",
+          "bind": null,
           "max": 0,
           "left": 0,
-          "recovery": "passive",
           "cost": "",
           "short": null,
           "hidden": false
@@ -79,9 +81,10 @@
           "name": "Mote of potential",
           "source": "Creation",
           "active": true,
+          "recovery": "passive",
+          "bind": null,
           "max": 0,
           "left": 0,
-          "recovery": "passive",
           "cost": "",
           "short": null,
           "hidden": false
@@ -91,9 +94,10 @@
           "name": "Performance of creation",
           "source": "Creation",
           "active": true,
+          "recovery": "long",
+          "bind": null,
           "max": 1,
           "left": 1,
-          "recovery": "long",
           "cost": "",
           "short": null,
           "hidden": false
@@ -103,9 +107,10 @@
           "name": "Animating performance",
           "source": "Creation",
           "active": true,
+          "recovery": "long",
+          "bind": null,
           "max": 1,
           "left": 1,
-          "recovery": "long",
           "cost": "",
           "short": null,
           "hidden": false
@@ -115,9 +120,10 @@
           "name": "Font of inspiration",
           "source": "Bard",
           "active": false,
+          "recovery": "passive",
+          "bind": null,
           "max": 0,
           "left": 0,
-          "recovery": "passive",
           "cost": "",
           "short": null,
           "hidden": false
@@ -127,9 +133,10 @@
           "name": "Jack of all trades",
           "source": "Bard",
           "active": false,
+          "recovery": "passive",
+          "bind": null,
           "max": 0,
           "left": 0,
-          "recovery": "passive",
           "cost": "",
           "short": null,
           "hidden": false
@@ -139,9 +146,10 @@
           "name": "Expertise",
           "source": "Bard",
           "active": false,
+          "recovery": "passive",
+          "bind": null,
           "max": 0,
           "left": 0,
-          "recovery": "passive",
           "cost": "",
           "short": null,
           "hidden": false
@@ -151,9 +159,10 @@
           "name": "Magical secrets",
           "source": "Bard",
           "active": false,
+          "recovery": "passive",
+          "bind": null,
           "max": 0,
           "left": 0,
-          "recovery": "passive",
           "cost": "",
           "short": null,
           "hidden": false
@@ -163,9 +172,10 @@
           "name": "Musician",
           "source": "Feat",
           "active": false,
+          "recovery": "passive",
+          "bind": null,
           "max": 0,
           "left": 0,
-          "recovery": "passive",
           "cost": "",
           "short": null,
           "hidden": false
@@ -175,9 +185,10 @@
           "name": "Conjuration adept",
           "source": "Feat",
           "active": false,
+          "recovery": "passive",
+          "bind": null,
           "max": 0,
           "left": 0,
-          "recovery": "passive",
           "cost": "",
           "short": null,
           "hidden": false
@@ -187,9 +198,10 @@
           "name": "Abjuration adept",
           "source": "Feat",
           "active": false,
+          "recovery": "passive",
+          "bind": null,
           "max": 0,
           "left": 0,
-          "recovery": "passive",
           "cost": "",
           "short": null,
           "hidden": false
@@ -248,7 +260,7 @@
         }
       ],
       "init": 0,
-      "ac": null,
+      "ac": 14,
       "hp": {
         "current": 0,
         "max": 0
@@ -335,9 +347,15 @@
       "warlockLeft": 0,
       "warlockLevel": 1,
       "slotsTouched": false,
-      "selected": 1,
+      "selected": 0,
       "lists": {
-        "0": [],
+        "0": [
+          "Mage Hand",
+          "Minor Illusion",
+          "Blade Ward",
+          "Message",
+          "Mind Sliver"
+        ],
         "1": [
           "Entangle",
           "Shield"
@@ -373,11 +391,17 @@
         "Dimension Door": "Conjuration adept",
         "Banishment": "Abjuration adept",
         "Conjure Elemental": "Conjuration adept",
-        "Mass Cure Wounds": "Abjuration adept"
+        "Mass Cure Wounds": "Abjuration adept",
+        "Mage Hand": "Bard",
+        "Minor Illusion": "Bard",
+        "Blade Ward": "Bard",
+        "Message": "Bard",
+        "Mind Sliver": "High Elf"
       },
-      "pick": "Bard",
+      "pick": "High Elf",
       "classes": {
-        "Bard": true
+        "Bard": true,
+        "Wizard": true
       },
       "levelFilter": true,
       "surge": null
