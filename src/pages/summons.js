@@ -396,7 +396,7 @@
     var groups = res ? res.groups : (C.R && C.R.diceIn ? C.R.diceIn(damage || '') : []);
     var flat = res ? res.flat : (C.R && C.R.flatIn ? C.R.flatIn(damage || '') : 0);
     var out = '<div class="sblock' + (res && res.crit ? ' crit' : '') + '" data-name="' + C.esc(a.name) + '">';
-    out += '<div class="sgrid">';
+    out += '<div class="satkgrid">';
     out += '<div class="scell-atk"><span class="sk">Attack</span>' +
       '<span class="snum2">' + C.esc(bonus) + '</span>' +
       (range ? '<span class="ssep">-</span><span class="srng">' + C.esc(range) + '</span>' : '') + '</div>';
@@ -406,6 +406,7 @@
       'aria-label="Roll the ' + C.esc(a.name) + '">' + dieBig(20, res ? res.total : '') + '</button></div>';
     out += '<div class="scell-hit"><span class="sdmini">' + dieIcon(20) + '</span>' +
       '<span class="snum2">' + (res ? res.roll : '--') + '</span>' +
+      (otherRolls(res) ? '<span class="sother">' + otherRolls(res) + '</span>' : '') +
       (num !== null ? '<span class="smod">' + (num > 0 ? '+' + num : String(num)) + '</span>' : '') + '</div>';
     out += '<div class="scell-dmgres">' + diceShapes(groups, res, col) +
       (flat ? '<span class="smod">' + (flat > 0 ? '+' + flat : String(flat)) + '</span>' : '') + '</div>';
@@ -424,7 +425,7 @@
     var col = colourOf(type);
     var range = attackRange(a);
     var out = '<div class="sblock" data-name="' + C.esc(a.name) + '">';
-    out += '<div class="sgrid">';
+    out += '<div class="satkgrid">';
     out += '<div class="scell-atk"><span class="sk">Attack</span>' +
       '<input class="scin satkbonus" data-role="atkbonus" type="text" value="' + C.esc(bonus) + '" aria-label="Attack bonus">' +
       (range ? '<span class="ssep">-</span><span class="srng">' + C.esc(range) + '</span>' : '') + '</div>';
@@ -438,7 +439,7 @@
   /* All the swings of an attack, under the one name of the attack. */
   function attackGroup(a, edit, rolls) {
     var out = '<div class="sgroup">';
-    out += '<div class="srow"><span class="satkname">' + C.esc(a.name) + '</span>' +
+    out += '<div class="satkhead"><span class="satkname">' + C.esc(a.name) + '</span>' +
       '<span class="skind">' + C.esc(attackKind(a)) + '</span></div>';
     if (editing) {
       out += editBlock(a, edit);
@@ -449,6 +450,26 @@
     out += '</div>';
     return out;
   }
+  /* An action that can be used a number of times a day, like the healing
+     touch of a spirit. The book says so in the name of the action. */
+  function limitedOf(a) {
+    var m = String(a.name || '').match(/\((\d+)\s*\/\s*Day\)/i);
+    if (!m) return null;
+    return { max: Number(m[1]) || 1, name: String(a.name || '').replace(/\s*\([^)]*\)\s*$/, '') };
+  }
+  /* The die that was thrown away, when the roll had the advantage. */
+  function otherRolls(res) {
+    if (!res || !res.rolls || res.rolls.length < 2) return '';
+    var kept = res.rolls.indexOf(res.roll);
+    var out = [], i;
+    for (i = 0; i < res.rolls.length; i++) if (i !== kept) out.push(res.rolls[i]);
+    return out.join(' ');
+  }
+
+  /* The uses of a limited action of the card. */
+  function usesOf(card, name) {
+    return card && card.uses ? card.uses[name] : null;
+  }
   /* The multiattack: how many attacks the creature makes. */
   function multiRow(a) {
     return '<div class="smulti"><span class="sk">' + C.esc(a.name) + '</span>' +
@@ -457,11 +478,19 @@
 
   /* An action that is not an attack: a healing, a touch. It shows its dice
      and it does not roll. */
-  function noteRow(a, edit) {
+  function noteRow(a, edit, uses) {
     var damage = edit && edit.damage !== undefined && edit.damage !== '' ? edit.damage : a.damage;
     var type = damageType(a);
+    var limit = limitedOf(a);
+    var label = limit ? limit.name : a.name;
     var out = '<div class="snoteblock" data-name="' + C.esc(a.name) + '">' +
-      '<span class="satkname">' + C.esc(a.name) + '</span>';
+      '<span class="satkname">' + C.esc(label) + '</span>';
+    if (limit) {
+      var u = uses ? uses[a.name] : null;
+      var left = u ? Number(u.left) || 0 : limit.max;
+      out += '<button type="button" class="suses' + (left ? '' : ' out') + '" data-role="use" ' +
+        'aria-label="Use the ' + C.esc(label) + '">' + left + '/' + limit.max + '</button>';
+    }
     if (editing) {
       out += '<input class="scin satkdamage" data-role="atkdamage" type="text" value="' + C.esc(damage) + '" aria-label="Damage of the action">';
     } else if (damage) {
@@ -487,14 +516,10 @@
     var html = '<div class="scard" data-id="' + C.esc(s.id) + '">' +
       '<div class="sstop">' +
         '<input class="sname" data-role="name" value="' + C.esc(s.name) + '" aria-label="Name of the summon">' +
-        '<span class="ssrc">' + C.esc(block ? block.name : (s.spell || '')) + '</span>' +
+        '<button type="button" class="ssrc" data-role="source" title="' + C.esc(block ? block.name : (s.spell || '')) + '" aria-label="Open what called it">' + C.esc(s.spell || '') + '</button>' +
         '<button type="button" class="sdel" data-role="dismiss" aria-label="Dismiss the summon">&times;</button>' +
       '</div>';
-    if (editing && forms) {
-      html += '<div class="sline"><span class="sk">Form</span>' +
-        '<button type="button" class="spick on" data-role="form" aria-label="The form of the summon">' +
-        C.esc(formName(block, s.form)) + '</button></div>';
-    }
+
     html += '<div class="sline">' +
       '<span class="sk">AC</span>';
     if (editing) {
@@ -512,11 +537,18 @@
     } else {
       html += '<span class="sval">' + C.esc(max) + '</span>';
     }
-    html += '</span></div>';
+    html += '</span>' +
+      '<button type="button" class="schip' + (s.adv ? ' on' : '') + '" data-role="adv" aria-pressed="' +
+      (s.adv ? 'true' : 'false') + '" aria-label="Roll with advantage">Adv</button>' +
+      '</div>';
     if (editing) {
+      /* The slot comes first, then the form, then the concentration. */
       html += '<div class="sline"><span class="sk">Slot</span>' +
-        '<button type="button" class="spick on" data-role="slot" aria-label="The slot that paid for it">' +
+        '<button type="button" class="sfpick on" data-role="slot" aria-label="The slot that paid for it">' +
         (s.slot < 0 ? 'none' : String(s.slot)) + '</button>' +
+        (forms ? '<span class="sk">Form</span>' +
+          '<button type="button" class="sfpick on" data-role="form" aria-label="The form of the summon">' +
+          C.esc(formName(block, s.form)) + '</button>' : '') +
         (s.concentration ? '<span class="sconc">Concentration</span>' : '') +
         '</div>';
     }
@@ -530,7 +562,7 @@
           '<span class="smultin">&times;' + multi.count + '</span>' : '') + '</div>';
       html += '<div class="satk">' + actions.map(function (a) {
         if (a.count) return '';
-        if (!a.attack) return noteRow(a, edit[a.name]);
+        if (!a.attack) return noteRow(a, edit[a.name], s.uses);
         return attackGroup(a, edit[a.name], rollsOf(s, a.name));
       }).join('') + '</div>';
     }
@@ -542,6 +574,36 @@
     E.empty.hidden = summons().length > 0;
   }
 
+  /* The spell or the feature the creature came from, opened in the
+     overlay of the app. */
+  function openSource(card) {
+    if (!card.source) return;
+    if (card.source.indexOf('spell:') === 0) {
+      var name = card.source.slice(6);
+      var spell = C.bookByName[name];
+      if (!spell) { api.toast('the book does not have it'); return; }
+      api.sheet.open({
+        id: 'summonspell:' + name,
+        title: spell.name,
+        meta: C.field('Level', spell.level) + C.field('Range', spell.range) +
+          C.field('Duration', spell.duration) +
+          C.field('Conc', spell.concentration ? 'Yes' : 'No', spell.concentration ? 'yes' : ''),
+        text: C.renderBlocks(spell.blocks)
+      });
+      return;
+    }
+    if (card.source.indexOf('feature:') === 0) {
+      var key = card.source.slice(8);
+      var f = C.featureByKey[key];
+      if (!f) { api.toast('the library does not have it'); return; }
+      api.sheet.open({
+        id: 'summonfeature:' + key,
+        title: f.name,
+        meta: C.field('Action', f.action) + C.field('Duration', f.duration),
+        text: C.renderBlocks(f.blocks)
+      });
+    }
+  }
   /* ---- the creature that comes to the table ---- */
 
   function addSummon(source, block, key) {
@@ -553,14 +615,24 @@
       slot: source.level === null || source.level === undefined ? -1 : source.level,
       hp: 0,
       spell: source.name,
+      source: source.id,
       concentration: !!source.concentration,
+      adv: false,
       edit: { ac: '', hpMax: '', attacks: {} },
+      uses: {},
       rolls: {}
     };
     summons().push(s);
     /* The creature comes to the table with its hit points full. */
     var full = derive(s);
     if (full && full.hpMax !== null && full.hpMax !== undefined) s.hp = full.hpMax;
+    /* The actions that can be used a number of times a day come with their
+       uses, and they are spent one by one. */
+    (full ? full.actions : []).forEach(function (a) {
+      var limit = limitedOf(a);
+      if (!limit) return;
+      s.uses[a.name] = { left: limit.max, max: limit.max };
+    });
     commit();
     api.toast(s.name + ' comes to the table');
   }
@@ -782,7 +854,7 @@
     var edit = (card.edit && card.edit.attacks && card.edit.attacks[name]) || {};
     var bonus = edit.bonus !== undefined && edit.bonus !== '' ? edit.bonus : action.bonus;
     var damage = edit.damage !== undefined && edit.damage !== '' ? edit.damage : action.damage;
-    var result = C.R.rollAttack(bonus, damage);
+    var result = C.R.rollAttack(bonus, damage, !!card.adv);
     if (!card.rolls) card.rolls = {};
     var list = rollsOf(card, name);
     while (list.length <= ix) list.push(null);
@@ -818,7 +890,8 @@
       '.scard{border:1px solid var(--edge);border-radius:5px;background:rgba(255,255,255,.03);padding:7px 8px;display:flex;flex-direction:column;gap:6px}',
       '.sstop{display:flex;align-items:center;gap:6px}',
       '.sname{flex:1 1 auto;min-width:0;font:inherit;font-size:15px;color:var(--ink);background:none;border:none;border-bottom:1px solid var(--edge);padding:2px 0}',
-      '.ssrc{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40%}',
+      '.ssrc{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40%;background:none;border:none;padding:0;font:inherit;font-size:10px;cursor:pointer;text-align:right}',
+      '.ssrc:active{color:var(--arcane)}',
       '.sdel{background:none;border:none;color:var(--muted);font:inherit;font-size:18px;line-height:1;padding:0 3px;cursor:pointer;flex:0 0 auto}',
       '.sdel:active{color:var(--gold)}',
       '.sline{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:12px;color:var(--muted)}',
@@ -832,10 +905,12 @@
       '.sgroup{display:flex;flex-direction:column;gap:4px}',
       '.sblock{border:1px solid var(--edge);border-radius:5px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));padding:6px 8px 7px;display:flex;flex-direction:column;gap:3px}',
       '.sblock.crit{border-color:rgba(var(--gold-rgb),.6);box-shadow:0 0 0 1px rgba(var(--gold-rgb),.16),0 8px 18px rgba(var(--gold-rgb),.12)}',
-      '.srow{display:flex;align-items:baseline;gap:8px}',
+      '.satkhead{display:flex;align-items:baseline;gap:8px}',
+      '.sfpick{font:inherit;font-size:10px;line-height:1;padding:4px 7px;border-radius:4px;border:1px solid var(--edge);background:none;color:var(--muted);cursor:pointer}',
+      '.sfpick.on{border-color:rgba(var(--arcane-rgb),.55);color:var(--arcane);background:rgba(var(--arcane-rgb),.12)}',
       '.satkname{flex:1 1 auto;min-width:0;font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
       '.skind{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#6f6a8d;flex:0 0 auto;white-space:nowrap}',
-      '.sgrid{display:grid;grid-template-columns:auto 40px auto minmax(0,1fr);column-gap:8px;row-gap:2px;align-items:center}',
+      '.satkgrid{display:grid;grid-template-columns:auto 40px auto minmax(0,1fr);column-gap:8px;row-gap:2px;align-items:center}',
       '.scell-atk{grid-column:1;grid-row:1;display:flex;align-items:baseline;gap:5px;white-space:nowrap}',
       '.scell-dmg{grid-column:1;grid-row:2;display:flex;align-items:baseline;gap:5px;white-space:nowrap}',
       '.scell-die{grid-column:2;grid-row:1/3;display:flex;align-items:center;justify-content:center}',
@@ -855,6 +930,11 @@
       '.ssep{font-size:10.5px;color:#6f6a8d;white-space:nowrap}',
       '.smod{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}',
       '.sghost{color:#6f6a8d}',
+      '.sother{font-size:10.5px;color:#6f6a8d;font-variant-numeric:tabular-nums}',
+      '.suses{border:1px solid var(--edge);border-radius:999px;background:none;color:var(--ink);font:inherit;font-size:10.5px;line-height:1.4;padding:1px 9px;cursor:pointer;font-variant-numeric:tabular-nums}',
+      '.suses.out{color:#6f6a8d}',
+      '.schip{border:1px solid var(--edge);border-radius:999px;background:none;color:var(--muted);font:inherit;font-size:10px;letter-spacing:.08em;line-height:1.4;padding:2px 9px;margin-left:auto;cursor:pointer;white-space:nowrap}',
+      '.schip.on{border-color:rgba(var(--arcane-rgb),.55);color:var(--arcane);background:rgba(var(--arcane-rgb),.12)}',
       '.snoteblock{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;font-size:12px}',
       '.smulti{display:flex;align-items:center;gap:6px;padding:1px 0}',
       '.smultin{font-size:11px;color:var(--gold);font-variant-numeric:tabular-nums}',
@@ -863,7 +943,7 @@
       '.scard .satkdamage{flex:1 1 auto;min-width:0}',
       '.scin{font-family:var(--sans);font-size:12.5px;color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--edge);border-radius:4px;padding:2px 4px;min-width:0}',
       '.snum{width:44px;text-align:center}',
-      '.scard .spick{font-size:11px;padding:4px 9px}'
+
     ].join('\n'),
 
     mount: function (root, a) {
@@ -942,6 +1022,25 @@
             if (block) roll(s, block.dataset.name, Number(roleEl.dataset.ix) || 0);
             return;
           }
+          /* The advantage of the card: the die is rolled twice. */
+          if (role === 'adv') {
+            s.adv = !s.adv;
+            buildCards();
+            commit();
+            return;
+          }
+          /* A use of a limited action is spent. */
+          if (role === 'use') {
+            var useBlock = roleEl.closest('[data-name]');
+            var u = useBlock && s.uses ? s.uses[useBlock.dataset.name] : null;
+            if (!u) return;
+            u.left = Math.max(0, (Number(u.left) || 0) - 1);
+            buildCards();
+            commit();
+            return;
+          }
+          /* The spell or the feature the creature came from. */
+          if (role === 'source') { openSource(s); return; }
         }
         /* An attack is rolled when its die is tapped, the way the volley
            rolls a beam. */

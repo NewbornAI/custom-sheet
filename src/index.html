@@ -1522,10 +1522,14 @@ input[type=range]::-moz-range-thumb{
      follows. A natural twenty is a critical and doubles the dice, the way
      the volley does. The armour class of the target is not the business of
      the roll: the player does not know it, so the roll only says what it
-     rolled. */
-  function rollAttack(bonus, damageText, rng) {
+     rolled. With advantage the die is rolled twice and the better one is
+     kept, the way the volley keeps the best of three. */
+  function rollAttack(bonus, damageText, adv, rng) {
     rng = rng || Math.random;
-    var roll = die(rng, 20);
+    var rolls = [die(rng, 20)];
+    if (adv) rolls.push(die(rng, 20));
+    var roll = rolls[0], i;
+    for (i = 1; i < rolls.length; i++) if (rolls[i] > roll) roll = rolls[i];
     var total = roll + (Number(bonus) || 0);
     var crit = roll >= 20;
     var mult = crit ? 2 : 1;
@@ -1539,6 +1543,7 @@ input[type=range]::-moz-range-thumb{
     var flat = flatIn(damageText || '');
     return {
       roll: roll,
+      rolls: rolls,
       total: total,
       crit: crit,
       groups: groups,
@@ -1829,6 +1834,22 @@ input[type=range]::-moz-range-thumb{
     };
   }
 
+  /* What a long rest gives back to the creatures at the table: the uses of
+     the actions that are limited, like the healing touch of a spirit. */
+  function summonRest(list) {
+    return (list || []).map(function (card) {
+      var copy = Object.assign({}, card);
+      if (copy.uses) {
+        var uses = {};
+        Object.keys(copy.uses).forEach(function (k) {
+          var u = copy.uses[k] || {};
+          uses[k] = { left: Number(u.max) || 0, max: Number(u.max) || 0 };
+        });
+        copy.uses = uses;
+      }
+      return copy;
+    });
+  }
   /* What a short rest gives back: the features marked as recovering on a
      short rest, and nothing else. */
   function shortRest(c, spell) {
@@ -1921,6 +1942,7 @@ input[type=range]::-moz-range-thumb{
     DIE_SHAPES: DIE_SHAPES,
     DIE_LABEL: DIE_LABEL,
     longRest: longRest,
+    summonRest: summonRest,
     shortRest: shortRest,
     snapshot: snapshot,
     rewind: rewind

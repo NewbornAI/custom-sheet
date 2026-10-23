@@ -385,6 +385,12 @@ console.log('the rests');
 
   const long = C.longRest(hero, spell);
   check('a long rest fills the hit points', long.hp, 38);
+  /* The uses of the creatures at the table come back on a long rest. */
+  const withUses = [{ id: 's1', name: 'Celestial Spirit', uses: { 'Healing Touch (1/Day)': { left: 0, max: 1 } } }];
+  const restedSummons = C.summonRest(withUses);
+  check('a long rest gives the uses back', restedSummons[0].uses['Healing Touch (1/Day)'].left, 1);
+  check('and the maximum stays', restedSummons[0].uses['Healing Touch (1/Day)'].max, 1);
+  check('the creature itself is untouched', restedSummons[0].name, 'Celestial Spirit');
   check('a long rest fills the spell slots', long.left, { 1: 4, 2: 3, 3: 3, 4: 2 });
   check('a long rest fills the warlock slots', long.warlockLeft, 2);
   check('a long rest fills the sorcery points', long.sp, 8);
@@ -659,16 +665,27 @@ console.log('the roll of an attack');
   check('the flat of a damage is the number on the dice', R.flatIn('1d10 + 11'), 11);
   check('and there may be more than one', R.flatIn('2d6 + 3 + 5'), 8);
   check('a damage of dice alone has no flat', R.flatIn('2d6'), 0);
-  const roll = R.rollAttack(8, '1d10 + 11', half);
+  const roll = R.rollAttack(8, '1d10 + 11', false, half);
   check('the d20 is rolled', roll.roll, 11);
   check('the total carries the bonus', roll.total, 19);
   check('the damage is the dice and the flat', roll.damage, 17);
   check('the dice are named', roll.groups[0].label, '1d10');
   check('the roll does not know the target', roll.hit, undefined);
-  const crit = R.rollAttack(8, '1d10 + 11', top);
+  check('and it rolls one die', roll.rolls.length, 1);
+  const crit = R.rollAttack(8, '1d10 + 11', false, top);
   check('a natural twenty is a critical', crit.crit, true);
   check('and it doubles the dice', crit.groups[0].label, '2d10');
   check('so the damage is bigger', crit.damage, 31);
+  /* The advantage rolls the die twice and keeps the better one. */
+  let call = 0;
+  const two = () => { call++; return call === 1 ? 0.3 : 0.9; };
+  const adv = R.rollAttack(8, '1d10 + 11', true, two);
+  check('the die is rolled twice', adv.rolls.length, 2);
+  check('and the better one is kept', adv.roll, 19);
+  check('the total follows the kept one', adv.total, 27);
+  const flat = R.rollAttack(8, '1d10 + 11', true, half);
+  check('a single roll is not an advantage', flat.rolls.length, 2);
+  check('and the same die twice keeps the same', flat.roll, 11);
 }
 console.log('the bestiary');
 {

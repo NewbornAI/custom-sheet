@@ -638,6 +638,11 @@
     CH.history.push(before);
     if (CH.history.length > 60) CH.history.shift();
     applyRest(after);
+    /* The creatures at the table get the uses of their limited actions back. */
+    if (kind === 'long') {
+      var rec = api.character();
+      if (rec.summons && rec.summons.list) rec.summons.list = SR.summonRest(rec.summons.list);
+    }
     commitChar();
     note(restNote(kind, before, after));
     if (navigator.vibrate) navigator.vibrate([14, 40, 14]);
