@@ -303,14 +303,36 @@
     return c ? c.join(',') : '';
   }
 
-  /* The die the hit roll sits in. */
-  var D20 = '<svg class="sd20g" viewBox="0 0 48 48" aria-hidden="true" focusable="false">' +
-    '<path class="sd20hex" d="M24 3.4 41.8 13.7 41.8 34.3 24 44.6 6.2 34.3 6.2 13.7Z"/>' +
-    '<path class="sd20tri" d="M24 3.4 41.8 34.3 6.2 34.3Z"/>' +
-    '</svg>';
+  /* The shape of a die, the way the app draws them. */
+  function diePoints(sides) {
+    var pts = C.SR && C.SR.DIE_SHAPES ? C.SR.DIE_SHAPES[sides] : '';
+    if (pts) return pts;
+    var built = [], i, a;
+    for (i = 0; i < sides; i++) {
+      a = -Math.PI / 2 + i * 2 * Math.PI / sides;
+      built.push((12 + 9.2 * Math.cos(a)).toFixed(2) + ',' + (12 + 9.2 * Math.sin(a)).toFixed(2));
+    }
+    return built.join(' ');
+  }
 
-  /* The rolls an attack holds: one for an attack, as many as the
-     multiattack says for a creature that makes several. */
+  /* The die, with nothing in it. */
+  function dieIcon(sides) {
+    return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<polygon points="' + diePoints(sides) + '" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
+  }
+
+  /* The die, with a number in it. */
+  function dieBig(sides, number) {
+    var out = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<polygon points="' + diePoints(sides) + '" fill="none" stroke="currentColor" stroke-width="1.5"/>';
+    if (number !== '' && number !== null && number !== undefined) {
+      out += '<text x="12" y="15.4" text-anchor="middle" font-size="9" fill="currentColor" ' +
+        'font-family="Cinzel, Georgia, serif">' + number + '</text>';
+    }
+    return out + '</svg>';
+  }
+
+  /* The rolls an attack holds: one per swing of the attack. */
   function rollsOf(card, name) {
     var v = card.rolls ? card.rolls[name] : null;
     if (!v) return [];
@@ -324,89 +346,96 @@
     return isFinite(n) ? n : null;
   }
 
-  /* The damage: the total, the type it wears, and the dice that made it. */
-  function damageBlock(res, type, damage) {
-    var col = colourOf(type);
-    var groups, flat, total;
-    if (res) {
-      groups = res.groups;
-      flat = res.flat;
-      total = res.damage;
-    } else {
-      groups = (C.R && C.R.diceIn ? C.R.diceIn(damage || '') : []).map(function (g) {
-        return { label: g.label, rolls: [] };
-      });
-      flat = C.R && C.R.flatIn ? C.R.flatIn(damage || '') : 0;
-      total = null;
-    }
-    var out = '<div class="sdmg">';
-    out += '<div class="sdtop"><span class="sdt' + (total === null ? ' sghost' : '') + '"' +
-      (col && total !== null ? ' style="color:' + col + '"' : '') + '>' + (total === null ? '--' : total) + '</span>';
-    if (type) out += '<em class="stype" style="color:' + col + '">' + C.esc(type) + '</em>';
-    out += '</div>';
-    if (groups.length || flat) {
-      out += '<div class="sdice">';
-      groups.forEach(function (g) {
-        out += '<span class="sg"><span class="slbl"' + (col ? ' style="color:' + col + '"' : '') + '>' + C.esc(g.label) + '</span>' +
-          '<span class="sgroll' + (res ? '' : ' sghost') + '">' + (res ? g.rolls.join(', ') : '--') + '</span></span>';
-      });
-      if (flat) {
-        out += '<span class="sg flat"><span class="slbl"' + (col ? ' style="color:' + col + '"' : '') + '>' +
-          (flat > 0 ? '+' + flat : String(flat)) + '</span></span>';
-      }
-      out += '</div>';
-    } else if (!res && damage) {
-      out += '<div class="sdice"><span class="sg"><span class="slbl sghost">' + C.esc(damage) + '</span></span></div>';
-    }
-    out += '</div>';
+  /* The kind of an attack and how far it reaches. */
+  function attackKind(a) {
+    var m = String(a.text || '').match(/^((?:Melee|Ranged)\s+(?:weapon\s+|spell\s+)?attack)/i);
+    return m ? m[1] : '';
+  }
+
+  function attackRange(a) {
+    var t = String(a.text || '');
+    var m = t.match(/\brange\s+([^.;,]+)/i);
+    if (m) return m[1].trim();
+    m = t.match(/\breach\s+([^.;,]+)/i);
+    if (m) return 'reach ' + m[1].trim();
+    return '';
+  }
+
+  /* A formula without the spaces around the plus. */
+  function compact(text) {
+    return String(text || '').replace(/\s*\+\s*/g, '+').trim();
+  }
+
+  /* The kind of die a group of dice is. */
+  function sidesOf(label) {
+    var m = String(label || '').match(/d(\d+)/i);
+    return m ? Number(m[1]) : 6;
+  }
+
+  /* The dice of a damage: the shape of the die, then the results beside it. */
+  function diceShapes(groups, res, col) {
+    var out = '';
+    groups.forEach(function (g) {
+      out += '<span class="sdmini">' + dieIcon(sidesOf(g.label)) + '</span>';
+      out += '<span class="snum2"' + (col ? ' style="color:' + col + '"' : '') + '>' +
+        (res ? g.rolls.join(',') : '--') + '</span>';
+    });
+    if (!groups.length) out += '<span class="snum2 sghost">--</span>';
     return out;
   }
 
-  /* One roll of one attack: the hit roll in its die, then the damage. */
-  function rollBlock(res, type, damage, bonus) {
-    var out = '<div class="srblock">';
-    out += '<div class="srb">';
-    out += '<div class="sd20' + (res && res.crit ? ' crit' : '') + (res ? '' : ' ghost') + '">' + D20 +
-      '<span class="sd20num' + (res ? '' : ' sghost') + '">' + (res ? res.total : '--') + '</span></div>';
-    out += '<div class="srbmeta"><span class="srbline' + (res ? '' : ' sghost') + '">d20 ' + (res ? res.roll : '--') + '</span>';
-    if (res && bonus !== null) {
-      out += '<span class="srbmod">' + (bonus > 0 ? '+' + bonus : String(bonus)) + '</span>';
-    }
-    if (res && res.crit) out += '<span class="srbcrit">crit</span>';
-    out += '</div></div>';
-    out += '<div class="sbeam"></div>';
-    out += damageBlock(res, type, damage);
-    out += '</div>';
-    return out;
-  }
-
-  /* An attack: its name, its bonus, and the rolls it holds. */
-  function attackCell(a, edit, rolls) {
+  /* One swing of an attack: a block of its own, with a die of its own to tap.
+     The big die holds the hit total, the small dice hold the arithmetic. */
+  function swingBlock(a, edit, res, ix) {
     var bonus = edit && edit.bonus !== undefined && edit.bonus !== '' ? edit.bonus : a.bonus;
     var damage = edit && edit.damage !== undefined && edit.damage !== '' ? edit.damage : a.damage;
     var type = damageType(a);
-    var trio = trioOf(type);
-    var out = '<div class="scell" data-name="' + C.esc(a.name) + '"' + (trio ? ' style="--beam:' + trio + '"' : '') + '>';
-    out += '<div class="schead"><span class="satkname" title="' + C.esc(a.text || '') + '">' + C.esc(a.name) + '</span>';
-    if (editing) {
-      out += '<input class="scin satkbonus" data-role="atkbonus" type="text" value="' + C.esc(bonus) + '" aria-label="Attack bonus">';
-    } else {
-      out += '<span class="satkatk">' + C.esc(bonus) + '</span>';
-    }
-    out += '</div>';
-    if (editing) {
-      out += '<div class="sline"><span class="sk">Damage</span>' +
-        '<input class="scin satkdamage" data-role="atkdamage" type="text" value="' + C.esc(damage) + '" aria-label="Damage of the attack">' +
-        (type ? '<em class="stype" style="color:' + colourOf(type) + '">' + C.esc(type) + '</em>' : '') +
-        '</div>';
-    } else {
-      var num = bonusOf(bonus);
-      var blocks = rolls.length
-        ? rolls.map(function (r) { return rollBlock(r, type, damage, num); })
-        : [rollBlock(null, type, damage, num)];
-      out += '<div class="srbs">' + blocks.join('') + '</div>';
-    }
-    out += '</div>';
+    var col = colourOf(type);
+    var num = bonusOf(bonus);
+    var range = attackRange(a);
+    var groups = res ? res.groups : (C.R && C.R.diceIn ? C.R.diceIn(damage || '') : []);
+    var flat = res ? res.flat : (C.R && C.R.flatIn ? C.R.flatIn(damage || '') : 0);
+    var out = '<div class="sblock" data-name="' + C.esc(a.name) + '">';
+    out += '<div class="srow"><span class="satkname">' + C.esc(a.name) + '</span>' +
+      '<span class="skind">' + C.esc(attackKind(a)) + '</span></div>';
+    out += '<div class="sgrid">';
+    out += '<div class="scell-atk"><span class="sk">Attack</span>' +
+      '<span class="snum2">' + C.esc(bonus) + '</span>' +
+      (range ? '<span class="ssep">-</span><span class="srng">' + C.esc(range) + '</span>' : '') + '</div>';
+    out += '<div class="scell-die"><button type="button" class="sdie" data-role="roll" data-ix="' + ix + '" ' +
+      'aria-label="Roll the ' + C.esc(a.name) + '">' + dieBig(20, res ? res.total : '') + '</button></div>';
+    out += '<div class="scell-hit"><span class="sdmini">' + dieIcon(20) + '</span>' +
+      '<span class="snum2">' + (res ? res.roll : '--') + '</span>' +
+      (num !== null ? '<span class="smod">' + (num > 0 ? '+' + num : String(num)) + '</span>' : '') + '</div>';
+    out += '<div class="scell-lab">Hit total</div>';
+    out += '<div class="scell-dmg"><span class="sk">Damage</span>' +
+      '<span class="sformula"' + (col ? ' style="color:' + col + '"' : '') + '>' + C.esc(compact(damage)) + '</span></div>';
+    out += '<div class="scell-tap">tap to roll</div>';
+    out += '<div class="scell-dmgres">' + diceShapes(groups, res, col) +
+      (flat ? '<span class="smod">' + (flat > 0 ? '+' + flat : String(flat)) + '</span>' : '') + '</div>';
+    out += '<div class="scell-lab">Damage total</div>';
+    out += '</div></div>';
+    return out;
+  }
+
+  /* The same block with the wrench on: the numbers are fields. */
+  function editBlock(a, edit) {
+    var bonus = edit && edit.bonus !== undefined && edit.bonus !== '' ? edit.bonus : a.bonus;
+    var damage = edit && edit.damage !== undefined && edit.damage !== '' ? edit.damage : a.damage;
+    var type = damageType(a);
+    var col = colourOf(type);
+    var range = attackRange(a);
+    var out = '<div class="sblock" data-name="' + C.esc(a.name) + '">';
+    out += '<div class="srow"><span class="satkname">' + C.esc(a.name) + '</span>' +
+      '<span class="skind">' + C.esc(attackKind(a)) + '</span></div>';
+    out += '<div class="sgrid">';
+    out += '<div class="scell-atk"><span class="sk">Attack</span>' +
+      '<input class="scin satkbonus" data-role="atkbonus" type="text" value="' + C.esc(bonus) + '" aria-label="Attack bonus">' +
+      (range ? '<span class="ssep">-</span><span class="srng">' + C.esc(range) + '</span>' : '') + '</div>';
+    out += '<div class="scell-dmg"><span class="sk">Damage</span>' +
+      '<input class="scin satkdamage" data-role="atkdamage" type="text" value="' + C.esc(damage) + '" aria-label="Damage of the attack">' +
+      (type ? '<em class="stype" style="color:' + col + '">' + C.esc(type) + '</em>' : '') + '</div>';
+    out += '</div></div>';
     return out;
   }
 
@@ -421,11 +450,12 @@
   function noteRow(a, edit) {
     var damage = edit && edit.damage !== undefined && edit.damage !== '' ? edit.damage : a.damage;
     var type = damageType(a);
-    var out = '<div class="snote" data-name="' + C.esc(a.name) + '"><span class="satkname">' + C.esc(a.name) + '</span>';
+    var out = '<div class="snoteblock" data-name="' + C.esc(a.name) + '">' +
+      '<span class="satkname">' + C.esc(a.name) + '</span>';
     if (editing) {
       out += '<input class="scin satkdamage" data-role="atkdamage" type="text" value="' + C.esc(damage) + '" aria-label="Damage of the action">';
     } else if (damage) {
-      out += '<span class="snotedmg">' + C.esc(damage) + '</span>';
+      out += '<span class="sformula">' + C.esc(compact(damage)) + '</span>';
     }
     if (type) out += '<em class="stype" style="color:' + colourOf(type) + '">' + C.esc(type) + '</em>';
     out += '</div>';
@@ -485,7 +515,14 @@
       html += '<div class="satk">' + actions.map(function (a) {
         if (a.count) return multiRow(a);
         if (!a.attack) return noteRow(a, edit[a.name]);
-        return attackCell(a, edit[a.name], rollsOf(s, a.name));
+        if (editing) return editBlock(a, edit[a.name]);
+        /* A creature that makes several attacks has a block for each of
+           them, and each block rolls on its own. */
+        var list = rollsOf(s, a.name);
+        var swings = a.multi && a.multi > 0 ? a.multi : 1;
+        var out = '';
+        for (var i = 0; i < swings; i++) out += swingBlock(a, edit[a.name], list[i] || null, i);
+        return out;
       }).join('') + '</div>';
     }
     return html + '</div>';
@@ -717,7 +754,7 @@
 
   /* ---- the roll of an attack ---- */
 
-  function roll(card, name) {
+  function roll(card, name, ix) {
     var out = derive(card);
     if (!out) return;
     var action = null;
@@ -729,11 +766,8 @@
     var result = C.R.rollAttack(bonus, damage);
     if (!card.rolls) card.rolls = {};
     var list = rollsOf(card, name);
-    list.push(result);
-    /* A multiattack is made as many times as it says, so the cell keeps
-       that many rolls and no more. */
-    var cap = action.multi && action.multi > 0 ? action.multi : 1;
-    while (list.length > cap) list.shift();
+    while (list.length <= ix) list.push(null);
+    list[ix] = result;
     card.rolls[name] = list;
     buildCards();
     commit();
@@ -776,42 +810,33 @@
       '.sstep:active{border-color:var(--arcane);color:var(--arcane)}',
       '.sconc{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}',
       '.satk{display:flex;flex-direction:column;gap:6px}',
-      '.scell{border:1px solid var(--edge);border-radius:5px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));padding:7px 8px;display:flex;flex-direction:column;gap:6px;cursor:pointer}',
-      '.scell:active{border-color:rgba(var(--arcane-rgb),.45)}',
-      '.schead{display:flex;align-items:baseline;gap:8px}',
-      '.satkname{flex:1 1 auto;min-width:0;font-size:12.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
-      '.satkatk{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;flex:0 0 auto}',
-      '.srbs{display:flex;flex-direction:column;gap:6px}',
-      '.srblock{display:flex;flex-direction:column;gap:5px}',
-      '.srblock+.srblock{border-top:1px dashed var(--edge);padding-top:6px}',
-      '.srb{display:flex;align-items:center;justify-content:center;gap:12px}',
-      '.sd20{position:relative;width:52px;height:52px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}',
-      '.sd20g{position:absolute;left:0;top:0;width:100%;height:100%;fill:none;stroke-linejoin:round;stroke-linecap:round}',
-      '.sd20hex{stroke:rgba(var(--arcane-rgb),.55);stroke-width:1.7}',
-      '.sd20tri{stroke:rgba(var(--arcane-rgb),.22);stroke-width:1}',
-      '.sd20num{position:relative;font-family:var(--display);font-weight:700;font-size:21px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}',
-      '.sd20.crit .sd20hex{stroke:rgba(var(--gold-rgb),.9)}',
-      '.sd20.crit .sd20tri{stroke:rgba(var(--gold-rgb),.28)}',
-      '.sd20.crit .sd20num{color:var(--gold)}',
-      '.srbmeta{display:flex;flex-direction:column;gap:1px;align-items:flex-start}',
-      '.srbline{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}',
-      '.srbmod{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}',
-      '.srbcrit{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}',
-      '.sbeam{height:16px;display:flex;justify-content:center}',
-      '.sbeam::before{content:"";width:3px;border-radius:2px;background:linear-gradient(180deg,rgba(var(--beam,var(--arcane-rgb)),.55),rgba(var(--beam,var(--arcane-rgb)),.12));box-shadow:0 0 10px rgba(var(--beam,var(--arcane-rgb)),.35)}',
-      '.sdmg{padding-top:6px;border-top:1px solid var(--edge);display:flex;flex-direction:column;gap:5px}',
-      '.sdtop{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}',
-      '.sdt{font-family:var(--display);font-weight:700;font-size:22px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}',
-      '.stype{font-style:normal;font-size:9.5px;letter-spacing:.04em}',
-      '.sdice{display:flex;gap:8px;flex-wrap:wrap}',
-      '.sg{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0}',
-      '.slbl{font-size:10px;line-height:1.1;color:var(--muted);font-variant-numeric:tabular-nums}',
-      '.sgroll{font-size:11.5px;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}',
+      '.sblock{border:1px solid var(--edge);border-radius:5px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));padding:6px 8px 7px;display:flex;flex-direction:column;gap:3px}',
+      '.srow{display:flex;align-items:baseline;gap:8px}',
+      '.satkname{flex:1 1 auto;min-width:0;font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+      '.skind{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#6f6a8d;flex:0 0 auto;white-space:nowrap}',
+      '.sgrid{display:grid;grid-template-columns:minmax(0,1fr) 40px minmax(0,auto) minmax(0,auto);column-gap:7px;row-gap:1px;align-items:center}',
+      '.scell-atk{grid-column:1;grid-row:1;display:flex;align-items:baseline;gap:5px;min-width:0}',
+      '.scell-dmg{grid-column:1;grid-row:2;display:flex;align-items:baseline;gap:5px;min-width:0}',
+      '.scell-die{grid-column:2;grid-row:1;display:flex;align-items:center;justify-content:center}',
+      '.scell-tap{grid-column:2;grid-row:2;font-size:8px;letter-spacing:.06em;color:#6f6a8d;text-align:center;white-space:nowrap}',
+      '.scell-hit{grid-column:3;grid-row:1;display:flex;align-items:center;gap:3px;justify-content:flex-end}',
+      '.scell-dmgres{grid-column:3;grid-row:2;display:flex;align-items:center;gap:3px;justify-content:flex-end;flex-wrap:wrap}',
+      '.scell-lab{grid-column:4;font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;color:#6f6a8d;white-space:nowrap}',
+      '.sdie{width:38px;height:38px;background:none;border:none;padding:0;cursor:pointer;color:var(--arcane);display:flex;align-items:center;justify-content:center}',
+      '.sdie svg{width:100%;height:100%;display:block}',
+      '.sdie:active{color:var(--gold)}',
+      '.sdmini{width:14px;height:14px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;color:var(--muted)}',
+      '.sdmini svg{width:13px;height:13px;display:block}',
+      '.snum2{font-family:var(--display);font-size:13.5px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}',
+      '.sformula{font-family:var(--sans);font-size:12.5px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}',
+      '.srng{font-size:10.5px;color:var(--muted);white-space:nowrap}',
+      '.ssep{font-size:10.5px;color:#6f6a8d;white-space:nowrap}',
+      '.smod{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}',
       '.sghost{color:#6f6a8d}',
+      '.snoteblock{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;font-size:12px}',
       '.smulti{display:flex;align-items:center;gap:6px;padding:1px 0}',
       '.smultin{font-size:11px;color:var(--gold);font-variant-numeric:tabular-nums}',
-      '.snote{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}',
-      '.snotedmg{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}',
+      '.stype{font-style:normal;font-size:9.5px;letter-spacing:.04em}',
       '.scard .satkbonus{width:58px;text-align:right}',
       '.scard .satkdamage{flex:1 1 auto;min-width:0}',
       '.scin{font-family:var(--sans);font-size:12.5px;color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--edge);border-radius:4px;padding:2px 4px;min-width:0}',
@@ -888,14 +913,16 @@
             commit();
             return;
           }
+          /* The die of a swing is the tap that rolls it. */
+          if (role === 'roll') {
+            var block = roleEl.closest('[data-name]');
+            if (block) roll(s, block.dataset.name, Number(roleEl.dataset.ix) || 0);
+            return;
+          }
         }
-        /* An attack is rolled when it is tapped, the way the volley rolls a
-           beam. */
+        /* An attack is rolled when its die is tapped, the way the volley
+           rolls a beam. */
         if (editing) return;
-        var row = ev.target.closest('.scell');
-        if (!row || !row.dataset.name) return;
-        if (ev.target.closest('input, button')) return;
-        roll(s, row.dataset.name);
       });
     },
 

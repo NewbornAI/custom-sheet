@@ -828,23 +828,30 @@ console.log('the bestiary');
     character: () => wizard,
     characters: () => ({ c1: wizard })
   }));
-  const onCell = (name) => ({
+  /* The die of a swing is the tap that rolls it. */
+  const onDie = (name, ix) => ({
     closest: (sel) => {
+      if (sel === '[data-role]') {
+        return {
+          dataset: { role: 'roll', ix: String(ix) },
+          closest: (inner) => (inner === '[data-name]' ? { dataset: { name: name } } : null)
+        };
+      }
       if (sel === '.scard') return { dataset: { id: 's1' } };
-      if (sel === '.scell') return { dataset: { name: name } };
+      if (sel === '[data-name]') return { dataset: { name: name } };
       return null;
     }
   });
-  body.listeners.click({ target: onCell('Radiant Bow') });
+  body.listeners.click({ target: onDie('Radiant Bow', 0) });
   const held = wizard.summons.list[0].rolls['Radiant Bow'];
-  check('the attack holds one roll', held.length, 1);
+  check('the swing holds one roll', held.length, 1);
   check('the roll does not say whether it hit', held[0].hit, undefined);
   check('the roll carries the dice of the bow', held[0].groups[0].label, '2d6');
   check('and the slot is in the flat of the damage', held[0].flat, 7);
-  body.listeners.click({ target: onCell('Radiant Bow') });
-  check('a multiattack holds as many rolls as it says', wizard.summons.list[0].rolls['Radiant Bow'].length, 2);
-  body.listeners.click({ target: onCell('Radiant Bow') });
-  check('and it keeps no more than that', wizard.summons.list[0].rolls['Radiant Bow'].length, 2);
+  body.listeners.click({ target: onDie('Radiant Bow', 1) });
+  check('the second swing holds its own roll', wizard.summons.list[0].rolls['Radiant Bow'].length, 2);
+  body.listeners.click({ target: onDie('Radiant Bow', 1) });
+  check('and it is rolled again, not added to', wizard.summons.list[0].rolls['Radiant Bow'].length, 2);
 }
 console.log(failures === 0 ? '\nall rules checks pass' : '\n' + failures + ' check(s) failed');
 process.exit(failures === 0 ? 0 : 1);
