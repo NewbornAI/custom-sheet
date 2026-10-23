@@ -966,12 +966,25 @@
       });
       root.appendChild(b);
       E.wrench = b;
+
+      /* The character goes to the shelf when the player says so, at the end
+         of a session, not while the sheet is being edited back and forth. */
+      var push = C.headButton('Push the character to the shelf',
+        '<path d="M12 19V5"/><path d="m5 12 7-7 7 7"/>', function () {
+          C.pushToShelf(api.character()).then(function () {
+            C.toast('it is on the shelf');
+          }).catch(function (e) { C.toast(String((e && e.message) || e)); });
+        });
+      push.hidden = !editingChar;
+      root.appendChild(push);
+      E.push = push;
     },
 
     render: function (a) {
       api = a;
       CH = a.character().char;
       if (E.wrench) E.wrench.setAttribute('aria-pressed', editingChar ? 'true' : 'false');
+      if (E.push) E.push.hidden = !editingChar;
       renderChar();
     }
   });

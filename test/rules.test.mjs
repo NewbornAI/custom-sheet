@@ -511,16 +511,16 @@ console.log('seeding a character from the data');
 {
   const features = JSON.parse(readFileSync(resolve(root, 'data', 'features.json'), 'utf8'));
   const book = JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8'));
-  const presets = JSON.parse(readFileSync(resolve(root, 'data', 'characters.json'), 'utf8')).presets;
+  const pkg = JSON.parse(readFileSync(resolve(root, 'characters', 'yngwie.json'), 'utf8'));
   const classes = JSON.parse(readFileSync(resolve(root, 'data', 'classes.json'), 'utf8')).classes;
-  const bard = presets[0];
+  const bard = { id: 'bardCreation', name: pkg.name, rec: pkg.record };
   const levelOf = {};
   book.spells.forEach((s) => { levelOf[s.name] = s.level; });
 
-  check('one ready-made character', presets.length, 1);
+  check('the example travels as a package', pkg.kind + '/' + pkg.version, 'custom-sheet-character/1');
   check('the bard of the sheet', bard.id, 'bardCreation');
   const known = features.features.map((f) => f.key);
-  check('every feature it names is known', bard.rec.char.featureKeys.every((k) => known.indexOf(k) >= 0), true);
+  check('every feature it holds is known', bard.rec.char.features.every((f) => known.indexOf(f.key) >= 0), true);
   check('the twelve it brings are its own', features.features.filter((f) => f.preset === 'bard').length, 12);
   check('the eighteen of the app wait for a new character', features.features.filter((f) => f.seed).length, 18);
   check('the level of the sheet', bard.rec.char.level, 11);
@@ -578,7 +578,7 @@ console.log('seeding a character from the data');
   });
 
   const char = taken.character.seed(bard.rec.char, true);
-  check('the ready-made features arrive whole', char.features.length, bard.rec.char.featureKeys.length);
+  check('the ready-made features arrive whole', char.features.length, bard.rec.char.features.length);
   check('and they are its own', char.features.map((f) => f.key).indexOf('musician') >= 0, true);
   check('a feature keeps its uses', char.features.filter((f) => f.key === 'bardicInspiration')[0].max, 5);
   check('the level survives the seeding', char.level, 11);
@@ -640,9 +640,7 @@ console.log('the page the phone opens at launch');
   const distClasses = JSON.parse(readFileSync(resolve(root, 'dist', 'data', 'classes.json'), 'utf8'));
   check('the classes sit beside it too', distClasses.classes.length, 12);
   check('the page is small without them', built.length < 400000, true);
-  const charBlock = built.match(/<script id="character-data" type="application\/json">([\s\S]*?)<\/script>/);
-  if (!charBlock) { check('the ready-made characters travel', false, true); }
-  else check('the ready-made characters travel', JSON.parse(charBlock[1]).presets.length, 1);
+  check('no character travels inside the page', /<script id="character-data"/.test(built), false);
   const distBook = JSON.parse(readFileSync(resolve(root, 'dist', 'data', 'spellbook.json'), 'utf8'));
   check('the book sits beside the page', distBook.spells.length > 100, true);
   check('and matches the data file', distBook.spells[0].name, JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8')).spells[0].name);

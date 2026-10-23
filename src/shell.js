@@ -64,7 +64,6 @@
   var SURGE = readJson('surge-data');
   var SEEDS = readJson('seed-data');
   var VERSION = (readJson('version-data') || {}).version || '';
-  var PRESETS = readJson('character-data').presets || [];
 
   /* ---- the data on disk ---- */
 
@@ -432,15 +431,21 @@
   }
 
   /* The wrench a page puts in the head of the app. */
-  function wrenchButton(label, onClick) {
+  /* A button of the head of the app: an icon, a label for the screen reader
+     and one action. The wrench and the push are the same button. */
+  function headButton(label, icon, onClick) {
     var b = document.createElement('button');
     b.type = 'button';
     b.className = 'wrench';
-    b.setAttribute('aria-pressed', 'false');
     b.setAttribute('aria-label', label);
-    b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-      '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>';
+    b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + icon + '</svg>';
     b.addEventListener('click', onClick);
+    return b;
+  }
+
+  function wrenchButton(label, onClick) {
+    var b = headButton(label, '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>', onClick);
+    b.setAttribute('aria-pressed', 'false');
     return b;
   }
 
@@ -506,6 +511,10 @@
     exportCharacter: exportCharacter,
     isPhone: isPhone,
     importPackage: importPackage,
+    packageName: packageName,
+    openPasteLink: openPasteLink,
+    openIntake: openIntake,
+    openCharacters: openCharacters,
     importUrl: importUrl,
     importAny: importAny,
     importLink: importLink,
@@ -516,6 +525,7 @@
     shelfCharacters: shelfCharacters,
     shelfBranches: shelfBranches,
     shelfWrite: shelfWrite,
+    pushToShelf: pushToShelf,
     shelfRemove: shelfRemove,
     shelfBranch: shelfBranch,
     shelfCreateRepo: shelfCreateRepo,
@@ -540,6 +550,7 @@
     sourceClass: sourceClass,
     sourceTag: sourceTag,
     wrenchButton: wrenchButton,
+    headButton: headButton,
     pushSnapshot: pushSnapshot,
     bumpSp: bumpSp,
     themes: THEMES,
@@ -592,7 +603,10 @@
      slices of the volley and one character, the second held the same three
      slices. */
   function migrate(saved) {
-    var out = { characters: {}, current: 'c1', ui: saved.ui || { pages: null } };
+    var out = { characters: {}, current: '', ui: saved.ui || { pages: null } };
+    /* Nothing at all was ever saved, so there is no character to carry and
+       the app opens on the ways in. */
+    if (!saved.spells && !saved.volley && !saved.char) return out;
     var rec = {};
     if (saved.spells || saved.volley) {
       /* the second version: three slices */
@@ -610,6 +624,7 @@
       rec.char = saved.char || {};
     }
     out.characters.c1 = rec;
+    out.current = 'c1';
     return out;
   }
 
@@ -744,17 +759,17 @@
     return home ? home.id : current;
   }
 
-  /* The list of the characters, top down, and the way to add one. */
+  /* The list of the characters, top down, and the way to add one. A device
+     that holds none opens on the ways in, which is the same list. */
   function openCharacters() {
     var list = characterList();
+    if (!list.length) { openIntake(); return; }
     var html = list.map(function (c) {
       return '<div class="crow" data-id="' + c.id + '">' +
         '<span class="cn">' + esc(c.name) + '</span>' +
         '<span class="cl">' + esc(c.level) + '</span>' +
         (c.current ? '<span class="cm">playing</span>' : '') +
-        (list.length > 1
-          ? '<button class="cdel" type="button" data-del="' + c.id + '" aria-label="Remove ' + esc(c.name) + '">&times;</button>'
-          : '') +
+        '<button class="cdel" type="button" data-del="' + c.id + '" aria-label="Remove ' + esc(c.name) + '">&times;</button>' +
         '</div>';
     }).join('');
     html += '<div class="crow cadd" data-add="1"><span class="cn">Add a character</span>' +
@@ -769,7 +784,7 @@
       onList: function (ev) {
         var del = ev.target.closest('[data-del]');
         if (del) { openRemoveCharacter(del.dataset.del); return; }
-        if (ev.target.closest('[data-add]')) { openNewCharacter(); return; }
+        if (ev.target.closest('[data-add]')) { openIntake(); return; }
         var row = ev.target.closest('.crow[data-id]');
         if (!row) return;
         switchCharacter(row.dataset.id);
@@ -793,28 +808,16 @@
     reshow();
   }
 
-  /* A character comes ready-made, or from nothing at all. */
-  function openNewCharacter() {
-    var html = PRESETS.map(function (p, i) {
-      return '<div class="crow" data-preset="' + i + '">' +
-        '<span class="cn">' + esc(p.name) + '</span>' +
-        '<span class="cl">' + esc(p.blurb || '') + '</span>' +
-        '</div>';
-    }).join('');
-    html += '<div class="crow cadd" data-class="1"><span class="cn">A character from a class</span>' +
-      '<span class="cx">+</span></div>' +
-      '<div class="crow cadd" data-blank="1"><span class="cn">A character from nothing</span>' +
-      '<span class="cx">+</span></div>';
-    sheet.open({
-      id: 'newcharacter',
-      title: 'New character',
-      metaClass: 'sheet-meta one',
-      meta: '<span>Ready-made, or from nothing at all.</span>',
-      list: html,
-      onList: function (ev) {
-        var row = ev.target.closest('[data-preset]');
-        if (row) { addCharacter(fromPreset(PRESETS[Number(row.dataset.preset)])); return; }
-        if (ev.target.closest('[data-class]')) {
+  /* The ways a character gets into the app. One list with two callers: the
+     switcher when it holds nothing, and its add row. A page that owns a way
+     in puts it here, so no flow is written twice. */
+  function intakes() {
+    var list = [
+      {
+        id: 'class',
+        label: 'A character from a class',
+        blurb: 'The class brings its features, its saves and its dice',
+        run: function () {
           /* The class and the library have to be there before a skeleton can
              be built out of them. */
           data('classes').then(function (ok) {
@@ -822,10 +825,106 @@
           }).then(function (ok) {
             if (ok) openClassChooser();
           });
-          return;
         }
-        if (ev.target.closest('[data-blank]')) openBlankCharacter();
+      },
+      {
+        id: 'blank',
+        label: 'A character from nothing',
+        blurb: 'An empty sheet you fill yourself',
+        run: openBlankCharacter
+      },
+      {
+        id: 'file',
+        label: 'From a file',
+        blurb: 'A package someone sent you',
+        run: function () { pickFile(); }
+      },
+      {
+        id: 'link',
+        label: 'From a link',
+        blurb: 'A link that carries the character',
+        run: openPasteLink
       }
+    ];
+    return list;
+  }
+
+  function intakeRows() {
+    return intakes().map(function (a) {
+      return '<div class="crow cadd" data-intake="' + a.id + '">' +
+        '<span class="cn">' + esc(a.label) + '</span>' +
+        '<span class="cl">' + esc(a.blurb) + '</span></div>';
+    }).join('');
+  }
+
+  /* The file of a character is named after it, so the name of the file is
+     the name to show. */
+  function shelfLabel(file) {
+    var n = String(file || '').replace(/\.json$/i, '').replace(/[-_]+/g, ' ').trim();
+    return n ? n.charAt(0).toUpperCase() + n.slice(1) : 'A character';
+  }
+
+  /* The ways in, then the characters of the shelf, so a new device can start
+     from one of them. The shelf answers later, and the window is painted
+     again with what it found. */
+  function openIntake() {
+    var shelf = '';
+    function paint() {
+      sheet.open({
+        id: 'intake',
+        title: 'A character',
+        metaClass: 'sheet-meta one',
+        meta: '<span>How does it come in?</span>',
+        list: intakeRows() + shelf,
+        onList: function (ev) {
+          var take = ev.target.closest('[data-shelf]');
+          if (take) {
+            importUrl(take.dataset.shelf).then(function (answer) {
+              toast(answer && answer.ok ? answer.name + ' is here'
+                : ((answer && answer.why) || 'that character did not come'));
+            });
+            return;
+          }
+          var row = ev.target.closest('[data-intake]');
+          if (!row) return;
+          var one = intakes().filter(function (a) { return a.id === row.dataset.intake; })[0];
+          if (one) one.run();
+        }
+      });
+    }
+    paint();
+    shelfCharacters('').then(function (chars) {
+      var layer = sheet.top();
+      if (!layer || layer.id !== 'intake' || !chars || !chars.length) return;
+      shelf = chars.map(function (c) {
+        return '<div class="crow" data-shelf="' + esc(c.url) + '">' +
+          '<span class="cn">' + esc(shelfLabel(c.name)) + '</span>' +
+          '<span class="cl">on the shelf</span></div>';
+      }).join('');
+      paint();
+    }).catch(function () {});
+  }
+
+  /* A link the player pasted. The link and the address of a file on GitHub
+     both come in by the same door, so there is one way to read them. */
+  function openPasteLink() {
+    sheet.open({
+      id: 'pastelink',
+      title: 'From a link',
+      metaClass: 'sheet-meta one',
+      meta: '<input class="sheet-search" id="pasteLink" type="url" placeholder="the link of a character" aria-label="The link of a character">',
+      actions: [{
+        label: 'Fetch',
+        onClick: function (root) {
+          var field = root.querySelector('#pasteLink');
+          var where = field && field.value ? field.value.trim() : '';
+          if (!where) return;
+          importAny(where).then(function (answer) {
+            toast(answer && answer.ok ? answer.name + ' is here'
+              : ((answer && answer.why) || 'that link holds no character'));
+          });
+        }
+      }]
     });
   }
 
@@ -851,10 +950,12 @@
     };
   }
 
+  /* One character, one name, wherever it sits: the file is named after the
+     character. The export, the shelf write and the shelf read all use it. */
   function packageName(rec) {
     var name = ((rec.char && rec.char.name) || 'character').toLowerCase()
       .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'character';
-    return 'custom-sheet-' + name + '.json';
+    return name + '.json';
   }
 
   /* A name that is taken does not stop the import: the new one is called
@@ -1163,10 +1264,10 @@
 
   /* A character is written to the shelf as a package, one file per
      character, and the answer is the address of the file. */
-  function shelfWrite(pkgText, fileName) {
+  function shelfWrite(pkgText, fileName, message) {
     if (!window.SheetGit) return Promise.reject(new Error('the shelf cannot write yet'));
     var path = 'characters/' + fileName;
-    return window.SheetGit.putFile(shelfRepo(), path, pkgText, 'a character joins the shelf', ghBranch(), ghToken())
+    return window.SheetGit.putFile(shelfRepo(), path, pkgText, message || 'a character joins the shelf', ghBranch(), ghToken())
       .then(function (answer) {
         return (answer && answer.content && answer.content.html_url) || '';
       });
@@ -1182,6 +1283,28 @@
   function shelfRemove(fileName) {
     if (!window.SheetGit) return Promise.reject(new Error('the shelf cannot write yet'));
     return window.SheetGit.deleteFile(shelfRepo(), 'characters/' + fileName, 'a character leaves the shelf', ghBranch(), ghToken());
+  }
+
+  /* The character being played goes onto the shelf, one file per character,
+     named after it, on the branch that is named. The sheet and the settings
+     both push through here, so a character is written one way. */
+  function pushToShelf(rec) {
+    if (!window.SheetGit) return Promise.reject(new Error('the shelf cannot write yet'));
+    if (!ghToken()) return Promise.reject(new Error('connect to GitHub first'));
+    if (!rec || !rec.char) return Promise.reject(new Error('there is no character'));
+    var name = packageName(rec);
+    var text = JSON.stringify(packageOf(rec), null, 2);
+    var branch = ghBranch();
+    var message = (rec.char.name || 'a character') + ' goes to the shelf';
+    return shelfWrite(text, name, message).catch(function (e) {
+      var why = String((e && e.message) || e);
+      /* the branch may not be there yet, so it is made and the character is
+         put again */
+      if (branch !== 'main' && why.indexOf('not found') >= 0) {
+        return shelfBranch(branch).then(function () { return shelfWrite(text, name, message); });
+      }
+      throw e;
+    });
   }
 
   /* A shelf of one's own: a new repository, or a fork of the one of the
@@ -1390,15 +1513,6 @@
     }, true);
   }
 
-  /* A ready-made character keeps the pages it wants, so a page can be left
-     out of one character without turning it off for the others. */
-  function fromPreset(preset) {
-    var rec = seedCharacter((preset && preset.rec) || {}, true);
-    if (!rec.char.name && preset && preset.name) rec.char.name = preset.name;
-    if (!rec.pages && preset && preset.rec && preset.rec.pages) rec.pages = preset.rec.pages.slice();
-    return rec;
-  }
-
   function addCharacter(rec) {
     var id = 'c' + Date.now();
     state.characters[id] = rec;
@@ -1444,13 +1558,15 @@
 
   function removeCharacter(id) {
     var ids = Object.keys(state.characters);
-    if (ids.length <= 1) return;
     delete state.characters[id];
     if (state.current === id) {
-      state.current = ids.filter(function (x) { return x !== id; })[0];
+      state.current = ids.filter(function (x) { return x !== id; })[0] || '';
     }
     save();
     sheet.closeAll();
+    /* The last one leaves the app with nothing to play, so it goes back to
+       the ways in. */
+    if (!Object.keys(state.characters).length) { openCharacters(); return; }
     reshow();
     openCharacters();
   }
@@ -1637,6 +1753,9 @@ wireHead();
     registerPluginPages(state.characters[id]);
     });
     save();
+    /* Every page reads a character, so a device that holds none shows the
+       ways in and no page at all. */
+    if (!Object.keys(state.characters).length) { openCharacters(); return; }
     var home = PAGES.filter(function (p) { return p.home; })[0];
     show(home ? home.id : (enabled()[0] || PAGES[0]).id);
   }

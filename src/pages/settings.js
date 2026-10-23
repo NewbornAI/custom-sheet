@@ -200,33 +200,18 @@
     into.appendChild(open);
     E.exchange.appendChild(into);
 
-    /* A character from a link. */
+    /* A character from a link. The window is the one the ways in use, so a
+       link is read the same way wherever it is offered. */
     var fromLink = document.createElement('div');
     fromLink.className = 'srow';
-    var title = document.createElement('span');
-    title.className = 't';
-    title.textContent = 'From a link';
-    fromLink.appendChild(title);
-    field = document.createElement('input');
-    field.className = 'cinput slim';
-    field.type = 'url';
-    field.placeholder = 'the link of a character';
-    field.setAttribute('aria-label', 'The link of a character to bring in');
-    var take = document.createElement('button');
-    take.type = 'button';
-    take.className = 'stog';
-    take.textContent = 'Fetch';
-    take.setAttribute('aria-label', 'Fetch the character at that link');
-    take.addEventListener('click', function () {
-      take.disabled = true;
-      C.importAny(field.value).then(function (answer) {
-        take.disabled = false;
-        C.toast(answer && answer.ok ? answer.name + ' is here'
-          : ((answer && answer.why) || 'that link holds no character'));
-      });
-    });
-    fromLink.appendChild(field);
-    fromLink.appendChild(take);
+    fromLink.innerHTML = '<span class="t">From a link</span><span class="d">a link that carries the character</span>';
+    var paste = document.createElement('button');
+    paste.type = 'button';
+    paste.className = 'stog';
+    paste.textContent = 'Paste';
+    paste.setAttribute('aria-label', 'Bring in the character a link carries');
+    paste.addEventListener('click', function () { C.openPasteLink(); });
+    fromLink.appendChild(paste);
     E.exchange.appendChild(fromLink);
   }
 
@@ -447,30 +432,11 @@
   /* The character being played goes on the shelf, as a package, one file per
      character, on the branch that is named. */
   function putOnShelf() {
-    if (!C.ghToken()) { C.toast('connect to GitHub first'); return; }
-    var rec = api.character();
-    if (!rec || !rec.char) { C.toast('there is no character'); return; }
-    var pkg = C.packageOf(rec);
-    var name = 'custom-sheet-' + ((rec.char.name || 'character').toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')) + '.json';
-    var branch = C.ghBranch();
-    var text = JSON.stringify(pkg, null, 2);
     C.toast('putting it on the shelf');
-    C.shelfWrite(text, name).then(function (url) {
+    C.pushToShelf(api.character()).then(function (url) {
       C.toast('it is on the shelf');
       showAddress(url);
-    }).catch(function (e) {
-      var why = String((e && e.message) || e);
-      /* the branch may not be there yet, so it is made and the character is
-         put again */
-      if (branch !== 'main' && why.indexOf('not found') >= 0) {
-        C.shelfBranch(branch).then(function () { return C.shelfWrite(text, name); })
-          .then(function (url) { C.toast('it is on the shelf'); showAddress(url); })
-          .catch(function (e2) { C.toast(String((e2 && e2.message) || e2)); });
-        return;
-      }
-      C.toast(why);
-    });
+    }).catch(function (e) { C.toast(String((e && e.message) || e)); });
   }
 
   /* The address of the file on GitHub, which is a link anyone can open and

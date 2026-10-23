@@ -39,12 +39,14 @@ exchange, the shelf, the credits and the update.
 
 ## The characters
 
-A character is added ready-made or from nothing.
+A device with no character opens on the ways in: a character from a class, a
+character from nothing, a file someone sent, a link, or one of the characters
+published on the shelf. Nothing ships inside the app, so the first screen is
+a way in rather than a sheet.
 
-A ready-made one comes from `data/characters.json`. Yngwie is there: the bard
-11 of the college of creation, high elf, the musician, the two adept feats,
-the scores eight, fourteen, fourteen, ten, twelve and nineteen, the eleven
-hit dice and the ten spells the feats prepare.
+The characters published on the shelf are the examples: Wendy the sorcerer
+and Yngwie the bard, one file each in `characters/`, named after the
+character.
 
 The others are built from a class, a level and a subclass, and the app fills in
 what it can: the features the class grants, the saving throws, the spell slots
@@ -153,7 +155,6 @@ the files under `data/`.
 | `features.json` | 1017 features of those classes and archetypes, with their text |
 | `spellbook.json` | 397 spells, with the classes that can learn each one |
 | `wild-magic-surge-xphb.json` | the surge table of the 2024 handbook |
-| `characters.json` | the ready-made characters |
 | `spell-sheet.csv` | the spells of the sheet of the table, one line each |
 
 `tools/fetch-5e-data.mjs` pulls them from 5e.tools, and the build writes the
