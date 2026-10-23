@@ -92,7 +92,11 @@
         '<div class="fconfirm"><span>Remove it?</span>' +
         '<button class="yes" type="button" data-role="yes">Remove</button>' +
         '<button class="no" type="button" data-role="no">Keep</button></div>';
-      (f.active ? E.featureActive : E.featurePassive).appendChild(card);
+      /* A feature that cannot be spent and does not come back on a rest is
+         not an active one, whatever the record says: it is always on. */
+      var spendable = !!Number(f.max) || !!f.cost || f.recovery === 'sp' ||
+        f.recovery === 'short' || f.recovery === 'long' || f.recovery === 'special';
+      (f.active && spendable ? E.featureActive : E.featurePassive).appendChild(card);
     });
   }
 
@@ -155,7 +159,8 @@
     if (data.action) meta += C.field('Action', data.action);
     if (data.duration) meta += C.field('Duration', data.duration);
     if (f.recovery === 'sp') meta += C.field('Cost', '1 sorcery point');
-    else if (f.recovery && f.recovery !== 'none') meta += C.field('Recovery', f.recovery + ' rest');
+    else if (f.recovery === 'short' || f.recovery === 'long') meta += C.field('Recovery', f.recovery + ' rest');
+    else if (f.recovery === 'special') meta += C.field('Recovery', 'special');
 
     api.sheet.open({
       id: 'feature:' + key,
