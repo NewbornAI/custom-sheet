@@ -372,21 +372,21 @@
     var cr = block.cr ? block.cr + ' (' + (block.xp || 0) + ' XP)' : 'None (XP 0)';
     return abilityRow(card, block) +
       C.field('Speed', block.speed) +
-      C.field('Resist', listText(block.resist)) +
-      C.field('Immune', listText(block.immune)) +
-      C.field('Senses', listText(block.senses)) +
-      '<div class="sspace"></div>' +
-      C.field('AC', acText ? ac + ' (' + acText + ')' : String(ac || '')) +
-      C.field('HP', hpText ? hp + ' (' + hpText + ')' : String(hp || '')) +
       C.field('Initiative', sign(dex)) +
-      '<div class="sspace"></div>' +
-      C.field('Lang.', block.languages) +
-      C.field('CR', cr) +
-      C.field('Type', (block.size ? block.size + ' ' : '') + block.type) +
-      C.field('Align', block.alignment) +
-      C.field('Skills', listText(block.skills)) +
+      C.field('Resistance', listText(block.resist)) +
       C.field('Vuln.', listText(block.vulnerable)) +
-      C.field('Cond.Imm', listText(block.conditionImmune));
+      C.field('Immune', listText(block.immune)) +
+      C.field('Cond.Imm', listText(block.conditionImmune)) +
+      '<div class="sspace"></div>' +
+      C.field('Senses', listText(block.senses), '', true) +
+      C.field('Skills', listText(block.skills), '', true) +
+      '<div class="sspace"></div>' +
+      C.field('AC', acText ? ac + ' (' + acText + ')' : String(ac || ''), '', true) +
+      C.field('HP', hpText ? hp + ' (' + hpText + ')' : String(hp || ''), '', true) +
+      '<div class="sspace"></div>' +
+      C.field('Lang.', block.languages, '', true) +
+      C.field('Align', block.alignment) +
+      C.field('CR', cr);
   }
 
   /* The text of the block: the traits, the actions and the rest. */
@@ -433,6 +433,8 @@
     api.sheet.open({
       id: 'stat:' + card.key,
       title: block.name,
+      tag: (block.size ? block.size + ' ' : '') + block.type,
+      metaClass: 'sheet-meta statmeta',
       meta: statFields(block, out, card),
       text: statText(block, out, card),
       onPaint: function (root) {
@@ -1122,6 +1124,7 @@
       '.savetog{width:7px;height:7px;flex:0 0 auto;border-radius:50%;border:1px solid #453f63;background:none;padding:0;cursor:pointer}',
       '.savetog.on{background:var(--gold);border-color:var(--gold);box-shadow:0 0 6px rgba(var(--gold-rgb),.45)}',
       '.sspace{grid-column:1 / -1;height:3px}',
+      '.statmeta .f{grid-template-columns:5.4em minmax(0,1fr)}',
       '.sother{font-size:10.5px;color:#6f6a8d;font-variant-numeric:tabular-nums}',
       '.suses{border:1px solid var(--edge);border-radius:999px;background:none;color:var(--ink);font:inherit;font-size:10.5px;line-height:1.4;padding:1px 9px;cursor:pointer;font-variant-numeric:tabular-nums}',
       '.suses.out{color:#6f6a8d}',

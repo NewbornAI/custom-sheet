@@ -711,6 +711,8 @@
       if (!layer) { el.sheet.hidden = true; return; }
       el.sheet.hidden = false;
       el.sheetTitle.textContent = layer.title || '';
+      el.sheetTag.textContent = layer.tag || '';
+      el.sheetTag.hidden = !layer.tag;
       el.sheetMeta.className = layer.metaClass || 'sheet-meta';
       el.sheetMeta.innerHTML = layer.meta || '';
       el.sheetText.innerHTML = layer.text || '';
@@ -1765,6 +1767,7 @@
     spentToast: document.getElementById('spentToast'),
     sheet: document.getElementById('sheet'),
     sheetTitle: document.getElementById('sheetTitle'),
+  sheetTag: document.getElementById('sheetTag'),
     sheetMeta: document.getElementById('sheetMeta'),
     sheetText: document.getElementById('sheetText'),
     sheetList: document.getElementById('sheetList'),

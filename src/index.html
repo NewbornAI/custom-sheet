@@ -584,6 +584,9 @@ input[type=range]::-moz-range-thumb{
   position:relative;
 }
 .sheet h2{font-family:var(--display);font-size:20px;font-weight:700;margin:0;padding-right:34px}
+.sheethead{display:flex;align-items:baseline;gap:12px;padding-right:38px}
+.sheethead h2{flex:1 1 auto;min-width:0;padding-right:0;overflow:hidden;text-overflow:ellipsis}
+.sheet-tag{flex:0 0 auto;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
 .sheet-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:14px;row-gap:5px;margin-top:2px}
 .sheet-meta.one{grid-template-columns:minmax(0,1fr)}
 .sheet-meta.one span{font-size:9.5px;font-style:italic;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1259,7 +1262,10 @@ input[type=range]::-moz-range-thumb{
 <div class="sheet" id="sheet" hidden>
   <div class="sheet-in">
     <button class="sheet-x" id="sheetClose" type="button" aria-label="Close">&times;</button>
+    <div class="sheethead">
     <h2 id="sheetTitle"></h2>
+    <span class="sheet-tag" id="sheetTag" hidden></span>
+  </div>
     <div class="sheet-meta" id="sheetMeta"></div>
     <div class="gsbar">
       <button class="gtog" id="grimoireLevel" type="button" aria-pressed="true" hidden>Level 1</button>
