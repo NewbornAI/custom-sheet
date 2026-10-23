@@ -46,12 +46,28 @@ check('the client id is public and in the source', G.clientId.length > 10, true)
 check('it asks for no secret', /client_secret/.test(code), false);
 
 console.log('the sign in');
-await G.deviceStart('public_repo');
+await G.deviceStart();
 const start = calls[calls.length - 1];
 check('it asks for a device code', start.url, 'https://github.com/login/device/code');
 check('it says what it wants', start.method, 'POST');
 check('it names the app', JSON.parse(start.body).client_id, G.clientId);
-check('it asks for the public shelf only', JSON.parse(start.body).scope, 'public_repo');
+check('it asks for no scope at all', JSON.parse(start.body).scope, undefined);
+check('the app decides the permissions, not the token', G.clientId.charAt(0), 'I');
+
+/* A token of a GitHub App lasts eight hours, and the refresh token renews
+   it, so the app asks for a new one rather than a new sign in. */
+const before = calls.length;
+answers['https://github.com/login/oauth/access_token POST'] = {
+  status: 200,
+  body: JSON.stringify({ access_token: 'ghu_new', expires_in: 28800, refresh_token: 'ghr_one' })
+};
+const renewed = await G.refreshSession('ghr_old');
+const ask = calls[before];
+check('the renewal goes to the same door', ask.url, 'https://github.com/login/oauth/access_token');
+check('and names the refresh grant', JSON.parse(ask.body).grant_type, 'refresh_token');
+check('with the token it was given', JSON.parse(ask.body).refresh_token, 'ghr_old');
+check('and no secret', JSON.parse(ask.body).client_secret, undefined);
+check('it comes back with a token that lasts', renewed.expires_in, 28800);
 
 console.log('the calls');
 await G.whoAmI('tok');

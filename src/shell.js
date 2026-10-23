@@ -531,6 +531,8 @@
     shelfCreateRepo: shelfCreateRepo,
     shelfFork: shelfFork,
     ghToken: ghToken,
+    ghTokenNow: ghTokenNow,
+    ghSetSession: ghSetSession,
     ghSetToken: ghSetToken,
     ghLogin: ghLogin,
     ghSetLogin: ghSetLogin,
@@ -1190,7 +1192,7 @@
      own can be private. */
   function shelfCharacters(ref) {
     if (window.SheetGit) {
-      return window.SheetGit.listCharacters(shelfRepo(), ref, ghToken())
+      return window.SheetGit.listCharacters(shelfRepo(), ref, ghReadToken())
         .catch(function (e) { throw e; });
     }
     var where = shelfApi('/contents/characters' + (ref ? '?ref=' + encodeURIComponent(ref) : ''));
@@ -1213,7 +1215,7 @@
   /* The branches are the shelves of the players: anybody may open one. */
   function shelfBranches() {
     if (window.SheetGit) {
-      return window.SheetGit.api('GET', '/repos/' + shelfRepo() + '/branches', null, ghToken())
+      return window.SheetGit.api('GET', '/repos/' + shelfRepo() + '/branches', null, ghReadToken())
         .then(function (rows) {
           if (!Array.isArray(rows)) return [];
           return rows.map(function (b) { return b.name; });
@@ -1228,14 +1230,59 @@
 
   /* ---- the shelf writes back ---- */
 
-  /* The token of the player. It is asked for once, kept in the state of the
+  /* The session of the player: the token, the refresh token that renews it
+     and when it runs out. It is asked for once, kept in the state of the
      app, and it never leaves the machine except to GitHub. */
+  function ghSession() {
+    return (state.ui && state.ui.gh) || null;
+  }
+
   function ghToken() {
-    return (state.ui && state.ui.token) || '';
+    var s = ghSession();
+    return (s && s.token) || (state.ui && state.ui.token) || '';
+  }
+
+  /* A read that may be anonymous. A token that has run out is not sent, so
+     the public shelf is still read without one. */
+  function ghReadToken() {
+    var s = ghSession();
+    if (!s || !s.token) return '';
+    if (s.expires && s.expires <= Date.now()) return '';
+    return s.token;
+  }
+
+  /* The token, renewed when it has run out. A GitHub App hands a token for
+     eight hours and a refresh token for six months, so the app renews the
+     session rather than asking the player to sign in again. */
+  function ghTokenNow() {
+    var s = ghSession();
+    var token = ghToken();
+    if (!token) return Promise.reject(new Error('connect to GitHub first'));
+    if (!s || !s.expires || s.expires - 60000 > Date.now()) return Promise.resolve(token);
+    if (!s.refresh || !window.SheetGit || !window.SheetGit.refreshSession) {
+      return Promise.reject(new Error('the connection has run out, sign in again'));
+    }
+    return window.SheetGit.refreshSession(s.refresh).then(function (answer) {
+      if (!answer || !answer.access_token) throw new Error('GitHub did not renew the connection');
+      ghSetSession(answer);
+      return answer.access_token;
+    });
+  }
+
+  function ghSetSession(answer) {
+    state.ui = state.ui || {};
+    var s = state.ui.gh || {};
+    if (answer && answer.access_token) s.token = answer.access_token;
+    if (answer && answer.refresh_token) s.refresh = answer.refresh_token;
+    s.expires = (answer && answer.expires_in) ? Date.now() + Number(answer.expires_in) * 1000 : 0;
+    state.ui.gh = s;
+    state.ui.token = s.token || '';
+    save();
   }
 
   function ghSetToken(token) {
     state.ui = state.ui || {};
+    state.ui.gh = token ? { token: token, expires: 0 } : null;
     state.ui.token = token || '';
     save();
   }
@@ -1247,6 +1294,7 @@
   function ghSetLogin(login) {
     state.ui = state.ui || {};
     state.ui.login = login || '';
+    if (state.ui.gh) state.ui.gh.login = login || '';
     save();
   }
 
@@ -1264,25 +1312,25 @@
 
   /* A character is written to the shelf as a package, one file per
      character, and the answer is the address of the file. */
-  function shelfWrite(pkgText, fileName, message) {
+  function shelfWrite(pkgText, fileName, message, token) {
     if (!window.SheetGit) return Promise.reject(new Error('the shelf cannot write yet'));
     var path = 'characters/' + fileName;
-    return window.SheetGit.putFile(shelfRepo(), path, pkgText, message || 'a character joins the shelf', ghBranch(), ghToken())
+    return window.SheetGit.putFile(shelfRepo(), path, pkgText, message || 'a character joins the shelf', ghBranch(), token || ghToken())
       .then(function (answer) {
         return (answer && answer.content && answer.content.html_url) || '';
       });
   }
 
   /* A branch of the shelf, made when it is not there yet. */
-  function shelfBranch(name) {
+  function shelfBranch(name, token) {
     if (!window.SheetGit) return Promise.reject(new Error('the shelf cannot write yet'));
-    return window.SheetGit.createBranch(shelfRepo(), name, ghToken());
+    return window.SheetGit.createBranch(shelfRepo(), name, token || ghToken());
   }
 
   /* A character goes off the shelf as well as on it. */
-  function shelfRemove(fileName) {
+  function shelfRemove(fileName, token) {
     if (!window.SheetGit) return Promise.reject(new Error('the shelf cannot write yet'));
-    return window.SheetGit.deleteFile(shelfRepo(), 'characters/' + fileName, 'a character leaves the shelf', ghBranch(), ghToken());
+    return window.SheetGit.deleteFile(shelfRepo(), 'characters/' + fileName, 'a character leaves the shelf', ghBranch(), token || ghToken());
   }
 
   /* The character being played goes onto the shelf, one file per character,
@@ -1290,33 +1338,36 @@
      both push through here, so a character is written one way. */
   function pushToShelf(rec) {
     if (!window.SheetGit) return Promise.reject(new Error('the shelf cannot write yet'));
-    if (!ghToken()) return Promise.reject(new Error('connect to GitHub first'));
     if (!rec || !rec.char) return Promise.reject(new Error('there is no character'));
     var name = packageName(rec);
     var text = JSON.stringify(packageOf(rec), null, 2);
     var branch = ghBranch();
     var message = (rec.char.name || 'a character') + ' goes to the shelf';
-    return shelfWrite(text, name, message).catch(function (e) {
-      var why = String((e && e.message) || e);
-      /* the branch may not be there yet, so it is made and the character is
-         put again */
-      if (branch !== 'main' && why.indexOf('not found') >= 0) {
-        return shelfBranch(branch).then(function () { return shelfWrite(text, name, message); });
-      }
-      throw e;
+    return ghTokenNow().then(function (token) {
+      return shelfWrite(text, name, message, token).catch(function (e) {
+        var why = String((e && e.message) || e);
+        /* the branch may not be there yet, so it is made and the character is
+           put again */
+        if (branch !== 'main' && why.indexOf('not found') >= 0) {
+          return shelfBranch(branch, token).then(function () {
+            return shelfWrite(text, name, message, token);
+          });
+        }
+        throw e;
+      });
     });
   }
 
   /* A shelf of one's own: a new repository, or a fork of the one of the
      project. */
-  function shelfCreateRepo(name, isPrivate) {
+  function shelfCreateRepo(name, isPrivate, token) {
     if (!window.SheetGit) return Promise.reject(new Error('the shelf cannot write yet'));
-    return window.SheetGit.createRepo(name, ghToken(), isPrivate);
+    return window.SheetGit.createRepo(name, token || ghToken(), isPrivate);
   }
 
-  function shelfFork() {
+  function shelfFork(token) {
     if (!window.SheetGit) return Promise.reject(new Error('the shelf cannot write yet'));
-    return window.SheetGit.forkRepo(shelfRepo(), ghToken());
+    return window.SheetGit.forkRepo(shelfRepo(), token || ghToken());
   }
 
   /* The address of a file on GitHub, the one a browser shows, is turned

@@ -17,7 +17,7 @@
 (function () {
   'use strict';
 
-  var CLIENT_ID = 'Ov23lihSRU49cPT8Hzfp';
+  var CLIENT_ID = 'Iv23lim6bRwLkTfAhHB5';
   var OAUTH = 'https://github.com/';
   var API = 'https://api.github.com/';
 
@@ -85,11 +85,24 @@
   /* ---- the sign in ---- */
 
   /* The device flow: the app asks for a code, the player approves it in
-     the browser, and the app polls until GitHub hands over the token. */
-  function deviceStart(scope) {
+     the browser, and the app polls until GitHub hands over the token. The
+     app is a GitHub App, so no scope is asked for: the permissions are the
+     ones of the app, and the token reaches only the repositories it is
+     installed on. */
+  function deviceStart() {
     return request(OAUTH + 'login/device/code', 'POST',
-      { client_id: CLIENT_ID, scope: scope || 'public_repo' }, null)
+      { client_id: CLIENT_ID }, null)
       .then(function (r) { return r.data; });
+  }
+
+  /* A user token lasts eight hours, and the refresh token it comes with
+     lasts six months, so a sign in is renewed rather than repeated. */
+  function refreshSession(refresh) {
+    return request(OAUTH + 'login/oauth/access_token', 'POST', {
+      client_id: CLIENT_ID,
+      grant_type: 'refresh_token',
+      refresh_token: refresh
+    }, null).then(function (r) { return r.data; });
   }
 
   function devicePoll(code) {
@@ -203,6 +216,7 @@
     clientId: CLIENT_ID,
     deviceStart: deviceStart,
     devicePoll: devicePoll,
+    refreshSession: refreshSession,
     whoAmI: whoAmI,
     listCharacters: listCharacters,
     putFile: putFile,

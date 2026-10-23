@@ -357,7 +357,7 @@
      it in the browser, and the app polls until the token lands. */
   function connect() {
     C.toast('asking GitHub for a code');
-    window.SheetGit.deviceStart('public_repo').then(function (answer) {
+    window.SheetGit.deviceStart().then(function (answer) {
       if (!answer || !answer.user_code) { C.toast('GitHub did not answer'); return; }
       var code = answer.user_code;
       var where = answer.verification_uri || 'https://github.com/login/device';
@@ -381,7 +381,7 @@
     window.setTimeout(function () {
       window.SheetGit.devicePoll(code).then(function (answer) {
         if (answer && answer.access_token) {
-          C.ghSetToken(answer.access_token);
+          C.ghSetSession(answer);
           api.sheet.close();
           window.SheetGit.whoAmI(answer.access_token).then(function (login) {
             C.ghSetLogin(login);
