@@ -773,6 +773,25 @@ console.log('the bestiary');
   check('and they are the same three', (opened[0].list.match(/data-src="([^"]+)"/g) || []).join(','), 'data-src="spell:Summon Fey",data-src="spell:Summon Celestial",data-src="feature:animatingPerformance"');
   const seeded = taken.summons.seed({}, true);
   check('a new character holds no creature', seeded.list.length, 0);
+
+  /* The numbers the book writes as words, and the forms a creature comes
+     in. */
+  const celestial = creatures['celestial spirit'];
+  check('the celestial spirit comes in two forms', (celestial.forms || []).length, 2);
+  const avenger = (celestial.forms || []).filter((f) => f.id === 'avenger')[0];
+  const defender = (celestial.forms || []).filter((f) => f.id === 'defender')[0];
+  check('the avenger has its own armour class', avenger.acTerms.branches[0].terms[0].const, 11);
+  check('and the defender another', defender.acTerms.branches[0].terms[0].const, 13);
+  check('the avenger shoots a bow', avenger.actions.map((a) => a.name).indexOf('Radiant Bow') >= 0, true);
+  check('and the defender has no bow', defender.actions.map((a) => a.name).indexOf('Radiant Bow'), -1);
+  check('the defender has a mace', defender.actions.map((a) => a.name).indexOf('Radiant Mace') >= 0, true);
+  check('the multiattack is counted by the level', avenger.actions[0].count.half, true);
+  check('the hit points grow with the slot', celestial.hpTerms.branches[0].terms[1].perLevelAbove, 10);
+  check('and only above the fifth level', celestial.hpTerms.branches[0].terms[1].above, 5);
+  check('the armour class grows with the slot too', avenger.acTerms.branches[0].terms[1].level, 1);
+  check('the damage of the bow is two dice of six', avenger.actions[1].damageParts.dice.count, 2);
+  check('and the slot is added to it', avenger.actions[1].damageParts.flat[1].level, 1);
+  check('the dancing item takes the proficiency of the caster', creatures['dancing item'].actions[0].damageParts.flat[0].prof, 1);
 }
 console.log(failures === 0 ? '\nall rules checks pass' : '\n' + failures + ' check(s) failed');
 process.exit(failures === 0 ? 0 : 1);

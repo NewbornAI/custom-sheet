@@ -141,7 +141,7 @@ export function references(node) {
 }
 
 /* The range of an attack: the tags m, mw, r, rw, ms and rs. */
-const RANGES = { m: 'Melee', mw: 'Melee', ms: 'Melee', r: 'Ranged', rw: 'Ranged', rs: 'Ranged' };
+const RANGES = { m: 'Melee attack:', mw: 'Melee weapon attack:', ms: 'Melee spell attack:', r: 'Ranged attack:', rw: 'Ranged weapon attack:', rs: 'Ranged spell attack:' };
 
 /* The text of a creature, with its tags read. */
 export function creatureText(text) {
@@ -150,8 +150,8 @@ export function creatureText(text) {
   out = out.replace(/\{@filter ([^}]*)}/g, '');
   out = out.replace(/\{@atk (m|r|mw|rw|ms|rs)\b\}?/g, (m, kind) => RANGES[kind] || kind);
   out = out.replace(/\{@atkr (m|r|mw|rw|ms|rs)\b\}?/g, (m, kind) => RANGES[kind] || kind);
-  out = out.replace(/\{@hit (-?\d+)\}/g, '$1 to hit');
-  out = out.replace(/\{@hitYourSpellAttack\}/g, 'your spell attack modifier');
+  out = out.replace(/\{@hit (-?\d+)\}/g, '+$1 to hit');
+  out = out.replace(/\{@hitYourSpellAttack[^}]*\}/g, 'your spell attack modifier');
   out = out.replace(/\{@h\}/g, '');
   out = out.replace(/\{@damage ([^}]+)\}(\s+([A-Z][a-z]+)( damage)?)?/g, (m, dice, gap, type, dmg) =>
     '[[d:' + dice + (gap ? ' ' + type + (dmg || '') : '') + ']]');
@@ -187,6 +187,11 @@ export function attackOf(text) {
   if (hit) out.bonus = hit[1];
   const dmg = text.match(/\{@(?:scaledamage|damage)\s+([^}|]+)/);
   if (dmg) out.damage = dmg[1].trim();
+  /* an action that heals or restores carries its amount in a dice tag */
+  if (!out.damage) {
+    const dice = text.match(/\{@dice\s+([^}|]+)/);
+    if (dice) out.damage = dice[1].trim();
+  }
   const typed = text.match(/\{@(?:scaledamage|damage)\s+[^}]+\}\s*([A-Za-z]+)\s+damage/);
   if (typed) out.type = typed[1].toLowerCase();
   else {
