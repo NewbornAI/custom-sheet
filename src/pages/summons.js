@@ -266,6 +266,103 @@
     return found ? found.name : '';
   }
 
+  /* ---- the stat block of the creature ---- */
+
+  /* A list the book writes, as a line of text. */
+  function listText(list) {
+    if (!list || !list.length) return '';
+    return list.map(function (x) {
+      return x.note ? x.text + ' (' + x.note + ')' : x.text;
+    }).join(', ');
+  }
+
+  /* The abilities, with the short names a stat block writes. */
+  function abilityText(list) {
+    if (!list || !list.length) return '';
+    var short = { Strength: 'Str', Dexterity: 'Dex', Constitution: 'Con', Intelligence: 'Int', Wisdom: 'Wis', Charisma: 'Cha' };
+    return list.map(function (a) { return (short[a.name] || a.name) + ' ' + a.score; }).join(', ');
+  }
+
+  /* One named thing of the block: its name and what it says. */
+  function statLine(name, text) {
+    if (!text) return '';
+    return '<p><b>' + C.esc(name) + '.</b> ' + C.markup(text) + '</p>';
+  }
+
+  /* The fields of the block: the numbers and the words around them. */
+  function statFields(block, out, card) {
+    var form = out ? out.form : null;
+    /* The numbers of the card are the numbers of the block at the slot it
+       was called with. */
+    var ac = out && out.ac !== null && out.ac !== undefined ? out.ac : (form && form.ac ? form.ac : block.ac);
+    var hp = out && out.hpMax !== null && out.hpMax !== undefined ? out.hpMax : (form && form.hp ? form.hp : block.hp);
+    var acText = form && form.acText ? form.acText : block.acText;
+    var hpText = form && form.hpText ? form.hpText : block.hpText;
+    return C.field('CR', block.cr) +
+      C.field('Type', (block.size ? block.size + ' ' : '') + block.type) +
+      C.field('Align', block.alignment) +
+      C.field('Speed', block.speed) +
+      C.field('AC', acText ? ac + ' (' + acText + ')' : String(ac || '')) +
+      C.field('HP', hpText ? hp + ' (' + hpText + ')' : String(hp || '')) +
+      C.field('Abilities', abilityText(block.ability)) +
+      C.field('Saves', listText(block.saves)) +
+      C.field('Skills', listText(block.skills)) +
+      C.field('Resist', listText(block.resist)) +
+      C.field('Immune', listText(block.immune)) +
+      C.field('Vuln.', listText(block.vulnerable)) +
+      C.field('Cond.Imm', listText(block.conditionImmune)) +
+      C.field('Senses', listText(block.senses)) +
+      C.field('Lang.', block.languages);
+  }
+
+  /* The text of the block: the traits, the actions and the rest. */
+  function statText(block, out, card) {
+    var form = out ? out.form : null;
+    var actions = form ? form.actions : block.actions;
+    var traits = form ? form.traits : block.traits;
+    var html = '';
+    function section(title, list) {
+      if (!list || !list.length) return;
+      html += '<h3>' + C.esc(title) + '</h3>';
+      list.forEach(function (x) { html += statLine(x.name, spoken(x.text, card)); });
+    }
+    section('Traits', traits);
+    section('Actions', actions);
+    section('Bonus Actions', block.bonusActions);
+    section('Reactions', block.reactions);
+    section('Legendary Actions', block.legendary);
+    if (block.spellcasting && block.spellcasting.length) {
+      html += '<h3>Spellcasting</h3>';
+      block.spellcasting.forEach(function (x) {
+        html += '<p><b>' + C.esc(x.name) + '.</b> ' + C.markup(spoken(x.header, card)) + '</p>';
+        if (x.text) html += '<p>' + C.markup(spoken(x.text, card)) + '</p>';
+      });
+    }
+    return html;
+  }
+
+  /* The words the book uses for the numbers of the caster are put right. */
+  function spoken(text, card) {
+    var out = String(text || '');
+    if (card && card.slot >= 0) out = out.replace(/summonSpellLevel/gi, String(card.slot));
+    var ch = (api.character() && api.character().char) || {};
+    var pb = (C.SR && C.SR.profBonus && ch.level) ? C.SR.profBonus(ch.level) : null;
+    if (pb !== null && pb !== undefined) out = out.replace(/\bPB\b/g, String(pb));
+    return out;
+  }
+
+  /* The stat block of the creature, in the overlay of the app. */
+  function openStat(card) {
+    var block = library()[card.key];
+    if (!block) { api.toast('the app does not carry its block'); return; }
+    var out = derive(card);
+    api.sheet.open({
+      id: 'stat:' + card.key,
+      title: block.name,
+      meta: statFields(block, out, card),
+      text: statText(block, out, card)
+    });
+  }
   /* ---- the cards ---- */
 
   /* The type of a damage, and the colour it wears. The book says it, and an
@@ -515,7 +612,9 @@
       : (out && out.hpMax !== null && out.hpMax !== undefined ? String(out.hpMax) : '');
     var html = '<div class="scard" data-id="' + C.esc(s.id) + '">' +
       '<div class="sstop">' +
-        '<input class="sname" data-role="name" value="' + C.esc(s.name) + '" aria-label="Name of the summon">' +
+        (editing
+          ? '<input class="sname" data-role="name" value="' + C.esc(s.name) + '" aria-label="Name of the summon">'
+          : '<button type="button" class="sname snamebtn" data-role="stat" aria-label="The stat block of the summon">' + C.esc(s.name) + '</button>') +
         '<button type="button" class="ssrc" data-role="source" title="' + C.esc(block ? block.name : (s.spell || '')) + '" aria-label="Open what called it">' + C.esc(s.spell || '') + '</button>' +
         '<button type="button" class="sdel" data-role="dismiss" aria-label="Dismiss the summon">&times;</button>' +
       '</div>';
@@ -890,6 +989,7 @@
       '.scard{border:1px solid var(--edge);border-radius:5px;background:rgba(255,255,255,.03);padding:7px 8px;display:flex;flex-direction:column;gap:6px}',
       '.sstop{display:flex;align-items:center;gap:6px}',
       '.sname{flex:1 1 auto;min-width:0;font:inherit;font-size:15px;color:var(--ink);background:none;border:none;border-bottom:1px solid var(--edge);padding:2px 0}',
+      '.snamebtn{text-align:left;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
       '.ssrc{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40%;background:none;border:none;padding:0;font:inherit;font-size:10px;cursor:pointer;text-align:right}',
       '.ssrc:active{color:var(--arcane)}',
       '.sdel{background:none;border:none;color:var(--muted);font:inherit;font-size:18px;line-height:1;padding:0 3px;cursor:pointer;flex:0 0 auto}',
@@ -1041,6 +1141,8 @@
           }
           /* The spell or the feature the creature came from. */
           if (role === 'source') { openSource(s); return; }
+          /* The stat block of the creature. */
+          if (role === 'stat') { openStat(s); return; }
         }
         /* An attack is rolled when its die is tapped, the way the volley
            rolls a beam. */

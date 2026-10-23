@@ -179,6 +179,125 @@ export function parseMultiattack(text) {
   return null;
 }
 
+/* ---- the whole stat block ---- */
+
+const ABILITY_NAMES = {
+  str: 'Strength', dex: 'Dexterity', con: 'Constitution',
+  int: 'Intelligence', wis: 'Wisdom', cha: 'Charisma'
+};
+
+const SKILL_NAMES = {
+  acrobatics: 'Acrobatics', 'animal handling': 'Animal Handling', arcana: 'Arcana',
+  athletics: 'Athletics', deception: 'Deception', history: 'History',
+  insight: 'Insight', intimidation: 'Intimidation', investigation: 'Investigation',
+  medicine: 'Medicine', nature: 'Nature', perception: 'Perception',
+  performance: 'Performance', persuasion: 'Persuasion', religion: 'Religion',
+  'sleight of hand': 'Sleight of Hand', stealth: 'Stealth', survival: 'Survival'
+};
+
+const ALIGNMENTS = { G: 'Good', N: 'Neutral', E: 'Evil', U: 'Unaligned', A: 'Any alignment' };
+
+/* The six abilities of the creature, with the names the book writes. */
+function abilitiesOf(entry) {
+  const out = [];
+  ['str', 'dex', 'con', 'int', 'wis', 'cha'].forEach((k) => {
+    if (typeof entry[k] === 'number') out.push({ name: ABILITY_NAMES[k], score: entry[k] });
+  });
+  return out.length ? out : null;
+}
+
+/* The name a skill is written with. */
+function skillName(key) {
+  const k = String(key || '').toLowerCase().replace(/_/g, ' ');
+  if (SKILL_NAMES[k]) return SKILL_NAMES[k];
+  return k.charAt(0).toUpperCase() + k.slice(1);
+}
+
+/* The saving throws, the way the book writes them. */
+function savesOf(entry) {
+  const save = entry.save;
+  if (!save || typeof save !== 'object') return null;
+  const out = [];
+  Object.keys(save).forEach((k) => {
+    out.push({ name: ABILITY_NAMES[k] || skillName(k), value: String(save[k]) });
+  });
+  return out.length ? out : null;
+}
+
+/* The skills the creature has a gift for. */
+function skillsOf(entry) {
+  const skill = entry.skill;
+  if (!skill || typeof skill !== 'object') return null;
+  const out = [];
+  Object.keys(skill).forEach((k) => {
+    out.push({ name: skillName(k), value: String(skill[k]) });
+  });
+  return out.length ? out : null;
+}
+
+/* A list the book writes: the names, and the note that goes with them. */
+function listOf(value, key) {
+  if (!value) return null;
+  const out = [];
+  [].concat(value).forEach((item) => {
+    if (typeof item === 'string') { if (item.trim()) out.push({ text: item.trim(), note: '' }); return; }
+    if (!item || typeof item !== 'object') return;
+    const names = [].concat(item[key] || []).map((x) => String(x).trim()).filter(Boolean);
+    if (!names.length) return;
+    out.push({ text: names.join(', '), note: item.note ? String(item.note) : '' });
+  });
+  return out.length ? out : null;
+}
+
+/* The senses of the creature. */
+function sensesOf(entry) {
+  const out = listOf(entry.senses, 'senses');
+  if (!out) return null;
+  if (typeof entry.passive === 'number') {
+    out.push({ text: 'passive Perception ' + entry.passive, note: '' });
+  }
+  return out;
+}
+
+/* The languages it speaks and understands. */
+function languagesOf(entry) {
+  const out = listOf(entry.languages, 'languages');
+  return out ? out.map((l) => l.text).join(', ') : '';
+}
+
+/* The alignment, as the book writes it. */
+function alignmentOf(entry) {
+  const a = entry.alignment;
+  if (typeof a === 'string') return ALIGNMENTS[a.toUpperCase()] || a;
+  if (a && typeof a === 'object' && !Array.isArray(a)) {
+    if (a.special) return String(a.special);
+    if (typeof a.type === 'string') return ALIGNMENTS[a.type.toUpperCase()] || a.type;
+    return '';
+  }
+  const list = [].concat(a || []).filter(Boolean);
+  if (!list.length) return '';
+  return list.map((x) => ALIGNMENTS[String(x).toUpperCase()] || String(x)).join(' ');
+}
+
+/* The spellcasting of the creature, with the spells it knows. */
+function spellcastingOf(value) {
+  const out = [];
+  [].concat(value || []).forEach((s) => {
+    if (!s || typeof s !== 'object') return;
+    const header = (s.headerEntries || []).map((e) => (typeof e === 'string' ? e : '')).join(' ');
+    const will = (s.will || []).map((e) => (typeof e === 'string' ? e : '')).join(', ');
+    const daily = [];
+    Object.keys(s.daily || {}).forEach((k) => {
+      const spells = (s.daily[k] || []).map((e) => (typeof e === 'string' ? e : '')).join(', ');
+      if (!spells) return;
+      const times = /e$/.test(k) ? 'each day' : k + '/day';
+      daily.push(times + ': ' + spells);
+    });
+    const body = [will ? 'At will: ' + will : '', daily.join('. ')].filter(Boolean).join('. ');
+    out.push({ name: s.name || 'Spellcasting', header: creatureText(header), text: creatureText(body) });
+  });
+  return out.length ? out : null;
+}
 /* ---- the block of a creature ---- */
 
 /* The armour class: a number, or the words that make one. */
@@ -241,11 +360,18 @@ function typeOf(entry) {
   return '';
 }
 
+/* The sizes the book writes as letters. */
+const SIZES = {
+  S: 'Small', M: 'Medium', L: 'Large', T: 'Tiny',
+  H: 'Huge', G: 'Gargantuan', F: 'Fragmentary', V: 'Varies'
+};
+
 /* The size, which a creature may have in more than one shape. */
 function sizeOf(entry) {
+  const one = (v) => SIZES[String(v || '').toUpperCase()] || String(v || '');
   const s = entry.size;
-  if (typeof s === 'string') return s;
-  if (Array.isArray(s)) return s.join(' or ');
+  if (typeof s === 'string') return one(s);
+  if (Array.isArray(s)) return s.map(one).join(' or ');
   return '';
 }
 
@@ -259,7 +385,7 @@ function rawTraits(entry) {
 }
 
 function shapeActions(list) {
-  return list.map((a) => {
+  return (list || []).map((a) => {
     const raw = (a.entries || []).map((e) => (typeof e === 'string' ? e : '')).join(' ');
     const atk = attackOf(raw);
     const out = {
@@ -280,7 +406,7 @@ function shapeActions(list) {
 
 function shapeTraits(list) {
   const out = [];
-  list.forEach((t) => {
+  (list || []).forEach((t) => {
     const raw = (t.entries || []).map((e) => (typeof e === 'string' ? e : '')).join(' ');
     const text = creatureText(raw);
     if (!text) return;
@@ -359,7 +485,23 @@ export function creatureRecord(item) {
     hpText: hp.text,
     hpTerms: parseFormula(hp.text),
     actions: shapeActions(rawActions(entry)),
-    traits: shapeTraits(rawTraits(entry))
+    traits: shapeTraits(rawTraits(entry)),
+    alignment: alignmentOf(entry),
+    ability: abilitiesOf(entry),
+    saves: savesOf(entry),
+    skills: skillsOf(entry),
+    senses: sensesOf(entry),
+    languages: languagesOf(entry),
+    resist: listOf(entry.resist, 'resist'),
+    immune: listOf(entry.immune, 'immune'),
+    vulnerable: listOf(entry.vulnerable, 'vulnerable'),
+    conditionImmune: listOf(entry.conditionImmune, 'conditionImmune'),
+    reactions: shapeTraits(entry.reaction),
+    bonusActions: shapeTraits(entry.bonus),
+    legendary: shapeTraits(entry.legendary),
+    legendaryActions: typeof entry.legendaryActions === 'number' ? entry.legendaryActions : null,
+    spellcasting: spellcastingOf(entry.spellcasting),
+    note: entry.pbNote ? String(entry.pbNote) : ''
   };
   const forms = formsOf(entry);
   if (forms.length) out.forms = forms;

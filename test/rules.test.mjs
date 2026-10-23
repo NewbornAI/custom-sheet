@@ -702,6 +702,15 @@ console.log('the bestiary');
   check('an attack carries its bonus', creatures['skeleton'].actions[0].bonus, '5');
   check('and its damage', creatures['skeleton'].actions[0].damage, '1d6 + 3');
   check('the type of a creature is its kind', creatures['skeleton'].type, 'undead');
+  /* The whole stat block travels with the creature. */
+  check('a block carries the resistances', creatures['celestial spirit'].resist[0].text, 'radiant');
+  check('and the condition immunities', creatures['celestial spirit'].conditionImmune.length, 2);
+  check('and the senses', creatures['celestial spirit'].senses[0].text, 'Darkvision 60 ft.');
+  check('and the six abilities', creatures['celestial spirit'].ability.length, 6);
+  check('and the languages', creatures['celestial spirit'].languages, 'Celestial, understands the languages you know');
+  check('and the size in words', creatures['celestial spirit'].size, 'Large');
+  check('and the alignment', creatures['celestial spirit'].alignment, 'Neutral');
+  check('and the traits of a monster', creatures['cat'].traits[0].name, 'Jumper');
 
   const book = JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8'));
   const summoning = book.spells.filter((s) => s.summons);
