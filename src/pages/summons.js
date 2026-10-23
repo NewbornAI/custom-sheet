@@ -376,8 +376,8 @@
   function diceShapes(groups, res, col) {
     var out = '';
     groups.forEach(function (g) {
-      out += '<span class="sdmini">' + dieIcon(sidesOf(g.label)) + '</span>';
-      out += '<span class="sgres"><span class="snum2"' + (col ? ' style="color:' + col + '"' : '') + '>' +
+      out += '<span class="sgres"><span class="sdmini">' + dieIcon(sidesOf(g.label)) + '</span>' +
+        '<span class="snum2"' + (col ? ' style="color:' + col + '"' : '') + '>' +
         (res ? g.rolls.join(',') : '--') + '</span></span>';
     });
     if (!groups.length) out += '<span class="snum2 sghost">--</span>';
@@ -395,7 +395,7 @@
     var range = attackRange(a);
     var groups = res ? res.groups : (C.R && C.R.diceIn ? C.R.diceIn(damage || '') : []);
     var flat = res ? res.flat : (C.R && C.R.flatIn ? C.R.flatIn(damage || '') : 0);
-    var out = '<div class="sblock" data-name="' + C.esc(a.name) + '">';
+    var out = '<div class="sblock' + (res && res.crit ? ' crit' : '') + '" data-name="' + C.esc(a.name) + '">';
     out += '<div class="srow"><span class="satkname">' + C.esc(a.name) + '</span>' +
       '<span class="skind">' + C.esc(attackKind(a)) + '</span></div>';
     out += '<div class="sgrid">';
@@ -811,6 +811,7 @@
       '.sconc{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}',
       '.satk{display:flex;flex-direction:column;gap:6px}',
       '.sblock{border:1px solid var(--edge);border-radius:5px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));padding:6px 8px 7px;display:flex;flex-direction:column;gap:3px}',
+      '.sblock.crit{border-color:rgba(var(--gold-rgb),.6);box-shadow:0 0 0 1px rgba(var(--gold-rgb),.16),0 8px 18px rgba(var(--gold-rgb),.12)}',
       '.srow{display:flex;align-items:baseline;gap:8px}',
       '.satkname{flex:1 1 auto;min-width:0;font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
       '.skind{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#6f6a8d;flex:0 0 auto;white-space:nowrap}',
@@ -828,7 +829,7 @@
       '.sdmini{width:14px;height:14px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;color:var(--muted)}',
       '.sdmini svg{width:13px;height:13px;display:block}',
       '.snum2{font-family:var(--display);font-size:13.5px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}',
-      '.sgres{display:inline-block;min-width:36px;text-align:right}',
+      ".sgres{display:inline-flex;align-items:center;gap:3px;min-width:38px}",
       '.sformula{font-family:var(--sans);font-size:12.5px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}',
       '.srng{font-size:10.5px;color:var(--muted);white-space:nowrap}',
       '.ssep{font-size:10.5px;color:#6f6a8d;white-space:nowrap}',
