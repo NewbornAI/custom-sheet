@@ -19,8 +19,13 @@ branches under the shelf, so a player opens their own.
 
 The app can write here too. Connect it to GitHub in the settings, under The
 shelf, and the character being played goes onto the shelf with a tap, on the
-branch named there. Two characters are here to start: the sorcerer of the app
-and Yngwie the bard.
+branch named there. The push is an option, never a requirement: a character
+lives on the device first, and the repository is a versioned backup of it.
+
+Two characters are here to start, as examples of what a sheet can be: Wendy
+the sorcerer, and Yngwie the bard. Both are published on purpose. A player who
+would rather keep their own characters private points the app at a repository
+of their own, or keeps the files and never pushes them.
 
 A character on the shelf has an address on GitHub, the one a browser shows
 and the one a player copies. The app reads that address as well as the raw
