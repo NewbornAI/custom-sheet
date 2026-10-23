@@ -402,7 +402,7 @@
     function section(title, list) {
       if (!list || !list.length) return;
       html += '<h3>' + C.esc(title) + '</h3>';
-      list.forEach(function (x) { html += statLine(x.name, spoken(x.text, card)); });
+      list.forEach(function (x) { html += statLine(x.name, spoken(x.text)); });
     }
     section('Traits', traits);
     section('Actions', actions);
@@ -412,21 +412,19 @@
     if (block.spellcasting && block.spellcasting.length) {
       html += '<h3>Spellcasting</h3>';
       block.spellcasting.forEach(function (x) {
-        html += '<p><b>' + C.esc(x.name) + '.</b> ' + C.markup(spoken(x.header, card)) + '</p>';
-        if (x.text) html += '<p>' + C.markup(spoken(x.text, card)) + '</p>';
+        html += '<p><b>' + C.esc(x.name) + '.</b> ' + C.markup(spoken(x.header)) + '</p>';
+        if (x.text) html += '<p>' + C.markup(spoken(x.text)) + '</p>';
       });
     }
     return html;
   }
 
-  /* The words the book uses for the numbers of the caster are put right. */
-  function spoken(text, card) {
-    var out = String(text || '');
-    if (card && card.slot >= 0) out = out.replace(/summonSpellLevel/gi, String(card.slot));
-    var ch = (api.character() && api.character().char) || {};
-    var pb = (C.SR && C.SR.profBonus && ch.level) ? C.SR.profBonus(ch.level) : null;
-    if (pb !== null && pb !== undefined) out = out.replace(/\bPB\b/g, String(pb));
-    return out;
+  /* The full description shows the words of the book, not the numbers they
+     work out to: the spell's level stays the spell's level, and the
+     proficiency of the caster stays PB. The card itself carries the numbers
+     the creature was called with. */
+  function spoken(text) {
+    return String(text || '').replace(/summonSpellLevel/gi, "the spell's level");
   }
 
   /* The stat block of the creature, in the overlay of the app. */
