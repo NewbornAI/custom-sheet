@@ -129,8 +129,12 @@
     var declared = saved && saved.sources && typeof saved.sources === 'object';
     s.sources = {};
     if (declared) {
+      /* A source the character names is kept even when the book has not
+         arrived yet, or the names it holds would be lost. */
       Object.keys(saved.sources).forEach(function (n) {
-        if (C.bookByName[n] && saved.sources[n]) s.sources[n] = String(saved.sources[n]);
+        if (!saved.sources[n]) return;
+        if (C.book.spells.length && !C.bookByName[n]) return;
+        s.sources[n] = String(saved.sources[n]);
       });
     } else if (!fresh) {
       LEVELS.forEach(function (lv) {
