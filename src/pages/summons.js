@@ -377,8 +377,8 @@
     var out = '';
     groups.forEach(function (g) {
       out += '<span class="sdmini">' + dieIcon(sidesOf(g.label)) + '</span>';
-      out += '<span class="snum2"' + (col ? ' style="color:' + col + '"' : '') + '>' +
-        (res ? g.rolls.join(',') : '--') + '</span>';
+      out += '<span class="sgres"><span class="snum2"' + (col ? ' style="color:' + col + '"' : '') + '>' +
+        (res ? g.rolls.join(',') : '--') + '</span></span>';
     });
     if (!groups.length) out += '<span class="snum2 sghost">--</span>';
     return out;
@@ -402,18 +402,18 @@
     out += '<div class="scell-atk"><span class="sk">Attack</span>' +
       '<span class="snum2">' + C.esc(bonus) + '</span>' +
       (range ? '<span class="ssep">-</span><span class="srng">' + C.esc(range) + '</span>' : '') + '</div>';
+    out += '<div class="scell-dmg"><span class="sk">Damage</span>' +
+      '<span class="sformula"' + (col ? ' style="color:' + col + '"' : '') + '>' + C.esc(compact(damage)) + '</span></div>';
     out += '<div class="scell-die"><button type="button" class="sdie" data-role="roll" data-ix="' + ix + '" ' +
       'aria-label="Roll the ' + C.esc(a.name) + '">' + dieBig(20, res ? res.total : '') + '</button></div>';
     out += '<div class="scell-hit"><span class="sdmini">' + dieIcon(20) + '</span>' +
       '<span class="snum2">' + (res ? res.roll : '--') + '</span>' +
       (num !== null ? '<span class="smod">' + (num > 0 ? '+' + num : String(num)) + '</span>' : '') + '</div>';
-    out += '<div class="scell-lab">Hit total</div>';
-    out += '<div class="scell-dmg"><span class="sk">Damage</span>' +
-      '<span class="sformula"' + (col ? ' style="color:' + col + '"' : '') + '>' + C.esc(compact(damage)) + '</span></div>';
-    out += '<div class="scell-tap">tap to roll</div>';
     out += '<div class="scell-dmgres">' + diceShapes(groups, res, col) +
       (flat ? '<span class="smod">' + (flat > 0 ? '+' + flat : String(flat)) + '</span>' : '') + '</div>';
-    out += '<div class="scell-lab">Damage total</div>';
+    out += '<div class="scell-dmgtot"><span class="snum2"' + (col ? ' style="color:' + col + '"' : '') + '>' +
+      (res ? res.damage : '--') + '</span>' +
+      (type ? '<em class="stype" style="color:' + col + '">' + C.esc(type) + '</em>' : '') + '</div>';
     out += '</div></div>';
     return out;
   }
@@ -814,20 +814,21 @@
       '.srow{display:flex;align-items:baseline;gap:8px}',
       '.satkname{flex:1 1 auto;min-width:0;font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
       '.skind{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#6f6a8d;flex:0 0 auto;white-space:nowrap}',
-      '.sgrid{display:grid;grid-template-columns:minmax(0,1fr) 40px minmax(0,auto) minmax(0,auto);column-gap:7px;row-gap:1px;align-items:center}',
-      '.scell-atk{grid-column:1;grid-row:1;display:flex;align-items:baseline;gap:5px;min-width:0}',
-      '.scell-dmg{grid-column:1;grid-row:2;display:flex;align-items:baseline;gap:5px;min-width:0}',
-      '.scell-die{grid-column:2;grid-row:1;display:flex;align-items:center;justify-content:center}',
-      '.scell-tap{grid-column:2;grid-row:2;font-size:8px;letter-spacing:.06em;color:#6f6a8d;text-align:center;white-space:nowrap}',
-      '.scell-hit{grid-column:3;grid-row:1;display:flex;align-items:center;gap:3px;justify-content:flex-end}',
-      '.scell-dmgres{grid-column:3;grid-row:2;display:flex;align-items:center;gap:3px;justify-content:flex-end;flex-wrap:wrap}',
-      '.scell-lab{grid-column:4;font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;color:#6f6a8d;white-space:nowrap}',
+      '.sgrid{display:grid;grid-template-columns:auto 40px auto minmax(0,1fr);column-gap:8px;row-gap:2px;align-items:center}',
+      '.scell-atk{grid-column:1;grid-row:1;display:flex;align-items:baseline;gap:5px;white-space:nowrap}',
+      '.scell-dmg{grid-column:1;grid-row:2;display:flex;align-items:baseline;gap:5px;white-space:nowrap}',
+      '.scell-die{grid-column:2;grid-row:1/3;display:flex;align-items:center;justify-content:center}',
+
+      '.scell-hit{grid-column:3;grid-row:1/3;display:flex;align-items:center;gap:3px;justify-content:flex-start}',
+      '.scell-dmgres{grid-column:4;grid-row:1;display:flex;align-items:center;gap:4px;justify-content:flex-end}',
+      '.scell-dmgtot{grid-column:4;grid-row:2;display:flex;align-items:baseline;gap:5px;justify-content:flex-end;white-space:nowrap}',
       '.sdie{width:38px;height:38px;background:none;border:none;padding:0;cursor:pointer;color:var(--arcane);display:flex;align-items:center;justify-content:center}',
       '.sdie svg{width:100%;height:100%;display:block}',
       '.sdie:active{color:var(--gold)}',
       '.sdmini{width:14px;height:14px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;color:var(--muted)}',
       '.sdmini svg{width:13px;height:13px;display:block}',
       '.snum2{font-family:var(--display);font-size:13.5px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}',
+      '.sgres{display:inline-block;min-width:36px;text-align:right}',
       '.sformula{font-family:var(--sans);font-size:12.5px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}',
       '.srng{font-size:10.5px;color:var(--muted);white-space:nowrap}',
       '.ssep{font-size:10.5px;color:#6f6a8d;white-space:nowrap}',
