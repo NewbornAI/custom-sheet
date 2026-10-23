@@ -2273,7 +2273,7 @@
       "warlockLeft": 0,
       "warlockLevel": 1,
       "slotsTouched": true,
-      "selected": 1,
+      "selected": 4,
       "lists": {
         "0": [
           "Mage Hand",
@@ -2292,7 +2292,8 @@
         ],
         "3": [
           "Conjure Animals",
-          "Protection from Energy"
+          "Protection from Energy",
+          "Summon Fey"
         ],
         "4": [
           "Dimension Door",
@@ -2300,9 +2301,15 @@
         ],
         "5": [
           "Conjure Elemental",
-          "Mass Cure Wounds"
+          "Mass Cure Wounds",
+          "Summon Celestial",
+          "Rary's Telepathic Bond",
+          "Bigby's Hand"
         ],
-        "6": [],
+        "6": [
+          "Contingency",
+          "Tasha's Bubbling Cauldron"
+        ],
         "7": [],
         "8": [],
         "9": []
@@ -2322,12 +2329,19 @@
         "Minor Illusion": "Bard",
         "Blade Ward": "Bard",
         "Message": "Bard",
-        "Mind Sliver": "High Elf"
+        "Mind Sliver": "High Elf",
+        "Contingency": "Bard",
+        "Tasha's Bubbling Cauldron": "Bard",
+        "Summon Celestial": "Bard",
+        "Rary's Telepathic Bond": "Bard",
+        "Bigby's Hand": "Bard",
+        "Summon Fey": "Bard"
       },
-      "pick": "High Elf",
+      "pick": "Bard",
       "classes": {
-        "Bard": true,
-        "Wizard": true
+        "Bard": false,
+        "Wizard": false,
+        "Druid": false
       },
       "levelFilter": true,
       "surge": null
