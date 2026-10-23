@@ -79,12 +79,22 @@
   var LOADING = {};
   var DATA_ERROR = {};
 
+  /* The bridge of the phone, whichever side answers. The app adds it under
+     two names, so a call asks the one that holds it rather than the one that
+     was hoped for. */
+  function phone(name) {
+    if (window.SheetShell && typeof window.SheetShell[name] === 'function') return window.SheetShell;
+    if (window.SheetNet && typeof window.SheetNet[name] === 'function') return window.SheetNet;
+    return null;
+  }
+
   /* The shell reads a file out of the app when it is there, and a page on
      the web fetches it. Either way the file is read when a page asks. */
   function readFile(file) {
-    if (window.SheetShell && window.SheetShell.read) {
+    var shell = phone('read');
+    if (shell) {
       try {
-        var answer = window.SheetShell.read(file);
+        var answer = shell.read(file);
         if (answer && typeof answer.then === 'function') {
           return answer.then(function (text) {
             if (text) return text;
@@ -1046,9 +1056,10 @@
     if (!rec) return { ok: false, why: 'no character' };
     var name = packageName(rec);
     var text = JSON.stringify(packageOf(rec), null, 2);
-    if (window.SheetShell && window.SheetShell.share) {
+    var shell = phone('share');
+    if (shell) {
       try {
-        var answer = window.SheetShell.share(name, text);
+        var answer = shell.share(name, text);
         if (answer && answer.indexOf('error ') === 0) return { ok: false, why: answer };
         return { ok: true, name: name };
       } catch (e) {
@@ -1149,9 +1160,10 @@
   /* A link leaves the app: the phone offers it to send, the web puts it in
      the clipboard. */
   function shareLink(url) {
-    if (window.SheetShell && window.SheetShell.shareText) {
+    var shell = phone('shareText');
+    if (shell) {
       try {
-        var answer = window.SheetShell.shareText(url);
+        var answer = shell.shareText(url);
         if (answer && answer.indexOf('error ') === 0) return Promise.resolve(answer);
         return Promise.resolve('ok');
       } catch (e) {
@@ -1170,7 +1182,7 @@
 
   /* The phone has an explorer and a share sheet, the web has neither. */
   function isPhone() {
-    return !!(window.SheetShell && window.SheetShell.pick);
+    return !!phone('pick');
   }
 
   /* ---- the shelf ---- */
@@ -1403,7 +1415,8 @@
 
   /* The file the player picked comes back to the page. */
   window.__sheetPicked = function (name) {
-    var text = (window.SheetShell && window.SheetShell.pickedText) ? window.SheetShell.pickedText() : '';
+    var shell = phone('pickedText');
+    var text = shell ? shell.pickedText() : '';
     if (!text) return;
     var answer = importPackage(text);
     if (answer && answer.ok) toast(answer.name + ' is here.');
@@ -1411,9 +1424,10 @@
   };
 
   function pickFile() {
-    if (window.SheetShell && window.SheetShell.pick) {
+    var shell = phone('pick');
+    if (shell) {
       try {
-        var answer = window.SheetShell.pick();
+        var answer = shell.pick();
         if (answer && answer.indexOf('error ') === 0) toast(answer);
         return true;
       } catch (e) {
