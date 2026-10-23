@@ -652,6 +652,26 @@ console.log('the page the phone opens at launch');
 }
 
 
+console.log('the roll of an attack');
+{
+  const half = () => 0.5;
+  const top = () => 0.999;
+  check('the flat of a damage is the number on the dice', R.flatIn('1d10 + 11'), 11);
+  check('and there may be more than one', R.flatIn('2d6 + 3 + 5'), 8);
+  check('a damage of dice alone has no flat', R.flatIn('2d6'), 0);
+  const roll = R.rollAttack(8, 15, '1d10 + 11', half);
+  check('the d20 is rolled', roll.roll, 11);
+  check('the total carries the bonus', roll.total, 19);
+  check('it hits the armour class of the target', roll.hit, true);
+  check('the damage is the dice and the flat', roll.damage, 17);
+  check('the dice are named', roll.groups[0].label, '1d10');
+  const crit = R.rollAttack(8, 15, '1d10 + 11', top);
+  check('a natural twenty is a critical', crit.crit, true);
+  check('and it doubles the dice', crit.groups[0].label, '2d10');
+  check('so the damage is bigger', crit.damage, 31);
+  const blind = R.rollAttack(8, '', '1d10 + 11', half);
+  check('without a target there is no hit and no miss', blind.hit, null);
+}
 console.log('the bestiary');
 {
   const bestiary = JSON.parse(readFileSync(resolve(root, 'data', 'bestiary.json'), 'utf8'));

@@ -1510,6 +1510,43 @@ input[type=range]::-moz-range-thumb{
     return { roll: roll, from: row.from, to: row.to, text: row.text, dice: rolled };
   }
 
+  /* The flat part of a damage, the number that rides on the dice. */
+  function flatIn(text) {
+    var rest = String(text || '').replace(/(\d*)d(\d+)/gi, '');
+    var flat = 0, m, re = /([+-]?\s*\d+)/g;
+    while ((m = re.exec(rest)) !== null) flat += Number(m[1].replace(/\s+/g, ''));
+    return flat;
+  }
+
+  /* One attack of a creature: the d20, the total, whether it hits the
+     armour class of a target, and the damage that follows. A natural twenty
+     is a critical and doubles the dice, the way the volley does. */
+  function rollAttack(bonus, ac, damageText, rng) {
+    rng = rng || Math.random;
+    var roll = die(rng, 20);
+    var total = roll + (Number(bonus) || 0);
+    var crit = roll >= 20;
+    var mult = crit ? 2 : 1;
+    var specs = diceIn(damageText || '');
+    var groups = [], j, k, rolled = 0;
+    for (j = 0; j < specs.length; j++) {
+      var count = specs[j].count * mult;
+      groups.push({ label: count + 'd' + specs[j].sides, rolls: dice(rng, count, specs[j].sides) });
+    }
+    for (k = 0; k < groups.length; k++) rolled += sum(groups[k].rolls);
+    var flat = flatIn(damageText || '');
+    var hasAc = ac !== undefined && ac !== null && ac !== '' && isFinite(Number(ac));
+    return {
+      roll: roll,
+      total: total,
+      crit: crit,
+      hit: hasAc ? total >= Number(ac) : null,
+      groups: groups,
+      flat: flat,
+      damage: rolled + flat
+    };
+  }
+
   /* Turns one spell slot into sorcery points: one point for each level of the slot.
      The warlock slots go first, they are the scarcer ones.
      Returns the new counts, or null when the slot cannot be turned. */
@@ -1548,6 +1585,8 @@ input[type=range]::-moz-range-thumb{
     rollVolley: rollVolley,
     tally: tally,
     diceIn: diceIn,
+    flatIn: flatIn,
+    rollAttack: rollAttack,
     rollSurge: rollSurge,
     convertSlot: convertSlot
   };

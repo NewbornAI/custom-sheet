@@ -3,7 +3,11 @@
    points, the attacks with their bonus and their damage, and the slot that
    paid for it. What the block of the creature says is worked out with the
    level of that slot, so a spirit that is called at a higher level carries
-   the numbers of that level. */
+   the numbers of that level.
+
+   The stats are edited with the wrench, the way the rest of the app edits
+   a character. What is left when the wrench is off is the table: the hit
+   points to move and the attacks to roll. */
 (function () {
   'use strict';
 
@@ -13,6 +17,7 @@
   var E = {};           /* the elements of the page */
   var built = null;     /* what the cards were built for */
   var machine = null;   /* the creatures the machine holds, once it answered */
+  var editing = false;  /* the wrench turns the stats editable */
 
   /* ---- the slice of the character ---- */
 
@@ -244,19 +249,6 @@
     return { ac: ac, hpMax: hp, actions: actions, form: form, block: block };
   }
 
-  /* ---- the cards ---- */
-
-  function attackRow(a, ix, edit) {
-    var label = a.count ? a.name + ' (x' + a.count + ')' : a.name;
-    var bonus = edit && edit.bonus !== undefined && edit.bonus !== '' ? edit.bonus : a.bonus;
-    var damage = edit && edit.damage !== undefined && edit.damage !== '' ? edit.damage : a.damage;
-    return '<div class="satkrow" data-ix="' + ix + '" data-name="' + C.esc(a.name) + '">' +
-      '<span class="satkname" title="' + C.esc(a.text || '') + '">' + C.esc(label) + '</span>' +
-      '<input class="scin satkbonus" data-role="atkbonus" type="text" value="' + C.esc(bonus) + '" aria-label="Attack bonus">' +
-      '<input class="scin satkdamage" data-role="atkdamage" type="text" value="' + C.esc(damage) + '" aria-label="Damage of the attack">' +
-      '</div>';
-  }
-
   /* The form the card carries, and the one it would fall back to. */
   function formName(block, id) {
     if (!block || !block.forms || !block.forms.length) return '';
@@ -266,11 +258,39 @@
     return found ? found.name : '';
   }
 
+  /* ---- the cards ---- */
+
+  function attackRow(a, ix, edit, roll) {
+    var label = a.count ? a.name + ' (x' + a.count + ')' : a.name;
+    var bonus = edit && edit.bonus !== undefined && edit.bonus !== '' ? edit.bonus : a.bonus;
+    var damage = edit && edit.damage !== undefined && edit.damage !== '' ? edit.damage : a.damage;
+    var row = '<div class="satkrow" data-ix="' + ix + '" data-name="' + C.esc(a.name) + '">' +
+      '<span class="satkname" title="' + C.esc(a.text || '') + '">' + C.esc(label) + '</span>';
+    if (editing) {
+      row += '<input class="scin satkbonus" data-role="atkbonus" type="text" value="' + C.esc(bonus) + '" aria-label="Attack bonus">' +
+        '<input class="scin satkdamage" data-role="atkdamage" type="text" value="' + C.esc(damage) + '" aria-label="Damage of the attack">';
+    } else {
+      row += '<span class="satkatk">' + C.esc(bonus) + '</span>' +
+        '<span class="satkdmg">' + C.esc(damage) + '</span>';
+    }
+    row += '</div>';
+    if (roll) {
+      row += '<div class="satkres">' +
+        '<span class="srtotal">' + roll.total + '</span>' +
+        (roll.crit ? '<span class="badge crit">crit</span>' : (roll.hit === true ? '<span class="badge hit">hit</span>' : (roll.hit === false ? '<span class="badge miss">miss</span>' : ''))) +
+        '<span class="tdmg">' + roll.damage + '</span>' +
+        '<span class="srdice">' + roll.groups.map(function (g) { return g.label + ': ' + g.rolls.join(', '); }).join('  ') + '</span>' +
+        '</div>';
+    }
+    return row;
+  }
+
   function cardHtml(s) {
     var block = library()[s.key];
     var out = derive(s);
     var forms = block && block.forms && block.forms.length ? block.forms : null;
     var actions = out ? out.actions : [];
+    var edit = (s.edit && s.edit.attacks) || {};
     var ac = s.edit && s.edit.ac !== undefined && s.edit.ac !== ''
       ? s.edit.ac
       : (out && out.ac !== null && out.ac !== undefined ? String(out.ac) : '');
@@ -283,30 +303,43 @@
         '<span class="ssrc">' + C.esc(block ? block.name : (s.spell || '')) + '</span>' +
         '<button type="button" class="sdel" data-role="dismiss" aria-label="Dismiss the summon">&times;</button>' +
       '</div>';
-    if (forms) {
-      html += '<div class="sline"><span class="slab">Form</span>' +
+    if (editing && forms) {
+      html += '<div class="sline"><span class="sk">Form</span>' +
         '<button type="button" class="spick on" data-role="form" aria-label="The form of the summon">' +
         C.esc(formName(block, s.form)) + '</button></div>';
     }
     html += '<div class="sline">' +
-      '<span class="slab">AC</span>' +
-      '<input class="scin snum" data-role="ac" type="number" inputmode="numeric" value="' + C.esc(ac) + '" aria-label="Armour class of the summon">' +
-      '<span class="slab">HP</span>' +
+      '<span class="sk">AC</span>';
+    if (editing) {
+      html += '<input class="scin snum" data-role="ac" type="number" inputmode="numeric" value="' + C.esc(ac) + '" aria-label="Armour class of the summon">';
+    } else {
+      html += '<span class="sval">' + C.esc(ac) + '</span>';
+    }
+    html += '<span class="sk">HP</span>' +
       '<button type="button" class="sstep" data-role="hpdown" aria-label="One hit point less">&minus;</button>' +
       '<input class="scin snum" data-role="hp" type="number" inputmode="numeric" value="' + (s.hp || 0) + '" aria-label="Hit points of the summon">' +
       '<button type="button" class="sstep" data-role="hpup" aria-label="One hit point more">+</button>' +
-      '<span class="sof">of <input class="scin snum" data-role="hpmax" type="number" inputmode="numeric" value="' + C.esc(max) + '" aria-label="Maximum hit points of the summon"></span>' +
-      '</div>' +
-      '<div class="sline">' +
-        '<span class="slab">Slot</span>' +
+      '<span class="sof">of ';
+    if (editing) {
+      html += '<input class="scin snum" data-role="hpmax" type="number" inputmode="numeric" value="' + C.esc(max) + '" aria-label="Maximum hit points of the summon">';
+    } else {
+      html += '<span class="sval">' + C.esc(max) + '</span>';
+    }
+    html += '</span></div>';
+    if (editing) {
+      html += '<div class="sline"><span class="sk">Slot</span>' +
         '<button type="button" class="spick on" data-role="slot" aria-label="The slot that paid for it">' +
         (s.slot < 0 ? 'none' : String(s.slot)) + '</button>' +
         (s.concentration ? '<span class="sconc">Concentration</span>' : '') +
-      '</div>';
+        '</div>';
+    }
     if (actions.length) {
-      var edits = (s.edit && s.edit.attacks) || {};
+      html += '<div class="sline"><span class="sk">Attacks</span>' +
+        '<span class="sof">vs <input class="scin snum" data-role="target" type="number" inputmode="numeric" value="' +
+        (s.target === undefined || s.target === null ? '' : s.target) + '" aria-label="The armour class of the target"></span></div>';
       html += '<div class="satk">' + actions.map(function (a, ix) {
-        return attackRow(a, ix, edits[a.name]);
+        var roll = s.rolls ? s.rolls[a.name] : null;
+        return attackRow(a, ix, edit[a.name], roll);
       }).join('') + '</div>';
     }
     return html + '</div>';
@@ -315,6 +348,27 @@
   function buildCards() {
     E.list.innerHTML = summons().map(cardHtml).join('');
     E.empty.hidden = summons().length > 0;
+  }
+
+  /* ---- the creature that comes to the table ---- */
+
+  function addSummon(source, block, key) {
+    var s = {
+      id: 's' + Date.now() + Math.floor(Math.random() * 1000),
+      name: block ? block.name : source.name,
+      key: key || '',
+      form: '',
+      slot: source.level === null || source.level === undefined ? -1 : source.level,
+      hp: 0,
+      target: '',
+      spell: source.name,
+      concentration: !!source.concentration,
+      edit: { ac: '', hpMax: '', attacks: {} },
+      rolls: {}
+    };
+    summons().push(s);
+    commit();
+    api.toast(s.name + ' comes to the table');
   }
 
   /* ---- the form and the slot, picked the way the app picks a class ---- */
@@ -367,25 +421,6 @@
         commit();
       }
     });
-  }
-
-  /* ---- the creature that comes to the table ---- */
-
-  function addSummon(source, block, key) {
-    var s = {
-      id: 's' + Date.now() + Math.floor(Math.random() * 1000),
-      name: block ? block.name : source.name,
-      key: key || '',
-      form: '',
-      slot: source.level === null || source.level === undefined ? -1 : source.level,
-      hp: 0,
-      spell: source.name,
-      concentration: !!source.concentration,
-      edit: { ac: '', hpMax: '', attacks: {} }
-    };
-    summons().push(s);
-    commit();
-    api.toast(s.name + ' comes to the table');
   }
 
   /* ---- the overlay: what the character can call ---- */
@@ -535,6 +570,26 @@
       .catch(function () { api.toast('the machine did not answer'); });
   }
 
+  /* ---- the roll of an attack ---- */
+
+  function roll(card, name) {
+    var out = derive(card);
+    if (!out) return;
+    var action = null;
+    out.actions.forEach(function (a) { if (a.name === name) action = a; });
+    if (!action || !action.bonus) return;
+    var edit = (card.edit && card.edit.attacks && card.edit.attacks[name]) || {};
+    var bonus = edit.bonus !== undefined && edit.bonus !== '' ? edit.bonus : action.bonus;
+    var damage = edit.damage !== undefined && edit.damage !== '' ? edit.damage : action.damage;
+    var target = card.target === undefined || card.target === null || card.target === '' ? null : card.target;
+    var result = C.R.rollAttack(bonus, target, damage);
+    if (!card.rolls) card.rolls = {};
+    card.rolls[name] = result;
+    buildCards();
+    commit();
+    if (navigator.vibrate) navigator.vibrate(result.crit ? [14, 45, 14] : 16);
+  }
+
   /* ---- the page ---- */
 
   Sheet.page({
@@ -564,16 +619,20 @@
       '.sdel{background:none;border:none;color:var(--muted);font:inherit;font-size:18px;line-height:1;padding:0 3px;cursor:pointer;flex:0 0 auto}',
       '.sdel:active{color:var(--gold)}',
       '.sline{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:12px;color:var(--muted)}',
-      '.slab{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#6f6a8d;display:inline-flex;align-items:center;gap:3px}',
+      '.sk{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#6f6a8d;display:inline-flex;align-items:center;gap:3px}',
+      '.sval{font-size:12.5px;color:var(--ink);min-width:20px}',
       '.sof{display:inline-flex;align-items:center;gap:3px}',
       '.sstep{width:22px;height:22px;border-radius:5px;border:1px solid var(--edge);background:none;color:var(--ink);font:inherit;font-size:14px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0}',
       '.sstep:active{border-color:var(--arcane);color:var(--arcane)}',
       '.sconc{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}',
-      '.satk{display:flex;flex-direction:column;gap:4px}',
+      '.satk{display:flex;flex-direction:column;gap:2px}',
       '.satkrow{display:grid;grid-template-columns:minmax(0,1fr) 42px 86px;gap:4px;align-items:center}',
-      '.satkname{width:100%;min-width:0}',
-      '.satkbonus{width:42px}',
-      '.satkdamage{width:86px}',
+      '.satkname{width:100%;min-width:0;font-size:12px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+      '.satkatk{font-size:12px;color:var(--muted);text-align:right}',
+      '.satkdmg{font-size:12px;color:var(--muted);text-align:right}',
+      '.satkres{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);padding:0 0 3px 2px}',
+      '.srtotal{font-size:13px;color:var(--ink);font-variant-numeric:tabular-nums}',
+      '.srdice{font-size:10px;color:var(--muted)}',
       '.scin{font-family:var(--sans);font-size:12.5px;color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--edge);border-radius:4px;padding:2px 4px;min-width:0}',
       '.snum{width:44px;text-align:center}',
       '.scard .spick{font-size:11px;padding:4px 9px}'
@@ -610,6 +669,7 @@
         var role = roleEl.dataset.role;
         if (role === 'name') s.name = roleEl.value;
         else if (role === 'hp') s.hp = Math.max(0, Math.min(999, Number(roleEl.value) || 0));
+        else if (role === 'target') s.target = roleEl.value;
         else if (role === 'ac' || role === 'hpmax') {
           if (!s.edit) s.edit = { ac: '', hpMax: '', attacks: {} };
           s.edit[role] = roleEl.value;
@@ -627,34 +687,49 @@
 
       E.body.addEventListener('click', function (ev) {
         var roleEl = ev.target.closest ? ev.target.closest('[data-role]') : null;
-        if (!roleEl) return;
-        var role = roleEl.dataset.role;
-        if (role !== 'dismiss' && role !== 'hpup' && role !== 'hpdown' && role !== 'form' && role !== 'slot') return;
-        var card = roleEl.closest('.scard');
+        var card = ev.target.closest ? ev.target.closest('.scard') : null;
         if (!card) return;
         var s = byId(card.dataset.id);
         if (!s) return;
-        if (role === 'form') { openFormPicker(s); return; }
-        if (role === 'slot') { openSlotPicker(s); return; }
-        if (role === 'dismiss') {
-          slice().list = summons().filter(function (x) { return x.id !== s.id; });
-          buildCards();
-          commit();
-          api.toast(s.name + ' is dismissed');
-          return;
+        if (roleEl) {
+          var role = roleEl.dataset.role;
+          if (role === 'form') { openFormPicker(s); return; }
+          if (role === 'slot') { openSlotPicker(s); return; }
+          if (role === 'dismiss') {
+            slice().list = summons().filter(function (x) { return x.id !== s.id; });
+            buildCards();
+            commit();
+            api.toast(s.name + ' is dismissed');
+            return;
+          }
+          if (role === 'hpup' || role === 'hpdown') {
+            var step = role === 'hpup' ? 1 : -1;
+            s.hp = Math.max(0, Math.min(999, (Number(s.hp) || 0) + step));
+            commit();
+            return;
+          }
         }
-        var step = role === 'hpup' ? 1 : -1;
-        s.hp = Math.max(0, Math.min(999, (Number(s.hp) || 0) + step));
-        commit();
+        /* An attack is rolled when it is tapped, the way the volley rolls a
+           beam. */
+        if (editing) return;
+        var row = ev.target.closest('.satkrow');
+        if (!row || !row.dataset.name) return;
+        if (ev.target.closest('input, button')) return;
+        roll(s, row.dataset.name);
       });
     },
 
-    /* The head of the app calls a creature. */
+    /* The wrench edits the stats, the way it edits a character. */
     head: function (root, a) {
       api = a;
-      root.appendChild(C.headButton('Call a creature',
-        '<path d="M12 5v14"/><path d="M5 12h14"/>',
-        function () { openSources(); }));
+      var b = C.wrenchButton('Edit the summons', function () {
+        editing = !editing;
+        buildCards();
+        api.save();
+        api.refresh();
+      });
+      root.appendChild(b);
+      E.wrench = b;
     },
 
     render: function (a) {
@@ -666,12 +741,13 @@
         built = sig;
         buildCards();
       }
+      if (E.wrench) E.wrench.setAttribute('aria-pressed', editing ? 'true' : 'false');
     }
   });
 
   /* What the cards were built for: the character and the creatures it has. */
   function signature() {
     return api.state.current + '|' + summons().map(function (s) { return s.id; }).join(',') +
-      '|' + Object.keys(library()).length;
+      '|' + Object.keys(library()).length + '|' + (editing ? 'edit' : 'read');
   }
 })();
