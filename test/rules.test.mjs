@@ -670,19 +670,22 @@ console.log('the bestiary');
 
   const book = JSON.parse(readFileSync(resolve(root, 'data', 'spellbook.json'), 'utf8'));
   const summoning = book.spells.filter((s) => s.summons);
-  check('the spells that call a creature are marked', summoning.length, 28);
+  check('the spells that call a creature are marked', summoning.length, 19);
   check('the find familiar is one of them', summoning.some((s) => s.name === 'Find Familiar'), true);
-  check('the conjure animals is one too', summoning.some((s) => s.name === 'Conjure Animals'), true);
-  check('and the conjure elemental', summoning.some((s) => s.name === 'Conjure Elemental'), true);
+  check('the conjure animals is not one, it is an effect', summoning.some((s) => s.name === 'Conjure Animals'), false);
+  check('nor the conjure elemental', summoning.some((s) => s.name === 'Conjure Elemental'), false);
+  check('nor the conjure minor elementals', summoning.some((s) => s.name === 'Conjure Minor Elementals'), false);
+  check('nor the unseen servant, it has no block', summoning.some((s) => s.name === 'Unseen Servant'), false);
   check('a spell that calls nothing is not marked', summoning.some((s) => s.name === "Bigby's Hand"), false);
   check('nor a conjure of weapons', summoning.some((s) => s.name === 'Conjure Volley'), false);
   check('nor a polymorph', summoning.some((s) => s.name === 'True Polymorph'), false);
   check('the familiar names the beasts it brings', (book.spells.filter((s) => s.name === 'Find Familiar')[0].creatures || []).length, 11);
-  check('the conjure animals names none, the player chooses', (book.spells.filter((s) => s.name === 'Conjure Animals')[0].creatures || []).length, 0);
+  check('a conjure names no creature at all', (book.spells.filter((s) => s.name === 'Conjure Animals')[0].creatures || []).length, 0);
+  check('and the summon fey names the spirit it brings', (book.spells.filter((s) => s.name === 'Summon Fey')[0].creatures || []).join(', '), 'Fey Spirit');
 
   const features = JSON.parse(readFileSync(resolve(root, 'data', 'features.json'), 'utf8')).features;
   const classes = JSON.parse(readFileSync(resolve(root, 'data', 'classes.json'), 'utf8')).classes;
-  check('a feature that brings a creature names it', (features.filter((f) => f.key === 'animatingPerformance')[0].creatures || []).indexOf('Dancing Item') >= 0, true);
+  check('a feature that brings a creature names it', (features.filter((f) => f.key === 'animatingPerformance')[0].creatures || []).join(', '), 'Dancing Item');
   check('and it says it summons', features.filter((f) => f.key === 'animatingPerformance')[0].summons, true);
   check('a feature that brings nothing does not', features.filter((f) => f.key === 'countercharm')[0].summons, false);
 
@@ -703,10 +706,10 @@ console.log('the bestiary');
   };
   const bardRec = JSON.parse(readFileSync(resolve(root, 'characters', 'yngwie.json'), 'utf8')).record;
   const wendyRec = JSON.parse(readFileSync(resolve(root, 'characters', 'wendy.json'), 'utf8')).record;
-  check('the bard calls five', libraryOf(bardRec).length, 5);
-  check('the animals, the fey, the elementals and the dancing item', libraryOf(bardRec).join(', '), 'Conjure Animals, Summon Fey, Conjure Elemental, Summon Celestial, Animating performance');
-  check('the sorcerer calls five', libraryOf(wendyRec).length, 5);
-  check('the servant, the familiar, the objects and the elementals', libraryOf(wendyRec).join(', '), 'Unseen Servant, Battle Familiar, Conjure Minor Elementals, Animate Objects, Conjure Elemental');
+  check('the bard calls three', libraryOf(bardRec).length, 3);
+  check('the two spirits and the dancing item', libraryOf(bardRec).join(', '), 'Summon Fey, Summon Celestial, Animating performance');
+  check('the sorcerer calls two', libraryOf(wendyRec).length, 2);
+  check('the familiar and the objects', libraryOf(wendyRec).join(', '), 'Battle Familiar, Animate Objects');
 
   /* The page reads the same things, so it is run here with a character and
      a shell that answer, and what it offers is what the data says. */
@@ -766,8 +769,8 @@ console.log('the bestiary');
   taken.summons.mount(page, api);
   page.call.click();
   const rows = (opened[0] && opened[0].list ? opened[0].list.match(/data-src=/g) || [] : []).length;
-  check('the page offers the five of the bard', rows, 5);
-  check('and they are the same five', (opened[0].list.match(/data-src="([^"]+)"/g) || []).join(','), 'data-src="spell:Conjure Animals",data-src="spell:Summon Fey",data-src="spell:Conjure Elemental",data-src="spell:Summon Celestial",data-src="feature:animatingPerformance"');
+  check('the page offers the three of the bard', rows, 3);
+  check('and they are the same three', (opened[0].list.match(/data-src="([^"]+)"/g) || []).join(','), 'data-src="spell:Summon Fey",data-src="spell:Summon Celestial",data-src="feature:animatingPerformance"');
   const seeded = taken.summons.seed({}, true);
   check('a new character holds no creature', seeded.list.length, 0);
 }

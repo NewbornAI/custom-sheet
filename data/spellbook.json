@@ -3663,7 +3663,7 @@
         "Bard",
         "Izzet engineer"
       ],
-      "summons": true,
+      "summons": false,
       "creatures": [],
       "blocks": [
         {
@@ -6334,7 +6334,7 @@
         "Druid",
         "Ranger"
       ],
-      "summons": true,
+      "summons": false,
       "creatures": [],
       "blocks": [
         {
@@ -8146,7 +8146,7 @@
         "Druid",
         "Izzet engineer"
       ],
-      "summons": true,
+      "summons": false,
       "creatures": [],
       "blocks": [
         {
@@ -8183,7 +8183,7 @@
         "Druid",
         "Ranger"
       ],
-      "summons": true,
+      "summons": false,
       "creatures": [],
       "blocks": [
         {
@@ -9697,7 +9697,7 @@
         "Druid",
         "Izzet engineer"
       ],
-      "summons": true,
+      "summons": false,
       "creatures": [],
       "blocks": [
         {
@@ -10497,7 +10497,7 @@
         "Cleric",
         "Druid"
       ],
-      "summons": true,
+      "summons": false,
       "creatures": [],
       "blocks": [
         {
@@ -11310,7 +11310,7 @@
       "classes": [
         "Druid"
       ],
-      "summons": true,
+      "summons": false,
       "creatures": [],
       "blocks": [
         {
@@ -12046,7 +12046,7 @@
       "classes": [
         "Cleric"
       ],
-      "summons": true,
+      "summons": false,
       "creatures": [],
       "blocks": [
         {
@@ -12422,7 +12422,7 @@
       "classes": [
         "Cleric"
       ],
-      "summons": true,
+      "summons": false,
       "creatures": [],
       "blocks": [
         {

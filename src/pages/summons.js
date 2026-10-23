@@ -383,7 +383,6 @@
     title: 'Summons',
     tab: 'Summons',
     order: 4,
-    always: true,
     blurb: 'The creatures at the table.',
     slice: 'summons',
     seed: function (saved) {

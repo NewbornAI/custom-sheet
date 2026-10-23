@@ -248,32 +248,23 @@ for (const src of SOURCES) {
    block is in, which the bestiary needs to find it. */
 const creatureSources = {};
 function creatureNames(node) {
+  /* The same creature is named twice in a text, once in each case, and the
+     name is kept as it was written the first time. */
   const names = [];
+  const seen = {};
   references(node).forEach((r) => {
-    if (names.indexOf(r.name) < 0) names.push(r.name);
+    const key = r.name.toLowerCase();
+    if (seen[key]) return;
+    seen[key] = true;
+    names.push(r.name);
     if (!creatureSources[r.name]) creatureSources[r.name] = r.source;
   });
   return names;
 }
 
-/* A spell calls a creature when its text names one, when its tags say so,
-   or when it is a conjure that brings a being. The 2024 handbook writes
-   conjure where the old one wrote summon, and the tag is not on those, so
-   the sentence that calls it says what it calls. A conjure of weapons is
-   not a creature, and a polymorph changes one. */
-const BEING = /\b(spirit|familiar|beast|elemental|steed|animal|creature|undead|fey|celestial|devil|demon|fiend|dragon|aberration|construct|object|ally|entity|weed|plant|guard|homunculus|sprite|wight|ghoul|ghast|mummy|skeleton|zombie|companion)\w*/i;
-const TRANSFORM = /\b(transform|shape-?shift|polymorph)/i;
-
-function callsCreature(spell, names) {
-  if (names && names.length) return true;
-  const text = JSON.stringify(spell.entries || []);
-  if (TRANSFORM.test(text)) return false;
-  if ((spell.miscTags || []).includes('SMN')) return true;
-  if (!/^(conjure|summon)/i.test(String(spell.name || ''))) return false;
-  const long = (spell.entries || []).filter((e) => typeof e === 'string' && e.length > 40);
-  const sentence = String(long[0] || '').split(/(?<=\.)\s+/)[0];
-  return BEING.test(sentence);
-}
+/* A spell calls a creature when its text names one. The conjure spells
+   of the 2024 handbook name none, for the pack they bring is an effect and
+   not a creature with a block, so they are no summons. */
 
 function spellRecord(spell, sourceTag) {
   const time = formatTime(spell.time);
@@ -292,9 +283,9 @@ function spellRecord(spell, sourceTag) {
     concentration: !!(spell.concentration || (Array.isArray(spell.duration) && spell.duration.some((d) => d && d.concentration))),
     source: sourceTag || '',
     classes: [],
-    /* A spell summons when it calls a creature, and the creatures it names
+    /* A spell summons when it names a creature, and the creatures it names
        are the blocks the player can call. */
-    summons: callsCreature(spell, creatures),
+    summons: creatures.length > 0,
     creatures: creatures,
     blocks: blocksFrom(spell.entries).concat(blocksFrom(spell.entriesHigherLevel))
   };
@@ -461,9 +452,9 @@ for (const spec of FEATURE_SPECS) {
     desc: spec.desc || '',
     /* A feature that names a creature brings it to the table. */
     creatures: creatureNames(entries),
+    summons: creatureNames(entries).length > 0,
     blocks: blocksFrom(entries)
   };
-  feature.summons = feature.creatures.length > 0;
   /* A feature that belongs to a ready-made character says which one it
      waits for; the rest seed a new character. */
   if (spec.preset) feature.preset = spec.preset;

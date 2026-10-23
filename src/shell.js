@@ -594,7 +594,7 @@
 
   /* ---- the store ---- */
 
-  var DEFAULT_PAGES = ['volley', 'spells', 'features', 'summons'];
+  var DEFAULT_PAGES = ['volley', 'spells', 'features'];
 
   var state = load();
 
@@ -1793,9 +1793,7 @@
     var on = pagesOf();
     return PAGES.filter(function (p) {
       if (p.hidden) return false;
-      /* The page the app opens on, and the page every character has, are on
-         whatever the character chose. */
-      if (p.home || p.always) return true;
+      if (p.home) return true;
       return on.indexOf(p.id) >= 0;
     }).sort(function (a, b) { return a.order - b.order; });
   }

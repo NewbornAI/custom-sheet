@@ -16,6 +16,7 @@
       "duration": "1 min",
       "desc": "DC +1, advantage attack w/ spells sorcerer",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -33,7 +34,6 @@
           "text": "You can use this feature twice, and you regain all expended uses of it when you finish a Long Rest."
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -49,6 +49,7 @@
       "duration": "",
       "desc": "Heighten + quicken",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -63,7 +64,6 @@
           "text": "Whenever you gain a Sorcerer level, you can replace one of your Metamagic options with one you don't know. You gain two more options at Sorcerer level 10 and two more at Sorcerer level 17."
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -79,6 +79,7 @@
       "duration": "",
       "desc": "Advantage, on spell slot: roll surge to refund",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -89,7 +90,6 @@
           "text": "If you do cast a Sorcerer spell with a spell slot before you finish a Long Rest, you automatically roll on the Wild Magic Surge table."
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -105,13 +105,13 @@
       "duration": "",
       "desc": "Regain 1/2 sorc level SP",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
           "text": "When you finish a Short Rest, you can regain expended Sorcery Points, but no more than a number equal to half your Sorcerer level (round down). Once you use this feature, you can't do so again until you finish a Long Rest."
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -127,13 +127,13 @@
       "duration": "",
       "desc": "Creature I can see rolls D20: +/-1d4",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
           "text": "You have the ability to twist fate using your wild magic. Immediately after another creature you can see rolls the d20 for a D20 Test, you can take a Reaction and spend 1 Sorcery Point to roll 1d4 and apply the number rolled as a bonus or penalty (your choice) to the d20 roll."
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -149,13 +149,13 @@
       "duration": "1 min",
       "desc": "Regain 1 spell slot",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
           "text": "You can perform an esoteric rite for 1 minute. At the end of it, you regain expended Pact Magic spell slots but no more than a number equal to half your maximum (round up). Once you use this feature, you can't do so again until you finish a Long Rest."
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -171,6 +171,7 @@
       "duration": "1 min",
       "desc": "+PRO damage, crit 19+, regain CHA+lvl hp",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -189,7 +190,6 @@
           "text": "You can't use this feature again until you finish a short or long rest."
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -205,6 +205,7 @@
       "duration": "",
       "desc": "Detect Magic for free",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -249,7 +250,6 @@
           ]
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -265,6 +265,7 @@
       "duration": "",
       "desc": "Misty Step for free",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -309,7 +310,6 @@
           ]
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -325,6 +325,7 @@
       "duration": "",
       "desc": "Spend 2 SP: regain innate sorcery",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -335,7 +336,6 @@
           "text": "In addition, while your Innate Sorcery feature is active, you can use up to two of your on each spell you cast."
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -351,13 +351,13 @@
       "duration": "",
       "desc": "Darkvision 120 ft, see darkness",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
           "text": "You can see normally in darkness, both magical and nonmagical, to a distance of 120 feet."
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -373,13 +373,13 @@
       "duration": "",
       "desc": "Hit: push 10 feet straight away from you",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
           "text": "When you hit a creature with eldritch blast, you can push the creature up to 10 feet away from you in a straight line."
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -395,13 +395,13 @@
       "duration": "",
       "desc": "+CHA damage",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
           "text": "When you cast eldritch blast, add your Charisma modifier to the damage it deals on a hit."
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -417,6 +417,7 @@
       "duration": "",
       "desc": "Every spell slot: roll d20, 20 = roll surge",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -537,7 +538,6 @@
           ]
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -553,6 +553,7 @@
       "duration": "",
       "desc": "Linked weapon attacks with CHA",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -563,7 +564,6 @@
           "text": "The influence of your patron also allows you to mystically channel your will through a particular weapon. Whenever you finish a long rest, you can touch one weapon that you are proficient with and that lacks the two-handed property. When you attack with that weapon, you can use your Charisma modifier, instead of Strength or Dexterity, for the attack and damage rolls. This benefit lasts until you finish a long rest. If you later gain the Pact of the Blade feature, this benefit extends to every pact weapon you conjure with that feature, no matter the weapon's type."
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -579,13 +579,13 @@
       "duration": "",
       "desc": "Sleep 4h, conscious",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
           "text": "You don't need to sleep, and magic can't put you to sleep. You can finish a Long Rest in 4 hours if you spend those hours in a trancelike meditation, during which you retain consciousness."
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -601,13 +601,13 @@
       "duration": "",
       "desc": "Advantage vs Charm",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
           "text": "You have Advantage on saving throws you make to avoid or end the [[c:Charmed]] condition."
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -623,6 +623,7 @@
       "duration": "",
       "desc": "Attacks roll 3d20 on advantage",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -635,7 +636,6 @@
           ]
         }
       ],
-      "summons": false,
       "seed": true
     },
     {
@@ -651,6 +651,7 @@
       "duration": "1 hour",
       "desc": "d10 die, CHA mod uses, short rest",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -685,7 +686,6 @@
           "text": "Your Bardic Inspiration die changes when you reach certain Bard levels, as shown in the Bardic Die column of the Bard Features table. The die becomes a d8 at level 5, a d10 at level 10, and a d12 at level 15."
         }
       ],
-      "summons": false,
       "preset": "bard"
     },
     {
@@ -701,6 +701,7 @@
       "duration": "",
       "desc": "A slot buys an inspiration back",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -711,7 +712,6 @@
           "text": "In addition, you can expend a spell slot (no action required) to regain one expended use of Bardic Inspiration."
         }
       ],
-      "summons": false,
       "preset": "bard"
     },
     {
@@ -727,6 +727,7 @@
       "duration": "",
       "desc": "Half the proficiency on the checks you lack",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -741,7 +742,6 @@
           "text": "Read aloud: Does your Bard beat a drum while chanting the deeds of ancient heroes? Strum a lute while crooning romantic tunes? Perform arias of stirring power? Recite dramatic monologues from classic tragedies? Use the rhythm of a folk dance to coordinate the movement of allies in battle? Compose naughty limericks? When you play a Bard, consider the style of artistic performance you favor, the moods you might invoke, and the themes that inspire your own creations. Are your poems inspired by moments of natural beauty, or are they brooding reflections on loss? Do you prefer lofty hymns or rowdy tavern songs? Are you drawn to laments for the fallen or celebrations of joy? Do you dance merry jigs or perform elaborate interpretive choreography? Do you focus on one style of performance or strive to master them all?"
         }
       ],
-      "summons": false,
       "preset": "bard"
     },
     {
@@ -757,6 +757,7 @@
       "duration": "",
       "desc": "Four skills carry double proficiency",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -767,7 +768,6 @@
           "text": "At Bard level 9, you gain Expertise in two more of your skill proficiencies of your choice."
         }
       ],
-      "summons": false,
       "preset": "bard"
     },
     {
@@ -783,13 +783,13 @@
       "duration": "",
       "desc": "Reroll a charm or fear save, with advantage",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
           "text": "You can use musical notes or words of power to disrupt mind-influencing effects. If you or a creature within 30 feet of you fails a saving throw against an effect that applies the [[c:Charmed]] or [[c:Frightened]] condition, you can take a Reaction to cause the save to be rerolled, and the new roll has Advantage."
         }
       ],
-      "summons": false,
       "preset": "bard"
     },
     {
@@ -805,13 +805,13 @@
       "duration": "",
       "desc": "Any list can fill the new prepared spells",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
           "text": "You've learned secrets from various magical traditions. Whenever you reach a Bard level (including this level) and the Prepared Spells number in the Bard Features table increases, you can choose any of your new prepared spells from the , , , and , and the chosen spells count as Bard spells for you (see a class's section for its spell list). In addition, whenever you replace a spell prepared for this class, you can replace it with a spell from those lists."
         }
       ],
-      "summons": false,
       "preset": "bard"
     },
     {
@@ -827,6 +827,7 @@
       "duration": "",
       "desc": "The inspiration die does one more thing",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -849,7 +850,6 @@
           ]
         }
       ],
-      "summons": false,
       "preset": "bard"
     },
     {
@@ -865,6 +865,7 @@
       "duration": "",
       "desc": "Create one item, 20 gp a bard level",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -883,7 +884,6 @@
           "text": "The size of the item you can create with this feature increases by one size category when you reach 6th level (Large) and 14th level (Huge)."
         }
       ],
-      "summons": false,
       "preset": "bard"
     },
     {
@@ -899,9 +899,9 @@
       "duration": "",
       "desc": "An item walks as a dancing item, one hour",
       "creatures": [
-        "Dancing Item",
-        "dancing item"
+        "Dancing Item"
       ],
+      "summons": true,
       "blocks": [
         {
           "t": "p",
@@ -924,7 +924,6 @@
           "text": "Once you animate an item with this feature, you can't do so again until you finish a long rest, unless you expend a spell slot of 3rd level or higher to use this feature again. You can have only one item animated by this feature at a time; if you use this action and already have a dancing item from this feature, the first one immediately becomes inanimate."
         }
       ],
-      "summons": true,
       "preset": "bard"
     },
     {
@@ -940,6 +939,7 @@
       "duration": "",
       "desc": "Three instruments, a song that inspires",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -962,7 +962,6 @@
           "text": "As you finish a Short Rest or Long Rest, you can play a song on a Musical Instrument with which you have proficiency and give Heroic Inspiration to allies who hear the song. The number of allies you can affect in this way equals your Proficiency."
         }
       ],
-      "summons": false,
       "preset": "bard"
     },
     {
@@ -978,6 +977,7 @@
       "duration": "",
       "desc": "Conjuration spells always prepared",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -1030,7 +1030,6 @@
           ]
         }
       ],
-      "summons": false,
       "preset": "bard"
     },
     {
@@ -1046,6 +1045,7 @@
       "duration": "",
       "desc": "Abjuration spells always prepared, a ward",
       "creatures": [],
+      "summons": false,
       "blocks": [
         {
           "t": "p",
@@ -1098,7 +1098,6 @@
           ]
         }
       ],
-      "summons": false,
       "preset": "bard"
     },
     {

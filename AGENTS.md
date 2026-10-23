@@ -57,10 +57,10 @@ Sheet.page({
 ```
 
 A page may also carry `hidden` (no tab of its own, the gear opens it), `home`
-(the page the app opens on), `always` (a tab every character has, whatever the
-character chose), `slice` (the key it owns in the record of a character),
-`seed(saved, fresh, rec)` (what a new character starts from) and `css` (its own
-styles).
+(the page the app opens on), `slice` (the key it owns in the record of a
+character), `seed(saved, fresh, rec)` (what a new character starts from) and
+`css` (its own styles). A page is off by default and the player turns it on
+in the settings.
 
 The page gets `a` at mount and at render:
 

@@ -30,7 +30,7 @@ learn each one.
 active features carry their uses and say when they come back, the passive ones
 always work, and every one opens its full text.
 
-**The summons.** The creatures you have called to the table. A summon carries a name you can change, the armour class, the hit points, the attacks with their bonus and their damage, and the slot that paid for it. The stat blocks come from the same place as the spell book, and the app carries the ones it names. The machine that serves the app holds the rest of the bestiary, so a creature you need and the app does not have can be fetched from there.
+**The summons.** The creatures you have called to the table. The tab is off by default and the settings turn it on. A summon carries a name you can change, the armour class, the hit points, the attacks with their bonus and their damage, and the slot that paid for it. A spell is a summon when it names a creature, so the conjure spells of the 2024 handbook, which bring a pack and not a creature with a block, are not in it. The stat blocks come from the same place as the spell book, and the app carries the ones it names. The machine that serves the app holds the rest of the bestiary, so a creature you need and the app does not have can be fetched from there.
 
 **The volley.** The roll: the attack, the damage, the advantage, the hex, the
 curse and the elemental. Give it an armour class and it marks the hits and
