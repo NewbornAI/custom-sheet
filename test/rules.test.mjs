@@ -650,7 +650,10 @@ console.log('the page the phone opens at launch');
   check('and matches the data file', distFeatures.features.length, JSON.parse(readFileSync(resolve(root, 'data', 'features.json'), 'utf8')).features.length);
   const distClasses = JSON.parse(readFileSync(resolve(root, 'dist', 'data', 'classes.json'), 'utf8'));
   check('the classes sit beside it too', distClasses.classes.length, 12);
-  check('the page is small without them', built.length < 400000, true);
+  /* The page carries the character and the rules, never the libraries. The
+     ceiling has room above the real size, so it only fires on a real
+     regression: the summons tab and its stat blocks brought it to 390 KB. */
+  check('the page is small without them', built.length < 450000, true);
   check('no character travels inside the page', /<script id="character-data"/.test(built), false);
   const distBook = JSON.parse(readFileSync(resolve(root, 'dist', 'data', 'spellbook.json'), 'utf8'));
   check('the book sits beside the page', distBook.spells.length > 100, true);

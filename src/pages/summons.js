@@ -276,11 +276,19 @@
     }).join(', ');
   }
 
-  /* The abilities, with the short names a stat block writes. */
-  function abilityText(list) {
+  /* The abilities, at the top of the block: the names above the scores, the
+     way a stat block writes them. */
+  function abilityRow(list) {
     if (!list || !list.length) return '';
     var short = { Strength: 'Str', Dexterity: 'Dex', Constitution: 'Con', Intelligence: 'Int', Wisdom: 'Wis', Charisma: 'Cha' };
-    return list.map(function (a) { return (short[a.name] || a.name) + ' ' + a.score; }).join(', ');
+    var names = '', values = '';
+    list.forEach(function (a) {
+      names += '<span>' + C.esc(short[a.name] || a.name) + '</span>';
+      var mod = C.SR && C.SR.abilityMod ? C.SR.abilityMod(a.score) : Math.floor((a.score - 10) / 2);
+      values += '<span>' + a.score + '<em>' + (mod >= 0 ? '+' + mod : String(mod)) + '</em></span>';
+    });
+    return '<div class="sabil"><div class="sab-h">' + names + '</div>' +
+      '<div class="sab-v">' + values + '</div></div>';
   }
 
   /* One named thing of the block: its name and what it says. */
@@ -298,13 +306,13 @@
     var hp = out && out.hpMax !== null && out.hpMax !== undefined ? out.hpMax : (form && form.hp ? form.hp : block.hp);
     var acText = form && form.acText ? form.acText : block.acText;
     var hpText = form && form.hpText ? form.hpText : block.hpText;
-    return C.field('CR', block.cr) +
+    return abilityRow(block.ability) +
+      C.field('CR', block.cr) +
       C.field('Type', (block.size ? block.size + ' ' : '') + block.type) +
       C.field('Align', block.alignment) +
       C.field('Speed', block.speed) +
       C.field('AC', acText ? ac + ' (' + acText + ')' : String(ac || '')) +
       C.field('HP', hpText ? hp + ' (' + hpText + ')' : String(hp || '')) +
-      C.field('Abilities', abilityText(block.ability)) +
       C.field('Saves', listText(block.saves)) +
       C.field('Skills', listText(block.skills)) +
       C.field('Resist', listText(block.resist)) +
@@ -492,7 +500,9 @@
     var range = attackRange(a);
     var groups = res ? res.groups : (C.R && C.R.diceIn ? C.R.diceIn(damage || '') : []);
     var flat = res ? res.flat : (C.R && C.R.flatIn ? C.R.flatIn(damage || '') : 0);
-    var out = '<div class="sblock' + (res && res.crit ? ' crit' : '') + '" data-name="' + C.esc(a.name) + '">';
+    var trio = trioOf(type);
+    var out = '<div class="sblock' + (res && res.crit ? ' crit' : '') + '" data-name="' + C.esc(a.name) + '"' +
+      (trio ? ' style="--beam:' + trio + '"' : '') + '>';
     out += '<div class="satkgrid">';
     out += '<div class="scell-atk"><span class="sk">Attack</span>' +
       '<span class="snum2">' + C.esc(bonus) + '</span>' +
@@ -563,15 +573,6 @@
     return out.join(' ');
   }
 
-  /* The uses of a limited action of the card. */
-  function usesOf(card, name) {
-    return card && card.uses ? card.uses[name] : null;
-  }
-  /* The multiattack: how many attacks the creature makes. */
-  function multiRow(a) {
-    return '<div class="smulti"><span class="sk">' + C.esc(a.name) + '</span>' +
-      '<span class="smultin">&times;' + a.count + '</span></div>';
-  }
 
   /* An action that is not an attack: a healing, a touch. It shows its dice
      and it does not roll. */
@@ -1030,6 +1031,11 @@
       '.ssep{font-size:10.5px;color:#6f6a8d;white-space:nowrap}',
       '.smod{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}',
       '.sghost{color:#6f6a8d}',
+      '.sabil{grid-column:1 / -1;display:flex;flex-direction:column;gap:2px;margin:0 0 3px}',
+      '.sab-h,.sab-v{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}',
+      '.sab-h span{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:#635e7e;text-align:center}',
+      '.sab-v span{font-family:var(--display);font-size:15px;line-height:1.1;color:var(--ink);text-align:center;font-variant-numeric:tabular-nums}',
+      '.sab-v em{font-style:normal;font-family:var(--sans);font-size:9px;color:var(--muted);margin-left:2px}',
       '.sother{font-size:10.5px;color:#6f6a8d;font-variant-numeric:tabular-nums}',
       '.suses{border:1px solid var(--edge);border-radius:999px;background:none;color:var(--ink);font:inherit;font-size:10.5px;line-height:1.4;padding:1px 9px;cursor:pointer;font-variant-numeric:tabular-nums}',
       '.suses.out{color:#6f6a8d}',
