@@ -542,6 +542,9 @@
     shelfFork: shelfFork,
     ghToken: ghToken,
     ghTokenNow: ghTokenNow,
+    ghBegin: ghBegin,
+    ghWait: ghWait,
+    ghPending: ghPending,
     ghSetSession: ghSetSession,
     ghSetToken: ghSetToken,
     ghLogin: ghLogin,
@@ -1281,6 +1284,100 @@
     });
   }
 
+  /* The sign in waits for a code approved in a browser, and the app is in
+     the background while the player approves it, so the wait is kept in the
+     state and picks itself up when the app comes back. */
+  var ghTimer = null;
+  var ghFails = 0;
+
+  function ghPending() {
+    var p = state.ui && state.ui.ghPending;
+    if (!p || !p.code) return null;
+    if (Date.now() - (Number(p.at) || 0) > 14 * 60 * 1000) {
+      state.ui.ghPending = null;
+      save();
+      return null;
+    }
+    return p;
+  }
+
+  function ghBegin() {
+    if (!window.SheetGit) return Promise.reject(new Error('the sign in cannot start'));
+    state.ui = state.ui || {};
+    return window.SheetGit.deviceStart().then(function (answer) {
+      if (!answer || !answer.user_code) throw new Error('GitHub did not answer');
+      state.ui.ghPending = {
+        code: answer.device_code || '',
+        wait: Number(answer.interval) || 5,
+        at: Date.now()
+      };
+      save();
+      return answer;
+    });
+  }
+
+  /* Asks GitHub again, and again, until the code is approved or the code runs
+     out. A slow down is answered by waiting longer, never by giving up. */
+  function ghWait(onDone) {
+    var p = ghPending();
+    if (!p || !window.SheetGit) return;
+    if (ghTimer) window.clearTimeout(ghTimer);
+    ghTimer = window.setTimeout(function () {
+      ghTimer = null;
+      if (!ghPending()) { if (onDone) onDone(false, 'the code ran out, ask for another'); return; }
+      window.SheetGit.devicePoll(p.code).then(function (answer) {
+        if (answer && answer.access_token) {
+          state.ui.ghPending = null;
+          state.ui.ghLast = '';
+          ghFails = 0;
+          ghSetSession(answer);
+          window.SheetGit.whoAmI(answer.access_token).then(function (login) {
+            ghSetLogin(login);
+            save();
+            toast('signed in as ' + login);
+            refresh();
+            if (onDone) onDone(true);
+          }).catch(function () {
+            save();
+            refresh();
+            if (onDone) onDone(true);
+          });
+          return;
+        }
+        var why = (answer && (answer.error || answer.error_description)) || 'not yet';
+        state.ui.ghLast = String(why);
+        save();
+        ghFails = 0;
+        /* the row says what GitHub answered, so a wait that never ends can
+           be read rather than guessed */
+        refresh();
+        if (why === 'authorization_pending') { ghWait(onDone); return; }
+        if (why === 'slow_down') {
+          p.wait = (Number(p.wait) || 5) + 5;
+          save();
+          ghWait(onDone);
+          return;
+        }
+        state.ui.ghPending = null;
+        save();
+        toast(String(why));
+        if (onDone) onDone(false, String(why));
+      }).catch(function (e) {
+        /* A bridge that cannot answer is not a reason to wait forever. */
+        ghFails += 1;
+        if (ghFails >= 5) {
+          state.ui.ghPending = null;
+          state.ui.ghLast = 'the check did not get through';
+          save();
+          toast('GitHub did not answer the check: ' + String((e && e.message) || e));
+          if (onDone) onDone(false, 'GitHub did not answer the check');
+          return;
+        }
+        ghWait(onDone);
+      });
+    }, (Number(p.wait) || 5) * 1000);
+  }
+
   function ghSetSession(answer) {
     state.ui = state.ui || {};
     var s = state.ui.gh || {};
@@ -1820,10 +1917,19 @@ wireHead();
     save();
     /* Every page reads a character, so a device that holds none shows the
        ways in and no page at all. */
+    /* A sign in that was waiting when the app went away picks itself back
+       up, so an approval in the browser is never lost. */
+    if (!ghToken() && ghPending()) ghWait();
     if (!Object.keys(state.characters).length) { openCharacters(); return; }
     var home = PAGES.filter(function (p) { return p.home; })[0];
     show(home ? home.id : (enabled()[0] || PAGES[0]).id);
   }
+
+  /* The app comes back from the browser where the code was approved, so
+     the wait is picked up again there. */
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && !ghToken() && ghPending()) ghWait();
+  });
 
   window.Sheet = { page: page, core: core, show: show };
 

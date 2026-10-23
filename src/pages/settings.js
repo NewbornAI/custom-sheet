@@ -244,8 +244,12 @@
     var sign = document.createElement('div');
     sign.className = 'srow';
     var signed = C.ghLogin();
+    var waiting = !signed && C.ghPending();
+    var last = (api.state.ui && api.state.ui.ghLast) || '';
     sign.innerHTML = '<span class="t">The connection</span><span class="d">' +
-      C.esc(signed ? 'signed in as ' + signed : 'not signed in') + '</span>';
+      C.esc(signed ? 'signed in as ' + signed
+        : (waiting ? 'waiting for the approval' + (last ? ', GitHub says ' + last : '')
+        : 'not signed in')) + '</span>';
     if (signed) {
       var out = document.createElement('button');
       out.type = 'button';
@@ -259,6 +263,19 @@
         api.refresh();
       });
       sign.appendChild(out);
+    } else if (waiting) {
+      var again = document.createElement('button');
+      again.type = 'button';
+      again.className = 'stog';
+      again.textContent = 'Check';
+      again.setAttribute('aria-label', 'Ask GitHub whether the code was approved');
+      again.addEventListener('click', function () {
+        C.ghWait(function (ok, why) {
+          if (ok) api.refresh();
+          else if (why) C.toast(String(why));
+        });
+      });
+      sign.appendChild(again);
     } else if (C.isPhone()) {
       var go = document.createElement('button');
       go.type = 'button';
@@ -353,51 +370,34 @@
     E.shelf.appendChild(row);
   }
 
-  /* The device flow: the app asks GitHub for a code, the player reads
-     it in the browser, and the app polls until the token lands. */
+  /* The device flow: the app asks GitHub for a code, the player reads it in
+     the browser, and the shell waits for the token, in the background as
+     well as here, so the approval is never lost. */
   function connect() {
     C.toast('asking GitHub for a code');
-    window.SheetGit.deviceStart().then(function (answer) {
-      if (!answer || !answer.user_code) { C.toast('GitHub did not answer'); return; }
-      var code = answer.user_code;
+    C.ghBegin().then(function (answer) {
       var where = answer.verification_uri || 'https://github.com/login/device';
       api.sheet.open({
         id: 'ghconnect',
         title: 'Connect to GitHub',
         metaClass: 'sheet-meta one',
         meta: '<span>Open GitHub, read the code, approve it. The app waits.</span>' +
-          '<div class="crow"><span class="cn">' + C.esc(code) + '</span>' +
+          '<div class="crow"><span class="cn">' + C.esc(answer.user_code) + '</span>' +
           '<a class="mini" href="' + C.esc(where) + '" target="_blank" rel="noreferrer" aria-label="Open GitHub">&#8599;</a></div>',
         actions: [{
           label: 'Open GitHub',
           onClick: function () { C.openUrl(where); }
         }]
       });
-      poll(code, answer.interval || 5);
+      /* The row says it is waiting, so it is painted again as soon as the
+         wait starts. */
+      api.refresh();
+      C.ghWait(function (ok, why) {
+        if (ok) { api.sheet.close(); api.refresh(); return; }
+        if (why) C.toast(String(why));
+        api.refresh();
+      });
     }).catch(function (e) { C.toast(String((e && e.message) || e)); });
-  }
-
-  function poll(code, wait) {
-    window.setTimeout(function () {
-      window.SheetGit.devicePoll(code).then(function (answer) {
-        if (answer && answer.access_token) {
-          C.ghSetSession(answer);
-          api.sheet.close();
-          window.SheetGit.whoAmI(answer.access_token).then(function (login) {
-            C.ghSetLogin(login);
-            C.toast('signed in as ' + login);
-            api.refresh();
-          }).catch(function () { api.refresh(); });
-          return;
-        }
-        var why = (answer && (answer.error || answer.error_description)) || 'not yet';
-        if (why === 'authorization_pending' || why === 'slow_down') {
-          poll(code, wait);
-          return;
-        }
-        C.toast(String(why));
-      }).catch(function (e) { C.toast(String((e && e.message) || e)); });
-    }, (wait || 5) * 1000);
   }
 
   /* A repository of the player, and the shelf points at it. */
