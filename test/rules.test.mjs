@@ -539,9 +539,9 @@ console.log('seeding a character from the data');
   Object.keys(bard.rec.spells.lists).forEach((lv) => bard.rec.spells.lists[lv].forEach((n) => listed.push(lv + ':' + n)));
   check('every spell it holds is in the book', listed.every((x) => levelOf[x.split(':')[1]] !== undefined), true);
   check('every spell sits at its own level', listed.every((x) => levelOf[x.split(':')[1]] === Number(x.split(':')[0])), true);
-  check('the fifteen spells of the character', listed.length, 15);
+  check('the twenty one spells of the character', listed.length, 21);
   const declared = bard.rec.spells.sources;
-  check('every spell of the preset names its source', Object.keys(declared).length, 15);
+  check('every spell of the preset names its source', Object.keys(declared).length, 21);
   check('five come from the conjuration adept', Object.keys(declared).filter((n) => declared[n] === 'Conjuration adept').length, 5);
   check('shield comes from the abjuration adept', declared.Shield, 'Abjuration adept');
   /* The five the class and the elf bring name a class and a race, and no
@@ -553,7 +553,7 @@ console.log('seeding a character from the data');
     const feat = features.features.filter((f) => f.name === declared[n])[0];
     return JSON.stringify(feat.blocks).indexOf('"' + n + '"') >= 0;
   }), true);
-  check('the grimoire opens on the bard and the wizard', JSON.stringify(bard.rec.spells.classes), '{"Bard":true,"Wizard":true}');
+  check('the grimoire opens with every filter off', JSON.stringify(bard.rec.spells.classes), '{"Bard":false,"Wizard":false,"Druid":false}');
 
   /* The two pages that hold a character read their own slice, so the way
      from the ready-made record to the sheet is checked here. */
@@ -585,7 +585,7 @@ console.log('seeding a character from the data');
   const char = taken.character.seed(bard.rec.char, true);
   check('the ready-made features arrive whole', char.features.length, bard.rec.char.features.length);
   check('and they are its own', char.features.map((f) => f.key).indexOf('musician') >= 0, true);
-  check('a feature keeps its uses', char.features.filter((f) => f.key === 'bardicInspiration')[0].max, 5);
+  check('a feature keeps its uses', char.features.filter((f) => f.key === 'bardicInspiration')[0].max, bard.rec.char.features.filter((f) => f.key === 'bardicInspiration')[0].max);
   check('the level survives the seeding', char.level, 11);
   check('the class survives it too', char.classes.length + ' ' + char.classes[0].name, '1 Bard');
   check('charisma 19 and level 11 give a spell attack of +8', C.spellAttack(char), 8);
@@ -602,7 +602,7 @@ console.log('seeding a character from the data');
   check('and the scores of the floor', blank.abilities.cha, 10);
   const spell = taken.spells.seed(bard.rec.spells, true);
   check('the ready-made spells travel', spell.lists[1].join(','), 'Entangle,Shield');
-  check('a level it left empty stays empty', spell.lists[6].length, 0);
+  check('a level it left empty stays empty', spell.lists[7].length, 0);
   check('the slots travel too', [spell.max[1], spell.max[5]].join('/'), '4/2');
   check('the source of a spell is the character\'s own', spell.sources.Shield, 'Abjuration adept');
   const old = taken.spells.seed({ lists: { 1: ['Shield'] } }, false);
@@ -703,8 +703,8 @@ console.log('the bestiary');
   };
   const bardRec = JSON.parse(readFileSync(resolve(root, 'characters', 'yngwie.json'), 'utf8')).record;
   const wendyRec = JSON.parse(readFileSync(resolve(root, 'characters', 'wendy.json'), 'utf8')).record;
-  check('the bard calls three', libraryOf(bardRec).length, 3);
-  check('the animals, the elemental and the dancing item', libraryOf(bardRec).join(', '), 'Conjure Animals, Conjure Elemental, Animating performance');
+  check('the bard calls five', libraryOf(bardRec).length, 5);
+  check('the animals, the fey, the elementals and the dancing item', libraryOf(bardRec).join(', '), 'Conjure Animals, Summon Fey, Conjure Elemental, Summon Celestial, Animating performance');
   check('the sorcerer calls five', libraryOf(wendyRec).length, 5);
   check('the servant, the familiar, the objects and the elementals', libraryOf(wendyRec).join(', '), 'Unseen Servant, Battle Familiar, Conjure Minor Elementals, Animate Objects, Conjure Elemental');
 
@@ -766,8 +766,8 @@ console.log('the bestiary');
   taken.summons.mount(page, api);
   page.call.click();
   const rows = (opened[0] && opened[0].list ? opened[0].list.match(/data-src=/g) || [] : []).length;
-  check('the page offers the three of the bard', rows, 3);
-  check('and they are the same three', (opened[0].list.match(/data-src="([^"]+)"/g) || []).join(','), 'data-src="spell:Conjure Animals",data-src="spell:Conjure Elemental",data-src="feature:animatingPerformance"');
+  check('the page offers the five of the bard', rows, 5);
+  check('and they are the same five', (opened[0].list.match(/data-src="([^"]+)"/g) || []).join(','), 'data-src="spell:Conjure Animals",data-src="spell:Summon Fey",data-src="spell:Conjure Elemental",data-src="spell:Summon Celestial",data-src="feature:animatingPerformance"');
   const seeded = taken.summons.seed({}, true);
   check('a new character holds no creature', seeded.list.length, 0);
 }

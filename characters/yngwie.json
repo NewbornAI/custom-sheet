@@ -32,21 +32,21 @@
       "skills": {
         "acrobatics": 0,
         "animalHandling": 0,
-        "arcana": 0,
+        "arcana": 1,
         "athletics": 0,
         "deception": 0,
         "history": 0,
         "insight": 0,
         "intimidation": 0,
         "investigation": 0,
-        "medicine": 0,
+        "medicine": 1,
         "nature": 0,
-        "perception": 0,
-        "performance": 0,
-        "persuasion": 0,
+        "perception": 2,
+        "performance": 2,
+        "persuasion": 2,
         "religion": 0,
         "sleightOfHand": 0,
-        "stealth": 0,
+        "stealth": 2,
         "survival": 0
       },
       "features": [
@@ -57,8 +57,8 @@
           "active": true,
           "recovery": "short",
           "bind": null,
-          "max": 5,
-          "left": 5,
+          "max": 4,
+          "left": 4,
           "cost": "",
           "short": null,
           "hidden": false
@@ -90,6 +90,19 @@
           "hidden": false
         },
         {
+          "key": "animatingPerformance",
+          "name": "Animating performance",
+          "source": "Creation",
+          "active": true,
+          "recovery": "long",
+          "bind": null,
+          "max": 1,
+          "left": 1,
+          "cost": "",
+          "short": null,
+          "hidden": false
+        },
+        {
           "key": "performanceOfCreation",
           "name": "Performance of creation",
           "source": "Creation",
@@ -103,9 +116,22 @@
           "hidden": false
         },
         {
-          "key": "animatingPerformance",
-          "name": "Animating performance",
-          "source": "Creation",
+          "key": "elvenLineageI",
+          "name": "Elven Lineage I",
+          "source": "High Elf",
+          "active": true,
+          "recovery": "long",
+          "bind": null,
+          "max": 1,
+          "left": 1,
+          "cost": "",
+          "short": null,
+          "hidden": false
+        },
+        {
+          "key": "elvenLineageII",
+          "name": "Elven Lineage II",
+          "source": "High Elf",
           "active": true,
           "recovery": "long",
           "bind": null,
@@ -207,32 +233,6 @@
           "hidden": false
         },
         {
-          "key": "elvenLineageI",
-          "name": "Elven Lineage I",
-          "source": "High Elf",
-          "active": true,
-          "recovery": "long",
-          "bind": null,
-          "max": 1,
-          "left": 1,
-          "cost": "",
-          "short": null,
-          "hidden": false
-        },
-        {
-          "key": "elvenLineageII",
-          "name": "Elven Lineage II",
-          "source": "High Elf",
-          "active": true,
-          "recovery": "long",
-          "bind": null,
-          "max": 1,
-          "left": 1,
-          "cost": "",
-          "short": null,
-          "hidden": false
-        },
-        {
           "key": "trance",
           "name": "Trance",
           "source": "Elf",
@@ -311,7 +311,1933 @@
           "spent": false
         }
       ],
-      "history": []
+      "history": [
+        {
+          "hp": 0,
+          "hpmax": 0,
+          "dice": [
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            }
+          ],
+          "features": [
+            {
+              "key": "bardicInspiration",
+              "name": "Bardic inspiration",
+              "source": "Bard",
+              "active": true,
+              "recovery": "short",
+              "bind": null,
+              "max": 5,
+              "left": 5,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "countercharm",
+              "name": "Countercharm",
+              "source": "Bard",
+              "active": true,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "moteOfPotential",
+              "name": "Mote of potential",
+              "source": "Creation",
+              "active": true,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "performanceOfCreation",
+              "name": "Performance of creation",
+              "source": "Creation",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "animatingPerformance",
+              "name": "Animating performance",
+              "source": "Creation",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "fontOfInspiration",
+              "name": "Font of inspiration",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "jackOfAllTrades",
+              "name": "Jack of all trades",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "expertise",
+              "name": "Expertise",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "magicalSecrets",
+              "name": "Magical secrets",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "musician",
+              "name": "Musician",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "conjurationAdept",
+              "name": "Conjuration adept",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "abjurationAdept",
+              "name": "Abjuration adept",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "elvenLineageI",
+              "name": "Elven Lineage I",
+              "source": "High Elf",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "elvenLineageII",
+              "name": "Elven Lineage II",
+              "source": "High Elf",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "trance",
+              "name": "Trance",
+              "source": "Elf",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "feyAncestry",
+              "name": "Fey Ancestry",
+              "source": "Elf",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            }
+          ],
+          "left": {
+            "1": 5,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 1,
+            "7": 0,
+            "8": 0,
+            "9": 0
+          },
+          "warlockLeft": 0,
+          "sp": 0,
+          "cunning": false,
+          "sorcRest": false
+        },
+        {
+          "hp": 0,
+          "hpmax": 0,
+          "dice": [
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            }
+          ],
+          "features": [
+            {
+              "key": "bardicInspiration",
+              "name": "Bardic inspiration",
+              "source": "Bard",
+              "active": true,
+              "recovery": "short",
+              "bind": null,
+              "max": 4,
+              "left": 4,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "countercharm",
+              "name": "Countercharm",
+              "source": "Bard",
+              "active": true,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "moteOfPotential",
+              "name": "Mote of potential",
+              "source": "Creation",
+              "active": true,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "performanceOfCreation",
+              "name": "Performance of creation",
+              "source": "Creation",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "animatingPerformance",
+              "name": "Animating performance",
+              "source": "Creation",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "fontOfInspiration",
+              "name": "Font of inspiration",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 1,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "jackOfAllTrades",
+              "name": "Jack of all trades",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "expertise",
+              "name": "Expertise",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "magicalSecrets",
+              "name": "Magical secrets",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "musician",
+              "name": "Musician",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "conjurationAdept",
+              "name": "Conjuration adept",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "abjurationAdept",
+              "name": "Abjuration adept",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "elvenLineageI",
+              "name": "Elven Lineage I",
+              "source": "High Elf",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "elvenLineageII",
+              "name": "Elven Lineage II",
+              "source": "High Elf",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "trance",
+              "name": "Trance",
+              "source": "Elf",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "feyAncestry",
+              "name": "Fey Ancestry",
+              "source": "Elf",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            }
+          ],
+          "left": {
+            "1": 5,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 1,
+            "7": 0,
+            "8": 0,
+            "9": 0
+          },
+          "warlockLeft": 0,
+          "sp": 0,
+          "cunning": false,
+          "sorcRest": false
+        },
+        {
+          "hp": 0,
+          "hpmax": 0,
+          "dice": [
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            }
+          ],
+          "features": [
+            {
+              "key": "bardicInspiration",
+              "name": "Bardic inspiration",
+              "source": "Bard",
+              "active": true,
+              "recovery": "short",
+              "bind": null,
+              "max": 4,
+              "left": 4,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "countercharm",
+              "name": "Countercharm",
+              "source": "Bard",
+              "active": true,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "moteOfPotential",
+              "name": "Mote of potential",
+              "source": "Creation",
+              "active": true,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "performanceOfCreation",
+              "name": "Performance of creation",
+              "source": "Creation",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "animatingPerformance",
+              "name": "Animating performance",
+              "source": "Creation",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "fontOfInspiration",
+              "name": "Font of inspiration",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "jackOfAllTrades",
+              "name": "Jack of all trades",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "expertise",
+              "name": "Expertise",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "magicalSecrets",
+              "name": "Magical secrets",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "musician",
+              "name": "Musician",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "conjurationAdept",
+              "name": "Conjuration adept",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "abjurationAdept",
+              "name": "Abjuration adept",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "elvenLineageI",
+              "name": "Elven Lineage I",
+              "source": "High Elf",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "elvenLineageII",
+              "name": "Elven Lineage II",
+              "source": "High Elf",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "trance",
+              "name": "Trance",
+              "source": "Elf",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "feyAncestry",
+              "name": "Fey Ancestry",
+              "source": "Elf",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            }
+          ],
+          "left": {
+            "1": 5,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 1,
+            "7": 0,
+            "8": 0,
+            "9": 0
+          },
+          "warlockLeft": 0,
+          "sp": 0,
+          "cunning": false,
+          "sorcRest": false
+        },
+        {
+          "hp": 0,
+          "hpmax": 0,
+          "dice": [
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            }
+          ],
+          "features": [
+            {
+              "key": "bardicInspiration",
+              "name": "Bardic inspiration",
+              "source": "Bard",
+              "active": true,
+              "recovery": "short",
+              "bind": null,
+              "max": 4,
+              "left": 4,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "countercharm",
+              "name": "Countercharm",
+              "source": "Bard",
+              "active": true,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "moteOfPotential",
+              "name": "Mote of potential",
+              "source": "Creation",
+              "active": true,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "performanceOfCreation",
+              "name": "Performance of creation",
+              "source": "Creation",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "animatingPerformance",
+              "name": "Animating performance",
+              "source": "Creation",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "fontOfInspiration",
+              "name": "Font of inspiration",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 1,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "jackOfAllTrades",
+              "name": "Jack of all trades",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "expertise",
+              "name": "Expertise",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "magicalSecrets",
+              "name": "Magical secrets",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "musician",
+              "name": "Musician",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "conjurationAdept",
+              "name": "Conjuration adept",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "abjurationAdept",
+              "name": "Abjuration adept",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "elvenLineageI",
+              "name": "Elven Lineage I",
+              "source": "High Elf",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "elvenLineageII",
+              "name": "Elven Lineage II",
+              "source": "High Elf",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "trance",
+              "name": "Trance",
+              "source": "Elf",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "feyAncestry",
+              "name": "Fey Ancestry",
+              "source": "Elf",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            }
+          ],
+          "left": {
+            "1": 5,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 1,
+            "7": 0,
+            "8": 0,
+            "9": 0
+          },
+          "warlockLeft": 0,
+          "sp": 0,
+          "cunning": false,
+          "sorcRest": false
+        },
+        {
+          "hp": 0,
+          "hpmax": 0,
+          "dice": [
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            }
+          ],
+          "features": [
+            {
+              "key": "bardicInspiration",
+              "name": "Bardic inspiration",
+              "source": "Bard",
+              "active": true,
+              "recovery": "short",
+              "bind": null,
+              "max": 4,
+              "left": 4,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "countercharm",
+              "name": "Countercharm",
+              "source": "Bard",
+              "active": true,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "moteOfPotential",
+              "name": "Mote of potential",
+              "source": "Creation",
+              "active": true,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "performanceOfCreation",
+              "name": "Performance of creation",
+              "source": "Creation",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "animatingPerformance",
+              "name": "Animating performance",
+              "source": "Creation",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "fontOfInspiration",
+              "name": "Font of inspiration",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "jackOfAllTrades",
+              "name": "Jack of all trades",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "expertise",
+              "name": "Expertise",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "magicalSecrets",
+              "name": "Magical secrets",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "musician",
+              "name": "Musician",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "conjurationAdept",
+              "name": "Conjuration adept",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "abjurationAdept",
+              "name": "Abjuration adept",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "elvenLineageI",
+              "name": "Elven Lineage I",
+              "source": "High Elf",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "elvenLineageII",
+              "name": "Elven Lineage II",
+              "source": "High Elf",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "trance",
+              "name": "Trance",
+              "source": "Elf",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "feyAncestry",
+              "name": "Fey Ancestry",
+              "source": "Elf",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            }
+          ],
+          "left": {
+            "1": 5,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 1,
+            "7": 0,
+            "8": 0,
+            "9": 0
+          },
+          "warlockLeft": 0,
+          "sp": 0,
+          "cunning": false,
+          "sorcRest": false
+        },
+        {
+          "hp": 0,
+          "hpmax": 0,
+          "dice": [
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            }
+          ],
+          "features": [
+            {
+              "key": "bardicInspiration",
+              "name": "Bardic inspiration",
+              "source": "Bard",
+              "active": true,
+              "recovery": "short",
+              "bind": null,
+              "max": 4,
+              "left": 4,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "countercharm",
+              "name": "Countercharm",
+              "source": "Bard",
+              "active": true,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "moteOfPotential",
+              "name": "Mote of potential",
+              "source": "Creation",
+              "active": true,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "performanceOfCreation",
+              "name": "Performance of creation",
+              "source": "Creation",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "animatingPerformance",
+              "name": "Animating performance",
+              "source": "Creation",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "fontOfInspiration",
+              "name": "Font of inspiration",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 1,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "jackOfAllTrades",
+              "name": "Jack of all trades",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "expertise",
+              "name": "Expertise",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "magicalSecrets",
+              "name": "Magical secrets",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "musician",
+              "name": "Musician",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "conjurationAdept",
+              "name": "Conjuration adept",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "abjurationAdept",
+              "name": "Abjuration adept",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "elvenLineageI",
+              "name": "Elven Lineage I",
+              "source": "High Elf",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "elvenLineageII",
+              "name": "Elven Lineage II",
+              "source": "High Elf",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "trance",
+              "name": "Trance",
+              "source": "Elf",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "feyAncestry",
+              "name": "Fey Ancestry",
+              "source": "Elf",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            }
+          ],
+          "left": {
+            "1": 5,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 1,
+            "7": 0,
+            "8": 0,
+            "9": 0
+          },
+          "warlockLeft": 0,
+          "sp": 0,
+          "cunning": false,
+          "sorcRest": false
+        },
+        {
+          "hp": 0,
+          "hpmax": 0,
+          "dice": [
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            },
+            {
+              "type": 8,
+              "spent": false
+            }
+          ],
+          "features": [
+            {
+              "key": "bardicInspiration",
+              "name": "Bardic inspiration",
+              "source": "Bard",
+              "active": true,
+              "recovery": "short",
+              "bind": null,
+              "max": 4,
+              "left": 4,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "countercharm",
+              "name": "Countercharm",
+              "source": "Bard",
+              "active": true,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "moteOfPotential",
+              "name": "Mote of potential",
+              "source": "Creation",
+              "active": true,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "performanceOfCreation",
+              "name": "Performance of creation",
+              "source": "Creation",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "animatingPerformance",
+              "name": "Animating performance",
+              "source": "Creation",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "fontOfInspiration",
+              "name": "Font of inspiration",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "jackOfAllTrades",
+              "name": "Jack of all trades",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "expertise",
+              "name": "Expertise",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "magicalSecrets",
+              "name": "Magical secrets",
+              "source": "Bard",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "musician",
+              "name": "Musician",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "conjurationAdept",
+              "name": "Conjuration adept",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "abjurationAdept",
+              "name": "Abjuration adept",
+              "source": "Feat",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "elvenLineageI",
+              "name": "Elven Lineage I",
+              "source": "High Elf",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "elvenLineageII",
+              "name": "Elven Lineage II",
+              "source": "High Elf",
+              "active": true,
+              "recovery": "long",
+              "bind": null,
+              "max": 1,
+              "left": 1,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "trance",
+              "name": "Trance",
+              "source": "Elf",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            },
+            {
+              "key": "feyAncestry",
+              "name": "Fey Ancestry",
+              "source": "Elf",
+              "active": false,
+              "recovery": "passive",
+              "bind": null,
+              "max": 0,
+              "left": 0,
+              "cost": "",
+              "short": null,
+              "hidden": false
+            }
+          ],
+          "left": {
+            "1": 5,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 1,
+            "7": 0,
+            "8": 0,
+            "9": 0
+          },
+          "warlockLeft": 0,
+          "sp": 0,
+          "cunning": false,
+          "sorcRest": false
+        }
+      ]
     },
     "spells": {
       "dc": 17,
@@ -346,8 +2272,8 @@
       "warlockMax": 0,
       "warlockLeft": 0,
       "warlockLevel": 1,
-      "slotsTouched": false,
-      "selected": 0,
+      "slotsTouched": true,
+      "selected": 4,
       "lists": {
         "0": [
           "Mage Hand",
@@ -366,7 +2292,8 @@
         ],
         "3": [
           "Conjure Animals",
-          "Protection from Energy"
+          "Protection from Energy",
+          "Summon Fey"
         ],
         "4": [
           "Dimension Door",
@@ -374,9 +2301,15 @@
         ],
         "5": [
           "Conjure Elemental",
-          "Mass Cure Wounds"
+          "Mass Cure Wounds",
+          "Summon Celestial",
+          "Rary's Telepathic Bond",
+          "Bigby's Hand"
         ],
-        "6": [],
+        "6": [
+          "Contingency",
+          "Tasha's Bubbling Cauldron"
+        ],
         "7": [],
         "8": [],
         "9": []
@@ -396,12 +2329,19 @@
         "Minor Illusion": "Bard",
         "Blade Ward": "Bard",
         "Message": "Bard",
-        "Mind Sliver": "High Elf"
+        "Mind Sliver": "High Elf",
+        "Contingency": "Bard",
+        "Tasha's Bubbling Cauldron": "Bard",
+        "Summon Celestial": "Bard",
+        "Rary's Telepathic Bond": "Bard",
+        "Bigby's Hand": "Bard",
+        "Summon Fey": "Bard"
       },
-      "pick": "High Elf",
+      "pick": "Bard",
       "classes": {
-        "Bard": true,
-        "Wizard": true
+        "Bard": false,
+        "Wizard": false,
+        "Druid": false
       },
       "levelFilter": true,
       "surge": null
