@@ -26,19 +26,10 @@ The README is the human entry point. This file is the agent one.
 
 ## The commands
 
-```
-node build.mjs                                  # src to dist, the font and the data inlined
-node test/rules.test.mjs                        # the rules engine and the data
-node test/github.test.mjs                       # the sign in and the calls to GitHub
-node test/address.test.mjs                      # the address of a file on GitHub
-node tools/fetch-5e-data.mjs                    # refetch the data from 5e.tools
-node tools/serve.mjs                              # serve the build and the whole bestiary
-powershell -ExecutionPolicy Bypass -File tools/build-apk.ps1
-```
-
-The build writes `dist/index.html` and the three data files beside it. The
-page is one file, and the data sits next to it and is read when a page asks
-for it.
+The build, the three test suites, the data fetch, the server and the APK are
+listed once, in the README under [Build it](README.md#build-it). The build
+writes `dist/index.html` and the data files beside it; the page is one file
+and the data is read when a page asks for it.
 
 ## The seams
 
