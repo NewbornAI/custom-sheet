@@ -246,21 +246,6 @@
 
   /* ---- the cards ---- */
 
-  function slotOptions(current) {
-    var html = '<option value="-1"' + (current < 0 ? ' selected' : '') + '>none</option>';
-    for (var i = 0; i <= 9; i++) {
-      html += '<option value="' + i + '"' + (current === i ? ' selected' : '') + '>' + i + '</option>';
-    }
-    return html;
-  }
-
-  function formOptions(block, current) {
-    if (!block || !block.forms || !block.forms.length) return '';
-    return block.forms.map(function (f) {
-      return '<option value="' + C.esc(f.id) + '"' + (f.id === current ? ' selected' : '') + '>' + C.esc(f.name) + '</option>';
-    }).join('');
-  }
-
   function attackRow(a, ix, edit) {
     var label = a.count ? a.name + ' (x' + a.count + ')' : a.name;
     var bonus = edit && edit.bonus !== undefined && edit.bonus !== '' ? edit.bonus : a.bonus;
@@ -270,6 +255,15 @@
       '<input class="scin satkbonus" data-role="atkbonus" type="text" value="' + C.esc(bonus) + '" aria-label="Attack bonus">' +
       '<input class="scin satkdamage" data-role="atkdamage" type="text" value="' + C.esc(damage) + '" aria-label="Damage of the attack">' +
       '</div>';
+  }
+
+  /* The form the card carries, and the one it would fall back to. */
+  function formName(block, id) {
+    if (!block || !block.forms || !block.forms.length) return '';
+    var found = null;
+    block.forms.forEach(function (f) { if (f.id === id) found = f; });
+    if (!found) found = block.forms[0];
+    return found ? found.name : '';
   }
 
   function cardHtml(s) {
@@ -290,8 +284,9 @@
         '<button type="button" class="sdel" data-role="dismiss" aria-label="Dismiss the summon">&times;</button>' +
       '</div>';
     if (forms) {
-      html += '<div class="sline"><label class="slab">Form <select class="scin sform" data-role="form" aria-label="The form of the summon">' +
-        formOptions(block, s.form) + '</select></label></div>';
+      html += '<div class="sline"><span class="slab">Form</span>' +
+        '<button type="button" class="spick on" data-role="form" aria-label="The form of the summon">' +
+        C.esc(formName(block, s.form)) + '</button></div>';
     }
     html += '<div class="sline">' +
       '<span class="slab">AC</span>' +
@@ -303,7 +298,9 @@
       '<span class="sof">of <input class="scin snum" data-role="hpmax" type="number" inputmode="numeric" value="' + C.esc(max) + '" aria-label="Maximum hit points of the summon"></span>' +
       '</div>' +
       '<div class="sline">' +
-        '<label class="slab">Slot <select class="scin" data-role="slot" aria-label="The slot that paid for it">' + slotOptions(s.slot) + '</select></label>' +
+        '<span class="slab">Slot</span>' +
+        '<button type="button" class="spick on" data-role="slot" aria-label="The slot that paid for it">' +
+        (s.slot < 0 ? 'none' : String(s.slot)) + '</button>' +
         (s.concentration ? '<span class="sconc">Concentration</span>' : '') +
       '</div>';
     if (actions.length) {
@@ -318,6 +315,58 @@
   function buildCards() {
     E.list.innerHTML = summons().map(cardHtml).join('');
     E.empty.hidden = summons().length > 0;
+  }
+
+  /* ---- the form and the slot, picked the way the app picks a class ---- */
+
+  function openFormPicker(card) {
+    var block = library()[card.key];
+    if (!block || !block.forms || !block.forms.length) return;
+    var list = block.forms.map(function (f) {
+      return '<div class="crow" data-form="' + C.esc(f.id) + '"><span class="cn">' + C.esc(f.name) + '</span>' +
+        '<span class="cl">' + C.esc(f.acText || '') + '</span></div>';
+    }).join('');
+    api.sheet.open({
+      id: 'pickform',
+      title: 'The form',
+      metaClass: 'sheet-meta one',
+      meta: '<span>Tap a form. It decides the armour class and the attacks.</span>',
+      list: list,
+      onList: function (ev) {
+        var row = ev.target.closest('[data-form]');
+        if (!row) return;
+        card.form = row.dataset.form;
+        api.sheet.close();
+        buildCards();
+        commit();
+      }
+    });
+  }
+
+  function openSlotPicker(card) {
+    var list = '';
+    for (var i = 0; i <= 9; i++) {
+      list += '<div class="crow" data-slot="' + i + '"><span class="cn">Slot ' + i + '</span></div>';
+    }
+    list += '<div class="crow" data-slot="-1"><span class="cn">No slot</span></div>';
+    api.sheet.open({
+      id: 'pickslot',
+      title: 'The slot',
+      metaClass: 'sheet-meta one',
+      meta: '<span>The slot that paid for it. The numbers of the creature follow it.</span>',
+      list: list,
+      onList: function (ev) {
+        var row = ev.target.closest('[data-slot]');
+        if (!row) return;
+        card.slot = Number(row.dataset.slot);
+        if (!card.edit) card.edit = { ac: '', hpMax: '', attacks: {} };
+        card.edit.ac = '';
+        card.edit.hpMax = '';
+        api.sheet.close();
+        buildCards();
+        commit();
+      }
+    });
   }
 
   /* ---- the creature that comes to the table ---- */
@@ -527,8 +576,7 @@
       '.satkdamage{width:86px}',
       '.scin{font-family:var(--sans);font-size:12.5px;color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--edge);border-radius:4px;padding:2px 4px;min-width:0}',
       '.snum{width:44px;text-align:center}',
-      '.scard select.scin{width:56px}',
-      '.scard select.sform{width:140px}'
+      '.scard .spick{font-size:11px;padding:4px 9px}'
     ].join('\n'),
 
     mount: function (root, a) {
@@ -577,38 +625,17 @@
         api.save();
       });
 
-      /* The slot and the form decide what the creature is, so a change of
-         either is a change of the numbers. */
-      E.body.addEventListener('change', function (ev) {
-        var roleEl = ev.target.closest ? ev.target.closest('[data-role]') : null;
-        if (!roleEl) return;
-        var role = roleEl.dataset.role;
-        if (role !== 'slot' && role !== 'form') return;
-        var card = roleEl.closest('.scard');
-        if (!card) return;
-        var s = byId(card.dataset.id);
-        if (!s) return;
-        if (role === 'slot') {
-          s.slot = Number(roleEl.value);
-          if (!s.edit) s.edit = { ac: '', hpMax: '', attacks: {} };
-          s.edit.ac = '';
-          s.edit.hpMax = '';
-        } else {
-          s.form = roleEl.value;
-        }
-        buildCards();
-        commit();
-      });
-
       E.body.addEventListener('click', function (ev) {
         var roleEl = ev.target.closest ? ev.target.closest('[data-role]') : null;
         if (!roleEl) return;
         var role = roleEl.dataset.role;
-        if (role !== 'dismiss' && role !== 'hpup' && role !== 'hpdown') return;
+        if (role !== 'dismiss' && role !== 'hpup' && role !== 'hpdown' && role !== 'form' && role !== 'slot') return;
         var card = roleEl.closest('.scard');
         if (!card) return;
         var s = byId(card.dataset.id);
         if (!s) return;
+        if (role === 'form') { openFormPicker(s); return; }
+        if (role === 'slot') { openSlotPicker(s); return; }
         if (role === 'dismiss') {
           slice().list = summons().filter(function (x) { return x.id !== s.id; });
           buildCards();
