@@ -1518,10 +1518,12 @@ input[type=range]::-moz-range-thumb{
     return flat;
   }
 
-  /* One attack of a creature: the d20, the total, whether it hits the
-     armour class of a target, and the damage that follows. A natural twenty
-     is a critical and doubles the dice, the way the volley does. */
-  function rollAttack(bonus, ac, damageText, rng) {
+  /* One attack of a creature: the d20, the total, and the damage that
+     follows. A natural twenty is a critical and doubles the dice, the way
+     the volley does. The armour class of the target is not the business of
+     the roll: the player does not know it, so the roll only says what it
+     rolled. */
+  function rollAttack(bonus, damageText, rng) {
     rng = rng || Math.random;
     var roll = die(rng, 20);
     var total = roll + (Number(bonus) || 0);
@@ -1535,12 +1537,10 @@ input[type=range]::-moz-range-thumb{
     }
     for (k = 0; k < groups.length; k++) rolled += sum(groups[k].rolls);
     var flat = flatIn(damageText || '');
-    var hasAc = ac !== undefined && ac !== null && ac !== '' && isFinite(Number(ac));
     return {
       roll: roll,
       total: total,
       crit: crit,
-      hit: hasAc ? total >= Number(ac) : null,
       groups: groups,
       flat: flat,
       damage: rolled + flat

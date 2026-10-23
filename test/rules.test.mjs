@@ -577,7 +577,7 @@ console.log('seeding a character from the data');
   };
   book.spells.forEach((s) => { core.bookByName[s.name] = s; });
   features.features.forEach((f) => { core.featureByKey[f.key] = f; });
-  const ctx = vm.createContext({ Sheet: { core: core, page: (spec) => { taken[spec.id] = spec; } } });
+  const ctx = vm.createContext({ Sheet: { core: core, page: (spec) => { taken[spec.id] = spec; } }, navigator: { vibrate: () => {} } });
   ['character', 'spells'].forEach((f) => {
     vm.runInContext(readFileSync(resolve(root, 'src', 'pages', f + '.js'), 'utf8'), ctx);
   });
@@ -659,18 +659,16 @@ console.log('the roll of an attack');
   check('the flat of a damage is the number on the dice', R.flatIn('1d10 + 11'), 11);
   check('and there may be more than one', R.flatIn('2d6 + 3 + 5'), 8);
   check('a damage of dice alone has no flat', R.flatIn('2d6'), 0);
-  const roll = R.rollAttack(8, 15, '1d10 + 11', half);
+  const roll = R.rollAttack(8, '1d10 + 11', half);
   check('the d20 is rolled', roll.roll, 11);
   check('the total carries the bonus', roll.total, 19);
-  check('it hits the armour class of the target', roll.hit, true);
   check('the damage is the dice and the flat', roll.damage, 17);
   check('the dice are named', roll.groups[0].label, '1d10');
-  const crit = R.rollAttack(8, 15, '1d10 + 11', top);
+  check('the roll does not know the target', roll.hit, undefined);
+  const crit = R.rollAttack(8, '1d10 + 11', top);
   check('a natural twenty is a critical', crit.crit, true);
   check('and it doubles the dice', crit.groups[0].label, '2d10');
   check('so the damage is bigger', crit.damage, 31);
-  const blind = R.rollAttack(8, '', '1d10 + 11', half);
-  check('without a target there is no hit and no miss', blind.hit, null);
 }
 console.log('the bestiary');
 {
@@ -758,7 +756,7 @@ console.log('the bestiary');
   book.spells.forEach((s) => { core.bookByName[s.name] = s; });
   features.forEach((f) => { core.featureByKey[f.key] = f; });
   const taken = {};
-  const ctx = vm.createContext({ Sheet: { core: core, page: (spec) => { taken[spec.id] = spec; } } });
+  const ctx = vm.createContext({ Sheet: { core: core, page: (spec) => { taken[spec.id] = spec; } }, navigator: { vibrate: () => {} } });
   vm.runInContext(readFileSync(resolve(root, 'src', 'pages', 'summons.js'), 'utf8'), ctx);
 
   const fakeEl = () => {
@@ -812,6 +810,41 @@ console.log('the bestiary');
   check('the damage of the bow is two dice of six', avenger.actions[1].damageParts.dice.count, 2);
   check('and the slot is added to it', avenger.actions[1].damageParts.flat[1].level, 1);
   check('the dancing item takes the proficiency of the caster', creatures['dancing item'].actions[0].damageParts.flat[0].prof, 1);
+
+  /* The attack of a creature: one roll per attack, the hit roll in its die,
+     and nothing about the target, because the player does not know it. */
+  const wizard = JSON.parse(readFileSync(resolve(root, 'characters', 'yngwie.json'), 'utf8')).record;
+  wizard.pages = ['spells', 'features', 'summons'];
+  wizard.summons = { list: [{
+    id: 's1', name: 'Celestial Spirit', key: 'celestial spirit', form: 'avenger',
+    slot: 5, hp: 40, spell: 'Summon Celestial', concentration: true,
+    edit: { ac: '', hpMax: '', attacks: {} }, rolls: {}
+  }] };
+  const body = fakeEl();
+  const page2 = fakeEl();
+  page2.call = fakeEl();
+  page2.querySelector = (sel) => (sel === '#callSummon' ? page2.call : (sel === '#summonBody' ? body : fakeEl()));
+  taken.summons.mount(page2, Object.assign({}, api, {
+    character: () => wizard,
+    characters: () => ({ c1: wizard })
+  }));
+  const onCell = (name) => ({
+    closest: (sel) => {
+      if (sel === '.scard') return { dataset: { id: 's1' } };
+      if (sel === '.scell') return { dataset: { name: name } };
+      return null;
+    }
+  });
+  body.listeners.click({ target: onCell('Radiant Bow') });
+  const held = wizard.summons.list[0].rolls['Radiant Bow'];
+  check('the attack holds one roll', held.length, 1);
+  check('the roll does not say whether it hit', held[0].hit, undefined);
+  check('the roll carries the dice of the bow', held[0].groups[0].label, '2d6');
+  check('and the slot is in the flat of the damage', held[0].flat, 7);
+  body.listeners.click({ target: onCell('Radiant Bow') });
+  check('a multiattack holds as many rolls as it says', wizard.summons.list[0].rolls['Radiant Bow'].length, 2);
+  body.listeners.click({ target: onCell('Radiant Bow') });
+  check('and it keeps no more than that', wizard.summons.list[0].rolls['Radiant Bow'].length, 2);
 }
 console.log(failures === 0 ? '\nall rules checks pass' : '\n' + failures + ' check(s) failed');
 process.exit(failures === 0 ? 0 : 1);

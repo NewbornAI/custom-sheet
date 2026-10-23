@@ -237,13 +237,21 @@
     var name = form ? form.name : '';
     var ac = evalTerms((branchFor(form ? form.acTerms : block.acTerms, name) || {}).terms, ctx);
     var hp = evalTerms((branchFor(form ? form.hpTerms : block.hpTerms, name) || {}).terms, ctx);
-    var actions = (form ? form.actions : block.actions).map(function (a) {
+    var raw = form ? form.actions : block.actions;
+    /* The multiattack says how many attacks the creature makes, so every
+       attack of that creature is made that many times. */
+    var multi = null;
+    raw.forEach(function (a) { if (a.count) multi = deriveCount(a.count, ctx); });
+    var actions = raw.map(function (a) {
       return {
         name: a.name,
         text: a.text,
         bonus: deriveBonus(a, ctx),
         damage: deriveDamage(a.damageParts, ctx) || a.damage || '',
-        count: deriveCount(a.count, ctx)
+        count: deriveCount(a.count, ctx),
+        type: a.type || '',
+        attack: /^(Melee|Ranged) (weapon |spell )?attack:/i.test(a.text || ''),
+        multi: a.count ? null : multi
       };
     });
     return { ac: ac, hpMax: hp, actions: actions, form: form, block: block };
@@ -260,29 +268,168 @@
 
   /* ---- the cards ---- */
 
-  function attackRow(a, ix, edit, roll) {
-    var label = a.count ? a.name + ' (x' + a.count + ')' : a.name;
+  /* The type of a damage, and the colour it wears. The book says it, and an
+     action that gives hit points back is a healing whatever it does not say. */
+  var TYPES = {
+    radiant: [255, 217, 138],
+    fire: [255, 132, 70],
+    lightning: [255, 212, 71],
+    cold: [127, 216, 255],
+    acid: [185, 227, 74],
+    necrotic: [95, 208, 160],
+    poison: [154, 216, 79],
+    psychic: [255, 122, 217],
+    force: [110, 155, 255],
+    thunder: [183, 155, 255],
+    bludgeoning: [201, 195, 221],
+    piercing: [201, 195, 221],
+    slashing: [201, 195, 221],
+    healing: [122, 216, 111]
+  };
+
+  function damageType(a) {
+    if (a.type) return a.type;
+    if (/regain|restore|heal/i.test(a.text || '')) return 'healing';
+    return '';
+  }
+
+  function colourOf(type) {
+    var c = TYPES[type];
+    return c ? 'rgb(' + c.join(',') + ')' : '';
+  }
+
+  function trioOf(type) {
+    var c = TYPES[type];
+    return c ? c.join(',') : '';
+  }
+
+  /* The die the hit roll sits in. */
+  var D20 = '<svg class="sd20g" viewBox="0 0 48 48" aria-hidden="true" focusable="false">' +
+    '<path class="sd20hex" d="M24 3.4 41.8 13.7 41.8 34.3 24 44.6 6.2 34.3 6.2 13.7Z"/>' +
+    '<path class="sd20tri" d="M24 3.4 41.8 34.3 6.2 34.3Z"/>' +
+    '</svg>';
+
+  /* The rolls an attack holds: one for an attack, as many as the
+     multiattack says for a creature that makes several. */
+  function rollsOf(card, name) {
+    var v = card.rolls ? card.rolls[name] : null;
+    if (!v) return [];
+    return Array.isArray(v) ? v : [v];
+  }
+
+  /* The number of the bonus, when the book writes one. */
+  function bonusOf(text) {
+    if (text === undefined || text === null || text === '') return null;
+    var n = Number(String(text).replace(/[^0-9.+-]/g, ''));
+    return isFinite(n) ? n : null;
+  }
+
+  /* The damage: the total, the type it wears, and the dice that made it. */
+  function damageBlock(res, type, damage) {
+    var col = colourOf(type);
+    var groups, flat, total;
+    if (res) {
+      groups = res.groups;
+      flat = res.flat;
+      total = res.damage;
+    } else {
+      groups = (C.R && C.R.diceIn ? C.R.diceIn(damage || '') : []).map(function (g) {
+        return { label: g.label, rolls: [] };
+      });
+      flat = C.R && C.R.flatIn ? C.R.flatIn(damage || '') : 0;
+      total = null;
+    }
+    var out = '<div class="sdmg">';
+    out += '<div class="sdtop"><span class="sdt' + (total === null ? ' sghost' : '') + '"' +
+      (col && total !== null ? ' style="color:' + col + '"' : '') + '>' + (total === null ? '--' : total) + '</span>';
+    if (type) out += '<em class="stype" style="color:' + col + '">' + C.esc(type) + '</em>';
+    out += '</div>';
+    if (groups.length || flat) {
+      out += '<div class="sdice">';
+      groups.forEach(function (g) {
+        out += '<span class="sg"><span class="slbl"' + (col ? ' style="color:' + col + '"' : '') + '>' + C.esc(g.label) + '</span>' +
+          '<span class="sgroll' + (res ? '' : ' sghost') + '">' + (res ? g.rolls.join(', ') : '--') + '</span></span>';
+      });
+      if (flat) {
+        out += '<span class="sg flat"><span class="slbl"' + (col ? ' style="color:' + col + '"' : '') + '>' +
+          (flat > 0 ? '+' + flat : String(flat)) + '</span></span>';
+      }
+      out += '</div>';
+    } else if (!res && damage) {
+      out += '<div class="sdice"><span class="sg"><span class="slbl sghost">' + C.esc(damage) + '</span></span></div>';
+    }
+    out += '</div>';
+    return out;
+  }
+
+  /* One roll of one attack: the hit roll in its die, then the damage. */
+  function rollBlock(res, type, damage, bonus) {
+    var out = '<div class="srblock">';
+    out += '<div class="srb">';
+    out += '<div class="sd20' + (res && res.crit ? ' crit' : '') + (res ? '' : ' ghost') + '">' + D20 +
+      '<span class="sd20num' + (res ? '' : ' sghost') + '">' + (res ? res.total : '--') + '</span></div>';
+    out += '<div class="srbmeta"><span class="srbline' + (res ? '' : ' sghost') + '">d20 ' + (res ? res.roll : '--') + '</span>';
+    if (res && bonus !== null) {
+      out += '<span class="srbmod">' + (bonus > 0 ? '+' + bonus : String(bonus)) + '</span>';
+    }
+    if (res && res.crit) out += '<span class="srbcrit">crit</span>';
+    out += '</div></div>';
+    out += '<div class="sbeam"></div>';
+    out += damageBlock(res, type, damage);
+    out += '</div>';
+    return out;
+  }
+
+  /* An attack: its name, its bonus, and the rolls it holds. */
+  function attackCell(a, edit, rolls) {
     var bonus = edit && edit.bonus !== undefined && edit.bonus !== '' ? edit.bonus : a.bonus;
     var damage = edit && edit.damage !== undefined && edit.damage !== '' ? edit.damage : a.damage;
-    var row = '<div class="satkrow" data-ix="' + ix + '" data-name="' + C.esc(a.name) + '">' +
-      '<span class="satkname" title="' + C.esc(a.text || '') + '">' + C.esc(label) + '</span>';
+    var type = damageType(a);
+    var trio = trioOf(type);
+    var out = '<div class="scell" data-name="' + C.esc(a.name) + '"' + (trio ? ' style="--beam:' + trio + '"' : '') + '>';
+    out += '<div class="schead"><span class="satkname" title="' + C.esc(a.text || '') + '">' + C.esc(a.name) + '</span>';
     if (editing) {
-      row += '<input class="scin satkbonus" data-role="atkbonus" type="text" value="' + C.esc(bonus) + '" aria-label="Attack bonus">' +
-        '<input class="scin satkdamage" data-role="atkdamage" type="text" value="' + C.esc(damage) + '" aria-label="Damage of the attack">';
+      out += '<input class="scin satkbonus" data-role="atkbonus" type="text" value="' + C.esc(bonus) + '" aria-label="Attack bonus">';
     } else {
-      row += '<span class="satkatk">' + C.esc(bonus) + '</span>' +
-        '<span class="satkdmg">' + C.esc(damage) + '</span>';
+      out += '<span class="satkatk">' + C.esc(bonus) + '</span>';
     }
-    row += '</div>';
-    if (roll) {
-      row += '<div class="satkres">' +
-        '<span class="srtotal">' + roll.total + '</span>' +
-        (roll.crit ? '<span class="badge crit">crit</span>' : (roll.hit === true ? '<span class="badge hit">hit</span>' : (roll.hit === false ? '<span class="badge miss">miss</span>' : ''))) +
-        '<span class="tdmg">' + roll.damage + '</span>' +
-        '<span class="srdice">' + roll.groups.map(function (g) { return g.label + ': ' + g.rolls.join(', '); }).join('  ') + '</span>' +
+    out += '</div>';
+    if (editing) {
+      out += '<div class="sline"><span class="sk">Damage</span>' +
+        '<input class="scin satkdamage" data-role="atkdamage" type="text" value="' + C.esc(damage) + '" aria-label="Damage of the attack">' +
+        (type ? '<em class="stype" style="color:' + colourOf(type) + '">' + C.esc(type) + '</em>' : '') +
         '</div>';
+    } else {
+      var num = bonusOf(bonus);
+      var blocks = rolls.length
+        ? rolls.map(function (r) { return rollBlock(r, type, damage, num); })
+        : [rollBlock(null, type, damage, num)];
+      out += '<div class="srbs">' + blocks.join('') + '</div>';
     }
-    return row;
+    out += '</div>';
+    return out;
+  }
+
+  /* The multiattack: how many attacks the creature makes. */
+  function multiRow(a) {
+    return '<div class="smulti"><span class="sk">' + C.esc(a.name) + '</span>' +
+      '<span class="smultin">&times;' + a.count + '</span></div>';
+  }
+
+  /* An action that is not an attack: a healing, a touch. It shows its dice
+     and it does not roll. */
+  function noteRow(a, edit) {
+    var damage = edit && edit.damage !== undefined && edit.damage !== '' ? edit.damage : a.damage;
+    var type = damageType(a);
+    var out = '<div class="snote" data-name="' + C.esc(a.name) + '"><span class="satkname">' + C.esc(a.name) + '</span>';
+    if (editing) {
+      out += '<input class="scin satkdamage" data-role="atkdamage" type="text" value="' + C.esc(damage) + '" aria-label="Damage of the action">';
+    } else if (damage) {
+      out += '<span class="snotedmg">' + C.esc(damage) + '</span>';
+    }
+    if (type) out += '<em class="stype" style="color:' + colourOf(type) + '">' + C.esc(type) + '</em>';
+    out += '</div>';
+    return out;
   }
 
   function cardHtml(s) {
@@ -334,12 +481,11 @@
         '</div>';
     }
     if (actions.length) {
-      html += '<div class="sline"><span class="sk">Attacks</span>' +
-        '<span class="sof">vs <input class="scin snum" data-role="target" type="number" inputmode="numeric" value="' +
-        (s.target === undefined || s.target === null ? '' : s.target) + '" aria-label="The armour class of the target"></span></div>';
-      html += '<div class="satk">' + actions.map(function (a, ix) {
-        var roll = s.rolls ? s.rolls[a.name] : null;
-        return attackRow(a, ix, edit[a.name], roll);
+      html += '<div class="sline"><span class="sk">Attacks</span></div>';
+      html += '<div class="satk">' + actions.map(function (a) {
+        if (a.count) return multiRow(a);
+        if (!a.attack) return noteRow(a, edit[a.name]);
+        return attackCell(a, edit[a.name], rollsOf(s, a.name));
       }).join('') + '</div>';
     }
     return html + '</div>';
@@ -360,7 +506,6 @@
       form: '',
       slot: source.level === null || source.level === undefined ? -1 : source.level,
       hp: 0,
-      target: '',
       spell: source.name,
       concentration: !!source.concentration,
       edit: { ac: '', hpMax: '', attacks: {} },
@@ -577,14 +722,19 @@
     if (!out) return;
     var action = null;
     out.actions.forEach(function (a) { if (a.name === name) action = a; });
-    if (!action || !action.bonus) return;
+    if (!action || !action.attack) return;
     var edit = (card.edit && card.edit.attacks && card.edit.attacks[name]) || {};
     var bonus = edit.bonus !== undefined && edit.bonus !== '' ? edit.bonus : action.bonus;
     var damage = edit.damage !== undefined && edit.damage !== '' ? edit.damage : action.damage;
-    var target = card.target === undefined || card.target === null || card.target === '' ? null : card.target;
-    var result = C.R.rollAttack(bonus, target, damage);
+    var result = C.R.rollAttack(bonus, damage);
     if (!card.rolls) card.rolls = {};
-    card.rolls[name] = result;
+    var list = rollsOf(card, name);
+    list.push(result);
+    /* A multiattack is made as many times as it says, so the cell keeps
+       that many rolls and no more. */
+    var cap = action.multi && action.multi > 0 ? action.multi : 1;
+    while (list.length > cap) list.shift();
+    card.rolls[name] = list;
     buildCards();
     commit();
     if (navigator.vibrate) navigator.vibrate(result.crit ? [14, 45, 14] : 16);
@@ -625,14 +775,45 @@
       '.sstep{width:22px;height:22px;border-radius:5px;border:1px solid var(--edge);background:none;color:var(--ink);font:inherit;font-size:14px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0}',
       '.sstep:active{border-color:var(--arcane);color:var(--arcane)}',
       '.sconc{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}',
-      '.satk{display:flex;flex-direction:column;gap:2px}',
-      '.satkrow{display:grid;grid-template-columns:minmax(0,1fr) 42px 86px;gap:4px;align-items:center}',
-      '.satkname{width:100%;min-width:0;font-size:12px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
-      '.satkatk{font-size:12px;color:var(--muted);text-align:right}',
-      '.satkdmg{font-size:12px;color:var(--muted);text-align:right}',
-      '.satkres{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);padding:0 0 3px 2px}',
-      '.srtotal{font-size:13px;color:var(--ink);font-variant-numeric:tabular-nums}',
-      '.srdice{font-size:10px;color:var(--muted)}',
+      '.satk{display:flex;flex-direction:column;gap:6px}',
+      '.scell{border:1px solid var(--edge);border-radius:5px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));padding:7px 8px;display:flex;flex-direction:column;gap:6px;cursor:pointer}',
+      '.scell:active{border-color:rgba(var(--arcane-rgb),.45)}',
+      '.schead{display:flex;align-items:baseline;gap:8px}',
+      '.satkname{flex:1 1 auto;min-width:0;font-size:12.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+      '.satkatk{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;flex:0 0 auto}',
+      '.srbs{display:flex;flex-direction:column;gap:6px}',
+      '.srblock{display:flex;flex-direction:column;gap:5px}',
+      '.srblock+.srblock{border-top:1px dashed var(--edge);padding-top:6px}',
+      '.srb{display:flex;align-items:center;justify-content:center;gap:12px}',
+      '.sd20{position:relative;width:52px;height:52px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}',
+      '.sd20g{position:absolute;left:0;top:0;width:100%;height:100%;fill:none;stroke-linejoin:round;stroke-linecap:round}',
+      '.sd20hex{stroke:rgba(var(--arcane-rgb),.55);stroke-width:1.7}',
+      '.sd20tri{stroke:rgba(var(--arcane-rgb),.22);stroke-width:1}',
+      '.sd20num{position:relative;font-family:var(--display);font-weight:700;font-size:21px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}',
+      '.sd20.crit .sd20hex{stroke:rgba(var(--gold-rgb),.9)}',
+      '.sd20.crit .sd20tri{stroke:rgba(var(--gold-rgb),.28)}',
+      '.sd20.crit .sd20num{color:var(--gold)}',
+      '.srbmeta{display:flex;flex-direction:column;gap:1px;align-items:flex-start}',
+      '.srbline{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}',
+      '.srbmod{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}',
+      '.srbcrit{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}',
+      '.sbeam{height:16px;display:flex;justify-content:center}',
+      '.sbeam::before{content:"";width:3px;border-radius:2px;background:linear-gradient(180deg,rgba(var(--beam,var(--arcane-rgb)),.55),rgba(var(--beam,var(--arcane-rgb)),.12));box-shadow:0 0 10px rgba(var(--beam,var(--arcane-rgb)),.35)}',
+      '.sdmg{padding-top:6px;border-top:1px solid var(--edge);display:flex;flex-direction:column;gap:5px}',
+      '.sdtop{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}',
+      '.sdt{font-family:var(--display);font-weight:700;font-size:22px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}',
+      '.stype{font-style:normal;font-size:9.5px;letter-spacing:.04em}',
+      '.sdice{display:flex;gap:8px;flex-wrap:wrap}',
+      '.sg{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0}',
+      '.slbl{font-size:10px;line-height:1.1;color:var(--muted);font-variant-numeric:tabular-nums}',
+      '.sgroll{font-size:11.5px;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}',
+      '.sghost{color:#6f6a8d}',
+      '.smulti{display:flex;align-items:center;gap:6px;padding:1px 0}',
+      '.smultin{font-size:11px;color:var(--gold);font-variant-numeric:tabular-nums}',
+      '.snote{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}',
+      '.snotedmg{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}',
+      '.scard .satkbonus{width:58px;text-align:right}',
+      '.scard .satkdamage{flex:1 1 auto;min-width:0}',
       '.scin{font-family:var(--sans);font-size:12.5px;color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--edge);border-radius:4px;padding:2px 4px;min-width:0}',
       '.snum{width:44px;text-align:center}',
       '.scard .spick{font-size:11px;padding:4px 9px}'
@@ -669,12 +850,11 @@
         var role = roleEl.dataset.role;
         if (role === 'name') s.name = roleEl.value;
         else if (role === 'hp') s.hp = Math.max(0, Math.min(999, Number(roleEl.value) || 0));
-        else if (role === 'target') s.target = roleEl.value;
         else if (role === 'ac' || role === 'hpmax') {
           if (!s.edit) s.edit = { ac: '', hpMax: '', attacks: {} };
           s.edit[role] = roleEl.value;
         } else if (role === 'atkbonus' || role === 'atkdamage') {
-          var row = roleEl.closest('.satkrow');
+          var row = roleEl.closest('[data-name]');
           if (!row) return;
           if (!s.edit) s.edit = { ac: '', hpMax: '', attacks: {} };
           if (!s.edit.attacks) s.edit.attacks = {};
@@ -712,7 +892,7 @@
         /* An attack is rolled when it is tapped, the way the volley rolls a
            beam. */
         if (editing) return;
-        var row = ev.target.closest('.satkrow');
+        var row = ev.target.closest('.scell');
         if (!row || !row.dataset.name) return;
         if (ev.target.closest('input, button')) return;
         roll(s, row.dataset.name);
