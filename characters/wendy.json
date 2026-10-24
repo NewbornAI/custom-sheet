@@ -9466,6 +9466,16 @@
       ],
       "initTouched": true
     },
+    "volley": {
+      "power": "eb",
+      "advantage": false,
+      "hex": false,
+      "curse": false,
+      "elem": false,
+      "elemPlus": false,
+      "quicken": false,
+      "ac": null
+    },
     "spells": {
       "dc": 17,
       "dcTouched": false,
@@ -9475,10 +9485,10 @@
       "sorcRest": false,
       "sorcererLevel": 8,
       "max": {
-        "1": 0,
-        "2": 0,
-        "3": 0,
-        "4": 0,
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 2,
         "5": 0,
         "6": 0,
         "7": 0,
@@ -9486,10 +9496,10 @@
         "9": 0
       },
       "left": {
-        "1": 0,
-        "2": 0,
-        "3": 0,
-        "4": 0,
+        "1": 4,
+        "2": 3,
+        "3": 3,
+        "4": 2,
         "5": 0,
         "6": 0,
         "7": 0,
@@ -9500,7 +9510,7 @@
       "warlockLeft": 2,
       "warlockLevel": 2,
       "slotsTouched": false,
-      "selected": 0,
+      "selected": 5,
       "lists": {
         "0": [
           "Produce Flame",
@@ -9557,9 +9567,7 @@
         ],
         "5": [
           "Animate Objects",
-          "Conjure Elemental",
-          "Hold Monster",
-          "Dominate Person"
+          "Conjure Elemental"
         ],
         "6": [],
         "7": [],
@@ -9611,9 +9619,7 @@
         "Divination": "Izzet engineer",
         "Otiluke's Resilient Sphere": "Izzet engineer",
         "Animate Objects": "Izzet engineer",
-        "Conjure Elemental": "Izzet engineer",
-        "Hold Monster": "Sorcerer",
-        "Dominate Person": "Sorcerer"
+        "Conjure Elemental": "Izzet engineer"
       },
       "sourcesTouched": false,
       "pick": "",
@@ -9627,15 +9633,50 @@
         "dice": []
       }
     },
-    "volley": {
-      "power": "eb",
-      "advantage": true,
-      "hex": false,
-      "curse": true,
-      "elem": true,
-      "elemPlus": false,
-      "quicken": true,
-      "ac": null
+    "summons": {
+      "list": [
+        {
+          "id": "s1792823207836722",
+          "name": "Battle Familiar",
+          "key": "battle familiar",
+          "form": "brute",
+          "slot": 2,
+          "hp": 30,
+          "spell": "Battle Familiar",
+          "source": "spell:Battle Familiar",
+          "concentration": false,
+          "adv": false,
+          "edit": {
+            "ac": "",
+            "hpMax": "",
+            "attacks": {}
+          },
+          "uses": {},
+          "rolls": {
+            "Rend": [
+              {
+                "roll": 11,
+                "rolls": [
+                  11
+                ],
+                "total": 20,
+                "crit": false,
+                "groups": [
+                  {
+                    "label": "1d8",
+                    "rolls": [
+                      3
+                    ]
+                  }
+                ],
+                "flat": 5,
+                "damage": 8
+              }
+            ]
+          }
+        }
+      ],
+      "picks": {}
     },
     "pages": [
       "volley",
